@@ -1,0 +1,216 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 214 60% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 214 60% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 214 60% 10%;
+    --primary: 210 68% 28%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 94%;
+    --secondary-foreground: 210 68% 28%;
+    --muted: 210 40% 94%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 92%;
+    --accent-foreground: 210 68% 20%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 88%;
+    --input: 214 32% 88%;
+    --ring: 210 68% 28%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 214 60% 8%;
+    --foreground: 210 40% 96%;
+    --card: 214 50% 11%;
+    --card-foreground: 210 40% 96%;
+    --popover: 214 50% 11%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 210 68% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 214 40% 16%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 214 40% 16%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 214 40% 18%;
+    --accent-foreground: 210 40% 96%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 40% 18%;
+    --input: 214 40% 18%;
+    --ring: 210 68% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior: none;
+  }
+
+  /* Mobile tap highlight */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer components {
+  /* Sidebar Styles */
+  .sidebar-nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200;
+    @apply text-white/70 hover:text-white hover:bg-white/10;
+  }
+  
+  .sidebar-nav-item.active {
+    @apply text-white bg-white/15;
+  }
+
+  /* Bottom Navigation */
+  .bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 z-50;
+    @apply bg-white border-t border-gray-200;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .bottom-nav-item {
+    @apply flex flex-col items-center justify-center gap-1 flex-1 py-2;
+    @apply text-gray-400 transition-colors duration-200;
+    min-height: 56px;
+  }
+
+  .bottom-nav-item.active {
+    @apply text-brand-primary;
+  }
+
+  /* Sync Indicator */
+  .sync-bar {
+    @apply flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-full;
+  }
+
+  .sync-bar.synced {
+    @apply bg-sync-success/10 text-sync-success;
+  }
+
+  .sync-bar.syncing {
+    @apply bg-sync-warning/10 text-sync-warning;
+  }
+
+  .sync-bar.offline {
+    @apply bg-sync-error/10 text-sync-error;
+  }
+
+  /* KPI Cards */
+  .kpi-card {
+    @apply bg-card rounded-xl p-5 border border-border shadow-sm;
+  }
+
+  .kpi-card-value {
+    @apply text-3xl font-bold text-foreground;
+  }
+
+  .kpi-card-label {
+    @apply text-sm text-muted-foreground mt-1;
+  }
+
+  /* Status Badges */
+  .status-badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .status-badge.synced {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .status-badge.pending {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  .status-badge.rejected {
+    @apply bg-red-100 text-red-800;
+  }
+
+  .status-badge.approved {
+    @apply bg-blue-100 text-blue-800;
+  }
+
+  /* Form Field Styles */
+  .form-field-card {
+    @apply bg-card rounded-xl border border-border p-4 shadow-sm hover:shadow-md transition-shadow;
+  }
+
+  /* Mobile Form Styles */
+  .mobile-field-wrapper {
+    @apply mb-4;
+  }
+
+  .mobile-field-label {
+    @apply block text-sm font-semibold text-foreground mb-2;
+  }
+
+  .mobile-field-input {
+    @apply w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground;
+    @apply focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary;
+    @apply text-base transition-all duration-200;
+  }
+
+  /* Confidence Indicators */
+  .confidence-high {
+    @apply text-green-600 bg-green-50 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .confidence-medium {
+    @apply text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .confidence-low {
+    @apply text-red-600 bg-red-50 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+}
+
+/* Leaflet Map overrides */
+.leaflet-container {
+  font-family: 'Inter', sans-serif !important;
+  border-radius: 0.75rem;
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
