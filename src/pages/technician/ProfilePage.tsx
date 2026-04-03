@@ -16,7 +16,7 @@ const historyForms = [
 ]
 
 export default function ProfilePage() {
-  const { user, logout } = useAuthStore()
+  const { user, signOut } = useAuthStore()
   const { status, pendingCount, setSyncComplete, setStatus } = useSyncStore()
   const navigate = useNavigate()
 
@@ -25,8 +25,8 @@ export default function ProfilePage() {
     setTimeout(() => setSyncComplete(), 2000)
   }
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await signOut()
     navigate('/login')
   }
 

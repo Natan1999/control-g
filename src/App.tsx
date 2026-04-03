@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 
@@ -75,7 +76,27 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const { user } = useAuthStore()
+  const { user, restore, isLoading } = useAuthStore()
+  const [ready, setReady] = useState(false)
+
+  // Restaurar sesión Appwrite al montar
+  useEffect(() => {
+    restore().finally(() => setReady(true))
+  }, [])
+
+  // Pantalla de carga mientras verificamos sesión
+  if (!ready) {
+    return (
+      <div className="min-h-screen bg-brand-dark flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center animate-pulse">
+            <span className="text-white font-black text-2xl">CG</span>
+          </div>
+          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <Routes>

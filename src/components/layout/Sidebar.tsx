@@ -60,12 +60,12 @@ interface SidebarProps {
 export function Sidebar({ role }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const { user, logout } = useAuthStore()
+  const { user, signOut } = useAuthStore()
   const navigate = useNavigate()
   const items = navItems[role]
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await signOut()
     navigate('/login')
   }
 

@@ -1,0 +1,42 @@
+{
+  "projectId": "",
+  "projectName": "Control G",
+  "endpoint": "https://cloud.appwrite.io/v1",
+  "databases": [
+    {
+      "databaseId": "control_g",
+      "name": "control_g"
+    }
+  ],
+  "collections": [
+    { "collectionId": "organizations", "name": "organizations", "databaseId": "control_g" },
+    { "collectionId": "user_profiles", "name": "user_profiles", "databaseId": "control_g" },
+    { "collectionId": "departments", "name": "departments", "databaseId": "control_g" },
+    { "collectionId": "municipalities", "name": "municipalities", "databaseId": "control_g" },
+    { "collectionId": "zones", "name": "zones", "databaseId": "control_g" },
+    { "collectionId": "projects", "name": "projects", "databaseId": "control_g" },
+    { "collectionId": "project_zones", "name": "project_zones", "databaseId": "control_g" },
+    { "collectionId": "project_members", "name": "project_members", "databaseId": "control_g" },
+    { "collectionId": "forms", "name": "forms", "databaseId": "control_g" },
+    { "collectionId": "form_versions", "name": "form_versions", "databaseId": "control_g" },
+    { "collectionId": "form_templates", "name": "form_templates", "databaseId": "control_g" },
+    { "collectionId": "form_responses", "name": "form_responses", "databaseId": "control_g" },
+    { "collectionId": "form_response_media", "name": "form_response_media", "databaseId": "control_g" },
+    { "collectionId": "chat_channels", "name": "chat_channels", "databaseId": "control_g" },
+    { "collectionId": "chat_members", "name": "chat_members", "databaseId": "control_g" },
+    { "collectionId": "chat_messages", "name": "chat_messages", "databaseId": "control_g" },
+    { "collectionId": "notifications", "name": "notifications", "databaseId": "control_g" },
+    { "collectionId": "sync_logs", "name": "sync_logs", "databaseId": "control_g" },
+    { "collectionId": "audit_logs", "name": "audit_logs", "databaseId": "control_g" }
+  ],
+  "buckets": [
+    { "bucketId": "field-photos", "name": "field-photos" },
+    { "bucketId": "field-videos", "name": "field-videos" },
+    { "bucketId": "signatures", "name": "signatures" },
+    { "bucketId": "ocr-scans", "name": "ocr-scans" },
+    { "bucketId": "form-attachments", "name": "form-attachments" },
+    { "bucketId": "pdf-templates", "name": "pdf-templates" },
+    { "bucketId": "exports", "name": "exports" },
+    { "bucketId": "avatars", "name": "avatars" }
+  ]
+}
