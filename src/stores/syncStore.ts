@@ -15,7 +15,7 @@ interface SyncState {
 
 export const useSyncStore = create<SyncState>((set) => ({
   status: 'offline',
-  pendingCount: 3,
+  pendingCount: 0,
   lastSyncAt: null,
   isSyncing: false,
   setStatus: (status) => set({ status, isSyncing: status === 'syncing' }),

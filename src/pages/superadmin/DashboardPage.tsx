@@ -1,10 +1,21 @@
+import { useState, useEffect } from 'react'
 import { Building2, Users, MapPin, Server, TrendingUp, AlertCircle, CheckCircle, Plus, Eye, Settings } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts'
 import { motion } from 'framer-motion'
 import { KPICard, StatusBadge, Avatar, PageWrapper } from '@/components/shared'
 import { TopBar } from '@/components/layout/Sidebar'
-import { mockOrganizations } from '@/lib/mockData'
-import { formatDate } from '@/lib/utils'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
+import { Query, Models } from 'appwrite'
+import { Link } from 'react-router-dom'
+
+interface OrganizationDocument extends Models.Document {
+  name: string;
+  nit: string;
+  plan: string;
+  max_users: number;
+  max_forms: number;
+  status: string;
+}
 
 const planData = [
   { name: 'Gobierno', value: 8, color: '#1A5276' },
@@ -23,25 +34,64 @@ const growthData = [
 ]
 
 export default function SuperDashboard() {
+  const [stats, setStats] = useState({
+    totalOrgs: 0,
+    totalUsers: 0,
+    activeAlerts: 0,
+  });
+  const [recentOrgs, setRecentOrgs] = useState<OrganizationDocument[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadDashboardData() {
+      try {
+        setLoading(true);
+        // Load counts
+        const orgsData = await databases.listDocuments(
+          DATABASE_ID,
+          COLLECTION_IDS.ORGANIZATIONS,
+          [Query.orderDesc('$createdAt'), Query.limit(5)]
+        );
+        const usersData = await databases.listDocuments(
+          DATABASE_ID,
+          COLLECTION_IDS.USER_PROFILES,
+          [Query.limit(1)] // Solo para obtener el total
+        );
+
+        setStats({
+          totalOrgs: orgsData.total,
+          totalUsers: usersData.total,
+          activeAlerts: 3 // Mocked por ahora
+        });
+        setRecentOrgs(orgsData.documents as unknown as OrganizationDocument[]);
+      } catch (error) {
+        console.error('Error cargando dashboard:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadDashboardData();
+  }, [])
+
   return (
     <PageWrapper>
       <TopBar
         title="Panel de Control Global"
         subtitle="Vista general de todas las organizaciones"
         actions={
-          <button className="flex items-center gap-2 bg-brand-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">
-            <Plus size={16} /> Nueva Organización
-          </button>
+          <Link to="/admin/organizations" className="flex items-center gap-2 bg-brand-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-secondary transition-colors">
+            <Plus size={16} /> Gestionar Organzaciones
+          </Link>
         }
       />
 
       <div className="p-6 space-y-6">
         {/* KPIs */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <KPICard label="Organizaciones activas" value={46} icon={<Building2 size={20} />} change={9.5} />
-          <KPICard label="Usuarios totales" value="1,842" icon={<Users size={20} />} colorClass="bg-blue-50 text-blue-600" change={12.3} />
+          <KPICard label="Organizaciones activas" value={loading ? '...' : stats.totalOrgs} icon={<Building2 size={20} />} change={9.5} />
+          <KPICard label="Usuarios totales" value={loading ? '...' : stats.totalUsers} icon={<Users size={20} />} colorClass="bg-blue-50 text-blue-600" change={12.3} />
           <KPICard label="Formularios respondidos" value="87,429" icon={<CheckCircle size={20} />} colorClass="bg-green-50 text-green-600" change={18.7} />
-          <KPICard label="Alertas activas" value={3} icon={<AlertCircle size={20} />} colorClass="bg-red-50 text-red-600" />
+          <KPICard label="Alertas activas" value={stats.activeAlerts} icon={<AlertCircle size={20} />} colorClass="bg-red-50 text-red-600" />
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
@@ -116,9 +166,9 @@ export default function SuperDashboard() {
         <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border">
             <h3 className="font-bold text-foreground">Organizaciones recientes</h3>
-            <button className="text-sm text-brand-primary font-medium hover:underline flex items-center gap-1">
+            <Link to="/admin/organizations" className="text-sm text-brand-primary font-medium hover:underline flex items-center gap-1">
               <Eye size={14} /> Ver todas
-            </button>
+            </Link>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -130,27 +180,27 @@ export default function SuperDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {mockOrganizations.map(org => (
-                  <tr key={org.id} className="hover:bg-muted/30 transition-colors">
+                {recentOrgs.map(org => (
+                  <tr key={org.$id} className="hover:bg-muted/30 transition-colors">
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-brand-primary/10 flex items-center justify-center text-brand-primary font-bold text-sm">
+                        <div className="w-9 h-9 rounded-xl bg-brand-primary/10 flex items-center justify-center text-brand-primary font-bold text-sm uppercase">
                           {org.name.charAt(0)}
                         </div>
                         <div>
                           <div className="text-sm font-semibold">{org.name}</div>
-                          <div className="text-xs text-muted-foreground">{org.nit}</div>
+                          <div className="text-xs text-muted-foreground">{org.nit || 'N/A'}</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-5 py-3.5">
                       <span className="text-xs font-semibold px-2 py-1 bg-brand-primary/10 text-brand-primary rounded-full capitalize">
-                        {org.plan}
+                        {org.plan || 'N/A'}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-sm">{Math.floor(org.maxUsers * 0.6)} / {org.maxUsers}</td>
-                    <td className="px-5 py-3.5 text-sm">{Math.floor(org.maxForms * 0.7)} / {org.maxForms}</td>
-                    <td className="px-5 py-3.5"><StatusBadge status={org.status} /></td>
+                    <td className="px-5 py-3.5 text-sm">{org.max_users}</td>
+                    <td className="px-5 py-3.5 text-sm">{org.max_forms}</td>
+                    <td className="px-5 py-3.5"><StatusBadge status={org.status || 'active'} /></td>
                     <td className="px-5 py-3.5">
                       <button className="text-muted-foreground hover:text-foreground transition-colors">
                         <Settings size={16} />
@@ -158,6 +208,13 @@ export default function SuperDashboard() {
                     </td>
                   </tr>
                 ))}
+                {recentOrgs.length === 0 && !loading && (
+                  <tr>
+                    <td colSpan={6} className="text-center py-6 text-muted-foreground text-sm">
+                      Noy hay organizaciones recientes.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

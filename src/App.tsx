@@ -75,9 +75,14 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
   )
 }
 
+import { useSync } from '@/hooks/useSync'
+
 export default function App() {
   const { user, restore, isLoading } = useAuthStore()
   const [ready, setReady] = useState(false)
+  
+  // Initialize sync engine globally if user exists
+  useSync()
 
   // Restaurar sesión Appwrite al montar
   useEffect(() => {
