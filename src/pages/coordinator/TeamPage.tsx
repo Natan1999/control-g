@@ -1,15 +1,55 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus, UserPlus, Mail, Check, X } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { Avatar, TeamMemberRow, PageWrapper } from '@/components/shared'
-import { mockTeamMembers } from '@/lib/mockData'
+import { listProjects, getProjectMembers } from '@/lib/appwrite-db'
 import { motion } from 'framer-motion'
+import { useAuthStore } from '@/stores/authStore'
 
 export default function TeamPage() {
   const [showInvite, setShowInvite] = useState(false)
+  const { user } = useAuthStore()
+  const [teamMembers, setTeamMembers] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const online = mockTeamMembers.filter(m => m.isOnline).length
-  const offline = mockTeamMembers.filter(m => !m.isOnline).length
+  useEffect(() => {
+    async function loadTeam() {
+      if (!user?.organizationId) return
+
+      try {
+        setLoading(true)
+        const projects = await listProjects({ organizationId: user.organizationId, coordinatorId: user.id })
+        
+        let allMembers: any[] = []
+        if (projects.documents.length > 0) {
+           const mainProject = projects.documents[0]
+           const members = await getProjectMembers(mainProject.$id)
+           
+           allMembers = members.map(m => ({
+             id: m.$id,
+             user: { 
+               fullName: m.user_id,
+               email: 'usuario@email.com', // Fetching from users api would be better, but doing placeholder for UI
+               lastSyncAt: m.$updatedAt
+             },
+             assignedZoneId: m.assigned_zone_id,
+             formsToday: 0,
+             isOnline: true, // we could calculate this based on lastSyncAt
+             isPending: false
+           }))
+        }
+        setTeamMembers(allMembers)
+      } catch (err) {
+        console.error('Error fetching team members:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadTeam()
+  }, [user])
+
+  const online = teamMembers.filter(m => m.isOnline).length
+  const offline = teamMembers.filter(m => !m.isOnline).length
 
   return (
     <PageWrapper>
@@ -32,7 +72,7 @@ export default function TeamPage() {
           {[
             { label: 'En línea', count: online, color: 'bg-green-100 text-green-700' },
             { label: 'Offline', count: offline, color: 'bg-gray-100 text-gray-600' },
-            { label: 'Total equipo', count: mockTeamMembers.length, color: 'bg-brand-primary/10 text-brand-primary' },
+            { label: 'Total equipo', count: teamMembers.length, color: 'bg-brand-primary/10 text-brand-primary' },
           ].map(s => (
             <div key={s.label} className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${s.color}`}>
               <span className="font-bold">{s.count}</span>
@@ -59,7 +99,7 @@ export default function TeamPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {mockTeamMembers.map((m, i) => (
+              {teamMembers.map((m, i) => (
                 <motion.tr
                   key={m.id}
                   initial={{ opacity: 0 }}
@@ -81,11 +121,11 @@ export default function TeamPage() {
                   </td>
                   <td className="px-4 py-3.5 text-sm text-muted-foreground">Zona {m.assignedZoneId?.slice(-3)}</td>
                   <td className="px-4 py-3.5">
-                    <span className="text-sm font-bold text-foreground">{m.formsToday ?? 0}</span>
-                    <span className="text-xs text-muted-foreground ml-1">formularios</span>
+                     <span className="text-sm font-bold text-foreground">{m.formsToday ?? 0}</span>
+                     <span className="text-xs text-muted-foreground ml-1">formularios</span>
                   </td>
                   <td className="px-4 py-3.5 text-sm text-muted-foreground">
-                    {m.user.lastSyncAt ? 'Hace 30 min' : 'Hace 4h'}
+                    {m.user.lastSyncAt ? new Date(m.user.lastSyncAt).toLocaleTimeString() : 'N/A'}
                   </td>
                   <td className="px-4 py-3.5">
                     <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${
@@ -97,6 +137,12 @@ export default function TeamPage() {
                   </td>
                 </motion.tr>
               ))}
+              {loading && (
+                 <tr><td colSpan={5} className="p-6 text-center text-sm text-muted-foreground">Cargando equipo...</td></tr>
+              )}
+              {!loading && teamMembers.length === 0 && (
+                 <tr><td colSpan={5} className="p-6 text-center text-sm text-muted-foreground">No se ha encontrado a ningún miembro del equipo activo.</td></tr>
+              )}
             </tbody>
           </table>
         </div>

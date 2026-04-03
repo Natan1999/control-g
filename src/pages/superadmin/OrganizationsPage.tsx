@@ -22,7 +22,7 @@ interface OrganizationDocument extends Models.Document {
 const planColors: Record<string, string> = {
   starter: 'bg-gray-100 text-gray-700',
   professional: 'bg-blue-100 text-blue-700',
-  enterprise: 'bg-purple-100 text-purple-700',
+  enterprise: 'bg-teal-100 text-teal-700',
   gobierno: 'bg-brand-primary/10 text-brand-primary',
 }
 
@@ -179,7 +179,7 @@ export default function OrganizationsPage() {
                       <div className="text-[10px] text-muted-foreground">Form Límite</div>
                     </div>
                     <div className="bg-muted/40 rounded-xl p-2.5 text-center">
-                      <HardDrive size={14} className="mx-auto text-purple-500 mb-1" />
+                      <HardDrive size={14} className="mx-auto text-teal-500 mb-1" />
                       <div className="text-sm font-bold">{org.max_storage_gb} GB</div>
                       <div className="text-[10px] text-muted-foreground">Storage</div>
                     </div>

@@ -32,6 +32,7 @@ const navItems: Record<UserRole, NavItem[]> = {
   coordinator: [
     { path: '/coord', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
     { path: '/coord/projects', label: 'Mis Proyectos', icon: <FolderOpen size={18} /> },
+    { path: '/coord/families', label: 'Familias', icon: <Building2 size={18} /> },
     { path: '/coord/form-builder', label: 'Form Builder', icon: <Layers size={18} /> },
     { path: '/coord/templates', label: 'Plantillas', icon: <FileText size={18} /> },
     { path: '/coord/team', label: 'Equipo', icon: <Users size={18} /> },

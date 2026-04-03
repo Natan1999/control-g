@@ -60,6 +60,8 @@ export const COLLECTION_IDS = {
   CHAT_MEMBERS:        'chat_members',
   CHAT_MESSAGES:       'chat_messages',
   NOTIFICATIONS:       'notifications',
+  BENEFICIARY_FAMILIES: 'beneficiary_families',
+  FAMILY_MEMBERS:       'family_members',
   SYNC_LOGS:           'sync_logs',
   AUDIT_LOGS:          'audit_logs',
 } as const;

@@ -18,10 +18,10 @@ interface OrganizationDocument extends Models.Document {
 }
 
 const planData = [
-  { name: 'Gobierno', value: 8, color: '#1A5276' },
-  { name: 'Enterprise', value: 12, color: '#2E86C1' },
-  { name: 'Professional', value: 19, color: '#5DADE2' },
-  { name: 'Starter', value: 7, color: '#AED6F1' },
+  { name: 'Gobierno', value: 8, color: 'hsl(var(--primary))' },
+  { name: 'Enterprise', value: 12, color: 'hsl(var(--secondary))' },
+  { name: 'Professional', value: 19, color: 'hsl(210 60% 45%)' },
+  { name: 'Starter', value: 7, color: 'hsl(210 40% 70%)' },
 ]
 
 const growthData = [
@@ -104,8 +104,8 @@ export default function SuperDashboard() {
                 <XAxis dataKey="month" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip />
-                <Line type="monotone" dataKey="orgs" stroke="#1A5276" strokeWidth={2.5} dot={{ r: 4 }} name="Orgs" />
-                <Line type="monotone" dataKey="users" stroke="#2E86C1" strokeWidth={2.5} dot={{ r: 4 }} name="Usuarios" />
+                <Line type="monotone" dataKey="orgs" stroke="hsl(var(--primary))" strokeWidth={2.5} dot={{ r: 4 }} name="Orgs" />
+                <Line type="monotone" dataKey="users" stroke="hsl(var(--secondary))" strokeWidth={2.5} dot={{ r: 4 }} name="Usuarios" />
               </LineChart>
             </ResponsiveContainer>
           </div>

@@ -46,6 +46,7 @@ export interface User {
   status: UserStatus
   lastSeenAt?: string
   lastSyncAt?: string
+  projectId?: string
   createdAt: string
 }
 
@@ -166,3 +167,70 @@ export interface KPIStat {
 }
 
 export interface ChartDataPoint { name: string; value: number; [key: string]: unknown }
+
+export interface FamilyMember {
+  id: string;
+  familyId: string;
+  fullName: string;
+  birthDate?: string;
+  age?: number;
+  
+  // 15 Enfoque diferencial
+  familyBond?: string;
+  sex?: string;
+  genderIdentity?: string;
+  sexualOrientation?: string;
+  educationLevel?: string;
+  ethnicGroup?: string;
+  disability?: string;
+  specialCondition?: string;
+  peaceApproach?: string;
+  maritalStatus?: string;
+  leadershipType?: string;
+  
+  idDocumentType?: string;
+  idNumber?: string;
+  
+  emailPrimary?: string;
+  phonePrimary?: string;
+}
+
+export interface BeneficiaryFamily {
+  id: string;
+  projectId: string;
+  organizationId: string;
+  zoneId?: string;
+  
+  headFirstName: string;
+  headFirstLastname: string;
+  headIdNumber?: string;
+  headPhone?: string;
+  
+  departmentId?: number;
+  municipalityId?: number;
+  vereda?: string;
+  address?: string;
+  
+  // Ciclo de Momentos (True/False + ID de la respuesta validada)
+  exAntesCompleted: boolean;
+  exAntesResponseId?: string;
+  
+  encounter1Completed: boolean;
+  encounter1ResponseId?: string;
+  
+  encounter2Completed: boolean;
+  encounter2ResponseId?: string;
+  
+  encounter3Completed: boolean;
+  encounter3ResponseId?: string;
+  
+  exPostCompleted: boolean;
+  exPostResponseId?: string;
+  
+  totalMembers: number;
+  status: 'active' | 'inactive' | 'completed';
+  consentGiven: boolean;
+  createdAt: string;
+  
+  members?: FamilyMember[]; // Opcional, cargado relacionadamente
+}

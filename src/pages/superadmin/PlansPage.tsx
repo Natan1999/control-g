@@ -33,7 +33,7 @@ export default function PlansPage() {
             </div>
             
             <div className="bg-white rounded-xl shadow-sm border border-border p-6 text-center">
-              <div className="w-full px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-bold inline-block mb-4">Empresa</div>
+              <div className="w-full px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-bold inline-block mb-4">Empresa</div>
               <h4 className="font-bold text-2xl">Enterprise</h4>
               <p className="text-muted-foreground text-sm my-4">Técnicos Ilimitados<br/>Marca blanca (Control G)<br/>Integración API</p>
               <button className="w-full py-2 border-2 border-brand-primary text-brand-primary rounded-lg font-bold">Contactar Ventas</button>

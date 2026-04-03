@@ -191,7 +191,12 @@ function NavBar() {
         </div>
 
         {/* Mobile toggle */}
-        <button onClick={() => setOpen(!open)} className="md:hidden p-2">
+        <button 
+          onClick={() => setOpen(!open)} 
+          className="md:hidden p-2 text-foreground"
+          aria-label={open ? "Cerrar menú de navegación" : "Abrir menú de navegación"}
+          aria-expanded={open}
+        >
           {open ? <X size={22} className={scrolled ? 'text-slate-900' : 'text-white'} /> : <Menu size={22} className={scrolled ? 'text-slate-900' : 'text-white'} />}
         </button>
       </div>
@@ -594,8 +599,12 @@ export default function LandingPage() {
             {faqs.map((faq, i) => (
               <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
                 className="border border-slate-200 rounded-2xl overflow-hidden">
-                <button onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-slate-50 transition-colors">
+                <button 
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-slate-50 transition-colors"
+                  aria-expanded={openFaq === i}
+                  aria-controls={`faq-answer-${i}`}
+                >
                   <span className="font-semibold text-slate-900 text-sm pr-4">{faq.q}</span>
                   <motion.div animate={{ rotate: openFaq === i ? 180 : 0 }} transition={{ duration: 0.2 }}>
                     <ChevronDown size={18} className="text-slate-400 flex-shrink-0" />
@@ -603,8 +612,14 @@ export default function LandingPage() {
                 </button>
                 <AnimatePresence>
                   {openFaq === i && (
-                    <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }}
-                      className="overflow-hidden">
+                    <motion.div 
+                      id={`faq-answer-${i}`}
+                      initial={{ height: 0 }} 
+                      animate={{ height: 'auto' }} 
+                      exit={{ height: 0 }}
+                      className="overflow-hidden"
+                      role="region"
+                    >
                       <div className="px-6 pb-5 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
                         {faq.a}
                       </div>

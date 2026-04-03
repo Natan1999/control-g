@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Eye, EyeOff, Loader2, MapPin, Shield, Wifi, AlertCircle } from 'lucide-react'
-import { useAuthStore, demoUsers } from '@/stores/authStore'
+import { useAuthStore } from '@/stores/authStore'
 import type { UserRole } from '@/types'
 
 const ROLE_ROUTES: Record<UserRole, string> = {
@@ -23,7 +23,6 @@ export default function LoginPage() {
   const [email, setEmail]               = useState('')
   const [password, setPassword]         = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [isDemoMode, setIsDemoMode]     = useState(false)
 
   const { signIn, isLoading, error, clearError, user, updateUser } = useAuthStore()
   const navigate = useNavigate()
@@ -43,26 +42,6 @@ export default function LoginPage() {
     }
   }
 
-  // ── Demo rápido (sin Appwrite) ──────────────────────────────────────────────
-  const loginAsDemo = (role: UserRole) => {
-    clearError()
-    setIsDemoMode(true)
-
-    // Simular login local sin Appwrite
-    const demoUser = demoUsers[role]
-    updateUser(demoUser)
-
-    // Usar la acción interna directa del store
-    useAuthStore.setState({
-      user:            demoUser,
-      profileId:       `demo-${role}`,
-      isAuthenticated: true,
-      isLoading:       false,
-      error:           null,
-    })
-
-    navigate(ROLE_ROUTES[role])
-  }
 
   return (
     <div className="min-h-screen flex bg-brand-dark overflow-hidden">
@@ -72,7 +51,7 @@ export default function LoginPage() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}
         className="hidden lg:flex flex-col justify-between w-1/2 p-12 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #0D1B2A 0%, #1A5276 60%, #2E86C1 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #001A33 0%, #003366 100%)' }}
       >
         {/* Grid pattern */}
         <div className="absolute inset-0 opacity-5">
@@ -163,28 +142,6 @@ export default function LoginPage() {
           <h1 className="text-2xl font-black text-foreground">Iniciar sesión</h1>
           <p className="text-muted-foreground mt-1 mb-8">Accede con tus credenciales institucionales</p>
 
-          {/* Demo rápido */}
-          <div className="mb-6 p-4 bg-blue-50 rounded-2xl border border-blue-100">
-            <p className="text-xs font-semibold text-blue-700 mb-3 uppercase tracking-wide">
-              Demo — Entrar como:
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              {(Object.keys(ROLE_LABELS) as UserRole[]).map((role) => {
-                const r = ROLE_LABELS[role]
-                return (
-                  <button
-                    key={role}
-                    type="button"
-                    onClick={() => loginAsDemo(role)}
-                    className={`${r.color} text-white text-xs font-semibold py-2.5 px-3 rounded-xl hover:opacity-90 transition-opacity text-left`}
-                  >
-                    <div>{r.label}</div>
-                    <div className="opacity-80 text-[10px] mt-0.5 font-normal">{r.desc}</div>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
 
           {/* Formulario real */}
           <form onSubmit={handleLogin} className="space-y-4">

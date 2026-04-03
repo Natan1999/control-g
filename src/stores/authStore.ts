@@ -154,29 +154,7 @@ export const useAuthStore = create<AuthState>()(
   )
 )
 
-// ─── Demo Users (solo para desarrollo sin Appwrite configurado) ──────────────
 
-export const demoUsers: Record<UserRole, User> = {
-  superadmin: {
-    id: 'sa-001', fullName: 'Natan Chiquillo', email: 'natan@drandigital.com',
-    role: 'superadmin', status: 'active', createdAt: new Date().toISOString(),
-  },
-  coordinator: {
-    id: 'co-001', organizationId: 'org-001', fullName: 'María Rodríguez',
-    email: 'maria@alcaldiacartagena.gov.co', role: 'coordinator', status: 'active',
-    createdAt: new Date().toISOString(),
-  },
-  assistant: {
-    id: 'as-001', organizationId: 'org-001', fullName: 'Carlos Mendoza',
-    email: 'carlos@alcaldiacartagena.gov.co', role: 'assistant', status: 'active',
-    createdAt: new Date().toISOString(),
-  },
-  technician: {
-    id: 'te-001', organizationId: 'org-001', fullName: 'Ana García',
-    email: 'ana@tecnicos.com', phone: '+57 315 123 4567', role: 'technician',
-    status: 'active', createdAt: new Date().toISOString(),
-  },
-}
 
 // Alias legacy para compatibilidad
 export const useAuthStoreCompat = useAuthStore

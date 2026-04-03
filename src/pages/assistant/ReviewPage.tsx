@@ -55,9 +55,9 @@ export default function ReviewPage() {
                   </div>
                 </div>
                 {selected.ocrConfidence && (
-                  <div className="bg-purple-100 rounded-xl px-4 py-2 text-center">
-                    <div className="text-xs text-purple-600 font-medium">Confianza OCR</div>
-                    <div className="text-2xl font-black text-purple-700">{Math.round(selected.ocrConfidence * 100)}%</div>
+                  <div className="bg-indigo-100 rounded-xl px-4 py-2 text-center">
+                    <div className="text-xs text-indigo-600 font-medium">Confianza OCR</div>
+                    <div className="text-2xl font-black text-indigo-700">{Math.round(selected.ocrConfidence * 100)}%</div>
                   </div>
                 )}
               </div>

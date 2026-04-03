@@ -19,11 +19,11 @@ export default {
       colors: {
         // Control G Brand Colors
         brand: {
-          primary: '#1A5276',
-          secondary: '#2E86C1',
+          primary: 'hsl(var(--primary))',
+          secondary: 'hsl(var(--secondary))',
           dark: '#0D1B2A',
           surface: '#1E2A3A',
-          light: '#D6EAF8',
+          light: 'hsl(var(--accent))',
         },
         sync: {
           success: '#27AE60',

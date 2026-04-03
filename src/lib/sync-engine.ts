@@ -1,6 +1,18 @@
 import { localDB } from './dexie-db';
-import { bulkSyncResponses, listForms, listProjects, listZones, uploadFieldPhoto } from './appwrite-db';
+import { 
+  bulkSyncResponses, 
+  listForms, 
+  listProjects, 
+  listZones, 
+  uploadFieldPhoto,
+  createBeneficiaryFamily,
+  createFamilyMember,
+  listBeneficiaryFamilies,
+  updateBeneficiaryFamily
+} from './appwrite-db';
 import { useSyncStore } from '@/stores/syncStore';
+import type { BeneficiaryFamilyAppwrite } from './appwrite-db';
+import { SERVICE_MOMENTS } from '@/config/moments';
 
 let syncInterval: ReturnType<typeof setInterval> | null = null;
 const SYNC_INTERVAL_MS = 60000; // 1 minute
@@ -67,7 +79,10 @@ export async function processSyncQueue() {
     // 1. Process Media Queue First (Photos, Signatures)
     await processMediaQueue();
 
-    // 2. Process Forms Queue
+    // 2. Process Families Queue
+    await processFamiliesQueue();
+
+    // 3. Process Forms Queue
     const pendingResponses = await localDB.responses
       .where('sync_status')
       .equals('pending')
@@ -119,6 +134,25 @@ export async function processSyncQueue() {
         sync_status: 'synced'
       });
       console.log(`[SyncEngine] Synced response: ${success.local_id}`);
+
+      // 4. Update the Family record in Appwrite if this was a Moment form
+      try {
+        const responseData = JSON.parse(success.data);
+        const familyId = responseData.familyId; 
+        const matchedMoment = SERVICE_MOMENTS.find(m => m.formId === success.form_id);
+
+        if (familyId && matchedMoment) {
+           const localFamily = await localDB.families.get(familyId);
+           await updateBeneficiaryFamily(familyId, {
+             [matchedMoment.completionField]: true,
+             [matchedMoment.responseField]: success.$id,
+             moment: localFamily?.moment || matchedMoment.id
+           } as any);
+           console.log(`[SyncEngine] Updated family ${familyId} progress after response sync.`);
+        }
+      } catch (e) {
+        console.warn(`[SyncEngine] Could not update family progress for response ${success.local_id}`, e);
+      }
     }
 
     // Handle Failures
@@ -150,6 +184,63 @@ export async function processSyncQueue() {
   } catch (error) {
     console.error('[SyncEngine] critical error processing queue:', error);
     store.setStatus('offline');
+  }
+}
+
+/**
+ * Process new families and members created offline
+ */
+async function processFamiliesQueue() {
+  try {
+    const pendingFamilies = await localDB.families
+      .where('sync_status')
+      .equals('pending')
+      .toArray();
+
+    for (const family of pendingFamilies) {
+      try {
+        const { sync_status, retry_count, local_id, created_at, ...restFamily } = family;
+        
+        // 1. Create family in Appwrite
+        // restFamily is mostly BeneficiaryFamilyAppwrite compatible
+        const result = await createBeneficiaryFamily(restFamily as any);
+        const remoteFamilyId = result.$id;
+
+        // 2. Process family members for this family
+        const pendingMembers = await localDB.familyMembers
+          .where('family_local_id')
+          .equals(local_id)
+          .toArray();
+
+        for (const member of pendingMembers) {
+           const { local_id: m_lid, family_local_id, sync_status: m_ss, retry_count: m_rc, ...restMember } = member;
+           await createFamilyMember({
+             ...restMember,
+             family_id: remoteFamilyId
+           } as any);
+           await localDB.familyMembers.update(m_lid, { sync_status: 'synced' });
+        }
+
+        // 3. Update all responses that were tied to the local_id of this family
+        // NOTE: In our current schema, responses are tied via project_id and head_id_number mostly
+        // but if we used family_id we'd update it here.
+
+        // 4. Mark family as synced
+        await localDB.families.update(local_id, {
+          sync_status: 'synced'
+        });
+
+      } catch (err) {
+        console.error(`[SyncEngine] Error syncing family ${family.local_id}`, err);
+        const rCount = family.retry_count + 1;
+        await localDB.families.update(family.local_id, {
+          retry_count: rCount,
+          sync_status: rCount >= 5 ? 'failed' : 'pending'
+        });
+      }
+    }
+  } catch (err) {
+    console.error('[SyncEngine] Error in processFamiliesQueue', err);
   }
 }
 
@@ -253,6 +344,28 @@ export async function updateLocalCache(organizationId?: string, projectId?: stri
       synced_at: Date.now()
     }));
     await localDB.zones.bulkPut(localZones);
+
+    // 4. Families (Pre-load existing families for this project)
+    if (organizationId) {
+      const familiesResp = await listBeneficiaryFamilies(organizationId, projectId);
+      const localFamilies = (familiesResp as BeneficiaryFamilyAppwrite[]).map(f => ({
+        local_id: f.$id, // Use remote ID as local ID for pre-loaded
+        project_id: f.project_id,
+        organization_id: f.organization_id,
+        technician_id: f.technician_id || '',
+        head_first_name: f.head_first_name,
+        head_first_lastname: f.head_first_lastname,
+        head_id_number: f.head_id_number,
+        vereda: f.vereda,
+        address: f.address,
+        head_phone: f.head_phone,
+        moment: f.moment || 'EX_ANTES',
+        sync_status: 'synced' as const,
+        retry_count: 0,
+        created_at: new Date(f.$createdAt).getTime()
+      }));
+      await localDB.families.bulkPut(localFamilies);
+    }
 
     console.log('[SyncEngine] Local cache update complete');
   } catch (error) {

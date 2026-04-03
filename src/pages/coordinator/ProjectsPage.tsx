@@ -1,13 +1,47 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus, Calendar, MapPin, Users, TrendingUp, Filter, ChevronRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { TopBar } from '@/components/layout/Sidebar'
 import { StatusBadge, ProgressRing, PageWrapper } from '@/components/shared'
-import { mockProjects } from '@/lib/mockData'
+import { listProjects } from '@/lib/appwrite-db'
 import { formatDate } from '@/lib/utils'
+import { useAuthStore } from '@/stores/authStore'
 
 export default function ProjectsPage() {
   const [showModal, setShowModal] = useState(false)
+  const { user } = useAuthStore()
+  const [projects, setProjects] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchProjects() {
+      if (!user?.organizationId) return
+      try {
+        setLoading(true)
+        const res = await listProjects({ organizationId: user.organizationId, coordinatorId: user.id })
+        
+        const mapped = res.documents.map((doc: any) => ({
+          id: doc.$id,
+          name: doc.name,
+          description: doc.description,
+          status: doc.status,
+          departmentId: doc.department_id || 'Bolívar',
+          startDate: doc.start_date,
+          endDate: doc.end_date,
+          targetForms: doc.target_forms || 0,
+          completedForms: doc.completed_forms || 0,
+          activeTechnicians: doc.active_technicians || 0,
+          type: doc.type || 'Socioeconómica'
+        }))
+        setProjects(mapped)
+      } catch (err) {
+        console.error('Error fetching projects', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchProjects()
+  }, [user])
 
   return (
     <PageWrapper>
@@ -43,7 +77,7 @@ export default function ProjectsPage() {
 
         {/* Projects grid */}
         <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
-          {mockProjects.map((project, i) => {
+          {projects.map((project, i) => {
             const pct = project.targetForms && project.completedForms
               ? Math.round((project.completedForms / project.targetForms) * 100)
               : 0
@@ -81,7 +115,7 @@ export default function ProjectsPage() {
                     <Users size={12} />
                     <span>{project.activeTechnicians || 0} técnicos activos</span>
                   </div>
-                  {project.targetForms && (
+                  {project.targetForms > 0 && (
                     <div className="flex items-center gap-1.5">
                       <TrendingUp size={12} />
                       <span>{project.completedForms?.toLocaleString('es-CO')} / {project.targetForms.toLocaleString('es-CO')} formularios</span>
@@ -98,6 +132,10 @@ export default function ProjectsPage() {
               </motion.div>
             )
           })}
+
+          {loading && projects.length === 0 && (
+             <div className="p-5 text-sm text-muted-foreground">Cargando proyectos...</div>
+          )}
 
           {/* New project card */}
           <motion.button

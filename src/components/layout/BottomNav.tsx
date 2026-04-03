@@ -27,9 +27,9 @@ export function MobileTopBar({ title }: { title?: string }) {
 
 const navItems = [
   { to: '/field',          icon: <Home size={22} />,          label: 'Inicio' },
+  { to: '/field/families', icon: <User size={22} />,          label: 'Familias' },
   { to: '/field/forms',    icon: <ClipboardList size={22} />, label: 'Formularios' },
   { to: '/field/scan',     icon: <Camera size={22} />,        label: 'Escanear' },
-  { to: '/field/templates',icon: <FileText size={22} />,      label: 'Plantillas' },
   { to: '/field/profile',  icon: <User size={22} />,          label: 'Perfil' },
 ]
 

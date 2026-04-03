@@ -125,6 +125,57 @@ export interface Zone extends AppwriteDocument {
   metadata:           string;
 }
 
+export interface FamilyMemberAppwrite extends AppwriteDocument {
+  family_id:          string;
+  full_name:          string;
+  birth_date:         string | null;
+  age:                number | null;
+  family_bond:        string | null;
+  sex:                string | null;
+  gender_identity:    string | null;
+  sexual_orientation: string | null;
+  education_level:    string | null;
+  ethnic_group:       string | null;
+  disability:         string | null;
+  special_condition:  string | null;
+  peace_approach:     string | null;
+  marital_status:     string | null;
+  leadership_type:    string | null;
+  id_document_type:   string | null;
+  id_number:          string | null;
+  email_primary:      string | null;
+  phone_primary:      string | null;
+}
+
+export interface BeneficiaryFamilyAppwrite extends AppwriteDocument {
+  project_id:             string;
+  organization_id:        string;
+  zone_id:                string | null;
+  head_first_name:        string;
+  head_first_lastname:    string;
+  head_id_number:         string | null;
+  head_phone:             string | null;
+  department_id:          number | null;
+  municipality_id:        number | null;
+  vereda:                 string | null;
+  address:                string | null;
+  technician_id:          string | null;
+  moment:                 string | null;
+  ex_antes_completed:     boolean;
+  ex_antes_response_id:   string | null;
+  encounter_1_completed:  boolean;
+  encounter_1_response_id: string | null;
+  encounter_2_completed:  boolean;
+  encounter_2_response_id: string | null;
+  encounter_3_completed:  boolean;
+  encounter_3_response_id: string | null;
+  ex_post_completed:      boolean;
+  ex_post_response_id:    string | null;
+  total_members:          number;
+  status:                 'active' | 'inactive' | 'completed';
+  consent_given:          boolean;
+}
+
 // ─── Helper de error ──────────────────────────────────────────────────────────
 
 function wrapError(err: unknown, context: string): Error {
@@ -856,5 +907,94 @@ export async function getProjectProgress(projectId: string): Promise<{
     return { target, synced, approved, progress };
   } catch (err) {
     throw wrapError(err, 'getProjectProgress');
+  }
+}
+
+// ─── FAMILIES (BENEFICIARIES) ──────────────────────────────────────────────────
+
+export async function listBeneficiaryFamilies(
+  organizationId: string,
+  projectId?:     string
+): Promise<BeneficiaryFamilyAppwrite[]> {
+  try {
+    const queries = [Query.equal('organization_id', organizationId)];
+    if (projectId) queries.push(Query.equal('project_id', projectId));
+    queries.push(Query.limit(100)); // Default limit
+
+    const result = await databases.listDocuments(DATABASE_ID, COLLECTION_IDS.BENEFICIARY_FAMILIES, queries);
+    return result.documents as unknown as BeneficiaryFamilyAppwrite[];
+  } catch (err) {
+    throw wrapError(err, 'listBeneficiaryFamilies');
+  }
+}
+
+export async function getBeneficiaryFamily(familyId: string): Promise<BeneficiaryFamilyAppwrite> {
+  try {
+    const doc = await databases.getDocument(DATABASE_ID, COLLECTION_IDS.BENEFICIARY_FAMILIES, familyId);
+    return doc as unknown as BeneficiaryFamilyAppwrite;
+  } catch (err) {
+    throw wrapError(err, 'getBeneficiaryFamily');
+  }
+}
+
+export async function createBeneficiaryFamily(
+  data: Omit<BeneficiaryFamilyAppwrite, keyof AppwriteDocument>
+): Promise<BeneficiaryFamilyAppwrite> {
+  try {
+    const doc = await databases.createDocument(
+      DATABASE_ID, 
+      COLLECTION_IDS.BENEFICIARY_FAMILIES, 
+      ID.unique(), 
+      data
+    );
+    return doc as unknown as BeneficiaryFamilyAppwrite;
+  } catch (err) {
+    throw wrapError(err, 'createBeneficiaryFamily');
+  }
+}
+
+export async function updateBeneficiaryFamily(
+  familyId: string,
+  data:     Partial<Omit<BeneficiaryFamilyAppwrite, keyof AppwriteDocument>>
+): Promise<BeneficiaryFamilyAppwrite> {
+  try {
+    const doc = await databases.updateDocument(
+      DATABASE_ID, 
+      COLLECTION_IDS.BENEFICIARY_FAMILIES, 
+      familyId, 
+      data
+    );
+    return doc as unknown as BeneficiaryFamilyAppwrite;
+  } catch (err) {
+    throw wrapError(err, 'updateBeneficiaryFamily');
+  }
+}
+
+export async function listFamilyMembers(familyId: string): Promise<FamilyMemberAppwrite[]> {
+  try {
+    const result = await databases.listDocuments(
+      DATABASE_ID, 
+      COLLECTION_IDS.FAMILY_MEMBERS, 
+      [Query.equal('family_id', familyId)]
+    );
+    return result.documents as unknown as FamilyMemberAppwrite[];
+  } catch (err) {
+    throw wrapError(err, 'listFamilyMembers');
+  }
+}
+
+export async function createFamilyMember(
+  data: Omit<FamilyMemberAppwrite, keyof AppwriteDocument>
+): Promise<FamilyMemberAppwrite> {
+  try {
+    const doc = await databases.createDocument(
+      DATABASE_ID, 
+      COLLECTION_IDS.FAMILY_MEMBERS, 
+      ID.unique(), 
+      data
+    );
+    return doc as unknown as FamilyMemberAppwrite;
+  } catch (err) {
+    throw wrapError(err, 'createFamilyMember');
   }
 }

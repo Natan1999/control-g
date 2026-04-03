@@ -24,6 +24,7 @@ import SuperSettingsPage from '@/pages/superadmin/SettingsPage'
 // Coordinator
 import CoordDashboard from '@/pages/coordinator/DashboardPage'
 import ProjectsPage from '@/pages/coordinator/ProjectsPage'
+import FamiliesPageCoord from '@/pages/coordinator/FamiliesPage'
 import FormBuilderPage from '@/pages/coordinator/FormBuilderPage'
 import DataPage from '@/pages/coordinator/DataPage'
 import TeamPage from '@/pages/coordinator/TeamPage'
@@ -45,6 +46,7 @@ import IncidentsPage from '@/pages/assistant/IncidentsPage'
 // Technician
 import FieldHome from '@/pages/technician/HomePage'
 import FormsPage from '@/pages/technician/FormsPage'
+import TechFamiliesPage from '@/pages/technician/FamiliesPage'
 import ScanPage from '@/pages/technician/ScanPage'
 import TemplatesPage from '@/pages/technician/TemplatesPage'
 import ProfilePage from '@/pages/technician/ProfilePage'
@@ -87,7 +89,7 @@ export default function App() {
   // Restaurar sesión Appwrite al montar
   useEffect(() => {
     restore().finally(() => setReady(true))
-  }, [])
+  }, [restore])
 
   // Pantalla de carga mientras verificamos sesión
   if (!ready) {
@@ -134,6 +136,7 @@ export default function App() {
             <Routes>
               <Route index element={<CoordDashboard />} />
               <Route path="projects" element={<ProjectsPage />} />
+              <Route path="families" element={<FamiliesPageCoord />} />
               <Route path="form-builder" element={<FormBuilderPage />} />
               <Route path="templates" element={<TemplatesPageCoord />} />
               <Route path="team" element={<TeamPage />} />
@@ -169,6 +172,7 @@ export default function App() {
         <ProtectedLayout roles={['technician']}>
           <Routes>
             <Route index element={<FieldHome />} />
+            <Route path="families" element={<TechFamiliesPage />} />
             <Route path="forms" element={<FormsPage />} />
             <Route path="scan" element={<ScanPage />} />
             <Route path="templates" element={<TemplatesPage />} />

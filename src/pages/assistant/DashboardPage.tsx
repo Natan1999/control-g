@@ -56,7 +56,7 @@ export default function AssistDashboard() {
                     <div className="text-sm font-semibold">{r.technicianName}</div>
                     <div className="text-xs text-muted-foreground mt-0.5">{r.formName?.slice(0, 35)}... · {r.zoneName}</div>
                     {r.ocrConfidence && (
-                      <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full mt-1 inline-block">
+                      <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full mt-1 inline-block">
                         OCR {Math.round(r.ocrConfidence * 100)}%
                       </span>
                     )}

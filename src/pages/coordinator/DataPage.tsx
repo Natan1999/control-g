@@ -1,19 +1,71 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Search, Filter, Eye, CheckCircle, XCircle, AlertCircle, Download } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { StatusBadge, Avatar, PageWrapper } from '@/components/shared'
-import { mockResponses } from '@/lib/mockData'
 import { formatRelativeTime } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
+import { Query } from 'appwrite'
+import { useAuthStore } from '@/stores/authStore'
 import type { FormResponse } from '@/types'
 
 export default function DataPage() {
+  const { user } = useAuthStore()
   const [selected, setSelected] = useState<FormResponse | null>(null)
   const [filter, setFilter] = useState('all')
+  const [responses, setResponses] = useState<FormResponse[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadData() {
+      if (!user?.organizationId) return
+      setLoading(true)
+      try {
+        const res = await databases.listDocuments(
+          DATABASE_ID,
+           COLLECTION_IDS.FORM_RESPONSES,
+           [
+              Query.equal('organization_id', user.organizationId),
+              Query.orderDesc('$createdAt'),
+              Query.limit(100)
+           ]
+        )
+        const mapped = res.documents.map((doc: any) => ({
+           id: doc.$id,
+           localId: doc.local_id,
+           formId: doc.form_id,
+           formName: 'Formulario ' + doc.form_id.substring(0, 5),
+           technicianId: doc.technician_id,
+           technicianName: 'Técnico ' + doc.technician_id.substring(0, 4),
+           zoneId: doc.zone_id,
+           zoneName: doc.zone_id || 'N/A',
+           status: doc.status as FormResponse['status'],
+           data: doc.data ? (typeof doc.data === 'string' ? JSON.parse(doc.data) : doc.data) : {},
+           createdAt: doc.$createdAt,
+           syncedAt: doc.synced_at,
+           source: doc.source as FormResponse['source'],
+           latitude: doc.location?.latitude,
+           longitude: doc.location?.longitude,
+           accuracy: doc.location?.accuracy,
+           ocrConfidence: doc.ocr_confidence,
+           rejectionReason: doc.rejection_reason,
+           formVersion: doc.form_version || '1.0',
+           projectId: doc.project_id || '',
+           organizationId: doc.organization_id || ''
+        }))
+        setResponses(mapped)
+      } catch (err) {
+         console.error('Error fetching responses', err)
+      } finally {
+         setLoading(false)
+      }
+    }
+    loadData()
+  }, [user])
 
   const filtered = filter === 'all'
-    ? mockResponses
-    : mockResponses.filter(r => r.status === filter)
+    ? responses
+    : responses.filter(r => r.status === filter)
 
   return (
     <PageWrapper className="flex">
@@ -21,7 +73,7 @@ export default function DataPage() {
       <div className="flex-1 min-w-0">
         <TopBar
           title="Datos Recolectados"
-          subtitle={`${mockResponses.length} formularios recibidos`}
+          subtitle={`${responses.length} formularios recibidos`}
           actions={
             <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors">
               <Download size={16} /> Exportar
@@ -33,10 +85,10 @@ export default function DataPage() {
           {/* Filters */}
           <div className="flex items-center gap-3 flex-wrap">
             {[
-              { key: 'all', label: 'Todos', count: mockResponses.length },
-              { key: 'in_review', label: 'En revisión', count: 1 },
-              { key: 'approved', label: 'Aprobados', count: 1 },
-              { key: 'rejected', label: 'Rechazados', count: 1 },
+              { key: 'all', label: 'Todos', count: responses.length },
+              { key: 'in_review', label: 'En revisión', count: responses.filter(r => r.status === 'in_review').length },
+              { key: 'approved', label: 'Aprobados', count: responses.filter(r => r.status === 'approved').length },
+              { key: 'rejected', label: 'Rechazados', count: responses.filter(r => r.status === 'rejected').length },
             ].map(f => (
               <button
                 key={f.key}
@@ -68,7 +120,11 @@ export default function DataPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {filtered.map(response => (
+                  {loading ? (
+                    <tr><td colSpan={8} className="p-6 text-center text-sm text-muted-foreground">Cargando datos...</td></tr>
+                  ) : filtered.length === 0 ? (
+                    <tr><td colSpan={8} className="p-6 text-center text-sm text-muted-foreground">No se han encotrado formularios.</td></tr>
+                  ) : filtered.map(response => (
                     <tr
                       key={response.id}
                       onClick={() => setSelected(response)}
@@ -87,7 +143,7 @@ export default function DataPage() {
                       <td className="px-4 py-3.5">
                         <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
                           response.source === 'digital' ? 'bg-blue-50 text-blue-600' :
-                          response.source === 'ocr_camera' ? 'bg-purple-50 text-purple-600' : 'bg-orange-50 text-orange-600'
+                          response.source === 'ocr_camera' ? 'bg-cyan-50 text-cyan-600' : 'bg-orange-50 text-orange-600'
                         }`}>
                           {response.source === 'digital' ? 'Digital' : response.source === 'ocr_camera' ? 'OCR Cámara' : 'OCR PDF'}
                         </span>
@@ -156,9 +212,9 @@ export default function DataPage() {
 
               {/* OCR */}
               {selected.ocrConfidence && (
-                <div className="bg-purple-50 rounded-xl p-3 mb-5">
-                  <div className="text-xs font-semibold text-purple-700 mb-1">Confianza OCR</div>
-                  <div className="text-lg font-bold text-purple-800">{Math.round(selected.ocrConfidence * 100)}%</div>
+                <div className="bg-cyan-50 rounded-xl p-3 mb-5">
+                  <div className="text-xs font-semibold text-cyan-700 mb-1">Confianza OCR</div>
+                  <div className="text-lg font-bold text-cyan-800">{Math.round(selected.ocrConfidence * 100)}%</div>
                 </div>
               )}
 
