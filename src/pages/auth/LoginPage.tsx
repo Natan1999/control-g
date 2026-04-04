@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Eye, EyeOff, Loader2, MapPin, Shield, Wifi, AlertCircle } from 'lucide-react'
@@ -24,21 +24,61 @@ export default function LoginPage() {
   const [password, setPassword]         = useState('')
   const [showPassword, setShowPassword] = useState(false)
 
-  const { signIn, isLoading, error, clearError, user, updateUser } = useAuthStore()
+  // ── Rate limiting ──────────────────────────────────────────────────────────
+  const [attempts, setAttempts] = useState(() => Number(localStorage.getItem('cg_login_attempts') || '0'))
+  const [blockedUntil, setBlockedUntil] = useState(() => Number(localStorage.getItem('cg_login_blocked_until') || '0'))
+  const [countdown, setCountdown] = useState(0)
+
+  useEffect(() => {
+    if (blockedUntil <= Date.now()) return
+    const interval = setInterval(() => {
+      const remaining = Math.ceil((blockedUntil - Date.now()) / 1000)
+      if (remaining <= 0) {
+        setCountdown(0)
+        localStorage.removeItem('cg_login_blocked_until')
+        localStorage.removeItem('cg_login_attempts')
+        setAttempts(0)
+        clearInterval(interval)
+      } else {
+        setCountdown(remaining)
+      }
+    }, 1000)
+    // Initialize countdown immediately so the UI shows the right value on mount
+    setCountdown(Math.ceil((blockedUntil - Date.now()) / 1000))
+    return () => clearInterval(interval)
+  }, [blockedUntil])
+
+  const isBlocked = countdown > 0
+
+  const { signIn, isLoading, error, clearError } = useAuthStore()
   const navigate = useNavigate()
 
   // ── Login real con Appwrite ────────────────────────────────────────────────
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (isBlocked) return
     clearError()
 
     try {
       await signIn(email, password)
+      // Éxito: limpiar contadores
+      localStorage.removeItem('cg_login_attempts')
+      localStorage.removeItem('cg_login_blocked_until')
+      setAttempts(0)
+      setBlockedUntil(0)
       // El store actualiza el user; navegamos según su rol
       const { user: u } = useAuthStore.getState()
       if (u) navigate(ROLE_ROUTES[u.role])
     } catch {
-      // El error ya está en el store, no hacemos nada más
+      // Incrementar contador de intentos fallidos
+      const newAttempts = attempts + 1
+      setAttempts(newAttempts)
+      localStorage.setItem('cg_login_attempts', String(newAttempts))
+      if (newAttempts >= 3) {
+        const until = Date.now() + 30000 // 30 segundos
+        setBlockedUntil(until)
+        localStorage.setItem('cg_login_blocked_until', String(until))
+      }
     }
   }
 
@@ -142,7 +182,6 @@ export default function LoginPage() {
           <h1 className="text-2xl font-black text-foreground">Iniciar sesión</h1>
           <p className="text-muted-foreground mt-1 mb-8">Accede con tus credenciales institucionales</p>
 
-
           {/* Formulario real */}
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
@@ -157,6 +196,7 @@ export default function LoginPage() {
                 placeholder="tu@organización.gov.co"
                 className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-all"
                 autoComplete="email"
+                disabled={isBlocked}
               />
             </div>
 
@@ -173,6 +213,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   className="w-full px-4 py-3 pr-12 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-all"
                   autoComplete="current-password"
+                  disabled={isBlocked}
                 />
                 <button
                   type="button"
@@ -184,8 +225,20 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {/* Aviso de intentos previos (2 intentos, antes del bloqueo) */}
+            {attempts >= 2 && !isBlocked && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-start gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-xl text-yellow-800 text-sm"
+              >
+                <AlertCircle size={16} className="mt-0.5 shrink-0 text-yellow-600" />
+                <span>Si continúas fallando, tu acceso será bloqueado temporalmente.</span>
+              </motion.div>
+            )}
+
             {/* Error Appwrite */}
-            {error && (
+            {error && !isBlocked && (
               <motion.div
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -198,12 +251,14 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={isLoading || !email || !password}
+              disabled={isLoading || !email || !password || isBlocked}
               className="w-full bg-brand-primary hover:bg-brand-secondary disabled:opacity-50 text-white font-semibold py-3.5 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 mt-2"
             >
-              {isLoading
-                ? <><Loader2 size={18} className="animate-spin" /> Verificando...</>
-                : 'Acceder a Control G'
+              {isBlocked
+                ? `Espera ${countdown}s para reintentar`
+                : isLoading
+                  ? <><Loader2 size={18} className="animate-spin" /> Verificando...</>
+                  : 'Acceder a Control G'
               }
             </button>
           </form>

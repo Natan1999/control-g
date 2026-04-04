@@ -1,31 +1,30 @@
 import { Client, Databases, Query } from 'node-appwrite';
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-dotenv.config();
+const __dirname = dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: join(__dirname, '..', '.env') });
 
 const client = new Client()
-    .setEndpoint(process.env.APPWRITE_ENDPOINT)
-    .setProject(process.env.APPWRITE_PROJECT_ID)
-    .setKey(process.env.APPWRITE_API_KEY);
+  .setEndpoint(process.env.VITE_APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1')
+  .setProject(process.env.VITE_APPWRITE_PROJECT_ID)
+  .setKey(process.env.APPWRITE_API_KEY);
 
 const databases = new Databases(client);
+const DATABASE_ID = 'control_g';
+const COLLECTION_ID = 'user_profiles';
 
-async function verifyProfiles() {
-    try {
-        console.log('🔍  Verificando perfiles de Control G...');
-        const response = await databases.listDocuments(
-            'control_g',
-            'user_profiles',
-            [Query.limit(10)]
-        );
-
-        console.log(`✅  Se encontraron ${response.total} perfiles.`);
-        response.documents.forEach(doc => {
-            console.log(`   👤  UID: ${doc.user_id.padEnd(25)} | Role: ${doc.role.padEnd(12)} | Name: ${doc.full_name.padEnd(30)} | Org: ${doc.organization_id}`);
-        });
-    } catch (err) {
-        console.error('❌  Error verificando perfiles:', err.message);
-    }
+async function checkProfiles() {
+  try {
+    const result = await databases.listDocuments(DATABASE_ID, COLLECTION_ID);
+    console.log(`Total profiles found: ${result.total}`);
+    result.documents.forEach(doc => {
+      console.log(`- User ID: ${doc.user_id}, Role: ${doc.role}, Name: ${doc.full_name}`);
+    });
+  } catch (error) {
+    console.error('Error checking profiles:', error.message);
+  }
 }
 
-verifyProfiles();
+checkProfiles();

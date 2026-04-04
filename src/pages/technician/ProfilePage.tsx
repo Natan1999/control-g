@@ -1,24 +1,110 @@
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { LogOut, RefreshCw, HardDrive, TrendingUp, Award, Clock } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { BottomNav, MobileTopBar } from '@/components/layout/BottomNav'
 import { useAuthStore } from '@/stores/authStore'
 import { useSyncStore } from '@/stores/syncStore'
-import { useNavigate } from 'react-router-dom'
+import { localDB, type LocalResponse } from '@/lib/dexie-db'
 import { getInitials, formatRelativeTime } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 
-const historyForms = [
-  { name: 'Ficha Socioeconómica', zone: 'Arjona', date: new Date(Date.now() - 900000).toISOString(), status: 'synced' },
-  { name: 'Ficha Socioeconómica', zone: 'Turbaco', date: new Date(Date.now() - 3600000).toISOString(), status: 'syncing' },
-  { name: 'Ficha Socioeconómica', zone: 'Turbana', date: new Date(Date.now() - 7200000).toISOString(), status: 'offline' },
-  { name: 'Ficha Socioeconómica', zone: 'Santa Rosa', date: new Date(Date.now() - 86400000).toISOString(), status: 'synced' },
-  { name: 'Ficha Socioeconómica', zone: 'Villanueva', date: new Date(Date.now() - 90000000).toISOString(), status: 'synced' },
-]
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+function startOfDay(date: Date): number {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
+}
+
+function calculateStreak(responses: LocalResponse[]): number {
+  if (responses.length === 0) return 0
+
+  // Collect unique day timestamps (start-of-day)
+  const days = new Set(responses.map(r => startOfDay(new Date(r.created_at))))
+  const sortedDays = Array.from(days).sort((a, b) => b - a) // desc
+
+  const DAY_MS = 86400000
+  let streak = 0
+  let expected = startOfDay(new Date())
+
+  for (const day of sortedDays) {
+    if (day === expected) {
+      streak++
+      expected -= DAY_MS
+    } else if (day < expected) {
+      // Gap found — streak broken
+      break
+    }
+  }
+
+  return streak
+}
+
+function calcAvgPerDay(total: number, responses: LocalResponse[]): string {
+  if (responses.length === 0 || total === 0) return '0'
+  const sorted = [...responses].sort((a, b) => a.created_at - b.created_at)
+  const firstMs = sorted[0].created_at
+  const daysDiff = Math.max(1, Math.ceil((Date.now() - firstMs) / 86400000))
+  return (total / daysDiff).toFixed(1)
+}
+
+const syncStatusLabels: Record<string, string> = {
+  synced:  'Sincronizado',
+  pending: 'Pendiente',
+  failed:  'Error',
+}
+
+// ── Component ──────────────────────────────────────────────────────────────
 
 export default function ProfilePage() {
   const { user, signOut } = useAuthStore()
   const { status, pendingCount, setSyncComplete, setStatus } = useSyncStore()
   const navigate = useNavigate()
+
+  const [historyForms, setHistoryForms] = useState<LocalResponse[]>([])
+  const [totalResponses, setTotalResponses] = useState(0)
+  const [avgPerDay, setAvgPerDay] = useState('0')
+  const [streak, setStreak] = useState(0)
+  const [storageLabel, setStorageLabel] = useState('0 KB')
+  const [storagePercent, setStoragePercent] = useState(0)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadData() {
+      try {
+        const all = await localDB.responses.orderBy('created_at').reverse().toArray()
+
+        if (cancelled) return
+
+        const total = all.length
+        const recent5 = all.slice(0, 5)
+        const avg = calcAvgPerDay(total, all)
+        const currentStreak = calculateStreak(all)
+
+        // Espacio estimado: total * 50 KB
+        const estimatedKB = total * 50
+        const storageStr = estimatedKB >= 1024
+          ? `${(estimatedKB / 1024).toFixed(1)} MB`
+          : `${estimatedKB} KB`
+        const percent = Math.min(100, Math.round((estimatedKB * 1024) / (2 * 1024 * 1024 * 1024) * 100))
+
+        setHistoryForms(recent5)
+        setTotalResponses(total)
+        setAvgPerDay(avg)
+        setStreak(currentStreak)
+        setStorageLabel(storageStr)
+        setStoragePercent(percent)
+      } catch {
+        // Dexie unavailable — keep defaults
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+
+    loadData()
+    return () => { cancelled = true }
+  }, [])
 
   const handleSync = () => {
     setStatus('syncing')
@@ -50,7 +136,7 @@ export default function ProfilePage() {
           <h1 className="text-white text-xl font-black">{user?.fullName}</h1>
           <p className="text-blue-200 text-sm mt-0.5">Técnico de Campo</p>
           <div className="mt-2 bg-white/15 backdrop-blur rounded-full px-3 py-1 text-xs text-white font-medium">
-            📍 Zona Norte — Bolívar
+            Zona Norte — Bolívar
           </div>
         </div>
 
@@ -59,9 +145,24 @@ export default function ProfilePage() {
           <div className="bg-white rounded-2xl shadow-md border border-border overflow-hidden">
             <div className="grid grid-cols-3 divide-x divide-border">
               {[
-                { label: 'Total', value: '247', icon: <TrendingUp size={16} />, sub: 'formularios' },
-                { label: 'Promedio', value: '12.4', icon: <Clock size={16} />, sub: 'por día' },
-                { label: 'Racha', value: '8', icon: <Award size={16} />, sub: 'días seguidos' },
+                {
+                  label: 'Total',
+                  value: loading ? '—' : String(totalResponses),
+                  icon: <TrendingUp size={16} />,
+                  sub: 'formularios',
+                },
+                {
+                  label: 'Promedio',
+                  value: loading ? '—' : avgPerDay,
+                  icon: <Clock size={16} />,
+                  sub: 'por día',
+                },
+                {
+                  label: 'Racha',
+                  value: loading ? '—' : String(streak),
+                  icon: <Award size={16} />,
+                  sub: 'días seguidos',
+                },
               ].map((s, i) => (
                 <div key={i} className="p-4 text-center">
                   <div className="flex justify-center text-brand-primary mb-1">{s.icon}</div>
@@ -96,11 +197,14 @@ export default function ProfilePage() {
 
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Espacio usado</span>
-                <span className="font-medium">124 MB de 2 GB</span>
+                <span className="font-medium">{loading ? '—' : `${storageLabel} de 2 GB`}</span>
               </div>
 
               <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full w-[6%] bg-brand-primary rounded-full" />
+                <div
+                  className="h-full bg-brand-primary rounded-full transition-all duration-500"
+                  style={{ width: `${storagePercent}%` }}
+                />
               </div>
 
               {pendingCount > 0 && (
@@ -125,30 +229,55 @@ export default function ProfilePage() {
         <div className="mx-4 mt-5">
           <h3 className="font-bold text-sm mb-3 flex items-center justify-between">
             Mis formularios
-            <button className="text-xs text-brand-primary font-medium">Ver todos</button>
+            <button
+              onClick={() => navigate('/field/forms')}
+              className="text-xs text-brand-primary font-medium"
+            >
+              Ver todos
+            </button>
           </h3>
-          <div className="space-y-2">
-            {historyForms.map((form, i) => (
-              <div key={i} className="bg-white rounded-xl border border-border px-4 py-3 flex items-center gap-3">
-                <div className={cn('w-2 h-2 rounded-full flex-shrink-0', {
-                  'bg-green-500': form.status === 'synced',
-                  'bg-yellow-500': form.status === 'syncing',
-                  'bg-red-400': form.status === 'offline',
-                })} />
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">{form.name}</div>
-                  <div className="text-xs text-muted-foreground">{form.zone} · {formatRelativeTime(form.date)}</div>
-                </div>
-                <span className={cn('text-xs font-medium', {
-                  'text-green-600': form.status === 'synced',
-                  'text-yellow-600': form.status === 'syncing',
-                  'text-red-500': form.status === 'offline',
-                })}>
-                  {form.status === 'synced' ? 'Sincronizado' : form.status === 'syncing' ? 'Enviando' : 'Pendiente'}
-                </span>
-              </div>
-            ))}
-          </div>
+
+          {loading ? (
+            <div className="space-y-2">
+              {[0, 1, 2].map(i => (
+                <div key={i} className="bg-white rounded-xl border border-border h-[60px] animate-pulse" />
+              ))}
+            </div>
+          ) : historyForms.length === 0 ? (
+            <div className="bg-white rounded-xl border border-border p-6 text-center">
+              <p className="text-sm text-muted-foreground">No hay formularios registrados aún.</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {historyForms.map((form, i) => {
+                const syncKey = form.sync_status
+                const dotColor = syncKey === 'synced'
+                  ? 'bg-green-500'
+                  : syncKey === 'failed'
+                    ? 'bg-red-400'
+                    : 'bg-yellow-500'
+                const textColor = syncKey === 'synced'
+                  ? 'text-green-600'
+                  : syncKey === 'failed'
+                    ? 'text-red-500'
+                    : 'text-yellow-600'
+                return (
+                  <div key={form.local_id} className="bg-white rounded-xl border border-border px-4 py-3 flex items-center gap-3">
+                    <div className={cn('w-2 h-2 rounded-full flex-shrink-0', dotColor)} />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium truncate">Formulario</div>
+                      <div className="text-xs text-muted-foreground">
+                        {formatRelativeTime(new Date(form.created_at).toISOString())}
+                      </div>
+                    </div>
+                    <span className={cn('text-xs font-medium', textColor)}>
+                      {syncStatusLabels[syncKey] ?? 'Pendiente'}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
 
         {/* Logout */}
