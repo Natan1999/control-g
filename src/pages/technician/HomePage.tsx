@@ -6,9 +6,9 @@ import { useSyncStore } from '@/stores/syncStore'
 import { cn } from '@/lib/utils'
 
 const recentForms = [
-  { id: 'loc-001', name: 'Ficha Socioeconómica', zone: 'El Pozón', status: 'synced', time: 'Hace 15 min' },
-  { id: 'loc-002', name: 'Ficha Socioeconómica', zone: 'El Pozón', status: 'syncing', time: 'Hace 1h' },
-  { id: 'loc-003', name: 'Ficha Socioeconómica', zone: 'El Pozón', status: 'offline', time: 'Hace 2h' },
+  { id: 'loc-001', name: 'Ficha Socioeconómica', zone: 'Arjona', status: 'synced', time: 'Hace 15 min' },
+  { id: 'loc-002', name: 'Ficha Socioeconómica', zone: 'Turbaco', status: 'syncing', time: 'Hace 1h' },
+  { id: 'loc-003', name: 'Ficha Socioeconómica', zone: 'Turbana', status: 'offline', time: 'Hace 2h' },
 ]
 
 const statusConfig = {
@@ -34,7 +34,7 @@ export default function FieldHome() {
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
             <p className="text-blue-200 text-sm">Buenos días 👋</p>
             <h1 className="text-white text-2xl font-black mt-0.5">{user?.fullName?.split(' ')[0]}</h1>
-            <p className="text-blue-200 text-sm mt-1">Zona El Pozón — Cartagena</p>
+            <p className="text-blue-200 text-sm mt-1">Zona Norte — Bolívar</p>
           </motion.div>
 
           {/* Active project card */}
@@ -45,7 +45,7 @@ export default function FieldHome() {
             className="mt-4 bg-white/15 backdrop-blur-sm rounded-2xl p-4"
           >
             <div className="text-white/70 text-xs font-medium mb-1">Proyecto activo</div>
-            <div className="text-white font-bold">Caracterización Socioeconómica Cartagena</div>
+            <div className="text-white font-bold">Caracterización Socioeconómica Bolívar</div>
             <div className="flex items-center gap-2 mt-2">
               <div className="flex-1 h-1.5 bg-white/20 rounded-full overflow-hidden">
                 <div className="h-full w-[37%] bg-white rounded-full" />

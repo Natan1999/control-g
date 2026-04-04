@@ -11,6 +11,8 @@ import { useAuthStore } from '@/stores/authStore'
 import { SyncIndicator } from '@/components/shared'
 import { cn, getInitials } from '@/lib/utils'
 import type { UserRole } from '@/types'
+import { useRealtimeNotifications } from '@/hooks/useNotifications'
+import { useNotifications } from '@/hooks/useAppwriteQuery'
 
 interface NavItem {
   path: string
@@ -220,7 +222,10 @@ interface TopBarProps {
 
 export function TopBar({ title, subtitle, actions }: TopBarProps) {
   const { user } = useAuthStore()
-  
+  const { unreadCount: realtimeUnread } = useRealtimeNotifications()
+  const { data: notifData } = useNotifications(user?.id)
+  const unreadCount = realtimeUnread + (notifData?.total ?? 0)
+
   return (
     <header className="bg-white border-b border-border px-6 py-4 flex items-center justify-between sticky top-0 z-30">
       <div className="ml-10 lg:ml-0">
@@ -231,7 +236,11 @@ export function TopBar({ title, subtitle, actions }: TopBarProps) {
         {actions}
         <button className="relative w-9 h-9 rounded-full bg-muted flex items-center justify-center hover:bg-accent transition-colors">
           <Bell size={16} className="text-muted-foreground" />
-          <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center font-bold">2</span>
+          {unreadCount > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 min-w-[1rem] h-4 px-0.5 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center font-bold">
+              {unreadCount > 99 ? '99+' : unreadCount}
+            </span>
+          )}
         </button>
         <div className="w-9 h-9 rounded-full bg-brand-primary flex items-center justify-center text-white text-sm font-bold">
           {getInitials(user?.fullName || 'U')}

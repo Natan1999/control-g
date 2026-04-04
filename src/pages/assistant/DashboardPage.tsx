@@ -11,7 +11,7 @@ export default function AssistDashboard() {
     <PageWrapper>
       <TopBar
         title={`Hola, ${user?.fullName?.split(' ')[0]} 👋`}
-        subtitle="Panel del Asistente — Caracterización Cartagena 2026"
+        subtitle="Panel del Asistente — Caracterización Bolívar 2026"
       />
 
       <div className="p-6 space-y-6">

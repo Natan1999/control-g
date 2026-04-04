@@ -94,12 +94,23 @@ export default function App() {
   // Pantalla de carga mientras verificamos sesión
   if (!ready) {
     return (
-      <div className="min-h-screen bg-brand-dark flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center animate-pulse">
-            <span className="text-white font-black text-2xl">CG</span>
+      <div className="min-h-screen bg-[#003366] flex items-center justify-center relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-white/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        
+        <div className="relative flex flex-col items-center gap-6 text-center px-6">
+          <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center shadow-2xl border border-white/20 animate-bounce">
+            <span className="text-white font-black text-3xl tracking-tighter">CG</span>
           </div>
-          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          <div className="space-y-2">
+            <h1 className="text-white font-bold text-xl tracking-tight">Control G</h1>
+            <p className="text-white/60 text-sm max-w-[240px] leading-relaxed">
+              Verificando acceso institucional... <br/>
+              <span className="text-white/40 text-[10px] uppercase font-bold tracking-widest mt-2 block">Gobernación de Bolívar</span>
+            </p>
+          </div>
+          <div className="w-8 h-8 border-2 border-white/20 border-t-yellow-500 rounded-full animate-spin" />
         </div>
       </div>
     )

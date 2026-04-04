@@ -5,11 +5,11 @@ import { TopBar } from '@/components/layout/Sidebar'
 import { PageWrapper } from '@/components/shared'
 
 const zones = [
-  { id: 'z1', name: 'El Pozón', progress: 72, technicians: 4, forms: 312, color: '#2E86C1', lat: 10.38, lng: -75.48 },
-  { id: 'z2', name: 'La Boquilla', progress: 48, technicians: 3, forms: 198, color: '#27AE60', lat: 10.44, lng: -75.49 },
-  { id: 'z3', name: 'Nelson Mandela', progress: 31, technicians: 2, forms: 124, color: '#F39C12', lat: 10.40, lng: -75.50 },
-  { id: 'z4', name: 'Boston', progress: 85, technicians: 5, forms: 421, color: '#8E44AD', lat: 10.37, lng: -75.46 },
-  { id: 'z5', name: 'Henequén', progress: 19, technicians: 2, forms: 78, color: '#E74C3C', lat: 10.42, lng: -75.52 },
+  { id: 'z1', name: 'Arjona', progress: 72, technicians: 4, forms: 312, color: '#2E86C1', lat: 10.38, lng: -75.48 },
+  { id: 'z2', name: 'Turbaco', progress: 48, technicians: 3, forms: 198, color: '#27AE60', lat: 10.44, lng: -75.49 },
+  { id: 'z3', name: 'Mahates', progress: 31, technicians: 2, forms: 124, color: '#F39C12', lat: 10.40, lng: -75.50 },
+  { id: 'z4', name: 'Villanueva', progress: 85, technicians: 5, forms: 421, color: '#8E44AD', lat: 10.37, lng: -75.46 },
+  { id: 'z5', name: 'Santa Rosa', progress: 19, technicians: 2, forms: 78, color: '#E74C3C', lat: 10.42, lng: -75.52 },
 ]
 
 const techs = [
@@ -26,7 +26,7 @@ function MapVisualization({ selectedZone, setSelectedZone }: { selectedZone: str
       {/* Map header */}
       <div className="absolute top-4 left-4 z-10">
         <div className="bg-black/60 backdrop-blur-md text-white text-xs px-3 py-2 rounded-xl border border-white/10">
-          📍 Cartagena de Indias, Bolívar · Colombia
+          📍 Bolívar, Colombia · Gobernación de Bolívar
         </div>
       </div>
 

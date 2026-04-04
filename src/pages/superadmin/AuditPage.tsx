@@ -5,7 +5,7 @@ import { formatRelativeTime } from '@/lib/utils'
 import { motion } from 'framer-motion'
 
 const auditLogs = [
-  { id: 'log-001', user: 'Natan Chiquillo', action: 'Creó organización', detail: 'Alcaldía de Cartagena', level: 'info', timestamp: new Date(Date.now() - 600000).toISOString() },
+  { id: 'log-001', user: 'Natan Chiquillo', action: 'Creó organización', detail: 'Gobernación de Bolívar', level: 'info', timestamp: new Date(Date.now() - 600000).toISOString() },
   { id: 'log-002', user: 'María Rodríguez', action: 'Publicó formulario', detail: 'Ficha de Caracterización Socioeconómica v3', level: 'info', timestamp: new Date(Date.now() - 1800000).toISOString() },
   { id: 'log-003', user: 'Sistema', action: 'Intento de acceso fallido', detail: 'email: hacker@evil.com — IP: 190.x.x.x', level: 'warning', timestamp: new Date(Date.now() - 3600000).toISOString() },
   { id: 'log-004', user: 'Carlos Mendoza', action: 'Aprobó formulario', detail: 'Resp. ID: loc-001 — Ana García', level: 'info', timestamp: new Date(Date.now() - 7200000).toISOString() },

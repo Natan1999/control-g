@@ -54,6 +54,8 @@ const COLLECTIONS = {
   PROJECTS:        'projects',
   PROJECT_MEMBERS: 'project_members',
   FORMS:           'forms',
+  BENEFICIARY_FAMILIES: 'beneficiary_families',
+  FAMILY_MEMBERS:       'family_members',
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -368,22 +370,18 @@ async function seedMunicipalities(deptIdMap) {
   }
 }
 
-// ─── 7. Zonas de ejemplo para Cartagena ───────────────────────────────────────
-
-const CARTAGENA_MUN_ID = 'mun_13001';
-
-async function seedZonesCartagena() {
-  console.log('\n📍  Insertando zonas de ejemplo (Cartagena)...');
+// ─── 7. Zonas de ejemplo para Bolívar ───────────────────────────────────────
+async function seedZonesBolivar() {
+  console.log('\n📍  Insertando zonas de ejemplo (Bolívar)...');
 
   const zonas = [
-    { name: 'Centro Histórico',       type: 'localidad' },
-    { name: 'Bocagrande',             type: 'barrio'    },
-    { name: 'Manga',                  type: 'barrio'    },
-    { name: 'El Bosque',              type: 'barrio'    },
-    { name: 'Nelson Mandela',         type: 'barrio'    },
-    { name: 'La Boquilla',            type: 'corregimiento' },
-    { name: 'Bayunca',                type: 'corregimiento' },
-    { name: 'Zona Industrial de Mamonal', type: 'sector' },
+    { name: 'Arjona - Centro',       type: 'sector' },
+    { name: 'Arjona - Las Nieves',   type: 'barrio'    },
+    { name: 'Turbaco - La Granja',   type: 'barrio'    },
+    { name: 'Turbaco - El Rosario',   type: 'barrio'    },
+    { name: 'Mahates - Centro',      type: 'corregimiento' },
+    { name: 'Villanueva',            type: 'corregimiento' },
+    { name: 'Santa Rosa',            type: 'corregimiento' },
   ];
 
   for (const zona of zonas) {
@@ -408,24 +406,24 @@ async function seedZonesCartagena() {
 // ─── 8. Proyecto demo ─────────────────────────────────────────────────────────
 
 async function seedDemoProject(coordinatorUserId) {
-  console.log('\n📁  Creando proyecto demo...');
+  console.log('\n📁  Creando proyecto demo (Bolívar)...');
 
-  const project = await safeCreate('Proyecto: Censo Socioeconómico Cartagena 2026', () =>
+  const project = await safeCreate('Proyecto: Caracterización Socioeconómica Bolívar 2026', () =>
     databases.createDocument(
       DATABASE_ID,
       COLLECTIONS.PROJECTS,
-      'proj_demo_cartagena_2026',
+      'proj_demo_bolivar_2026',
       {
         organization_id:  ORG_ID,
         coordinator_id:   coordinatorUserId || 'unknown',
-        name:             'Censo Socioeconómico Cartagena 2026',
-        description:      'Levantamiento de información socioeconómica en los barrios prioritarios de Cartagena de Indias para el plan de desarrollo municipal.',
+        name:             'Caracterización Socioeconómica Bolívar 2026',
+        description:      'Levantamiento de información socioeconómica en los municipios prioritarios de Bolívar para el plan de desarrollo departamental.',
         type:             'socioeconomica',
         department_id:    'dept_13',
-        municipality_id:  CARTAGENA_MUN_ID,
+        municipality_id:  'mun_13052', // Arjona
         start_date:       '2026-04-01',
-        end_date:         '2026-10-31',
-        target_forms:     5000,
+        end_date:         '2026-12-31',
+        target_forms:     10000,
         status:           'active',
         settings:         JSON.stringify({
           allow_offline: true,
@@ -509,6 +507,100 @@ async function seedDemoForm(coordinatorUserId) {
   );
 }
 
+// ─── 10. Familias de prueba ───────────────────────────────────────────────────
+
+async function seedTestFamilies(projectId) {
+  console.log('\n👨‍👩‍👧‍👦  Creando familias de prueba (Gobernación Bolívar)...');
+
+  const FAMILIAS = [
+    {
+      id: 'fam_001',
+      headFirstName: 'Juan',
+      headFirstLastname: 'Pérez',
+      headIdNumber: '12345678',
+      headPhone: '3001234567',
+      address: 'Calle 10 # 5-20, Barrio El Socorro',
+      zone: 'Sector 1',
+      members: [
+        { name: 'Maria Pérez', bond: 'Hija', age: 10 },
+        { name: 'Rosa Garcia', bond: 'Esposa', age: 35 }
+      ]
+    },
+    {
+      id: 'fam_002',
+      headFirstName: 'Marta',
+      headFirstLastname: 'Suárez',
+      headIdNumber: '87654321',
+      headPhone: '3109876543',
+      address: 'Carrera 5 # 12-40, Corregimiento Bayunca',
+      zone: 'Sector 2',
+      members: [
+        { name: 'Lucas Suárez', bond: 'Hijo', age: 5 }
+      ]
+    }
+  ];
+
+  for (const f of FAMILIAS) {
+    await safeCreate(`Familia: ${f.headFirstName} ${f.headFirstLastname}`, async () => {
+      // 1. Crear documento de familia
+      const family = await databases.createDocument(
+        DATABASE_ID,
+        COLLECTIONS.BENEFICIARY_FAMILIES,
+        f.id,
+        {
+          project_id:       projectId,
+          organization_id:  ORG_ID,
+          zone_id:          'unknown',
+          head_first_name:  f.headFirstName,
+          head_first_lastname: f.headFirstLastname,
+          head_id_number:   f.headIdNumber,
+          head_phone:       f.headPhone,
+          address:          f.address,
+          vereda:           f.zone,
+          status:           'active',
+          ex_antes_completed: false,
+          encounter1_completed: false,
+          encounter2_completed: false,
+          encounter3_completed: false,
+          ex_post_completed:    false,
+          consent_given:        true,
+          total_members:        f.members.length + 1
+        }
+      );
+
+      // 2. Crear miembros (incluyendo al jefe)
+      await databases.createDocument(
+        DATABASE_ID,
+        COLLECTIONS.FAMILY_MEMBERS,
+        ID.unique(),
+        {
+          family_id: f.id,
+          full_name: `${f.headFirstName} ${f.headFirstLastname}`,
+          id_number: f.headIdNumber,
+          is_head:   true
+        }
+      );
+
+      for (const m of f.members) {
+        await databases.createDocument(
+          DATABASE_ID,
+          COLLECTIONS.FAMILY_MEMBERS,
+          ID.unique(),
+          {
+            family_id: f.id,
+            full_name: m.name,
+            family_bond: m.bond,
+            age:       m.age,
+            is_head:   false
+          }
+        );
+      }
+
+      return family;
+    });
+  }
+}
+
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -536,12 +628,16 @@ async function main() {
     // Datos geográficos
     const deptIds = await seedDepartments();
     await seedMunicipalities(deptIds);
-    await seedZonesCartagena();
+    await seedZonesBolivar();
 
     // Datos de proyecto
     const coordinatorUser = users.find(u => u.role === 'coordinator');
-    await seedDemoProject(coordinatorUser?.userId);
+    const project = await seedDemoProject(coordinatorUser?.userId);
     await seedDemoForm(coordinatorUser?.userId);
+    
+    if (project) {
+        await seedTestFamilies(project.$id);
+    }
 
     const elapsed = ((Date.now() - start) / 1000).toFixed(1);
 

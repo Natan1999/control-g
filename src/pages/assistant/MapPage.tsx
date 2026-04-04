@@ -5,9 +5,9 @@ import { TopBar } from '@/components/layout/Sidebar'
 import { PageWrapper } from '@/components/shared'
 
 const zones = [
-  { id: 'z1', name: 'El Pozón', progress: 72, technicians: 4, forms: 312, color: '#2E86C1' },
-  { id: 'z2', name: 'La Boquilla', progress: 48, technicians: 3, forms: 198, color: '#27AE60' },
-  { id: 'z3', name: 'Nelson Mandela', progress: 31, technicians: 2, forms: 124, color: '#F39C12' },
+  { id: 'z1', name: 'Arjona', progress: 72, technicians: 4, forms: 312, color: '#2E86C1' },
+  { id: 'z2', name: 'Turbaco', progress: 48, technicians: 3, forms: 198, color: '#27AE60' },
+  { id: 'z3', name: 'Mahates', progress: 31, technicians: 2, forms: 124, color: '#F39C12' },
 ]
 
 const techs = [
@@ -32,7 +32,7 @@ export default function AssistMapPage() {
             backgroundSize: '30px 30px',
           }}>
             <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md text-white text-xs px-3 py-2 rounded-xl border border-white/10">
-              📍 Zona asignada: Cartagena Norte
+              📍 Zona asignada: Bolívar Norte
             </div>
             {zones.map((zone, i) => {
               const positions = [{ x: 35, y: 55 }, { x: 60, y: 30 }, { x: 50, y: 65 }]

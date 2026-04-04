@@ -1,15 +1,20 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ID } from 'appwrite'
 import { DndContext, DragEndEvent, useDraggable, useDroppable, closestCenter } from '@dnd-kit/core'
 import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
   Type, AlignLeft, Hash, List, CheckSquare, ToggleLeft, Calendar, Clock,
   MapPin, Camera, Video, PenTool, Paperclip, QrCode, Grid, Plus, Trash2,
-  GripVertical, Settings2, Eye, Save, Globe, FileText, History, ChevronDown,
+  GripVertical, Settings2, Eye, Save, Globe, FileText, History, X,
 } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { TopBar } from '@/components/layout/Sidebar'
 import { PageWrapper } from '@/components/shared'
 import { cn } from '@/lib/utils'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
+import { useAuthStore } from '@/stores/authStore'
 import type { FieldType, FormField, FormPage } from '@/types'
 
 const FIELD_TYPES = [
@@ -37,7 +42,7 @@ const CATEGORIES = ['Básicos', 'Fecha y Hora', 'Escalas', 'Multimedia', 'Ubicac
 // Draggable field type item
 function DraggableFieldType({ type, label, icon }: { type: FieldType; label: string; icon: React.ReactNode }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: `type-${type}`, data: { fieldType: type } })
-  
+
   return (
     <div
       ref={setNodeRef}
@@ -61,7 +66,7 @@ function SortableField({ field, isSelected, onSelect, onDelete }: {
   field: FormField; isSelected: boolean; onSelect: () => void; onDelete: () => void
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: field.id })
-  
+
   return (
     <div
       ref={setNodeRef}
@@ -224,9 +229,110 @@ function FieldProperties({ field, onChange }: { field: FormField | null; onChang
   )
 }
 
+// Preview field renderer
+function PreviewField({ field }: { field: FormField }) {
+  if (field.type === 'section_title') {
+    return (
+      <div className="py-3">
+        <div className="h-px bg-gray-200 w-full" />
+        <div className="text-center -mt-2.5">
+          <span className="bg-white px-3 text-sm font-bold text-gray-500">{field.label}</span>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-1.5">
+      <label className="block text-sm font-semibold text-gray-800">
+        {field.label}
+        {field.required && <span className="text-red-500 ml-1">*</span>}
+      </label>
+      {field.helpText && <p className="text-xs text-gray-500 italic">{field.helpText}</p>}
+      {(field.type === 'text_short' || field.type === 'numeric') && (
+        <input
+          disabled
+          placeholder={field.placeholder || ''}
+          className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm bg-gray-50"
+        />
+      )}
+      {field.type === 'text_long' && (
+        <textarea
+          disabled
+          placeholder={field.placeholder || ''}
+          rows={3}
+          className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm bg-gray-50 resize-none"
+        />
+      )}
+      {(field.type === 'single_select' || field.type === 'multi_select') && (
+        <div className="space-y-1.5">
+          {(field.options || []).map((opt) => (
+            <label key={opt.value} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <input
+                type={field.type === 'single_select' ? 'radio' : 'checkbox'}
+                disabled
+                className="accent-brand-primary"
+              />
+              {opt.label}
+            </label>
+          ))}
+        </div>
+      )}
+      {field.type === 'yes_no' && (
+        <div className="flex gap-3">
+          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <input type="radio" disabled className="accent-brand-primary" /> Sí
+          </label>
+          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <input type="radio" disabled className="accent-brand-primary" /> No
+          </label>
+        </div>
+      )}
+      {field.type === 'date' && (
+        <input type="date" disabled className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm bg-gray-50" />
+      )}
+      {field.type === 'time' && (
+        <input type="time" disabled className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm bg-gray-50" />
+      )}
+      {(field.type === 'photo' || field.type === 'video' || field.type === 'file') && (
+        <div className="w-full px-3 py-4 rounded-lg border border-dashed border-gray-300 text-sm text-gray-400 text-center bg-gray-50">
+          {field.type === 'photo' ? 'Tomar fotografía' : field.type === 'video' ? 'Grabar video' : 'Adjuntar archivo'}
+        </div>
+      )}
+      {field.type === 'signature' && (
+        <div className="w-full h-20 rounded-lg border border-dashed border-gray-300 text-sm text-gray-400 flex items-center justify-center bg-gray-50">
+          Área de firma
+        </div>
+      )}
+      {field.type === 'geolocation' && (
+        <div className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-400 bg-gray-50 flex items-center gap-2">
+          <MapPin size={14} /> Obtener ubicación GPS
+        </div>
+      )}
+      {field.type === 'barcode_qr' && (
+        <div className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-400 bg-gray-50 flex items-center gap-2">
+          <QrCode size={14} /> Escanear código QR/Barras
+        </div>
+      )}
+      {field.type === 'likert' && (
+        <div className="flex gap-2">
+          {[1, 2, 3, 4, 5].map(n => (
+            <button key={n} disabled className="flex-1 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-500 bg-gray-50">
+              {n}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 let fieldCounter = 100
 
 export default function FormBuilderPage() {
+  const { user } = useAuthStore()
+  const navigate = useNavigate()
+
   const [pages, setPages] = useState<FormPage[]>([
     { id: 'page_1', title: 'Página 1', fields: [] }
   ])
@@ -234,10 +340,94 @@ export default function FormBuilderPage() {
   const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null)
   const [formName, setFormName] = useState('Nuevo formulario sin título')
 
+  const [isSaving, setIsSaving] = useState(false)
+  const [isPublishing, setIsPublishing] = useState(false)
+  const [showPreview, setShowPreview] = useState(false)
+  const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null)
+  const [savedFormId, setSavedFormId] = useState<string | null>(null)
+
   const currentPage = pages[activePage]
   const selectedField = currentPage?.fields.find(f => f.id === selectedFieldId) || null
 
   const { setNodeRef: setDropRef, isOver } = useDroppable({ id: 'canvas' })
+
+  const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
+    setToast({ msg, type })
+    setTimeout(() => setToast(null), 3500)
+  }
+
+  const saveDraft = async () => {
+    setIsSaving(true)
+    try {
+      const schemaJson = JSON.stringify({ pages })
+      const totalFields = pages.reduce((acc, p) => acc + p.fields.length, 0)
+
+      if (savedFormId) {
+        await databases.updateDocument(DATABASE_ID, COLLECTION_IDS.FORMS, savedFormId, {
+          name: formName,
+          schema: schemaJson,
+          total_fields: totalFields,
+          status: 'draft'
+        })
+      } else {
+        const doc = await databases.createDocument(DATABASE_ID, COLLECTION_IDS.FORMS, ID.unique(), {
+          name: formName,
+          schema: schemaJson,
+          total_fields: totalFields,
+          status: 'draft',
+          version: 1,
+          organization_id: user?.organizationId || '',
+          created_by: user?.id || ''
+        })
+        setSavedFormId(doc.$id)
+      }
+      showToast('Formulario guardado como borrador')
+    } catch {
+      // Si falla Appwrite, guardar en localStorage como fallback
+      localStorage.setItem('cg_draft_form', JSON.stringify({ name: formName, pages, savedAt: new Date().toISOString() }))
+      showToast('Borrador guardado localmente', 'success')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const publishForm = async () => {
+    if (pages.every(p => p.fields.length === 0)) {
+      showToast('Agrega al menos un campo antes de publicar', 'error')
+      return
+    }
+    setIsPublishing(true)
+    try {
+      const schemaJson = JSON.stringify({ pages })
+      const totalFields = pages.reduce((acc, p) => acc + p.fields.length, 0)
+
+      if (savedFormId) {
+        await databases.updateDocument(DATABASE_ID, COLLECTION_IDS.FORMS, savedFormId, {
+          name: formName,
+          schema: schemaJson,
+          total_fields: totalFields,
+          status: 'published'
+        })
+      } else {
+        const doc = await databases.createDocument(DATABASE_ID, COLLECTION_IDS.FORMS, ID.unique(), {
+          name: formName,
+          schema: schemaJson,
+          total_fields: totalFields,
+          status: 'published',
+          version: 1,
+          organization_id: user?.organizationId || '',
+          created_by: user?.id || ''
+        })
+        setSavedFormId(doc.$id)
+      }
+      showToast('¡Formulario publicado exitosamente! Los técnicos ya pueden verlo.')
+      setTimeout(() => navigate('/coord/templates'), 2000)
+    } catch {
+      showToast('Error al publicar. Verificar conexión con el servidor.', 'error')
+    } finally {
+      setIsPublishing(false)
+    }
+  }
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
@@ -303,17 +493,28 @@ export default function FormBuilderPage() {
             className="text-lg font-bold text-foreground bg-transparent border-none outline-none focus:bg-muted/30 px-2 py-1 rounded-lg transition-colors"
           />
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors">
+            <button
+              onClick={() => setShowPreview(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors"
+            >
               <Eye size={14} /> Vista previa
             </button>
             <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors">
               <History size={14} /> Versiones
             </button>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted text-sm font-medium hover:bg-muted/80 transition-colors">
-              <Save size={14} /> Guardar borrador
+            <button
+              onClick={saveDraft}
+              disabled={isSaving}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted text-sm font-medium hover:bg-muted/80 transition-colors disabled:opacity-60"
+            >
+              <Save size={14} /> {isSaving ? 'Guardando...' : 'Guardar borrador'}
             </button>
-            <button className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-brand-primary text-white text-sm font-medium hover:bg-brand-secondary transition-colors">
-              <Globe size={14} /> Publicar formulario
+            <button
+              onClick={publishForm}
+              disabled={isPublishing}
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-brand-primary text-white text-sm font-medium hover:bg-brand-secondary transition-colors disabled:opacity-60"
+            >
+              <Globe size={14} /> {isPublishing ? 'Publicando...' : 'Publicar formulario'}
             </button>
           </div>
         </div>
@@ -404,6 +605,93 @@ export default function FormBuilderPage() {
           </div>
         </div>
       </DndContext>
+
+      {/* Preview Modal */}
+      <AnimatePresence>
+        {showPreview && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4"
+            onClick={() => setShowPreview(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              onClick={e => e.stopPropagation()}
+              className="bg-white rounded-3xl shadow-2xl w-full max-w-sm max-h-[85vh] overflow-hidden flex flex-col"
+            >
+              {/* Phone-like header */}
+              <div className="bg-brand-primary px-5 py-4 flex items-center justify-between">
+                <div>
+                  <div className="text-white/70 text-xs font-medium">Vista previa móvil</div>
+                  <div className="text-white font-bold text-sm mt-0.5 truncate max-w-[200px]">{formName}</div>
+                </div>
+                <button
+                  onClick={() => setShowPreview(false)}
+                  className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Page tabs */}
+              {pages.length > 1 && (
+                <div className="flex border-b border-gray-100 overflow-x-auto">
+                  {pages.map((page, i) => (
+                    <button
+                      key={page.id}
+                      onClick={() => setActivePage(i)}
+                      className={cn(
+                        'px-4 py-2 text-xs font-medium whitespace-nowrap transition-colors',
+                        i === activePage ? 'text-brand-primary border-b-2 border-brand-primary' : 'text-gray-500'
+                      )}
+                    >
+                      {page.title}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Fields */}
+              <div className="flex-1 overflow-y-auto p-5 space-y-5">
+                {currentPage?.fields.length === 0 ? (
+                  <div className="text-center py-10 text-gray-400">
+                    <p className="text-sm">Esta página no tiene campos</p>
+                  </div>
+                ) : (
+                  currentPage.fields.map(field => (
+                    <PreviewField key={field.id} field={field} />
+                  ))
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="p-4 border-t border-gray-100">
+                <button disabled className="w-full py-3 rounded-xl bg-brand-primary text-white text-sm font-semibold opacity-80">
+                  {activePage < pages.length - 1 ? 'Siguiente página' : 'Enviar formulario'}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Toast */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl shadow-xl text-white text-sm font-medium ${toast.type === 'error' ? 'bg-red-500' : 'bg-green-500'}`}
+          >
+            {toast.msg}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </PageWrapper>
   )
 }

@@ -5,10 +5,10 @@ import { TopBar } from '@/components/layout/Sidebar'
 import { PageWrapper } from '@/components/shared'
 
 const exportJobs = [
-  { id: '1', name: 'Caracterización El Pozón — Completo', format: 'xlsx', status: 'completed', rows: 842, size: '2.4 MB', date: '2026-03-29 10:30' },
-  { id: '2', name: 'Informe La Boquilla — Marzo', format: 'pdf', status: 'completed', rows: 312, size: '890 KB', date: '2026-03-28 16:15' },
-  { id: '3', name: 'Datos crudos — JSON completo', format: 'json', status: 'processing', rows: 1842, size: '—', date: '2026-03-29 11:45' },
-  { id: '4', name: 'Nelson Mandela — Validados', format: 'csv', status: 'failed', rows: 0, size: '—', date: '2026-03-27 09:00' },
+  { id: '1', name: 'Caracterización Arjona — Completo', format: 'xlsx', status: 'completed', rows: 842, size: '2.4 MB', date: '2026-03-29 10:30' },
+  { id: '2', name: 'Informe Turbaco — Marzo', format: 'pdf', status: 'completed', rows: 312, size: '890 KB', date: '2026-03-28 16:15' },
+  { id: '3', name: 'Datos crudos — JSON completo Bolívar', format: 'json', status: 'processing', rows: 1842, size: '—', date: '2026-03-29 11:45' },
+  { id: '4', name: 'Villanueva — Validados', format: 'csv', status: 'failed', rows: 0, size: '—', date: '2026-03-27 09:00' },
 ]
 
 const formatIcon = (f: string) => {
@@ -46,8 +46,8 @@ export default function ExportPage() {
               <div>
                 <label className="text-sm font-semibold text-foreground mb-2 block">Proyecto</label>
                 <select className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30">
-                  <option>Caracterización Socioeconómica Cartagena</option>
-                  <option>Diagnóstico Comunal Bogotá Norte</option>
+                  <option>Caracterización Socioeconómica Bolívar 2026</option>
+                  <option>Diagnóstico Comunal Zodes Dique</option>
                 </select>
               </div>
               <div>

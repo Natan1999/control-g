@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Search, Filter, Eye, CheckCircle, XCircle, AlertCircle, Download } from 'lucide-react'
+import { Search, Eye, CheckCircle, XCircle, Download } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { StatusBadge, Avatar, PageWrapper } from '@/components/shared'
 import { formatRelativeTime } from '@/lib/utils'
@@ -16,6 +16,10 @@ export default function DataPage() {
   const [responses, setResponses] = useState<FormResponse[]>([])
   const [loading, setLoading] = useState(true)
 
+  const [actionLoading, setActionLoading] = useState(false)
+  const [rejectModal, setRejectModal] = useState(false)
+  const [rejectReason, setRejectReason] = useState('')
+
   useEffect(() => {
     async function loadData() {
       if (!user?.organizationId) return
@@ -23,45 +27,86 @@ export default function DataPage() {
       try {
         const res = await databases.listDocuments(
           DATABASE_ID,
-           COLLECTION_IDS.FORM_RESPONSES,
-           [
-              Query.equal('organization_id', user.organizationId),
-              Query.orderDesc('$createdAt'),
-              Query.limit(100)
-           ]
+          COLLECTION_IDS.FORM_RESPONSES,
+          [
+            Query.equal('organization_id', user.organizationId),
+            Query.orderDesc('$createdAt'),
+            Query.limit(100)
+          ]
         )
         const mapped = res.documents.map((doc: any) => ({
-           id: doc.$id,
-           localId: doc.local_id,
-           formId: doc.form_id,
-           formName: 'Formulario ' + doc.form_id.substring(0, 5),
-           technicianId: doc.technician_id,
-           technicianName: 'Técnico ' + doc.technician_id.substring(0, 4),
-           zoneId: doc.zone_id,
-           zoneName: doc.zone_id || 'N/A',
-           status: doc.status as FormResponse['status'],
-           data: doc.data ? (typeof doc.data === 'string' ? JSON.parse(doc.data) : doc.data) : {},
-           createdAt: doc.$createdAt,
-           syncedAt: doc.synced_at,
-           source: doc.source as FormResponse['source'],
-           latitude: doc.location?.latitude,
-           longitude: doc.location?.longitude,
-           accuracy: doc.location?.accuracy,
-           ocrConfidence: doc.ocr_confidence,
-           rejectionReason: doc.rejection_reason,
-           formVersion: doc.form_version || '1.0',
-           projectId: doc.project_id || '',
-           organizationId: doc.organization_id || ''
+          id: doc.$id,
+          localId: doc.local_id,
+          formId: doc.form_id,
+          formName: 'Formulario ' + doc.form_id.substring(0, 5),
+          technicianId: doc.technician_id,
+          technicianName: 'Técnico ' + doc.technician_id.substring(0, 4),
+          zoneId: doc.zone_id,
+          zoneName: doc.zone_id || 'N/A',
+          status: doc.status as FormResponse['status'],
+          data: doc.data ? (typeof doc.data === 'string' ? JSON.parse(doc.data) : doc.data) : {},
+          createdAt: doc.$createdAt,
+          syncedAt: doc.synced_at,
+          source: doc.source as FormResponse['source'],
+          latitude: doc.location?.latitude,
+          longitude: doc.location?.longitude,
+          accuracy: doc.location?.accuracy,
+          ocrConfidence: doc.ocr_confidence,
+          rejectionReason: doc.rejection_reason,
+          formVersion: doc.form_version || '1.0',
+          projectId: doc.project_id || '',
+          organizationId: doc.organization_id || ''
         }))
         setResponses(mapped)
       } catch (err) {
-         console.error('Error fetching responses', err)
+        console.error('Error fetching responses', err)
       } finally {
-         setLoading(false)
+        setLoading(false)
       }
     }
     loadData()
   }, [user])
+
+  const handleApprove = async () => {
+    if (!selected) return
+    setActionLoading(true)
+    try {
+      await databases.updateDocument(DATABASE_ID, COLLECTION_IDS.FORM_RESPONSES, selected.id, {
+        status: 'approved',
+        reviewed_by: user?.id || '',
+        reviewed_at: new Date().toISOString()
+      })
+      setResponses(prev => prev.map(r => r.id === selected.id ? { ...r, status: 'approved' as const } : r))
+      setSelected(prev => prev ? { ...prev, status: 'approved' as const } : null)
+    } catch {
+      alert('Error al aprobar. Verifica la conexión.')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handleReject = async () => {
+    if (!selected || !rejectReason.trim()) return
+    setActionLoading(true)
+    try {
+      await databases.updateDocument(DATABASE_ID, COLLECTION_IDS.FORM_RESPONSES, selected.id, {
+        status: 'rejected',
+        rejection_reason: rejectReason,
+        reviewed_by: user?.id || '',
+        reviewed_at: new Date().toISOString()
+      })
+      setResponses(prev => prev.map(r =>
+        r.id === selected.id ? { ...r, status: 'rejected' as const, rejectionReason: rejectReason } : r
+      ))
+      setSelected(prev => prev ? { ...prev, status: 'rejected' as const } : null)
+      setRejectModal(false)
+      setRejectReason('')
+    } catch {
+      alert('Error al rechazar.')
+    } finally {
+      setActionLoading(false)
+    }
+  }
 
   const filtered = filter === 'all'
     ? responses
@@ -123,7 +168,7 @@ export default function DataPage() {
                   {loading ? (
                     <tr><td colSpan={8} className="p-6 text-center text-sm text-muted-foreground">Cargando datos...</td></tr>
                   ) : filtered.length === 0 ? (
-                    <tr><td colSpan={8} className="p-6 text-center text-sm text-muted-foreground">No se han encotrado formularios.</td></tr>
+                    <tr><td colSpan={8} className="p-6 text-center text-sm text-muted-foreground">No se han encontrado formularios.</td></tr>
                   ) : filtered.map(response => (
                     <tr
                       key={response.id}
@@ -229,15 +274,70 @@ export default function DataPage() {
               {/* Actions */}
               {selected.status === 'in_review' && (
                 <div className="flex gap-2">
-                  <button className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-green-500 text-white rounded-xl text-sm font-medium hover:bg-green-600 transition-colors">
-                    <CheckCircle size={16} /> Aprobar
+                  <button
+                    onClick={handleApprove}
+                    disabled={actionLoading}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-green-500 text-white rounded-xl text-sm font-medium hover:bg-green-600 transition-colors disabled:opacity-60"
+                  >
+                    {actionLoading ? 'Procesando...' : <><CheckCircle size={16} /> Aprobar</>}
                   </button>
-                  <button className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-red-500 text-white rounded-xl text-sm font-medium hover:bg-red-600 transition-colors">
+                  <button
+                    onClick={() => setRejectModal(true)}
+                    disabled={actionLoading}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-red-500 text-white rounded-xl text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-60"
+                  >
                     <XCircle size={16} /> Rechazar
                   </button>
                 </div>
               )}
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Reject Modal */}
+      <AnimatePresence>
+        {rejectModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            onClick={() => setRejectModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={e => e.stopPropagation()}
+              className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl"
+            >
+              <h3 className="text-lg font-bold mb-1">Rechazar formulario</h3>
+              <p className="text-sm text-muted-foreground mb-4">Indica el motivo del rechazo. El técnico podrá ver este mensaje.</p>
+              <textarea
+                value={rejectReason}
+                onChange={e => setRejectReason(e.target.value)}
+                placeholder="Ej: Datos incompletos, dirección incorrecta, firma faltante..."
+                rows={4}
+                className="w-full px-4 py-2.5 rounded-xl border border-input text-sm focus:outline-none focus:ring-2 focus:ring-red-400/30 resize-none"
+                autoFocus
+              />
+              <div className="flex gap-3 mt-4">
+                <button
+                  onClick={() => { setRejectModal(false); setRejectReason('') }}
+                  className="flex-1 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleReject}
+                  disabled={actionLoading || !rejectReason.trim()}
+                  className="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors disabled:opacity-60"
+                >
+                  {actionLoading ? 'Procesando...' : 'Confirmar Rechazo'}
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -119,7 +119,7 @@ export default function LoginPage() {
         </div>
 
         <div className="relative z-10 text-white/30 text-xs">
-          © 2026 DRAN Digital · NIT 901.359.114 · Cartagena de Indias
+          © 2026 DRAN Digital · NIT 901.359.114 · Gobernación de Bolívar
         </div>
       </motion.div>
 

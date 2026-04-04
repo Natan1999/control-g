@@ -1,17 +1,50 @@
 import { useState, useEffect } from 'react'
-import { Plus, Calendar, MapPin, Users, TrendingUp, Filter, ChevronRight } from 'lucide-react'
+import { Plus, Calendar, MapPin, Users, TrendingUp, ChevronRight } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { ID } from 'appwrite'
 import { TopBar } from '@/components/layout/Sidebar'
 import { StatusBadge, ProgressRing, PageWrapper } from '@/components/shared'
 import { listProjects } from '@/lib/appwrite-db'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
 import { formatDate } from '@/lib/utils'
 import { useAuthStore } from '@/stores/authStore'
 
+const PROJECT_TYPES = [
+  { value: 'socioeconomica', label: 'Caracterización Socioeconómica' },
+  { value: 'conectividad', label: 'Diagnóstico de Conectividad' },
+  { value: 'servicios_publicos', label: 'Servicios Públicos' },
+  { value: 'censo', label: 'Censo de Población' },
+  { value: 'electoral', label: 'Electoral' },
+  { value: 'vivienda', label: 'Vivienda' },
+  { value: 'agropecuario', label: 'Agropecuario' },
+  { value: 'personalizada', label: 'Personalizada' },
+]
+
+const STATUS_FILTERS = [
+  { key: 'all', label: 'Todos' },
+  { key: 'active', label: 'Activos' },
+  { key: 'draft', label: 'Borrador' },
+  { key: 'completed', label: 'Completados' },
+  { key: 'archived', label: 'Archivados' },
+]
+
 export default function ProjectsPage() {
   const [showModal, setShowModal] = useState(false)
+  const [statusFilter, setStatusFilter] = useState('all')
   const { user } = useAuthStore()
   const [projects, setProjects] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+
+  const [form, setForm] = useState({
+    name: '',
+    type: 'socioeconomica' as const,
+    target_forms: '',
+    start_date: '',
+    end_date: '',
+    description: '',
+  })
+  const [creating, setCreating] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     async function fetchProjects() {
@@ -19,7 +52,7 @@ export default function ProjectsPage() {
       try {
         setLoading(true)
         const res = await listProjects({ organizationId: user.organizationId, coordinatorId: user.id })
-        
+
         const mapped = res.documents.map((doc: any) => ({
           id: doc.$id,
           name: doc.name,
@@ -43,6 +76,49 @@ export default function ProjectsPage() {
     fetchProjects()
   }, [user])
 
+  const handleCreate = async () => {
+    if (!form.name.trim()) { setError('El nombre del proyecto es requerido'); return }
+    setCreating(true)
+    setError('')
+    try {
+      const doc = await databases.createDocument(DATABASE_ID, COLLECTION_IDS.PROJECTS, ID.unique(), {
+        name: form.name,
+        type: form.type,
+        target_forms: parseInt(form.target_forms) || 0,
+        start_date: form.start_date || null,
+        end_date: form.end_date || null,
+        description: form.description || null,
+        status: 'draft',
+        organization_id: user?.organizationId || '',
+        coordinator_id: user?.id || '',
+        settings: '{}'
+      })
+      setProjects(prev => [{
+        id: doc.$id,
+        name: doc.name,
+        description: doc.description,
+        status: doc.status,
+        departmentId: 'Bolívar',
+        startDate: doc.start_date,
+        endDate: doc.end_date,
+        targetForms: doc.target_forms,
+        completedForms: 0,
+        activeTechnicians: 0,
+        type: doc.type
+      }, ...prev])
+      setShowModal(false)
+      setForm({ name: '', type: 'socioeconomica', target_forms: '', start_date: '', end_date: '', description: '' })
+    } catch {
+      setError('Error al crear el proyecto. Verifica la conexión.')
+    } finally {
+      setCreating(false)
+    }
+  }
+
+  const filteredProjects = statusFilter === 'all'
+    ? projects
+    : projects.filter(p => p.status === statusFilter)
+
   return (
     <PageWrapper>
       <TopBar
@@ -60,29 +136,26 @@ export default function ProjectsPage() {
 
       <div className="p-6 space-y-5">
         {/* Filter bar */}
-        <div className="flex items-center gap-3">
-          {['Todos', 'Activos', 'Borrador', 'Completados', 'Archivados'].map(f => (
+        <div className="flex items-center gap-3 flex-wrap">
+          {STATUS_FILTERS.map(f => (
             <button
-              key={f}
+              key={f.key}
+              onClick={() => setStatusFilter(f.key)}
               className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                f === 'Todos'
+                statusFilter === f.key
                   ? 'bg-brand-primary text-white'
                   : 'bg-muted text-muted-foreground hover:bg-muted/80'
               }`}
             >
-              {f}
+              {f.label}
             </button>
           ))}
         </div>
 
         {/* Projects grid */}
         <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-5">
-          {projects.map((project, i) => {
-            const pct = project.targetForms && project.completedForms
-              ? Math.round((project.completedForms / project.targetForms) * 100)
-              : 0
-
-            return (
+          {filteredProjects.map((project, i) => {
+              return (
               <motion.div
                 key={project.id}
                 initial={{ opacity: 0, y: 16 }}
@@ -134,7 +207,7 @@ export default function ProjectsPage() {
           })}
 
           {loading && projects.length === 0 && (
-             <div className="p-5 text-sm text-muted-foreground">Cargando proyectos...</div>
+            <div className="p-5 text-sm text-muted-foreground">Cargando proyectos...</div>
           )}
 
           {/* New project card */}
@@ -163,30 +236,93 @@ export default function ProjectsPage() {
           >
             <h2 className="text-xl font-bold mb-5">Crear Nuevo Proyecto</h2>
             <div className="space-y-4">
-              {[
-                { label: 'Nombre del proyecto', placeholder: 'Ej: Caracterización Socioeconómica...' },
-                { label: 'Tipo de caracterización', placeholder: 'Ej: Socioeconómica, Conectividad...' },
-                { label: 'Meta de formularios', placeholder: 'Ej: 5000' },
-              ].map(f => (
-                <div key={f.label}>
-                  <label className="block text-sm font-semibold mb-1.5">{f.label}</label>
-                  <input placeholder={f.placeholder} className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30" />
-                </div>
-              ))}
+              <div>
+                <label className="block text-sm font-semibold mb-1.5">Nombre del proyecto</label>
+                <input
+                  value={form.name}
+                  onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="Ej: Caracterización Socioeconómica Bolívar 2026"
+                  className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1.5">Tipo de caracterización</label>
+                <select
+                  value={form.type}
+                  onChange={e => setForm(prev => ({ ...prev, type: e.target.value as typeof form.type }))}
+                  className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30"
+                >
+                  {PROJECT_TYPES.map(t => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1.5">Meta de formularios</label>
+                <input
+                  type="number"
+                  value={form.target_forms}
+                  onChange={e => setForm(prev => ({ ...prev, target_forms: e.target.value }))}
+                  placeholder="Ej: 5000"
+                  className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1.5">Descripción (opcional)</label>
+                <textarea
+                  value={form.description}
+                  onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Descripción del proyecto..."
+                  rows={2}
+                  className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30 resize-none"
+                />
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-semibold mb-1.5">Fecha inicio</label>
-                  <input type="date" className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30" />
+                  <input
+                    type="date"
+                    value={form.start_date}
+                    onChange={e => setForm(prev => ({ ...prev, start_date: e.target.value }))}
+                    className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold mb-1.5">Fecha fin</label>
-                  <input type="date" className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30" />
+                  <input
+                    type="date"
+                    value={form.end_date}
+                    onChange={e => setForm(prev => ({ ...prev, end_date: e.target.value }))}
+                    className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30"
+                  />
                 </div>
               </div>
+              {error && (
+                <p className="text-sm text-red-500 font-medium">{error}</p>
+              )}
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowModal(false)} className="flex-1 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted transition-colors">Cancelar</button>
-              <button onClick={() => setShowModal(false)} className="flex-1 py-2.5 rounded-xl bg-brand-primary text-white text-sm font-medium hover:bg-brand-secondary transition-colors">Crear Proyecto</button>
+              <button
+                onClick={() => { setShowModal(false); setError('') }}
+                className="flex-1 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleCreate}
+                disabled={creating}
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-brand-primary text-white text-sm font-medium hover:bg-brand-secondary transition-colors disabled:opacity-60"
+              >
+                {creating ? (
+                  <>
+                    <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    Creando...
+                  </>
+                ) : 'Crear Proyecto'}
+              </button>
             </div>
           </motion.div>
         </div>

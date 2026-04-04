@@ -19,7 +19,7 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('general')
   const [saved, setSaved] = useState(false)
   const [form, setForm] = useState({
-    orgName: 'Alcaldía de Cartagena',
+    orgName: 'Gobernación de Bolívar',
     timezone: 'America/Bogota',
     language: 'es',
     autoSync: true,

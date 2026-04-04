@@ -93,10 +93,10 @@ const useCases = [
 ]
 
 const stats = [
-  { value: '4×', label: 'Más rápido que papel', desc: 'Tiempos de recolección' },
-  { value: '99%', label: 'Uptime garantizado', desc: 'Disponibilidad del servicio' },
+  { value: '46', label: 'Municipios', desc: 'Atención en todo Bolívar' },
+  { value: '45,000+', label: 'Familias', desc: 'Impactadas por la gestión' },
   { value: '17', label: 'Tipos de campo', desc: 'En el Form Builder' },
-  { value: '0%', label: 'Pérdida de datos', desc: 'Con sync automático' },
+  { value: '100%', label: 'Bolívar Mejor', desc: 'Compromiso institucional' },
 ]
 
 const plans = [
@@ -193,11 +193,11 @@ function NavBar() {
         {/* Mobile toggle */}
         <button 
           onClick={() => setOpen(!open)} 
-          className="md:hidden p-2 text-foreground"
+          className="md:hidden p-3 -mr-3 text-foreground"
           aria-label={open ? "Cerrar menú de navegación" : "Abrir menú de navegación"}
           aria-expanded={open}
         >
-          {open ? <X size={22} className={scrolled ? 'text-slate-900' : 'text-white'} /> : <Menu size={22} className={scrolled ? 'text-slate-900' : 'text-white'} />}
+          {open ? <X size={24} className={scrolled ? 'text-slate-900' : 'text-white'} /> : <Menu size={24} className={scrolled ? 'text-slate-900' : 'text-white'} />}
         </button>
       </div>
 
@@ -209,7 +209,7 @@ function NavBar() {
             {['Características', 'Casos de Uso', 'Precios', 'FAQ'].map(label => (
               <a key={label} href={`#${label.toLowerCase().replace(/ /g, '-')}`}
                 onClick={() => setOpen(false)}
-                className="block text-sm font-medium text-slate-700 py-1.5">
+                className="block text-base font-medium text-slate-700 py-3 border-b border-slate-50 last:border-0">
                 {label}
               </a>
             ))}
@@ -309,7 +309,7 @@ export default function LandingPage() {
                   <div className="flex items-center justify-between mb-5">
                     <div>
                       <div className="text-white font-bold text-lg">Dashboard Coordinador</div>
-                      <div className="text-white/50 text-sm">Proyecto: Caracterización Socioeconómica Cartagena</div>
+                      <div className="text-white/50 text-sm">Proyecto: Caracterización Socioeconómica Bolívar</div>
                     </div>
                     <div className="flex items-center gap-2 bg-green-500/15 text-green-400 text-xs font-semibold px-3 py-1.5 rounded-full border border-green-500/25">
                       <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
@@ -332,10 +332,10 @@ export default function LandingPage() {
                   {/* Progress bars */}
                   <div className="space-y-2.5 mb-5">
                     {[
-                      { z: 'El Pozón', p: 72, c: 'bg-blue-500' },
-                      { z: 'La Boquilla', p: 48, c: 'bg-cyan-500' },
-                      { z: 'Nelson Mandela', p: 31, c: 'bg-orange-400' },
-                      { z: 'Boston', p: 85, c: 'bg-emerald-500' },
+                      { z: 'Arjona', p: 72, c: 'bg-blue-500' },
+                      { z: 'Turbaco', p: 48, c: 'bg-cyan-500' },
+                      { z: 'Turbana', p: 31, c: 'bg-orange-400' },
+                      { z: 'Villanueva', p: 85, c: 'bg-emerald-500' },
                     ].map(z => (
                       <div key={z.z}>
                         <div className="flex justify-between text-xs text-white/50 mb-1">
@@ -675,7 +675,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <p className="text-slate-400 text-sm leading-relaxed">Plataforma de recolección de datos en campo para caracterizaciones territoriales en Colombia.</p>
-              <div className="text-slate-500 text-xs mt-3">NIT: 901.359.114-1 · Cartagena, Colombia</div>
+              <div className="text-slate-500 text-xs mt-3">NIT: 800.100.400-2 · Bolívar, Colombia</div>
             </div>
             {[
               { title: 'Plataforma', links: ['Características', 'Precios', 'Casos de uso', 'Seguridad'] },

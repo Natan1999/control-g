@@ -8,11 +8,11 @@ import { getInitials, formatRelativeTime } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 
 const historyForms = [
-  { name: 'Ficha Socioeconómica', zone: 'El Pozón', date: new Date(Date.now() - 900000).toISOString(), status: 'synced' },
-  { name: 'Ficha Socioeconómica', zone: 'El Pozón', date: new Date(Date.now() - 3600000).toISOString(), status: 'syncing' },
-  { name: 'Ficha Socioeconómica', zone: 'El Pozón', date: new Date(Date.now() - 7200000).toISOString(), status: 'offline' },
-  { name: 'Ficha Socioeconómica', zone: 'El Pozón', date: new Date(Date.now() - 86400000).toISOString(), status: 'synced' },
-  { name: 'Ficha Socioeconómica', zone: 'El Pozón', date: new Date(Date.now() - 90000000).toISOString(), status: 'synced' },
+  { name: 'Ficha Socioeconómica', zone: 'Arjona', date: new Date(Date.now() - 900000).toISOString(), status: 'synced' },
+  { name: 'Ficha Socioeconómica', zone: 'Turbaco', date: new Date(Date.now() - 3600000).toISOString(), status: 'syncing' },
+  { name: 'Ficha Socioeconómica', zone: 'Turbana', date: new Date(Date.now() - 7200000).toISOString(), status: 'offline' },
+  { name: 'Ficha Socioeconómica', zone: 'Santa Rosa', date: new Date(Date.now() - 86400000).toISOString(), status: 'synced' },
+  { name: 'Ficha Socioeconómica', zone: 'Villanueva', date: new Date(Date.now() - 90000000).toISOString(), status: 'synced' },
 ]
 
 export default function ProfilePage() {
@@ -50,7 +50,7 @@ export default function ProfilePage() {
           <h1 className="text-white text-xl font-black">{user?.fullName}</h1>
           <p className="text-blue-200 text-sm mt-0.5">Técnico de Campo</p>
           <div className="mt-2 bg-white/15 backdrop-blur rounded-full px-3 py-1 text-xs text-white font-medium">
-            📍 Zona El Pozón — Cartagena
+            📍 Zona Norte — Bolívar
           </div>
         </div>
 

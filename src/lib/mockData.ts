@@ -2,8 +2,8 @@ import type { Organization, Project, Form, FormResponse, TeamMember, Notificatio
 
 export const mockOrganizations: Organization[] = [
   {
-    id: 'org-001', name: 'Alcaldía de Cartagena', nit: '800.100.400-2',
-    contactEmail: 'tic@cartagena.gov.co', contactPhone: '+57 5 660 0100',
+    id: 'org-001', name: 'Gobernación de Bolívar', nit: '800.100.400-2',
+    contactEmail: 'tic@bolivar.gov.co', contactPhone: '+57 5 660 0100',
     plan: 'gobierno', status: 'active', maxUsers: 200, maxForms: 50,
     maxOcrMonthly: 2000, maxStorageGb: 100,
     createdAt: '2026-01-15T08:00:00Z', updatedAt: '2026-03-01T10:00:00Z',
@@ -27,8 +27,8 @@ export const mockOrganizations: Organization[] = [
 export const mockProjects: Project[] = [
   {
     id: 'proj-001', organizationId: 'org-001', coordinatorId: 'co-001',
-    name: 'Caracterización Socioeconómica Cartagena 2026',
-    description: 'Levantamiento de información socioeconómica en los 15 corregimientos de Cartagena',
+    name: 'Caracterización Socioeconómica Bolívar 2026',
+    description: 'Levantamiento de información socioeconómica en los municipios de Bolívar',
     type: 'socioeconomica', departmentId: 13, municipalityId: 13001,
     startDate: '2026-03-01', endDate: '2026-06-30',
     targetForms: 5000, status: 'active',
@@ -158,20 +158,20 @@ export const mockDailyData: ChartDataPoint[] = [
 ]
 
 export const mockZoneData: ChartDataPoint[] = [
-  { name: 'El Pozón', value: 456, total: 600 },
-  { name: 'La Boquilla', value: 312, total: 400 },
-  { name: 'Bayunca', value: 198, total: 350 },
-  { name: 'Pasacaballo', value: 445, total: 500 },
-  { name: 'Bocachico', value: 231, total: 400 },
-  { name: 'Arroyo Grande', value: 178, total: 300 },
-  { name: 'Punta Canoa', value: 22, total: 200 },
+  { name: 'Arjona', value: 456, total: 600 },
+  { name: 'Turbaco', value: 312, total: 400 },
+  { name: 'Turbana', value: 198, total: 350 },
+  { name: 'Santa Rosa', value: 445, total: 500 },
+  { name: 'Villanueva', value: 231, total: 400 },
+  { name: 'Mahates', value: 178, total: 300 },
+  { name: 'Clemencia', value: 22, total: 200 },
 ]
 
 export const mockNotifications: Notification[] = [
   {
     id: 'notif-001', userId: 'co-001',
     title: 'Formulario pendiente de revisión',
-    body: 'Ana García envió un formulario desde El Pozón hace 15 minutos',
+    body: 'Ana García envió un formulario desde Arjona hace 15 minutos',
     type: 'sync', read: false, createdAt: new Date(Date.now() - 900000).toISOString(),
   },
   {

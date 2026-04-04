@@ -59,6 +59,8 @@ const C = {
   CHAT_MEMBERS:        'chat_members',
   CHAT_MESSAGES:       'chat_messages',
   NOTIFICATIONS:       'notifications',
+  BENEFICIARY_FAMILIES: 'beneficiary_families',
+  FAMILY_MEMBERS:       'family_members',
   SYNC_LOGS:           'sync_logs',
   AUDIT_LOGS:          'audit_logs',
 };
@@ -455,6 +457,50 @@ async function createCollections() {
   await idx(C.AUDIT_LOGS, 'idx_al_org',      'key', ['organization_id'], ['ASC']);
   await idx(C.AUDIT_LOGS, 'idx_al_user',     'key', ['user_id'],         ['ASC']);
   await idx(C.AUDIT_LOGS, 'idx_al_action',   'key', ['action'],          ['ASC']);
+  
+  // ── beneficiary_families ───────────────────────────────────────────────────
+  console.log('\n  → beneficiary_families');
+  await col(C.BENEFICIARY_FAMILIES, 'beneficiary_families');
+  await str(C.BENEFICIARY_FAMILIES, 'project_id',            36,   true);
+  await str(C.BENEFICIARY_FAMILIES, 'organization_id',       36,   true);
+  await str(C.BENEFICIARY_FAMILIES, 'zone_id',               36);
+  await str(C.BENEFICIARY_FAMILIES, 'head_first_name',       100,  true);
+  await str(C.BENEFICIARY_FAMILIES, 'head_first_lastname',   100,  true);
+  await str(C.BENEFICIARY_FAMILIES, 'head_id_number',        30);
+  await str(C.BENEFICIARY_FAMILIES, 'head_phone',            20);
+  await str(C.BENEFICIARY_FAMILIES, 'department_id',         36);
+  await str(C.BENEFICIARY_FAMILIES, 'municipality_id',       36);
+  await str(C.BENEFICIARY_FAMILIES, 'vereda',                200);
+  await str(C.BENEFICIARY_FAMILIES, 'address',               500);
+  await bol(C.BENEFICIARY_FAMILIES, 'ex_antes_completed',    false, false);
+  await str(C.BENEFICIARY_FAMILIES, 'ex_antes_response_id',  36);
+  await bol(C.BENEFICIARY_FAMILIES, 'encounter1_completed',  false, false);
+  await str(C.BENEFICIARY_FAMILIES, 'encounter1_response_id',36);
+  await bol(C.BENEFICIARY_FAMILIES, 'encounter2_completed',  false, false);
+  await str(C.BENEFICIARY_FAMILIES, 'encounter2_response_id',36);
+  await bol(C.BENEFICIARY_FAMILIES, 'encounter3_completed',  false, false);
+  await str(C.BENEFICIARY_FAMILIES, 'encounter3_response_id',36);
+  await bol(C.BENEFICIARY_FAMILIES, 'ex_post_completed',     false, false);
+  await str(C.BENEFICIARY_FAMILIES, 'ex_post_response_id',   36);
+  await int(C.BENEFICIARY_FAMILIES, 'total_members',         false, 0, null, 0);
+  await enm(C.BENEFICIARY_FAMILIES, 'status',                ['active','inactive','completed'], false, 'active');
+  await bol(C.BENEFICIARY_FAMILIES, 'consent_given',         false, false);
+  await idx(C.BENEFICIARY_FAMILIES, 'idx_fam_org',           'key',    ['organization_id'], ['ASC']);
+  await idx(C.BENEFICIARY_FAMILIES, 'idx_fam_doc',           'unique', ['head_id_number'],  ['ASC']);
+
+  // ── family_members ──────────────────────────────────────────────────────────
+  console.log('\n  → family_members');
+  await col(C.FAMILY_MEMBERS, 'family_members');
+  await str(C.FAMILY_MEMBERS, 'family_id',          36,  true);
+  await str(C.FAMILY_MEMBERS, 'full_name',          200, true);
+  await str(C.FAMILY_MEMBERS, 'birth_date',         10);
+  await int(C.FAMILY_MEMBERS, 'age');
+  await str(C.FAMILY_MEMBERS, 'family_bond',        100);
+  await str(C.FAMILY_MEMBERS, 'sex',                20);
+  await str(C.FAMILY_MEMBERS, 'id_document_type',   20);
+  await str(C.FAMILY_MEMBERS, 'id_number',          30);
+  await bol(C.FAMILY_MEMBERS, 'is_head',            false, false);
+  await idx(C.FAMILY_MEMBERS, 'idx_mem_fam',        'key',    ['family_id'], ['ASC']);
 }
 
 // ─── 3. Storage Buckets ───────────────────────────────────────────────────────

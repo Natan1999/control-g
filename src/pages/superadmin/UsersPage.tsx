@@ -7,11 +7,11 @@ import { formatDate } from '@/lib/utils'
 import type { User } from '@/types'
 
 const mockUsers: User[] = [
-  { id: 'u1', organizationId: 'org-001', fullName: 'María Rodríguez', email: 'maria@cartagena.gov.co', role: 'coordinator', status: 'active', createdAt: '2026-01-15T00:00:00Z' },
-  { id: 'u2', organizationId: 'org-001', fullName: 'Carlos Mendoza', email: 'carlos@cartagena.gov.co', role: 'assistant', status: 'active', createdAt: '2026-01-20T00:00:00Z' },
+  { id: 'u1', organizationId: 'org-001', fullName: 'María Rodríguez', email: 'maria@bolivar.gov.co', role: 'coordinator', status: 'active', createdAt: '2026-01-15T00:00:00Z' },
+  { id: 'u2', organizationId: 'org-001', fullName: 'Carlos Mendoza', email: 'carlos@bolivar.gov.co', role: 'assistant', status: 'active', createdAt: '2026-01-20T00:00:00Z' },
   { id: 'u3', organizationId: 'org-001', fullName: 'Ana García', email: 'ana@tecnicos.com', role: 'technician', status: 'active', createdAt: '2026-02-01T00:00:00Z', phone: '+57 315 123 4567' },
   { id: 'u4', organizationId: 'org-002', fullName: 'Pedro Suárez', email: 'pedro@ipse.gov.co', role: 'technician', status: 'inactive', createdAt: '2026-02-10T00:00:00Z' },
-  { id: 'u5', organizationId: 'org-001', fullName: 'Sofía Herrera', email: 'sofia@cartagena.gov.co', role: 'technician', status: 'active', createdAt: '2026-02-15T00:00:00Z' },
+  { id: 'u5', organizationId: 'org-001', fullName: 'Sofía Herrera', email: 'sofia@bolivar.gov.co', role: 'technician', status: 'active', createdAt: '2026-02-15T00:00:00Z' },
   { id: 'u6', organizationId: 'org-003', fullName: 'Luis Martínez', email: 'luis@fundacion.org', role: 'coordinator', status: 'suspended', createdAt: '2026-02-20T00:00:00Z' },
 ]
 
