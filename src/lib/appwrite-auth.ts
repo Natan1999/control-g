@@ -66,7 +66,18 @@ function mapError(err: unknown): Error {
  */
 export async function login(email: string, password: string): Promise<AuthUser> {
   try {
-    await account.createEmailPasswordSession(email, password);
+    try {
+      await account.createEmailPasswordSession(email, password);
+    } catch (sessionErr: any) {
+      if (sessionErr instanceof AppwriteException && 
+         (sessionErr.type === 'user_session_already_exists' || sessionErr.message.includes('session is active'))) {
+        // Cierra la sesión previa si existe e intenta de nuevo
+        await account.deleteSession('current').catch(() => {});
+        await account.createEmailPasswordSession(email, password);
+      } else {
+        throw sessionErr;
+      }
+    }
     return await getCurrentUser();
   } catch (err) {
     throw mapError(err);

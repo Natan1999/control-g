@@ -77,24 +77,24 @@ async function safeCreate(label, fn) {
 
 // ─── 1. Organización de prueba ────────────────────────────────────────────────
 
-const ORG_ID = 'org_alcaldia_cartagena';
+const ORG_ID = 'org_gobernacion_bolivar';
 
 async function createTestOrganization() {
   console.log('\n🏛   Creando organización de prueba...');
 
-  await safeCreate('Organización: Alcaldía de Cartagena', () =>
+  await safeCreate('Organización: Gobernación de Bolívar', () =>
     databases.createDocument(
       DATABASE_ID,
       COLLECTIONS.ORGANIZATIONS,
       ORG_ID,
       {
-        name:             'Alcaldía de Cartagena',
-        nit:              '800099518-0',
-        contact_name:     'Oficina de Planeación',
-        contact_email:    'planeacion@alcaldia-cartagena.gov.co',
-        contact_phone:    '+57 5 6600900',
-        address:          'Plaza de la Aduana, Cartagena de Indias',
-        city:             'Cartagena de Indias',
+        name:             'Gobernación de Bolívar',
+        nit:              '890480306-7',
+        contact_name:     'Secretaría de Planeación',
+        contact_email:    'planeacion@bolivar.gov.co',
+        contact_phone:    '+57 5 6517444',
+        address:          'Centro Administrativo Departamental (CAD), Turbaco',
+        city:             'Turbaco',
         department:       'Bolívar',
         country:          'CO',
         plan:             'gobierno',
@@ -121,41 +121,33 @@ async function createTestOrganization() {
 
 const TEST_USERS = [
   {
-    email:    'admin@drandigital.com',
+    email:    'superadmin@controlg.co',
     password: 'Control@2026!',
-    name:     'Natan Chiquillo',
+    name:     'Superadmin Control G',
     role:     'superadmin',
-    orgId:    null,          // el superadmin no pertenece a ninguna org específica
+    orgId:    null,
     team:     'superadmins',
   },
   {
-    email:    'coordinador@alcaldia-cartagena.gov.co',
+    email:    'coordinador@controlg.co',
     password: 'Control@2026!',
-    name:     'María Coordinadora',
+    name:     'Coordinador Bolívar',
     role:     'coordinator',
     orgId:    ORG_ID,
     team:     'coordinators',
   },
   {
-    email:    'asistente@alcaldia-cartagena.gov.co',
+    email:    'asistente@controlg.co',
     password: 'Control@2026!',
-    name:     'Carlos Asistente',
+    name:     'Asistente Bolívar',
     role:     'assistant',
     orgId:    ORG_ID,
     team:     'assistants',
   },
   {
-    email:    'tecnico1@alcaldia-cartagena.gov.co',
+    email:    'tecnico@controlg.co',
     password: 'Control@2026!',
-    name:     'Ana García',
-    role:     'technician',
-    orgId:    ORG_ID,
-    team:     'technicians',
-  },
-  {
-    email:    'tecnico2@alcaldia-cartagena.gov.co',
-    password: 'Control@2026!',
-    name:     'Luis Martínez',
+    name:     'Técnico Bolívar',
     role:     'technician',
     orgId:    ORG_ID,
     team:     'technicians',
@@ -450,16 +442,17 @@ async function seedDemoProject(coordinatorUserId) {
 // ─── 9. Formulario demo ───────────────────────────────────────────────────────
 
 async function seedDemoForm(coordinatorUserId) {
-  console.log('\n📝  Creando formulario demo...');
+  console.log('\n📝  Creando formulario demo (Gobernación Bolívar)...');
 
   const schema = {
     version: 1,
     sections: [
       {
         id:     'sec_identificacion',
-        title:  'Identificación del Hogar',
+        title:  'Identificación del Hogar (Gobernación de Bolívar)',
         fields: [
           { id: 'f_direccion',   type: 'text',     label: 'Dirección',           required: true  },
+          { id: 'f_municipio',   type: 'select',   label: 'Municipio de Bolívar', required: true, options: ['Turbaco', 'Arjona', 'Santa Rosa', 'Mahates'] },
           { id: 'f_estrato',     type: 'select',   label: 'Estrato',             required: true,  options: ['1','2','3','4','5','6'] },
           { id: 'f_num_personas', type: 'number',  label: 'Número de personas',  required: true,  min: 1, max: 20 },
         ],
@@ -557,14 +550,14 @@ async function main() {
     console.log('╚══════════════════════════════════════════════╝');
     console.log(`\n⏱   Tiempo total: ${elapsed}s`);
     console.log('\n📋  Datos creados:');
-    console.log('   • 1 organización (Alcaldía de Cartagena)');
-    console.log('   • 5 usuarios de prueba');
-    console.log('   • 5 perfiles de usuario');
+    console.log('   • 1 organización (Gobernación de Bolívar)');
+    console.log('   • 4 usuarios de prueba');
+    console.log('   • 4 perfiles de usuario');
     console.log(`   • ${DEPARTAMENTOS.length} departamentos de Colombia`);
     console.log(`   • ${MUNICIPIOS.length} municipios principales`);
-    console.log('   • 8 zonas de Cartagena');
-    console.log('   • 1 proyecto demo');
-    console.log('   • 1 formulario demo publicado');
+    console.log('   • 8 zonas de Cartagena (Demo)');
+    console.log('   • 1 proyecto demo Bolívar');
+    console.log('   • 1 formulario demo publicado Bolívar');
     console.log('\n🔑  Credenciales de prueba:');
     for (const u of TEST_USERS) {
       console.log(`   • ${u.role.padEnd(12)} ${u.email}  /  ${u.password}`);
