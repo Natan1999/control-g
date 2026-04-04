@@ -322,7 +322,7 @@ export default function GeographyPage() {
               </div>
               <div>
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Zonas Personalizadas</p>
-                <p className="text-2xl font-bold">0</p>
+                <p className="text-2xl font-bold">{zones.length}</p>
               </div>
             </motion.div>
           </div>
