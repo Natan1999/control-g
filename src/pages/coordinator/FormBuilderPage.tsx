@@ -11,7 +11,7 @@ import { TopBar } from '@/components/layout/Sidebar'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
 import { ID, Query } from 'appwrite'
 import { useAuthStore } from '@/stores/authStore'
-import { FormField, FormDefinition, FormPage, FormFieldType, ActivityType } from '@/types'
+import { FormField, FormDefinition, FormPage, FormFieldType, ActivityType, Entity } from '@/types'
 
 const COLORS = {
   primary: '#0038A8',   // Royal Blue
@@ -56,6 +56,33 @@ export default function FormBuilderPage() {
   const [saving, setSaving] = useState(false)
   const [preview, setPreview] = useState(false)
   const [toast, setToast] = useState('')
+  
+  // Super Admin specific state
+  const [entities, setEntities] = useState<Entity[]>([])
+  const [selectedEntityId, setSelectedEntityId] = useState<string>(user?.entityId || '')
+
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      const fetchEntities = async () => {
+        try {
+          const res = await databases.listDocuments(DATABASE_ID, COLLECTION_IDS.ENTITIES, [
+            Query.orderDesc('$createdAt'),
+            Query.limit(100)
+          ])
+          setEntities(res.documents as unknown as Entity[])
+        } catch (err) {
+          console.error('Error fetching entities:', err)
+        }
+      }
+      fetchEntities()
+    }
+  }, [user?.role])
+
+  useEffect(() => {
+    if (user?.entityId && !selectedEntityId) {
+      setSelectedEntityId(user.entityId)
+    }
+  }, [user?.entityId, selectedEntityId])
 
   const activePage = form.pages![activePageIdx]
 
@@ -99,11 +126,14 @@ export default function FormBuilderPage() {
   }
 
   const handleSave = async () => {
-    if (!user?.entityId) return
+    if (!selectedEntityId) {
+      setToast('Debes seleccionar una entidad')
+      return
+    }
     setSaving(true)
     try {
       const payload = {
-        entity_id: user.entityId,
+        entity_id: selectedEntityId,
         title: form.title,
         type: form.type,
         definition: JSON.stringify(form.pages),
@@ -126,9 +156,21 @@ export default function FormBuilderPage() {
     <div className="flex flex-col h-screen bg-slate-50 overflow-hidden">
       <TopBar 
         title={form.title || 'Diseño de Formulario'}
-        subtitle="Constructor universal de caracterizaciones"
+        subtitle={user?.role === 'admin' ? "Constructor de formularios para cualquier entidad" : "Constructor universal de caracterizaciones"}
         actions={
           <div className="flex items-center gap-3">
+             {user?.role === 'admin' && (
+              <select
+                value={selectedEntityId}
+                onChange={(e) => setSelectedEntityId(e.target.value)}
+                className="px-4 py-2 bg-slate-100 border-none rounded-xl text-xs font-bold text-slate-700 focus:ring-2 focus:ring-blue-500/20"
+              >
+                <option value="">Seleccionar Entidad...</option>
+                {entities.map(e => (
+                  <option key={e.id} value={e.id}>{e.name}</option>
+                ))}
+              </select>
+            )}
             <button 
               onClick={() => setPreview(!preview)}
               className="flex items-center gap-2 px-4 py-2 text-slate-600 font-bold hover:bg-slate-100 rounded-xl transition-all"
@@ -143,7 +185,7 @@ export default function FormBuilderPage() {
               style={{ background: COLORS.primary }}
             >
               <Save size={18} />
-              {saving ? 'Guardando...' : 'Publicar Formulario'}
+              {saving ? 'Guardando...' : 'Publicar'}
             </button>
           </div>
         }

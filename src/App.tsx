@@ -110,6 +110,7 @@ export default function App() {
             <Routes>
               <Route index element={<AdminDashboard />} />
               <Route path="entities" element={<AdminEntitiesPage />} />
+              <Route path="forms" element={<FormBuilderPage />} />
               <Route path="settings" element={<AdminSettingsPage />} />
             </Routes>
           </DashboardLayout>

@@ -35,7 +35,7 @@ export default function AdminSettingsPage() {
           <div className="space-y-3 text-sm">
             <div><span className="text-muted-foreground">Nombre:</span> <span className="font-medium">{user?.fullName}</span></div>
             <div><span className="text-muted-foreground">Email:</span> <span className="font-medium">{user?.email}</span></div>
-            <div><span className="text-muted-foreground">Rol:</span> <span className="font-medium">Administrador</span></div>
+            <div><span className="text-muted-foreground">Rol:</span> <span className="font-medium text-blue-600">Super Administrador</span></div>
           </div>
         </div>
 

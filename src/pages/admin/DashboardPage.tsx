@@ -43,7 +43,7 @@ export default function AdminDashboard() {
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <TopBar
-        title="Dashboard Administrador"
+        title="Dashboard Super Administrador"
         subtitle="Gestión global de entidades — DRAN Digital S.A.S."
         actions={
           <button

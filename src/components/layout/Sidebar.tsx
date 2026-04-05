@@ -22,6 +22,7 @@ const navItems: Record<UserRole, NavItem[]> = {
   admin: [
     { path: '/admin',          label: 'Dashboard',     icon: <LayoutDashboard size={18} /> },
     { path: '/admin/entities', label: 'Entidades',     icon: <Building2 size={18} /> },
+    { path: '/admin/forms',    label: 'Formularios',   icon: <ClipboardList size={18} /> },
     { path: '/admin/settings', label: 'Configuración', icon: <Settings size={18} /> },
   ],
   coordinator: [
@@ -43,7 +44,7 @@ const navItems: Record<UserRole, NavItem[]> = {
 }
 
 const rolLabels: Record<UserRole, string> = {
-  admin: 'Administrador',
+  admin: 'Super Administrador',
   coordinator: 'Coordinador',
   support: 'Apoyo Administrativo',
   professional: 'Profesional de Campo',
