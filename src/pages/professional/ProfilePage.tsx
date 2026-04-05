@@ -6,10 +6,11 @@ import { useAuthStore } from '@/stores/authStore'
 import { useSyncStore } from '@/stores/syncStore'
 import { getInitials } from '@/lib/utils'
 import { cn } from '@/lib/utils'
+import { processSyncQueue, updateLocalCache } from '@/lib/sync-engine'
 
 export default function FieldProfilePage() {
   const { user, signOut } = useAuthStore()
-  const { status, pendingCount, setSyncComplete, setStatus } = useSyncStore()
+  const { status, pendingCount, setStatus } = useSyncStore()
   const navigate = useNavigate()
 
   const [pwForm, setPwForm] = useState({ current: '', next: '', confirm: '' })
@@ -20,9 +21,16 @@ export default function FieldProfilePage() {
     navigate('/login')
   }
 
-  const handleSync = () => {
+  const handleSync = async () => {
     setStatus('syncing')
-    setTimeout(() => setSyncComplete(), 2000)
+    try {
+      await processSyncQueue()
+      if (user?.entityId) {
+        await updateLocalCache(user.entityId)
+      }
+    } catch {
+      setStatus('error')
+    }
   }
 
   const handlePwSubmit = (e: React.FormEvent) => {

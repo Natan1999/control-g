@@ -11,6 +11,7 @@ import {
   getSession,
   type UserProfile,
 } from '@/lib/appwrite-auth'
+import { updateLocalCache } from '@/lib/sync-engine'
 
 function profileToUser(profile: UserProfile, email: string): User {
   return {
@@ -61,6 +62,10 @@ export const useAuthStore = create<AuthState>()(
           }
           const user = profileToUser(authUser.profile, authUser.email)
           set({ user, profileId: authUser.profile.$id, isAuthenticated: true, isLoading: false, error: null })
+          // Pre-cache offline data for field professionals
+          if (user.entityId) {
+            updateLocalCache(user.entityId).catch(() => {})
+          }
         } catch (err) {
           const msg = err instanceof Error ? err.message : 'Error al iniciar sesión'
           set({ isLoading: false, error: msg, isAuthenticated: false, user: null })

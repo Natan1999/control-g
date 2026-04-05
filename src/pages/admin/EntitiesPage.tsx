@@ -2,29 +2,32 @@ import { useState, useEffect } from 'react'
 import { Plus, Building2, X, ChevronDown, Search, MapPin, Calendar, Users, Mail, Hash } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TopBar } from '@/components/layout/Sidebar'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
+import { account, databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
 import { ID, Query } from 'appwrite'
 import { getDepartments, getMunicipalities, Department, Municipality } from '@/services/geographyService'
 
 interface EntityForm {
-  name: string; 
-  nit: string; 
-  contract_number: string; 
+  name: string;
+  nit: string;
+  contract_number: string;
   contract_object: string;
-  operator_name: string; 
+  operator_name: string;
   department_id: string;
   department_name: string;
-  period_start: string; 
+  period_start: string;
   period_end: string;
-  families_per_municipality: number; 
+  families_per_municipality: number;
+  coordinator_name: string;
   coordinator_email: string;
+  coordinator_password: string;
   municipalities: { id: string; name: string }[];
 }
 
 const EMPTY_FORM: EntityForm = {
   name: '', nit: '', contract_number: '', contract_object: '', operator_name: '',
   department_id: '', department_name: '', period_start: '', period_end: '',
-  families_per_municipality: 35, coordinator_email: '', municipalities: [],
+  families_per_municipality: 35, coordinator_name: '', coordinator_email: '',
+  coordinator_password: '', municipalities: [],
 }
 
 const COLORS = {
@@ -116,48 +119,71 @@ export default function AdminEntitiesPage() {
     }))
 
   async function handleSave() {
-    if (!form.name || !form.contract_number || !form.period_start || !form.period_end || !form.coordinator_email) {
+    if (!form.name || !form.contract_number || !form.period_start || !form.period_end ||
+        !form.coordinator_email || !form.coordinator_name || !form.coordinator_password) {
       showToast('Completa todos los campos obligatorios (*)', 'error')
+      return
+    }
+    if (form.coordinator_password.length < 8) {
+      showToast('La contraseña del coordinador debe tener al menos 8 caracteres', 'error')
       return
     }
 
     setSaving(true)
     try {
-      // 1. Create Entity
+      // 1. Create Appwrite Auth account for coordinator
+      let coordinatorUserId = ''
+      try {
+        const authUser = await account.create(
+          ID.unique(),
+          form.coordinator_email,
+          form.coordinator_password,
+          form.coordinator_name,
+        )
+        coordinatorUserId = authUser.$id
+      } catch (authErr: any) {
+        // 409 = account already exists — link by email, profile created next
+        if (authErr?.code !== 409) throw authErr
+        showToast('Email ya registrado — creando perfil vinculado', 'success')
+      }
+
+      // 2. Create Entity
       const entity = await databases.createDocument(DATABASE_ID, COLLECTION_IDS.ENTITIES, ID.unique(), {
-        name: form.name, 
-        nit: form.nit, 
+        name: form.name,
+        nit: form.nit,
         contract_number: form.contract_number,
-        contract_object: form.contract_object, 
+        contract_object: form.contract_object,
         operator_name: form.operator_name,
-        department: form.department_name, 
-        period_start: form.period_start, 
+        department: form.department_name,
+        period_start: form.period_start,
         period_end: form.period_end,
-        families_per_municipality: form.families_per_municipality, 
+        families_per_municipality: form.families_per_municipality,
         status: 'active',
         created_by: form.coordinator_email,
       })
 
-      // 2. Create municipalities linkages
+      // 3. Create municipality records
       for (const mun of form.municipalities) {
         await databases.createDocument(DATABASE_ID, COLLECTION_IDS.ENTITY_MUNICIPALITIES, ID.unique(), {
-          entity_id: entity.$id, 
-          municipality_name: mun.name, 
+          entity_id: entity.$id,
+          municipality_name: mun.name,
           department: form.department_name,
           families_target: form.families_per_municipality,
+          dane_code: mun.id,
         })
       }
 
-      // 3. Register Coordinator (Initial Metadata Profile)
+      // 4. Create coordinator profile linked to entity
       await databases.createDocument(DATABASE_ID, COLLECTION_IDS.USER_PROFILES, ID.unique(), {
-        full_name: `Coordinador - ${form.name}`,
+        ...(coordinatorUserId ? { user_id: coordinatorUserId } : {}),
+        full_name: form.coordinator_name,
         email: form.coordinator_email,
         role: 'coordinator',
         entity_id: entity.$id,
         status: 'active',
       })
 
-      showToast(`Entidad "${form.name}" creada exitosamente`)
+      showToast(`Entidad "${form.name}" y coordinador creados exitosamente`)
       setShowForm(false)
       setForm(EMPTY_FORM)
       loadEntities()
@@ -413,17 +439,34 @@ export default function AdminEntitiesPage() {
 
                   <div className="md:col-span-2 mb-2 mt-4 flex items-center gap-2">
                     <span className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xs">3</span>
-                    <h4 className="font-bold text-slate-800">Vigencia y Gestión</h4>
+                    <h4 className="font-bold text-slate-800">Coordinador General &amp; Vigencia</h4>
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Nombre Completo del Coordinador *</label>
+                    <div className="relative">
+                      <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                      <input value={form.coordinator_name} onChange={e => setForm(f => ({ ...f, coordinator_name: e.target.value }))}
+                        placeholder="Ej: María Fernanda González"
+                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner" />
+                    </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Email Coordinador Designado *</label>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Email Coordinador *</label>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                       <input type="email" value={form.coordinator_email} onChange={e => setForm(f => ({ ...f, coordinator_email: e.target.value }))}
                         placeholder="coordinador@proyecto.com"
                         className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner" />
                     </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Contraseña Temporal * (mín. 8 caracteres)</label>
+                    <input type="password" value={form.coordinator_password} onChange={e => setForm(f => ({ ...f, coordinator_password: e.target.value }))}
+                      placeholder="Contraseña temporal segura"
+                      className="w-full px-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner" />
                   </div>
 
                   <div>
