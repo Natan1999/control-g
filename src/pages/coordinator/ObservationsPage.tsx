@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { MessageSquare, Plus, X, Eye, ChevronDown } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { PageWrapper } from '@/components/shared'
@@ -33,11 +33,7 @@ export default function ObservationsPage() {
   const defaultForm = { to_user_id: '', content: '', type: 'observation' as ObservationType }
   const [form, setForm] = useState({ ...defaultForm })
 
-  useEffect(() => {
-    if (user?.entityId) loadAll()
-  }, [user?.entityId])
-
-  async function loadAll() {
+  const loadAll = useCallback(async () => {
     setLoading(true)
     try {
       const [obsRes, profRes] = await Promise.all([
@@ -60,7 +56,11 @@ export default function ObservationsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user])
+
+  useEffect(() => {
+    if (user?.entityId) loadAll()
+  }, [user?.entityId, loadAll])
 
   function getUserName(id: string): string {
     const found = professionals.find(p => p.$id === id || p.user_id === id)

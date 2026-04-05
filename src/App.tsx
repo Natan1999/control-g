@@ -23,6 +23,7 @@ import CoordReportsPage from '@/pages/coordinator/ReportsPage'
 import CoordObservationsPage from '@/pages/coordinator/ObservationsPage'
 import CoordSettingsPage from '@/pages/coordinator/SettingsPage'
 import FormBuilderPage from '@/pages/coordinator/FormBuilderPage'
+import FormsListPage from '@/pages/shared/FormsListPage'
 
 // Apoyo Administrativo
 import ApoyoDashboard from '@/pages/apoyo/DashboardPage'
@@ -110,7 +111,9 @@ export default function App() {
             <Routes>
               <Route index element={<AdminDashboard />} />
               <Route path="entities" element={<AdminEntitiesPage />} />
-              <Route path="forms" element={<FormBuilderPage />} />
+              <Route path="forms" element={<FormsListPage />} />
+              <Route path="forms/new" element={<FormBuilderPage />} />
+              <Route path="forms/edit/:id" element={<FormBuilderPage />} />
               <Route path="settings" element={<AdminSettingsPage />} />
             </Routes>
           </DashboardLayout>
@@ -128,7 +131,9 @@ export default function App() {
               <Route path="families" element={<CoordFamiliesPage />} />
               <Route path="reports" element={<CoordReportsPage />} />
               <Route path="observations" element={<CoordObservationsPage />} />
-              <Route path="forms" element={<FormBuilderPage />} />
+              <Route path="forms" element={<FormsListPage />} />
+              <Route path="forms/new" element={<FormBuilderPage />} />
+              <Route path="forms/edit/:id" element={<FormBuilderPage />} />
               <Route path="settings" element={<CoordSettingsPage />} />
             </Routes>
           </DashboardLayout>

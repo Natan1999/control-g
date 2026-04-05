@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Users, Mail, X, ChevronRight } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
@@ -31,9 +31,7 @@ export default function ApoyoProfessionalsPage() {
   const [loading, setLoading] = useState(true)
   const [selectedPro, setSelectedPro] = useState<ProfessionalRow | null>(null)
 
-  useEffect(() => { load() }, [user?.entityId])
-
-  async function load() {
+  const load = useCallback(async () => {
     if (!user?.entityId) { setLoading(false); return }
     setLoading(true)
     try {
@@ -45,7 +43,7 @@ export default function ApoyoProfessionalsPage() {
         ]),
         databases.listDocuments(DATABASE_ID, COLLECTION_IDS.FAMILIES, [
           Query.equal('entity_id', user.entityId),
-          Query.limit(500),
+          Query.limit(1000),
         ]),
       ])
 
@@ -84,7 +82,9 @@ export default function ApoyoProfessionalsPage() {
       setProfessionals(rows)
     } catch { /* silent */ }
     setLoading(false)
-  }
+  }, [user?.entityId])
+
+  useEffect(() => { load() }, [load])
 
   const statusDot = (s: string) =>
     s === 'completed'

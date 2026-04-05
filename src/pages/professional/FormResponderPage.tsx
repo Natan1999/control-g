@@ -17,24 +17,36 @@ const FormResponderPage: React.FC = () => {
 
   useEffect(() => {
     const loadForm = async () => {
+      if (!formId) return
+      setLoading(true)
+
       try {
-        if (!formId) return
-        
-        // 1. Try to load from Appwrite (could be cached by service worker if offline)
-        // In a full production offline-first app, we'd sync 'forms' definitions to Dexie on login
-        const doc = await databases.getDocument(
-          DATABASE_ID,
-          COLLECTION_IDS.FORMS,
-          formId
-        )
+        let doc: any
+
+        try {
+          // 1. Try to load from Appwrite
+          doc = await databases.getDocument(
+            DATABASE_ID,
+            COLLECTION_IDS.FORMS,
+            formId
+          )
+        } catch (apiError) {
+          console.warn('Network error loading form, trying local cache...', apiError)
+          // 2. Try to load from local cache
+          const cachedRaw = localStorage.getItem(`cg_forms_${user?.entityId}`)
+          const cachedForms = cachedRaw ? JSON.parse(cachedRaw) : []
+          doc = cachedForms.find((f: any) => f.$id === formId)
+          
+          if (!doc) throw apiError // If still not found, fail
+        }
 
         setFormDef({
           id: doc.$id,
           entityId: doc.entity_id || '',
-          title: doc.name,
-          description: doc.description,
+          title: doc.name || doc.title || '',
+          description: doc.description || '',
           type: doc.type || 'ex_ante',
-          pages: JSON.parse(doc.pages_json || '[]'),
+          pages: JSON.parse(doc.pages_json || doc.definition || '[]'),
           status: doc.status || 'published',
           version: doc.v || 1,
           createdAt: doc.$createdAt,
@@ -42,15 +54,13 @@ const FormResponderPage: React.FC = () => {
         } as FormDefinition)
       } catch (error) {
         console.error('Error loading form:', error)
-        // If offline and request fails, we might want to alert the user or try a local fallback
-        // For now, if we can't get the definition, we can't render the form.
       } finally {
         setLoading(false)
       }
     }
 
     loadForm()
-  }, [formId])
+  }, [formId, user?.entityId])
 
   const handleSubmit = async (answers: Record<string, any>) => {
     if (!formDef || !user) return

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { AlertCircle, Plus, X } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
@@ -50,9 +50,7 @@ export default function ApoyoObservationsPage() {
   const [submitting, setSubmitting] = useState(false)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
-  useEffect(() => { load() }, [user?.entityId])
-
-  async function load() {
+  const loadObservations = useCallback(async () => {
     if (!user?.entityId || !user?.id) { setLoading(false); return }
     setLoading(true)
     try {
@@ -87,7 +85,7 @@ export default function ApoyoObservationsPage() {
           type: o.type,
           read: o.read,
           $createdAt: o.$createdAt,
-          fromName: o.from_user_id === user!.id ? user!.fullName : profMap[o.from_user_id] ?? o.from_user_id,
+          fromName: o.from_user_id === user.id ? user.fullName : profMap[o.from_user_id] ?? o.from_user_id,
           toName: profMap[o.to_user_id] ?? o.to_user_id,
         }))
       }
@@ -109,7 +107,7 @@ export default function ApoyoObservationsPage() {
             type: o.type,
             read: o.read,
             $createdAt: o.$createdAt,
-            fromName: user!.fullName,
+            fromName: user.fullName,
             toName: profMap[o.to_user_id] ?? o.to_user_id,
           }))
         allObs = [...allObs, ...fromObs]
@@ -119,7 +117,9 @@ export default function ApoyoObservationsPage() {
       setObservations(allObs)
     } catch { /* silent */ }
     setLoading(false)
-  }
+  }, [user?.entityId, user?.id, user?.fullName])
+
+  useEffect(() => { loadObservations() }, [loadObservations])
 
   async function createObservation() {
     if (!form.professionalId || !form.content.trim() || !user?.id || !user?.entityId) return
@@ -136,7 +136,7 @@ export default function ApoyoObservationsPage() {
       setShowModal(false)
       setForm({ professionalId: '', content: '', type: 'observation' })
       setToast({ message: 'Observación enviada exitosamente', type: 'success' })
-      await load()
+      await loadObservations()
     } catch {
       setToast({ message: 'Error al crear la observación', type: 'error' })
     }

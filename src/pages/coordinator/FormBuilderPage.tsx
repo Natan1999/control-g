@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { 
   Plus, Save, Eye, Hash, Type, AlignLeft, Calendar, Clock, 
   ChevronDown, CheckSquare, List, Radio as RadioIcon, 
@@ -7,6 +7,7 @@ import {
   ChevronRight, ChevronLeft, Layout, Globe, X
 } from 'lucide-react'
 import { motion, Reorder, AnimatePresence } from 'framer-motion'
+import { useParams, useNavigate } from 'react-router-dom'
 import { TopBar } from '@/components/layout/Sidebar'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
 import { ID, Query } from 'appwrite'
@@ -45,14 +46,18 @@ const FIELD_TYPES: { type: FormFieldType; label: string; icon: any; category: st
 
 export default function FormBuilderPage() {
   const { user } = useAuthStore()
+  const { id } = useParams()
+  const navigate = useNavigate()
   const [form, setForm] = useState<Partial<FormDefinition>>({
     title: 'Nueva Caracterización',
     type: 'ex_ante',
     pages: [{ id: 'p1', title: 'Página 1', fields: [] }],
-    status: 'draft'
+    status: 'draft',
+    version: 1
   })
   const [activePageIdx, setActivePageIdx] = useState(0)
   const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null)
+  const [loading, setLoading] = useState(!!id)
   const [saving, setSaving] = useState(false)
   const [preview, setPreview] = useState(false)
   const [toast, setToast] = useState('')
@@ -79,10 +84,41 @@ export default function FormBuilderPage() {
   }, [user?.role])
 
   useEffect(() => {
-    if (user?.entityId && !selectedEntityId) {
+    if (id) {
+      const fetchForm = async () => {
+        setLoading(true)
+        try {
+          const doc = await databases.getDocument(DATABASE_ID, COLLECTION_IDS.FORMS, id)
+          const data = doc as unknown as any
+          
+          let pages = []
+          try {
+            pages = data.definition ? JSON.parse(data.definition) : []
+          } catch (pErr) {
+            console.warn('Malformed form definition, resetting to empty:', pErr)
+          }
+
+          setForm({
+            ...data,
+            pages
+          })
+          setSelectedEntityId(data.entity_id)
+        } catch (err) {
+          console.error('Error fetching form:', err)
+          setToast('Error al cargar el formulario')
+        } finally {
+          setLoading(false)
+        }
+      }
+      fetchForm()
+    }
+  }, [id])
+
+  useEffect(() => {
+    if (user?.entityId && !selectedEntityId && !id) {
       setSelectedEntityId(user.entityId)
     }
-  }, [user?.entityId, selectedEntityId])
+  }, [user?.entityId, selectedEntityId, id])
 
   const activePage = form.pages![activePageIdx]
 
@@ -125,7 +161,7 @@ export default function FormBuilderPage() {
     setActivePageIdx(form.pages!.length)
   }
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     if (!selectedEntityId) {
       setToast('Debes seleccionar una entidad')
       return
@@ -138,25 +174,34 @@ export default function FormBuilderPage() {
         type: form.type,
         definition: JSON.stringify(form.pages),
         status: form.status,
-        version: 1,
+        version: form.version || 1,
       }
       
-      await databases.createDocument(DATABASE_ID, COLLECTION_IDS.FORMS, ID.unique(), payload)
-      setToast('Formulario guardado con éxito')
-      setTimeout(() => setToast(''), 3000)
+      if (id) {
+        await databases.updateDocument(DATABASE_ID, COLLECTION_IDS.FORMS, id, payload)
+        setToast('Cambios guardados con éxito')
+      } else {
+        await databases.createDocument(DATABASE_ID, COLLECTION_IDS.FORMS, ID.unique(), payload)
+        setToast('Formulario creado con éxito')
+      }
+      
+      setTimeout(() => {
+        setToast('')
+        navigate(user?.role === 'admin' ? '/admin/forms' : '/coord/forms')
+      }, 2000)
     } catch (err) {
       console.error(err)
       setToast('Error al guardar')
     } finally {
       setSaving(false)
     }
-  }
+  }, [selectedEntityId, form, id, navigate, user?.role])
 
   return (
     <div className="flex flex-col h-screen bg-slate-50 overflow-hidden">
       <TopBar 
         title={form.title || 'Diseño de Formulario'}
-        subtitle={user?.role === 'admin' ? "Constructor de formularios para cualquier entidad" : "Constructor universal de caracterizaciones"}
+        subtitle={id ? `Editando: ${form.title}` : (user?.role === 'admin' ? "Constructor de formularios para cualquier entidad" : "Constructor universal de caracterizaciones")}
         actions={
           <div className="flex items-center gap-3">
              {user?.role === 'admin' && (

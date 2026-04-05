@@ -12,6 +12,43 @@ const LAYER_DEPARTAMENTO = 319;
 const LAYER_MUNICIPIO = 317;
 const LAYER_CENTRO_POBLADO = 305;
 
+// Fallback estático DIVIPOLA (32 Departamentos + Bogotá DC)
+const COLOMBIA_DEPARTMENTS: Department[] = [
+  { id: '05', name: 'ANTIOQUIA' },
+  { id: '08', name: 'ATLÁNTICO' },
+  { id: '11', name: 'BOGOTÁ, D.C.' },
+  { id: '13', name: 'BOLÍVAR' },
+  { id: '15', name: 'BOYACÁ' },
+  { id: '17', name: 'CALDAS' },
+  { id: '18', name: 'CAQUETÁ' },
+  { id: '19', name: 'CAUCA' },
+  { id: '20', name: 'CESAR' },
+  { id: '23', name: 'CÓRDOBA' },
+  { id: '25', name: 'CUNDINAMARCA' },
+  { id: '27', name: 'CHOCÓ' },
+  { id: '41', name: 'HUILA' },
+  { id: '44', name: 'LA GUAJIRA' },
+  { id: '47', name: 'MAGDALENA' },
+  { id: '50', name: 'META' },
+  { id: '52', name: 'NARIÑO' },
+  { id: '54', name: 'NORTE DE SANTANDER' },
+  { id: '63', name: 'QUINDÍO' },
+  { id: '66', name: 'RISARALDA' },
+  { id: '68', name: 'SANTANDER' },
+  { id: '70', name: 'SUCRE' },
+  { id: '73', name: 'TOLIMA' },
+  { id: '76', name: 'VALLE DEL CAUCA' },
+  { id: '81', name: 'ARAUCA' },
+  { id: '85', name: 'CASANARE' },
+  { id: '86', name: 'PUTUMAYO' },
+  { id: '88', name: 'ARCHIPIÉLAGO DE SAN ANDRÉS, PROVIDENCIA Y SANTA CATALINA' },
+  { id: '91', name: 'AMAZONAS' },
+  { id: '94', name: 'GUAINÍA' },
+  { id: '95', name: 'GUAVIARE' },
+  { id: '97', name: 'VAUPÉS' },
+  { id: '99', name: 'VICHADA' }
+].sort((a, b) => a.name.localeCompare(b.name));
+
 export interface Department {
   id: string;
   name: string;
@@ -41,13 +78,12 @@ export async function getDepartments(): Promise<Department[]> {
     });
 
     const response = await fetch(`${DANE_ARCGIS_BASE}/${LAYER_DEPARTAMENTO}/query?${params.toString()}`);
-    if (!response.ok) throw new Error('Error al consultar departamentos en DANE ArcGIS');
+    if (!response.ok) throw new Error('CORS o Servidor DANE no responde');
 
     const data = await response.json();
-    
-    // Deduplicación estricta por código (DIVIPOLA exige 33 registros: 32 deptos + Bogotá)
+    if (!data.features) throw new Error('Formato DANE inválido');
+
     const uniqueDepts = new Map<string, Department>();
-    
     data.features.forEach((f: any) => {
       const id = f.attributes.DPTO_CCDGO;
       const name = f.attributes.DPTO_CNMBRE;
@@ -59,15 +95,10 @@ export async function getDepartments(): Promise<Department[]> {
     const result = Array.from(uniqueDepts.values())
       .sort((a, b) => a.name.localeCompare(b.name));
 
-    // Validar caso crítico de 33 entidades
-    if (result.length < 30) {
-      console.warn(`DANE API retornó solo ${result.length} departamentos. Usando fallback parcial.`);
-    }
-
-    return result;
+    return result.length > 0 ? result : COLOMBIA_DEPARTMENTS;
   } catch (error) {
-    console.error('Error fetching departments:', error);
-    return [{ id: '13', name: 'BOLÍVAR' }]; // Fallback básico
+    console.warn('Usando fallback DIVIPOLA por error en DANE ArcGIS API:', (error as Error).message);
+    return COLOMBIA_DEPARTMENTS;
   }
 }
 

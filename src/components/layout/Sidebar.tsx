@@ -32,6 +32,7 @@ const navItems: Record<UserRole, NavItem[]> = {
     { path: '/coord/families',       label: 'Familias',       icon: <UserCheck size={18} /> },
     { path: '/coord/reports',        label: 'Informes',       icon: <BarChart2 size={18} /> },
     { path: '/coord/observations',   label: 'Observaciones',  icon: <MessageSquare size={18} /> },
+    { path: '/coord/forms',          label: 'Formularios',    icon: <ClipboardList size={18} /> },
     { path: '/coord/settings',       label: 'Configuración',  icon: <Settings size={18} /> },
   ],
   support: [

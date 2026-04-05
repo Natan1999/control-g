@@ -35,7 +35,7 @@ export default function MunicipalityPicker({ value, onChange, disabled }: Munici
        const deptId = value.substring(0, 2)
        setSelectedDeptId(deptId)
     }
-  }, [value])
+  }, [value, selectedDeptId])
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

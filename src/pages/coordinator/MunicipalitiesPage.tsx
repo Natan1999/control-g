@@ -1,10 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { MapPin, Users, UserCheck, X, ChevronDown, Plus, Pencil, Trash2, UserMinus } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { PageWrapper } from '@/components/shared'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
 import { Query, ID } from 'appwrite'
 import { useAuthStore } from '@/stores/authStore'
+import { getDepartments, getMunicipalities, Department, Municipality } from '@/services/geographyService'
+import { Search, Loader2, Globe } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 
 // ─── Colombian departments ────────────────────────────────────────────────────
 
@@ -23,9 +27,10 @@ interface MunForm {
   municipality_name: string
   department: string
   families_target: number
+  dane_code?: string
 }
 
-const EMPTY_MUN: MunForm = { municipality_name: '', department: 'Bolívar', families_target: 35 }
+const EMPTY_MUN: MunForm = { municipality_name: '', department: 'Bolívar', families_target: 35, dane_code: '' }
 
 export default function MunicipalitiesPage() {
   const { user } = useAuthStore()
@@ -55,9 +60,14 @@ export default function MunicipalitiesPage() {
 
   const [toast, setToast]                     = useState('')
 
-  useEffect(() => { if (user?.entityId) loadAll() }, [user?.entityId])
+  // Divipola lookup state
+  const [daneDepts, setDaneDepts]             = useState<Department[]>([])
+  const [daneMpios, setDaneMpios]             = useState<Municipality[]>([])
+  const [loadingDane, setLoadingDane]         = useState(false)
+  const [showDaneLookup, setShowDaneLookup]   = useState(false)
+  const [selectedDeptId, setSelectedDeptId]   = useState('')
 
-  async function loadAll() {
+  const loadAll = useCallback(async () => {
     setLoading(true)
     try {
       const [munRes, profRes, assignRes, famRes] = await Promise.all([
@@ -89,7 +99,33 @@ export default function MunicipalitiesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user?.entityId, user?.fullName])
+
+  useEffect(() => { if (user?.entityId) loadAll() }, [user?.entityId, loadAll])
+
+  // Load DANE departments on mount
+  useEffect(() => {
+    const fetchDepts = async () => {
+      const depts = await getDepartments()
+      setDaneDepts(depts)
+    }
+    fetchDepts()
+  }, [])
+
+  // Load DANE municipalities when dept changes
+  useEffect(() => {
+    if (selectedDeptId) {
+      const fetchMpios = async () => {
+        setLoadingDane(true)
+        const mpios = await getMunicipalities(selectedDeptId)
+        setDaneMpios(mpios)
+        setLoadingDane(false)
+      }
+      fetchMpios()
+    } else {
+      setDaneMpios([])
+    }
+  }, [selectedDeptId])
 
   // ─── Municipality CRUD ──────────────────────────────────────────────────────
 
@@ -104,6 +140,7 @@ export default function MunicipalitiesPage() {
       municipality_name: mun.municipality_name,
       department: mun.department,
       families_target: mun.families_target ?? 35,
+      dane_code: mun.dane_code || '',
     })
     setMunError('')
     setMunModal({ open: true, editing: mun })
@@ -121,19 +158,20 @@ export default function MunicipalitiesPage() {
     setMunSaving(true)
     setMunError('')
     try {
+      const payload = {
+        municipality_name: munForm.municipality_name.trim(),
+        department: munForm.department,
+        families_target: Number(munForm.families_target),
+        dane_code: munForm.dane_code,
+      }
+
       if (munModal.editing) {
-        await databases.updateDocument(DATABASE_ID, COLLECTION_IDS.ENTITY_MUNICIPALITIES, munModal.editing.$id, {
-          municipality_name: munForm.municipality_name.trim(),
-          department: munForm.department,
-          families_target: munForm.families_target,
-        })
+        await databases.updateDocument(DATABASE_ID, COLLECTION_IDS.ENTITY_MUNICIPALITIES, munModal.editing.$id, payload)
         showToast('Municipio actualizado correctamente')
       } else {
         await databases.createDocument(DATABASE_ID, COLLECTION_IDS.ENTITY_MUNICIPALITIES, ID.unique(), {
+          ...payload,
           entity_id: user!.entityId!,
-          municipality_name: munForm.municipality_name.trim(),
-          department: munForm.department,
-          families_target: munForm.families_target,
         })
         showToast('Municipio agregado correctamente')
       }
@@ -399,6 +437,83 @@ export default function MunicipalitiesPage() {
                   </select>
                   <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
                 </div>
+              </div>
+
+              {/* DANE DIVIPOLA Lookup */}
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowDaneLookup(!showDaneLookup)}
+                  className="flex items-center gap-2 text-[10px] font-black text-blue-600 uppercase tracking-widest hover:text-blue-700 transition-colors"
+                >
+                  <Globe size={14} />
+                  {showDaneLookup ? 'Cerrar catálogo DANE' : 'Consultar catálogo DANE (DIVIPOLA)'}
+                </button>
+
+                {showDaneLookup && (
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="mt-3 p-4 bg-blue-50/50 rounded-2xl border border-blue-100 space-y-3"
+                  >
+                    <div>
+                      <label className="block text-[10px] font-bold text-blue-900/60 uppercase tracking-wider mb-1">Dpto. Oficial (DANE)</label>
+                      <select 
+                        value={selectedDeptId}
+                        onChange={(e) => setSelectedDeptId(e.target.value)}
+                        className="w-full text-xs font-bold py-2 bg-white border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 px-2"
+                      >
+                        <option value="">Seleccione Departamento...</option>
+                        {daneDepts.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                      </select>
+                    </div>
+
+                    {selectedDeptId && (
+                      <div className="space-y-2">
+                        <label className="block text-[10px] font-bold text-blue-900/60 uppercase tracking-wider">Municipio Oficial (DIVIPOLA)</label>
+                        {loadingDane ? (
+                          <div className="flex items-center gap-2 py-2 text-[10px] font-bold text-blue-400">
+                            <Loader2 size={12} className="animate-spin" /> Cargando catálogo...
+                          </div>
+                        ) : (
+                          <div className="max-h-40 overflow-y-auto border border-blue-200 rounded-lg bg-white divide-y divide-blue-50">
+                            {daneMpios.length === 0 ? (
+                              <div className="p-3 text-[10px] text-slate-400 italic">No se encontraron resultados</div>
+                            ) : (
+                              daneMpios.map(m => (
+                                <button
+                                  key={m.id}
+                                  onClick={() => {
+                                    setMunForm(f => ({
+                                      ...f,
+                                      municipality_name: m.name,
+                                      department: daneDepts.find(d => d.id === selectedDeptId)?.name || f.department,
+                                      dane_code: m.id
+                                    }))
+                                    setShowDaneLookup(false)
+                                  }}
+                                  className="w-full text-left px-3 py-2 text-xs font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition-colors flex items-center justify-between group"
+                                >
+                                  {m.name}
+                                  <span className="text-[9px] text-slate-400 group-hover:text-blue-400 font-mono">{m.id}</span>
+                                </button>
+                              ))
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+                
+                {munForm.dane_code && !showDaneLookup && (
+                  <div className="mt-2 flex items-center gap-2 p-2 bg-emerald-50 border border-emerald-100 rounded-lg">
+                    <div className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center text-white">
+                      <UserCheck size={10} />
+                    </div>
+                    <span className="text-[10px] font-bold text-emerald-700">Código DANE vinculado: <span className="font-mono">{munForm.dane_code}</span></span>
+                  </div>
+                )}
               </div>
 
               {/* Families target */}

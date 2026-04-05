@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Users, CheckCircle, Clock, AlertCircle, RefreshCw } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
@@ -16,6 +16,14 @@ interface PendingActivity {
   professionalName?: string
 }
 
+const activityTypeLabel: Record<string, string> = {
+  ex_ante: 'Caracterización Ex-Antes',
+  encounter_1: 'Momento de Encuentro 1',
+  encounter_2: 'Momento de Encuentro 2',
+  encounter_3: 'Momento de Encuentro 3',
+  ex_post: 'Caracterización Ex-Post',
+}
+
 export default function ApoyoDashboard() {
   const { user } = useAuthStore()
   const [totalFamilies, setTotalFamilies] = useState(0)
@@ -26,17 +34,7 @@ export default function ApoyoDashboard() {
   const [pendingActivities, setPendingActivities] = useState<PendingActivity[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { load() }, [user?.entityId])
-
-  const activityTypeLabel: Record<string, string> = {
-    ex_ante: 'Caracterización Ex-Antes',
-    encounter_1: 'Momento de Encuentro 1',
-    encounter_2: 'Momento de Encuentro 2',
-    encounter_3: 'Momento de Encuentro 3',
-    ex_post: 'Caracterización Ex-Post',
-  }
-
-  async function load() {
+  const load = useCallback(async () => {
     if (!user?.entityId) { setLoading(false); return }
     setLoading(true)
     try {
@@ -111,7 +109,9 @@ export default function ApoyoDashboard() {
       setPendingActivities(enriched)
     } catch { /* silent */ }
     setLoading(false)
-  }
+  }, [user?.entityId])
+
+  useEffect(() => { load() }, [load])
 
   const kpis = [
     { label: 'Total Familias', value: totalFamilies, icon: <Users size={20} />, color: '#1B3A4B' },

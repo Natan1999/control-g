@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { User, Lock, Building2, CheckCircle, AlertCircle } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { PageWrapper } from '@/components/shared'
@@ -20,11 +20,7 @@ export default function SettingsPage() {
   const [entity, setEntity] = useState<any>(null)
   const [entityLoading, setEntityLoading] = useState(true)
 
-  useEffect(() => {
-    if (user?.entityId) loadEntity()
-  }, [user?.entityId])
-
-  async function loadEntity() {
+  const loadEntity = useCallback(async () => {
     setEntityLoading(true)
     try {
       const res = await databases.listDocuments(DATABASE_ID, COLLECTION_IDS.ENTITIES, [
@@ -37,7 +33,11 @@ export default function SettingsPage() {
     } finally {
       setEntityLoading(false)
     }
-  }
+  }, [user?.entityId])
+
+  useEffect(() => {
+    if (user?.entityId) loadEntity()
+  }, [user?.entityId, loadEntity])
 
   async function handleChangePassword() {
     setPwError('')

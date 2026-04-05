@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Users, CheckCircle, TrendingUp, AlertTriangle, Clock } from 'lucide-react'
 import { MobileTopBar, BottomNav } from '@/components/layout/BottomNav'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
@@ -56,9 +56,7 @@ export default function FieldHome() {
   const [municipalityName, setMunicipalityName] = useState('')
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { load() }, [user?.id])
-
-  async function load() {
+  const load = useCallback(async () => {
     if (!user?.id) { setLoading(false); return }
     setLoading(true)
     try {
@@ -87,7 +85,9 @@ export default function FieldHome() {
       }
     } catch { /* silent */ }
     setLoading(false)
-  }
+  }, [user?.id])
+
+  useEffect(() => { load() }, [load])
 
   const total = families.length
   const completed = families.filter(f => f.overall_status === 'completed').length

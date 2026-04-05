@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { UserPlus, X, Check, Users } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { PageWrapper } from '@/components/shared'
@@ -50,11 +50,7 @@ export default function TeamPage() {
   const [inviting, setInviting] = useState(false)
   const [formError, setFormError] = useState('')
 
-  useEffect(() => {
-    if (user?.entityId) loadMembers()
-  }, [user?.entityId])
-
-  async function loadMembers() {
+  const loadMembers = useCallback(async () => {
     setLoading(true)
     try {
       const res = await databases.listDocuments(
@@ -69,7 +65,11 @@ export default function TeamPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user?.entityId])
+
+  useEffect(() => {
+    if (user?.entityId) loadMembers()
+  }, [user?.entityId, loadMembers])
 
   async function handleInvite() {
     if (!form.full_name.trim() || !form.email.trim()) {

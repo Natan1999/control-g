@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, CheckCircle, Circle } from 'lucide-react'
 import { MobileTopBar, BottomNav } from '@/components/layout/BottomNav'
@@ -81,9 +81,7 @@ export default function FieldFamiliesPage() {
   const [search, setSearch] = useState('')
   const [activeTab, setActiveTab] = useState<FilterTab>('all')
 
-  useEffect(() => { load() }, [user?.id])
-
-  async function load() {
+  const load = useCallback(async () => {
     if (!user?.id) { setLoading(false); return }
     setLoading(true)
     try {
@@ -94,7 +92,9 @@ export default function FieldFamiliesPage() {
       setFamilies(res.documents as unknown as FamilyDoc[])
     } catch { /* silent */ }
     setLoading(false)
-  }
+  }, [user?.id])
+
+  useEffect(() => { load() }, [load])
 
   const filterTabs: { key: FilterTab; label: string }[] = [
     { key: 'all', label: 'Todas' },

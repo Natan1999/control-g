@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { CheckCircle, XCircle, MessageSquare, ChevronDown } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
@@ -50,9 +50,7 @@ export default function ApoyoReviewPage() {
   const [obsContent, setObsContent] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  useEffect(() => { load() }, [user?.entityId])
-
-  async function load() {
+  const load = useCallback(async () => {
     if (!user?.entityId) { setLoading(false); return }
     setLoading(true)
     try {
@@ -96,7 +94,9 @@ export default function ApoyoReviewPage() {
       setActivities(cards)
     } catch { /* silent */ }
     setLoading(false)
-  }
+  }, [user?.entityId])
+
+  useEffect(() => { load() }, [load])
 
   const showToast = (message: string, type: 'success' | 'error') => setToast({ message, type })
 

@@ -147,6 +147,14 @@ export async function updateLocalCache(entityId?: string) {
     ])
     localStorage.setItem(`cg_municipalities_${entityId}`, JSON.stringify(munRes.documents))
 
+    // Also cache forms for this entity (or global forms)
+    const formsRes = await databases.listDocuments(DATABASE_ID, COLLECTION_IDS.FORMS, [
+      Query.equal('entity_id', [entityId, 'global']), 
+      Query.equal('status', 'published'),
+      Query.limit(100),
+    ])
+    localStorage.setItem(`cg_forms_${entityId}`, JSON.stringify(formsRes.documents))
+
     useSyncStore.getState().setSyncComplete()
   } catch {
     // Silently fail — offline reads will use cached data

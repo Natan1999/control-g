@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Download, AlertCircle } from 'lucide-react'
 import { MobileTopBar, BottomNav } from '@/components/layout/BottomNav'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
@@ -43,9 +43,7 @@ export default function FieldReportsPage() {
   const [observations, setObservations] = useState<ObsDoc[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => { load() }, [user?.id])
-
-  async function load() {
+  const load = useCallback(async () => {
     if (!user?.id) { setLoading(false); return }
     setLoading(true)
     try {
@@ -64,7 +62,9 @@ export default function FieldReportsPage() {
       setObservations(obsRes.documents as unknown as ObsDoc[])
     } catch { /* silent */ }
     setLoading(false)
-  }
+  }, [user?.id])
+
+  useEffect(() => { load() }, [load])
 
   const total = families.length
   const exAnte = families.filter(f => f.ex_ante_status === 'completed').length

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Users, Search, X, ChevronDown, UserPlus } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { PageWrapper } from '@/components/shared'
@@ -68,11 +68,7 @@ export default function FamiliesPage() {
   }
   const [form, setForm] = useState({ ...defaultForm })
 
-  useEffect(() => {
-    if (user?.entityId) loadAll()
-  }, [user?.entityId])
-
-  async function loadAll() {
+  const loadAll = useCallback(async () => {
     setLoading(true)
     try {
       const [famRes, munRes, profRes] = await Promise.all([
@@ -96,7 +92,11 @@ export default function FamiliesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user?.entityId, user?.fullName])
+
+  useEffect(() => {
+    if (user?.entityId) loadAll()
+  }, [user?.entityId, loadAll])
 
   function getMunicipalityName(id: string) {
     return municipalities.find(m => m.$id === id)?.municipality_name ?? '—'

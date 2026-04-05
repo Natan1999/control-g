@@ -132,23 +132,62 @@ export function PageWrapper({ children, className }: { children: ReactNode; clas
 // ─── Sync Indicator ──────────────────────────────────────────────────────────
 
 import { useSyncStore } from '@/stores/syncStore'
-import { Wifi, WifiOff, RefreshCw, Check } from 'lucide-react'
+import { processSyncQueue } from '@/lib/sync-engine'
+import { WifiOff, RefreshCw, Check, Cloud } from 'lucide-react'
 
 export function SyncIndicator() {
-  const { status, pendingCount } = useSyncStore()
+  const { status, pendingCount, isSyncing } = useSyncStore()
 
-  const cfgMap: Record<string, { icon: React.ReactNode; label: string; cls: string }> = {
-    synced:  { icon: <Check size={13} />,       label: 'Sincronizado',         cls: 'bg-green-100 text-green-700 border-green-200' },
-    syncing: { icon: <RefreshCw size={13} className="animate-spin" />, label: `Enviando ${pendingCount}...`, cls: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
-    offline: { icon: <WifiOff size={13} />,     label: `${pendingCount} pendientes`, cls: 'bg-red-50 text-red-600 border-red-200' },
-    error:   { icon: <WifiOff size={13} />,     label: 'Error de sync',        cls: 'bg-red-50 text-red-600 border-red-200' },
+  const handleSync = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (isSyncing) return
+    await processSyncQueue()
   }
-  const cfg = cfgMap[status] ?? cfgMap.offline
+
+  if (status === 'synced' && pendingCount === 0) {
+    return (
+      <div className="flex items-center gap-2 px-3 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-[10px] font-black text-emerald-400 uppercase tracking-widest">
+        <Check size={12} className="text-emerald-500" />
+        <span>Sincronizado</span>
+      </div>
+    )
+  }
 
   return (
-    <div className={cn('flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border text-xs font-medium', cfg.cls)}>
-      {cfg.icon}
-      <span>{cfg.label}</span>
+    <div className={cn(
+      "flex flex-col gap-2 p-3 rounded-2xl border transition-all duration-300",
+      status === 'syncing' ? "bg-amber-500/10 border-amber-500/20" : "bg-rose-500/10 border-rose-500/20"
+    )}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          {status === 'syncing' ? (
+            <RefreshCw size={14} className="text-amber-500 animate-spin" />
+          ) : (
+            <WifiOff size={14} className="text-rose-500" />
+          )}
+          <span className={cn(
+            "text-[10px] font-black uppercase tracking-widest",
+            status === 'syncing' ? "text-amber-500" : "text-rose-500"
+          )}>
+            {status === 'syncing' ? 'Sincronizando...' : `${pendingCount} Pendientes`}
+          </span>
+        </div>
+      </div>
+      
+      <button
+        onClick={handleSync}
+        disabled={isSyncing}
+        className={cn(
+          "flex items-center justify-center gap-2 w-full py-2 rounded-xl text-[10px] font-black uppercase tracking-tighter transition-all active:scale-95",
+          status === 'syncing' 
+            ? "bg-amber-500 text-white cursor-wait" 
+            : "bg-rose-600 text-white hover:bg-rose-700 shadow-lg shadow-rose-900/20"
+        )}
+      >
+        <Cloud size={14} />
+        {status === 'syncing' ? 'Enviando...' : 'Sincronizar ahora'}
+      </button>
     </div>
   )
 }
