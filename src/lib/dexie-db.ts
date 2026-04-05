@@ -98,19 +98,33 @@ export interface LocalMedia {
   appwriteFileId?: string;
 }
 
+export interface LocalFormResponse {
+  localId: string;                   // primary key
+  formId: string;
+  familyId: string | null;
+  entityId: string;
+  professionalId: string;
+  answers: Record<string, any>;      // JSON object with fieldId: value
+  status: 'draft' | 'completed' | 'synced';
+  createdAt: number;
+  updatedAt: number;
+}
+
 // ─── Database class ───────────────────────────────────────────────────────────
 
 export class ControlGDatabase extends Dexie {
   characterizations!: Table<LocalCharacterization, string>;
   activities!: Table<LocalActivity, string>;
   mediaQueue!: Table<LocalMedia, string>;
+  formResponses!: Table<LocalFormResponse, string>;
 
   constructor() {
     super('ControlG_v2');
-    this.version(1).stores({
+    this.version(2).stores({
       characterizations: 'localId, familyId, entityId, professionalId, status',
       activities: 'localId, familyId, activityType, status, createdAt',
       mediaQueue: 'id, activityLocalId, status',
+      formResponses: 'localId, formId, familyId, status, createdAt',
     });
   }
 }

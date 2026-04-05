@@ -40,9 +40,10 @@ function updateNetworkStatus() {
 function handleOnline()  { processSyncQueue() }
 function handleOffline() { useSyncStore.getState().setStatus('offline') }
 
+import { localDB } from './dexie-db'
+
 /**
- * Process pending items from the offline queue.
- * Each item: { type, id, data, familyId, familyUpdate }
+ * Process pending items from both the legacy localStorage queue and the new Dexie form responses.
  */
 export async function processSyncQueue() {
   if (!navigator.onLine) return
@@ -52,52 +53,77 @@ export async function processSyncQueue() {
   try {
     store.setStatus('syncing')
 
+    // 1. Process legacy localStorage activities
     const raw = localStorage.getItem('cg_offline_queue')
-    if (!raw) { store.setSyncComplete(); return }
-
-    const queue: any[] = JSON.parse(raw)
-    if (queue.length === 0) {
-      localStorage.removeItem('cg_offline_queue')
-      store.setSyncComplete()
-      return
-    }
-
-    store.setPendingCount(queue.length)
-
+    const queue: any[] = raw ? JSON.parse(raw) : []
     const remaining: any[] = []
 
     for (const item of queue) {
       try {
         if (item.type === 'activity') {
-          // Create activity document
           await databases.createDocument(DATABASE_ID, COLLECTION_IDS.ACTIVITIES, item.id, item.data)
-
-          // Update family status if provided
           if (item.familyUpdate && item.familyId) {
             await databases.updateDocument(DATABASE_ID, COLLECTION_IDS.FAMILIES, item.familyId, item.familyUpdate)
           }
-          // Successfully synced — do NOT add back to remaining
-        } else {
-          // Unknown item type — skip but keep for manual inspection
-          remaining.push(item)
         }
       } catch (err: any) {
-        // If document already exists (409) — consider it synced, don't retry
-        if (err?.code === 409) continue
-        // Otherwise keep in queue for retry
-        remaining.push(item)
+        if (err?.code !== 409) remaining.push(item)
       }
     }
 
     if (remaining.length === 0) {
       localStorage.removeItem('cg_offline_queue')
-      store.setSyncComplete()
     } else {
       localStorage.setItem('cg_offline_queue', JSON.stringify(remaining))
-      store.setPendingCount(remaining.length)
+    }
+
+    // 2. Process new Dexie Form Responses
+    // Sync responses that are 'completed' and not yet 'synced'
+    const pendingResponses = await localDB.formResponses
+      .where('status')
+      .equals('completed')
+      .toArray()
+
+    for (const resp of pendingResponses) {
+      try {
+        const payload = {
+          form_id: resp.formId,
+          professional_id: resp.professionalId,
+          entity_id: resp.entityId || '',
+          family_id: resp.familyId || '',
+          answers_json: JSON.stringify(resp.answers),
+          created_at: new Date(resp.createdAt).toISOString(),
+          v: 1
+        }
+
+        await databases.createDocument(
+            DATABASE_ID, 
+            COLLECTION_IDS.FORM_RESPONSES, 
+            'unique()', 
+            payload
+        )
+
+        // Update local status to synced
+        await localDB.formResponses.update(resp.localId, { 
+            status: 'synced',
+            updatedAt: Date.now()
+        })
+      } catch (err: any) {
+        console.error('Error syncing form response:', err)
+      }
+    }
+
+    const finalPendingCount = (remaining.length) + 
+      (await localDB.formResponses.where('status').equals('completed').count())
+
+    if (finalPendingCount === 0) {
+      store.setSyncComplete()
+    } else {
+      store.setPendingCount(finalPendingCount)
       store.setStatus('offline')
     }
-  } catch {
+  } catch (err) {
+    console.error('Sync engine error:', err)
     useSyncStore.getState().setStatus('error')
   }
 }

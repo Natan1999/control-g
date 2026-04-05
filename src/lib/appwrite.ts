@@ -27,6 +27,8 @@ export const COLLECTION_IDS = {
   OBSERVATIONS:             'observations',
   AUDIT_LOG:                'audit_log',
   SYNC_LOG:                 'sync_log',
+  FORMS:                    'forms',
+  FORM_RESPONSES:           'form_responses',
 } as const;
 
 export const BUCKET_IDS = {

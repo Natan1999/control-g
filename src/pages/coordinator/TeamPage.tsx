@@ -6,22 +6,29 @@ import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
 import { Query, ID } from 'appwrite'
 import { useAuthStore } from '@/stores/authStore'
 
+const COLORS = {
+  primary: '#0038A8',   // Royal Blue
+  secondary: '#D4AF37', // Gold
+  accent: '#1B3A4B',    // Slate
+  success: '#10B981',
+}
+
 const ROLE_LABELS: Record<string, string> = {
   coordinator: 'Coordinador',
   support: 'Apoyo Administrativo',
-  professional: 'Profesional',
+  professional: 'Profesional de Campo',
 }
 
 const ROLE_COLORS: Record<string, string> = {
-  coordinator: 'bg-[#1B3A4B] text-white',
-  support: 'bg-[#3D7B9E] text-white',
-  professional: 'bg-[#27AE60] text-white',
+  coordinator: 'bg-[#0038A8] text-white',
+  support: 'bg-[#1B3A4B] text-white',
+  professional: 'bg-[#D4AF37] text-white',
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  active: 'bg-green-100 text-green-700',
-  inactive: 'bg-gray-100 text-gray-500',
-  suspended: 'bg-red-100 text-red-600',
+  active: 'bg-emerald-50 text-emerald-600 border border-emerald-100',
+  inactive: 'bg-slate-100 text-slate-500 border border-slate-200',
+  suspended: 'bg-rose-50 text-rose-600 border border-rose-100',
 }
 
 const STATUS_LABELS: Record<string, string> = {

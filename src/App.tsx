@@ -22,6 +22,7 @@ import CoordFamiliesPage from '@/pages/coordinator/FamiliesPage'
 import CoordReportsPage from '@/pages/coordinator/ReportsPage'
 import CoordObservationsPage from '@/pages/coordinator/ObservationsPage'
 import CoordSettingsPage from '@/pages/coordinator/SettingsPage'
+import FormBuilderPage from '@/pages/coordinator/FormBuilderPage'
 
 // Apoyo Administrativo
 import ApoyoDashboard from '@/pages/apoyo/DashboardPage'
@@ -36,6 +37,8 @@ import FieldCapturePage from '@/pages/professional/CapturePage'
 import FieldReportsPage from '@/pages/professional/ReportsPage'
 import FieldProfilePage from '@/pages/professional/ProfilePage'
 import ActivityFormPage from '@/pages/professional/ActivityFormPage'
+import FormResponderPage from '@/pages/professional/FormResponderPage'
+import FieldFreePhotoPage from '@/pages/professional/FreePhotoPage'
 
 import { useSync } from '@/hooks/useSync'
 
@@ -124,6 +127,7 @@ export default function App() {
               <Route path="families" element={<CoordFamiliesPage />} />
               <Route path="reports" element={<CoordReportsPage />} />
               <Route path="observations" element={<CoordObservationsPage />} />
+              <Route path="forms" element={<FormBuilderPage />} />
               <Route path="settings" element={<CoordSettingsPage />} />
             </Routes>
           </DashboardLayout>
@@ -154,6 +158,9 @@ export default function App() {
             <Route path="reports" element={<FieldReportsPage />} />
             <Route path="profile" element={<FieldProfilePage />} />
             <Route path="activity/:familyId/:activityType" element={<ActivityFormPage />} />
+            <Route path="forms/:formId" element={<FormResponderPage />} />
+            <Route path="forms/:formId/:familyId" element={<FormResponderPage />} />
+            <Route path="capture/free-photo" element={<FieldFreePhotoPage />} />
           </Routes>
         </ProtectedLayout>
       } />

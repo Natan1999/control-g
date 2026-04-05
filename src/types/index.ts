@@ -238,3 +238,63 @@ export interface MunicipalityProgress {
   percentageComplete: number
   professionals: string[]
 }
+// ─── Forms & Universal Builder ───────────────────────────────────────────────
+
+export type FormFieldType = 
+  | 'text' | 'longtext' | 'number' | 'date' | 'time'
+  | 'select' | 'multi_select' | 'radio' | 'checkbox'
+  | 'photo' | 'signature' | 'gps' | 'repeat_group'
+  | 'calculation' | 'note' | 'file' | 'phone' | 'email' | 'municipality'
+
+export interface FormField {
+  id: string
+  type: FormFieldType
+  label: string
+  description?: string
+  placeholder?: string
+  required: boolean
+  options?: { label: string; value: string }[] // For select, radio, etc.
+  subFields?: FormField[] // For repeat_group recursive logic
+  validation?: string // Regex
+  calculation?: string // Formula like {{field_a}} + {{field_b}}
+  visibilityLogic?: {
+    fieldId: string
+    operator: '==' | '!=' | 'contains'
+    value: any
+  }
+}
+
+export interface FormPage {
+  id: string
+  title: string
+  description?: string
+  fields: FormField[]
+}
+
+export interface FormDefinition {
+  id: string
+  entityId: string
+  title: string
+  description?: string
+  type: ActivityType
+  pages: FormPage[]
+  status: 'draft' | 'published'
+  version: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface FormResponse {
+  id: string
+  formId: string
+  entityId: string
+  familyId: string
+  professionalId: string
+  municipalityId: string
+  data: Record<string, any> // Answers indexed by field.id
+  gps?: { lat: number; lng: number }
+  status: ReviewStatus
+  localId?: string // For Dexie sync
+  syncedAt?: string
+  createdAt: string
+}
