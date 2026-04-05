@@ -340,7 +340,7 @@ export default function FamiliesPage() {
                   <select value={form.professional_id} onChange={e => setForm(p => ({ ...p, professional_id: e.target.value }))}
                     className="w-full appearance-none px-3 py-2 rounded-xl border border-input text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A4B]/30 pr-8">
                     <option value="">Seleccionar profesional...</option>
-                    {professionals.map((p: any) => <option key={p.$id} value={p.$id}>{p.full_name}</option>)}
+                    {professionals.map((p: any) => <option key={p.$id} value={p.user_id}>{p.full_name}</option>)}
                   </select>
                   <ChevronDown size={13} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
                 </div>

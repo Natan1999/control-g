@@ -223,7 +223,7 @@ export default function MunicipalitiesPage() {
               >
                 <option value="">Seleccionar profesional...</option>
                 {professionals.map((p: any) => (
-                  <option key={p.$id} value={p.$id}>{p.full_name}</option>
+                  <option key={p.$id} value={p.user_id}>{p.full_name}</option>
                 ))}
               </select>
               <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
