@@ -1,9 +1,4 @@
-/**
- * Control G — Sync Engine
- * Handles offline detection and syncs activities/families from the queue to Appwrite.
- * Queue is stored in localStorage under key `cg_offline_queue`.
- */
-
+import { Network } from '@capacitor/network'
 import { useSyncStore } from '@/stores/syncStore'
 import { databases, DATABASE_ID, COLLECTION_IDS } from './appwrite'
 import { Query } from 'appwrite'
@@ -11,74 +6,106 @@ import { Query } from 'appwrite'
 let syncInterval: ReturnType<typeof setInterval> | null = null
 const SYNC_INTERVAL_MS = 30_000 // 30 seconds
 
-export function startSyncEngine() {
+export async function isOnline(): Promise<boolean> {
+  const status = await Network.getStatus()
+  return status.connected
+}
+
+export async function startSyncEngine() {
   if (typeof window === 'undefined') return
-  updateNetworkStatus()
-  window.addEventListener('online', handleOnline)
-  window.addEventListener('offline', handleOffline)
-  syncInterval = setInterval(() => {
-    if (navigator.onLine) processSyncQueue()
-  }, SYNC_INTERVAL_MS)
-}
-
-export function stopSyncEngine() {
-  if (typeof window !== 'undefined') {
-    window.removeEventListener('online', handleOnline)
-    window.removeEventListener('offline', handleOffline)
-  }
-  if (syncInterval) { clearInterval(syncInterval); syncInterval = null }
-}
-
-function updateNetworkStatus() {
-  if (navigator.onLine) {
+  
+  // Initial check
+  const status = await Network.getStatus()
+  if (status.connected) {
     processSyncQueue()
   } else {
     useSyncStore.getState().setStatus('offline')
   }
+
+  // Listen for network changes
+  Network.addListener('networkStatusChange', (status) => {
+    if (status.connected) {
+      console.log('Network connected, triggering sync...')
+      processSyncQueue()
+    } else {
+      console.log('Network disconnected')
+      useSyncStore.getState().setStatus('offline')
+    }
+  })
+
+  syncInterval = setInterval(async () => {
+    if (await isOnline()) processSyncQueue()
+  }, SYNC_INTERVAL_MS)
 }
 
-function handleOnline()  { processSyncQueue() }
-function handleOffline() { useSyncStore.getState().setStatus('offline') }
+export function stopSyncEngine() {
+  Network.removeAllListeners()
+  if (syncInterval) { 
+    clearInterval(syncInterval)
+    syncInterval = null 
+  }
+}
+
+// Removed legacy window listeners in favor of Network.addListener
 
 import { localDB } from './dexie-db'
 
 /**
- * Process pending items from both the legacy localStorage queue and the new Dexie form responses.
+ * Process pending items from both the legacy localStorage queue and the new Dexie form responses/activities.
  */
 export async function processSyncQueue() {
-  if (!navigator.onLine) return
+  if (!(await isOnline())) return
   const store = useSyncStore.getState()
   if (store.isSyncing) return
 
   try {
     store.setStatus('syncing')
 
-    // 1. Process legacy localStorage activities
+    // 1. Process legacy localStorage activities (MIGRATION SUPPORT)
     const raw = localStorage.getItem('cg_offline_queue')
-    const queue: any[] = raw ? JSON.parse(raw) : []
-    const remaining: any[] = []
-
-    for (const item of queue) {
-      try {
-        if (item.type === 'activity') {
-          await databases.createDocument(DATABASE_ID, COLLECTION_IDS.ACTIVITIES, item.id, item.data)
-          if (item.familyUpdate && item.familyId) {
-            await databases.updateDocument(DATABASE_ID, COLLECTION_IDS.FAMILIES, item.familyId, item.familyUpdate)
+    const legacyQueue: any[] = raw ? JSON.parse(raw) : []
+    
+    if (legacyQueue.length > 0) {
+      for (const item of legacyQueue) {
+        try {
+          if (item.type === 'activity') {
+            await databases.createDocument(DATABASE_ID, COLLECTION_IDS.ACTIVITIES, 'unique()', item.data)
+            if (item.familyUpdate && item.familyId) {
+              await databases.updateDocument(DATABASE_ID, COLLECTION_IDS.FAMILIES, item.familyId, item.familyUpdate)
+            }
           }
+        } catch (err: any) {
+          if (err?.code !== 409) console.error('Legacy sync error:', err)
         }
+      }
+      localStorage.removeItem('cg_offline_queue')
+    }
+
+    // 2. Process Dexie Activities (All types: ex_ante, encounter, ex_post)
+    const pendingActivities = await localDB.activities
+      .where('status')
+      .equals('pending')
+      .toArray()
+
+    for (const act of pendingActivities) {
+      try {
+        const payload = JSON.parse(act.data)
+        await databases.createDocument(DATABASE_ID, COLLECTION_IDS.ACTIVITIES, 'unique()', payload)
+        
+        if (act.familyUpdate && act.familyId) {
+          const famPayload = JSON.parse(act.familyUpdate)
+          await databases.updateDocument(DATABASE_ID, COLLECTION_IDS.FAMILIES, act.familyId, famPayload)
+        }
+
+        await localDB.activities.update(act.localId, { status: 'synced' })
       } catch (err: any) {
-        if (err?.code !== 409) remaining.push(item)
+        console.error('Error syncing activity:', err)
+        // Optionally increment retry count
+        await localDB.activities.update(act.localId, { retryCount: (act.retryCount || 0) + 1 })
       }
     }
 
-    if (remaining.length === 0) {
-      localStorage.removeItem('cg_offline_queue')
-    } else {
-      localStorage.setItem('cg_offline_queue', JSON.stringify(remaining))
-    }
-
-    // 2. Process new Dexie Form Responses
-    // Sync responses that are 'completed' and not yet 'synced'
+    // 3. Process Dexie Form Responses
     const pendingResponses = await localDB.formResponses
       .where('status')
       .equals('completed')
@@ -103,7 +130,6 @@ export async function processSyncQueue() {
             payload
         )
 
-        // Update local status to synced
         await localDB.formResponses.update(resp.localId, { 
             status: 'synced',
             updatedAt: Date.now()
@@ -113,17 +139,18 @@ export async function processSyncQueue() {
       }
     }
 
-    const finalPendingCount = (remaining.length) + 
+    // Update pending count state
+    const currentPending = 
+      (await localDB.activities.where('status').equals('pending').count()) +
       (await localDB.formResponses.where('status').equals('completed').count())
 
-    if (finalPendingCount === 0) {
+    if (currentPending === 0) {
       store.setSyncComplete()
     } else {
-      store.setPendingCount(finalPendingCount)
-      store.setStatus('offline')
+      store.setPendingCount(currentPending)
     }
   } catch (err) {
-    console.error('Sync engine error:', err)
+    console.error('Global sync engine error:', err)
     useSyncStore.getState().setStatus('error')
   }
 }
@@ -132,7 +159,7 @@ export async function processSyncQueue() {
  * Download families for a given entity and store in localStorage for offline access.
  */
 export async function updateLocalCache(entityId?: string) {
-  if (!navigator.onLine || !entityId) return
+  if (!(await isOnline()) || !entityId) return
   try {
     const res = await databases.listDocuments(DATABASE_ID, COLLECTION_IDS.FAMILIES, [
       Query.equal('entity_id', entityId),

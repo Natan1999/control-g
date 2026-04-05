@@ -8,6 +8,7 @@ import { ID } from 'appwrite'
 import { useAuthStore } from '@/stores/authStore'
 import { cn } from '@/lib/utils'
 import { localDB, type FamilyMember, type LocalCharacterization } from '@/lib/dexie-db'
+import { isOnline } from '@/lib/sync-engine'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -1072,10 +1073,12 @@ export default function ActivityFormPage() {
         signatureDataUrl = sigRef.current.toDataURL('image/png')
       }
 
+      const online = await isOnline()
+
       // Upload photo if present (encounters/ex-post)
       let photoUrl: string | null = null
       const photoFile = formData._photoFile as File | undefined
-      if (photoFile && navigator.onLine) {
+      if (photoFile && online) {
         try {
           const uploaded = await storage.createFile(
             BUCKET_IDS.FIELD_PHOTOS,
@@ -1084,7 +1087,7 @@ export default function ActivityFormPage() {
           )
           photoUrl = uploaded.$id
         } catch { /* photo upload failure is non-blocking */ }
-      } else if (photoFile && !navigator.onLine) {
+      } else if (photoFile && !online) {
         // Queue photo for upload when online
         try {
           await localDB.mediaQueue.add({
@@ -1169,7 +1172,7 @@ export default function ActivityFormPage() {
       const anyDone = Object.values(newStatuses).some(s => s === 'completed')
       familyUpdates.overall_status = allDone ? 'completed' : anyDone ? 'in_progress' : 'pending'
 
-      if (navigator.onLine) {
+      if (online) {
         await databases.createDocument(DATABASE_ID, COLLECTION_IDS.ACTIVITIES, ID.unique(), activityDoc)
         await databases.updateDocument(DATABASE_ID, COLLECTION_IDS.FAMILIES, family.$id, familyUpdates)
       } else {
