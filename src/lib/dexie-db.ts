@@ -1,114 +1,116 @@
+/**
+ * Control G — Local IndexedDB via Dexie.js
+ * Stores activities, characterizations, and media for offline-first operation.
+ */
 import Dexie, { type Table } from 'dexie';
 
-export interface LocalProject {
-  $id: string;
-  name: string;
-  organization_id: string;
-  status: string;
-  settings: string;
-  synced_at: number;
+// ─── Family Member (per characterization) ────────────────────────────────────
+
+export interface FamilyMember {
+  id: string;                        // UUID local
+  familyBond: string;                // Tabla A
+  sex: 'hombre' | 'mujer';          // Tabla B
+  genderIdentity: string;            // Tabla C
+  sexualOrientation: string;         // Tabla D
+  educationLevel: string;            // Tabla E
+  ethnicGroup: string;               // Tabla F
+  disability: string;                // Tabla G
+  specialCondition: string;          // Tabla H
+  peaceApproach: string;             // Tabla I
+  maritalStatus: string;             // Tabla J
+  leadershipType: string | null;     // Tabla K
+  birthDate: string;                 // ISO date string YYYY-MM-DD
+  calculatedAge: number;
+  idDocumentType: string;            // Tabla L
+  idNumber: string;
+  emailPrimary: string | null;
+  emailSecondary: string | null;
+  phonePrimary: string | null;
+  phoneSecondary: string | null;
 }
 
-export interface LocalForm {
-  $id: string;
-  name: string;
-  project_id: string | null;
-  organization_id: string;
-  schema: string;
-  version: number;
-  total_fields: number;
-  synced_at: number;
-}
+// ─── Local Characterization (Ex-Antes) ───────────────────────────────────────
 
-export interface LocalZone {
-  $id: string;
-  name: string;
-  type: string;
-  municipality_id: string;
-  parent_zone_id: string | null;
-  synced_at: number;
-}
+export interface LocalCharacterization {
+  localId: string;                   // UUID generado offline — primary key
+  familyId: string;
+  entityId: string;
+  municipalityId: string | null;
+  professionalId: string;
 
-export interface LocalResponse {
-  local_id: string;
-  form_id: string;
-  project_id: string;
-  organization_id: string;
-  technician_id: string;
-  zone_id: string | null;
-  data: string; // JSON
+  // Página 1 — Ubicación
+  department: string;
+  municipalityName: string;
+  corregimiento: string | null;
+  vereda: string | null;
+  address: string;
+  activityDate: string;              // ISO date YYYY-MM-DD
+
+  // Página 2 — Cabeza de familia
+  headFirstName: string;
+  headSecondName: string | null;
+  headFirstLastname: string;
+  headSecondLastname: string | null;
+  headFamilyRole: 'padre_cabeza' | 'madre_cabeza' | 'cuidador_cabeza';
+
+  // Página 3 — Miembros
+  members: FamilyMember[];
+
+  // Página 4 — Consentimiento
+  consentAccepted: boolean;
+  beneficiarySignatureDataUrl: string | null;
+
+  // Geo
   latitude: number | null;
   longitude: number | null;
-  accuracy: number | null;
-  status: string;
-  source: string;
-  device_info: string;
-  started_at: string | null;
-  completed_at: string | null;
-  
-  // Sync metadata
-  sync_status: 'pending' | 'synced' | 'failed';
-  retry_count: number;
-  created_at: number;
+
+  // Metadata
+  status: 'draft' | 'completed' | 'synced';
+  createdAt: string;
+  updatedAt: string;
+  syncedAt: string | null;
 }
 
-export interface LocalBeneficiaryFamily {
-  local_id: string;
-  project_id: string;
-  organization_id: string;
-  technician_id: string;
-  head_first_name: string;
-  head_first_lastname: string;
-  head_id_number: string | null;
-  head_phone: string | null;
-  vereda: string | null;
-  address: string | null;
-  moment: string;
-  sync_status: 'pending' | 'synced' | 'failed';
-  retry_count: number;
-  created_at: number;
+// ─── Offline activity queue item ──────────────────────────────────────────────
+
+export interface LocalActivity {
+  localId: string;                   // primary key
+  type: 'activity';
+  familyId: string;
+  activityType: string;
+  data: string;                      // JSON payload for Appwrite
+  familyUpdate: string | null;       // JSON payload for family doc update
+  status: 'pending' | 'synced' | 'failed';
+  createdAt: number;
+  retryCount: number;
 }
 
-export interface LocalFamilyMember {
-  local_id: string;
-  family_local_id: string;
-  full_name: string;
-  family_bond: string | null;
-  age: number | null;
-  sync_status: 'pending' | 'synced' | 'failed';
-  retry_count: number;
-}
+// ─── Media queue item ─────────────────────────────────────────────────────────
 
-export interface LocalMediaItem {
+export interface LocalMedia {
   id: string;
-  response_local_id: string;
+  activityLocalId: string;
   file: Blob;
   name: string;
-  type: string;
-  bucket_id: string; // which bucket to route to
+  mimeType: string;
+  bucketId: string;
   status: 'pending' | 'uploaded' | 'failed';
-  appwrite_file_id?: string;
+  appwriteFileId?: string;
 }
 
+// ─── Database class ───────────────────────────────────────────────────────────
+
 export class ControlGDatabase extends Dexie {
-  projects!: Table<LocalProject, string>;
-  forms!: Table<LocalForm, string>;
-  zones!: Table<LocalZone, string>;
-  responses!: Table<LocalResponse, string>;
-  families!: Table<LocalBeneficiaryFamily, string>;
-  familyMembers!: Table<LocalFamilyMember, string>;
-  mediaQueue!: Table<LocalMediaItem, string>;
+  characterizations!: Table<LocalCharacterization, string>;
+  activities!: Table<LocalActivity, string>;
+  mediaQueue!: Table<LocalMedia, string>;
 
   constructor() {
-    super('ControlG_LocalDB');
+    super('ControlG_v2');
     this.version(1).stores({
-      projects: '$id, organization_id, status',
-      forms: '$id, project_id, organization_id',
-      zones: '$id, municipality_id, parent_zone_id',
-      responses: 'local_id, form_id, sync_status, created_at',
-      families: 'local_id, project_id, head_id_number, sync_status',
-      familyMembers: 'local_id, family_local_id, sync_status',
-      mediaQueue: 'id, response_local_id, status'
+      characterizations: 'localId, familyId, entityId, professionalId, status',
+      activities: 'localId, familyId, activityType, status, createdAt',
+      mediaQueue: 'id, activityLocalId, status',
     });
   }
 }
