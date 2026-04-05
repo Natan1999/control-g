@@ -8,21 +8,14 @@ export function useSync() {
   const { status, pendingCount, lastSyncAt, isSyncing } = useSyncStore();
 
   useEffect(() => {
-    // Only run sync engine if we have a logged-in user
     if (user) {
       startSyncEngine();
-      
-      // Optionally run a cache update on initial mount/login
-      // We pass the org Id if applicable
-      const orgId = user.organizationId;
-      if (orgId) {
-        updateLocalCache(orgId).catch(console.error);
+      const entityId = user.entityId;
+      if (entityId) {
+        updateLocalCache(entityId).catch(console.error);
       }
     }
-
-    return () => {
-      stopSyncEngine();
-    };
+    return () => { stopSyncEngine(); };
   }, [user]);
 
   return {
@@ -32,9 +25,9 @@ export function useSync() {
     isSyncing,
     forceSync: () => processSyncQueue(),
     updateCache: () => {
-      if (user?.organizationId) {
-        return updateLocalCache(user.organizationId);
+      if (user?.entityId) {
+        return updateLocalCache(user.entityId);
       }
-    }
+    },
   };
 }

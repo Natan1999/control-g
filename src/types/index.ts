@@ -2,235 +2,239 @@
 // CONTROL G — TypeScript Types
 // ==============================
 
-export type UserRole = 'superadmin' | 'coordinator' | 'assistant' | 'technician'
-export type OrgPlan = 'starter' | 'professional' | 'enterprise' | 'gobierno'
-export type OrgStatus = 'active' | 'suspended' | 'cancelled'
+export type UserRole = 'admin' | 'coordinator' | 'support' | 'professional'
 export type UserStatus = 'active' | 'inactive' | 'suspended'
-export type ProjectStatus = 'draft' | 'active' | 'paused' | 'completed' | 'archived'
-export type FormStatus = 'draft' | 'published' | 'archived'
-export type ResponseStatus = 'synced' | 'in_review' | 'validated' | 'approved' | 'rejected'
-export type ResponseSource = 'digital' | 'ocr_camera' | 'ocr_pdf'
+export type EntityStatus = 'active' | 'suspended' | 'completed'
+export type ActivityType = 'ex_ante' | 'encounter_1' | 'encounter_2' | 'encounter_3' | 'ex_post'
+export type ActivityStatus = 'pending' | 'completed'
+export type FamilyStatus = 'pending' | 'in_progress' | 'completed'
 export type SyncStatus = 'synced' | 'syncing' | 'offline' | 'error'
-export type MediaType = 'photo' | 'video' | 'signature' | 'document' | 'ocr_scan'
+export type ObservationType = 'observation' | 'correction' | 'approval'
+export type ReviewStatus = 'synced' | 'reviewed' | 'approved' | 'rejected'
 
-export type FieldType =
-  | 'text_short' | 'text_long' | 'numeric' | 'single_select' | 'multi_select'
-  | 'yes_no' | 'date' | 'time' | 'likert' | 'geolocation' | 'photo' | 'video'
-  | 'signature' | 'file' | 'barcode_qr' | 'repeating_group' | 'calculated'
-  | 'matrix' | 'section_title'
-
-export interface Organization {
-  id: string
-  name: string
-  nit?: string
-  contactEmail: string
-  contactPhone?: string
-  plan: OrgPlan
-  status: OrgStatus
-  maxUsers: number
-  maxForms: number
-  maxOcrMonthly: number
-  maxStorageGb: number
-  createdAt: string
-  updatedAt: string
-}
+// ─── Users ───────────────────────────────────────────────────────────────────
 
 export interface User {
   id: string
-  organizationId?: string
+  entityId?: string
   fullName: string
   email: string
   phone?: string
   role: UserRole
   avatarUrl?: string
+  signatureUrl?: string
   status: UserStatus
   lastSeenAt?: string
   lastSyncAt?: string
-  projectId?: string
   createdAt: string
 }
 
-export interface Department { id: number; code: string; name: string }
-export interface Municipality { id: number; departmentId: number; code: string; name: string }
+// ─── Entities ────────────────────────────────────────────────────────────────
 
-export interface Zone {
+export interface Entity {
   id: string
-  municipalityId: number
-  organizationId?: string
   name: string
-  type: 'localidad' | 'comuna' | 'corregimiento' | 'vereda' | 'barrio' | 'sector' | 'manzana' | 'custom'
-  parentZoneId?: string
-  polygon?: Record<string, unknown>
-  createdAt: string
-}
-
-export interface Project {
-  id: string
-  organizationId: string
-  coordinatorId: string
-  name: string
-  description?: string
-  type: string
-  departmentId?: number
-  municipalityId?: number
-  startDate?: string
-  endDate?: string
-  targetForms?: number
-  status: ProjectStatus
+  nit?: string
+  contractNumber: string
+  contractObject: string
+  operatorName: string
+  department: string
+  periodStart: string
+  periodEnd: string
+  familiesPerMunicipality: number
+  status: EntityStatus
+  createdBy?: string
   createdAt: string
   updatedAt: string
-  totalForms?: number
-  completedForms?: number
-  activeTechnicians?: number
-  zones?: Zone[]
 }
 
-export interface FieldValidation {
-  required?: boolean; minLength?: number; maxLength?: number
-  min?: number; max?: number; pattern?: string; customMessage?: string
-}
+// ─── Municipalities ───────────────────────────────────────────────────────────
 
-export interface FieldConditional {
-  fieldId: string
-  operator: 'equals' | 'not_equals' | 'greater_than' | 'less_than' | 'contains' | 'is_empty' | 'is_not_empty'
-  value: unknown
-}
-
-export interface FieldOption { value: string; label: string }
-
-export interface FormField {
+export interface EntityMunicipality {
   id: string
-  type: FieldType
-  label: string
-  placeholder?: string
-  helpText?: string
-  required?: boolean
-  validations?: FieldValidation
-  options?: FieldOption[]
-  displayAs?: 'radio' | 'dropdown' | 'checkbox'
-  maxFiles?: number
-  maxFileSizeMb?: number
-  conditional?: FieldConditional
-  minEntries?: number
-  maxEntries?: number
-  addButtonText?: string
-  fields?: FormField[]
-  autoCapture?: boolean
-  showMap?: boolean
-  consentText?: string
+  entityId: string
+  municipalityName: string
+  department: string
+  familiesTarget: number
+  createdAt: string
 }
 
-export interface FormPage { id: string; title: string; description?: string; fields: FormField[] }
+// ─── Professional Assignments ─────────────────────────────────────────────────
 
-export interface FormSchema {
-  pages: FormPage[]
-  settings?: {
-    allowDraftSave?: boolean; requireGps?: boolean; autoGps?: boolean
-    requireSignature?: boolean; enableOcr?: boolean
-  }
+export interface ProfessionalAssignment {
+  id: string
+  entityId: string
+  professionalId: string
+  municipalityId: string
+  professionalName?: string
+  municipalityName?: string
+  createdAt: string
 }
 
-export interface Form {
-  id: string; projectId: string; organizationId: string; createdBy: string
-  name: string; description?: string; version: number; status: FormStatus
-  schema: FormSchema; printablePdfUrl?: string; totalFields?: number
-  createdAt: string; updatedAt: string
-}
+// ─── Families ────────────────────────────────────────────────────────────────
 
-export interface FormResponse {
-  id: string; localId: string; formId: string; formVersion: number
-  projectId: string; organizationId: string; technicianId: string; zoneId?: string
-  data: Record<string, unknown>; latitude?: number; longitude?: number; accuracy?: number
-  status: ResponseStatus; source: ResponseSource; ocrConfidence?: number
-  rejectionReason?: string; reviewedBy?: string; reviewedAt?: string
-  deviceInfo?: Record<string, unknown>; startedAt?: string; completedAt?: string
-  syncedAt?: string; createdAt: string
+export interface Family {
+  id: string
+  entityId: string
+  municipalityId: string
+  professionalId: string
+
+  // Datos cabeza de familia
+  firstName: string
+  secondName?: string
+  firstLastname: string
+  secondLastname?: string
+  fullName?: string
+  idDocumentType: string
+  idNumber: string
+  birthDate?: string
+  age?: number
+  phone?: string
+  zone?: string
+  address?: string
+  directions?: string
+  latitude?: number
+  longitude?: number
+
+  // Caracterización
+  gender?: string
+  ethnicGroup?: string
+  disability?: string
+  differentialFactor?: string
+  dependents: number
+  companionRequired: boolean
+  companionName?: string
+  companionDocument?: string
+  companionRelationship?: string
+
+  // Estado actividades
+  exAnteStatus: ActivityStatus
+  exAnteDate?: string
+  exAnteActivityId?: string
+
+  encounter1Status: ActivityStatus
+  encounter1Date?: string
+  encounter1Topic?: string
+  encounter1ActivityId?: string
+
+  encounter2Status: ActivityStatus
+  encounter2Date?: string
+  encounter2Topic?: string
+  encounter2ActivityId?: string
+
+  encounter3Status: ActivityStatus
+  encounter3Date?: string
+  encounter3Topic?: string
+  encounter3ActivityId?: string
+
+  exPostStatus: ActivityStatus
+  exPostDate?: string
+  exPostPositiveImpact?: boolean
+  exPostActivityId?: string
+
+  overallStatus: FamilyStatus
+  consentGiven: boolean
+  createdAt: string
+  updatedAt: string
+
   // Joined
-  technicianName?: string; formName?: string; zoneName?: string
+  municipalityName?: string
+  professionalName?: string
 }
 
-export interface TeamMember {
-  id: string; userId: string; projectId: string; user: User
-  assignedZoneId?: string; supervisorId?: string; isActive: boolean; joinedAt: string
-  formsToday?: number; lastSyncAt?: string; isOnline?: boolean; isPending?: boolean
+// ─── Activities ───────────────────────────────────────────────────────────────
+
+export interface Activity {
+  id: string
+  entityId: string
+  familyId: string
+  professionalId: string
+  municipalityId: string
+
+  activityType: ActivityType
+  activityDate: string
+
+  // Datos por tipo
+  topic?: string
+  description?: string
+  positiveImpact?: boolean
+  programEvaluation?: string
+  professionalEvaluation?: string
+
+  // Evidencia
+  photoUrl?: string
+  beneficiarySignatureUrl?: string
+
+  // GPS
+  latitude?: number
+  longitude?: number
+
+  // Sync
+  localId: string
+  syncedAt?: string
+
+  // Review
+  status: ReviewStatus
+  reviewNotes?: string
+  reviewedBy?: string
+  reviewedAt?: string
+
+  createdAt: string
 }
 
-export interface Notification {
-  id: string; userId: string; title: string; body?: string
-  type: 'assignment' | 'approval' | 'rejection' | 'message' | 'sync' | 'system' | 'alert'
-  data?: Record<string, unknown>; read: boolean; createdAt: string
+// ─── Observations ─────────────────────────────────────────────────────────────
+
+export interface Observation {
+  id: string
+  entityId: string
+  fromUserId: string
+  toUserId: string
+  familyId?: string
+  activityId?: string
+  content: string
+  type: ObservationType
+  read: boolean
+  createdAt: string
+  fromUserName?: string
 }
+
+// ─── Dashboard types ──────────────────────────────────────────────────────────
 
 export interface KPIStat {
-  label: string; value: number | string; change?: number
-  changeLabel?: string; icon?: string; color?: string
+  label: string
+  value: number | string
+  change?: number
+  changeLabel?: string
+  icon?: string
+  color?: string
 }
 
-export interface ChartDataPoint { name: string; value: number; [key: string]: unknown }
-
-export interface FamilyMember {
-  id: string;
-  familyId: string;
-  fullName: string;
-  birthDate?: string;
-  age?: number;
-  
-  // 15 Enfoque diferencial
-  familyBond?: string;
-  sex?: string;
-  genderIdentity?: string;
-  sexualOrientation?: string;
-  educationLevel?: string;
-  ethnicGroup?: string;
-  disability?: string;
-  specialCondition?: string;
-  peaceApproach?: string;
-  maritalStatus?: string;
-  leadershipType?: string;
-  
-  idDocumentType?: string;
-  idNumber?: string;
-  
-  emailPrimary?: string;
-  phonePrimary?: string;
+export interface ChartDataPoint {
+  name: string
+  value: number
+  [key: string]: unknown
 }
 
-export interface BeneficiaryFamily {
-  id: string;
-  projectId: string;
-  organizationId: string;
-  zoneId?: string;
-  
-  headFirstName: string;
-  headFirstLastname: string;
-  headIdNumber?: string;
-  headPhone?: string;
-  
-  departmentId?: number;
-  municipalityId?: number;
-  vereda?: string;
-  address?: string;
-  
-  // Ciclo de Momentos (True/False + ID de la respuesta validada)
-  exAntesCompleted: boolean;
-  exAntesResponseId?: string;
-  
-  encounter1Completed: boolean;
-  encounter1ResponseId?: string;
-  
-  encounter2Completed: boolean;
-  encounter2ResponseId?: string;
-  
-  encounter3Completed: boolean;
-  encounter3ResponseId?: string;
-  
-  exPostCompleted: boolean;
-  exPostResponseId?: string;
-  
-  totalMembers: number;
-  status: 'active' | 'inactive' | 'completed';
-  consentGiven: boolean;
-  createdAt: string;
-  
-  members?: FamilyMember[]; // Opcional, cargado relacionadamente
+export interface ProfessionalProgress {
+  professionalId: string
+  professionalName: string
+  municipalities: string[]
+  familiesTarget: number
+  exAnte: number
+  encounter1: number
+  encounter2: number
+  encounter3: number
+  exPost: number
+  percentageComplete: number
+  lastSyncAt?: string
+}
+
+export interface MunicipalityProgress {
+  municipalityId: string
+  municipalityName: string
+  familiesTarget: number
+  familiesRegistered: number
+  familiesCompleted: number
+  percentageComplete: number
+  professionals: string[]
 }

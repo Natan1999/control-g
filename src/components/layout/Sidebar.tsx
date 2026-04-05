@@ -2,17 +2,15 @@ import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  LayoutDashboard, Building2, Users, MapPin, FolderOpen, Shield,
-  Settings, ChevronLeft, ChevronRight, LogOut, Bell, CreditCard,
-  Layers, ClipboardList, FileText, Map, BarChart2, Download,
-  MessageSquare, UserCheck, AlertCircle, Menu, X,
+  LayoutDashboard, Building2, Users, MapPin, FileText,
+  Settings, ChevronLeft, ChevronRight, LogOut, Bell,
+  ClipboardList, BarChart2, MessageSquare, UserCheck,
+  AlertCircle, Menu, X,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { SyncIndicator } from '@/components/shared'
 import { cn, getInitials } from '@/lib/utils'
 import type { UserRole } from '@/types'
-import { useRealtimeNotifications } from '@/hooks/useNotifications'
-import { useNotifications } from '@/hooks/useAppwriteQuery'
 
 interface NavItem {
   path: string
@@ -21,39 +19,34 @@ interface NavItem {
 }
 
 const navItems: Record<UserRole, NavItem[]> = {
-  superadmin: [
-    { path: '/admin', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
-    { path: '/admin/organizations', label: 'Organizaciones', icon: <Building2 size={18} /> },
-    { path: '/admin/users', label: 'Usuarios', icon: <Users size={18} /> },
-    { path: '/admin/geography', label: 'Geografía', icon: <MapPin size={18} /> },
-    { path: '/admin/projects', label: 'Proyectos', icon: <FolderOpen size={18} /> },
-    { path: '/admin/audit', label: 'Auditoría', icon: <Shield size={18} /> },
-    { path: '/admin/plans', label: 'Planes', icon: <CreditCard size={18} /> },
+  admin: [
+    { path: '/admin',          label: 'Dashboard',     icon: <LayoutDashboard size={18} /> },
+    { path: '/admin/entities', label: 'Entidades',     icon: <Building2 size={18} /> },
     { path: '/admin/settings', label: 'Configuración', icon: <Settings size={18} /> },
   ],
   coordinator: [
-    { path: '/coord', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
-    { path: '/coord/projects', label: 'Mis Proyectos', icon: <FolderOpen size={18} /> },
-    { path: '/coord/families', label: 'Familias', icon: <Building2 size={18} /> },
-    { path: '/coord/form-builder', label: 'Form Builder', icon: <Layers size={18} /> },
-    { path: '/coord/templates', label: 'Plantillas', icon: <FileText size={18} /> },
-    { path: '/coord/team', label: 'Equipo', icon: <Users size={18} /> },
-    { path: '/coord/map', label: 'Mapa de Campo', icon: <Map size={18} /> },
-    { path: '/coord/data', label: 'Datos Recolectados', icon: <ClipboardList size={18} /> },
-    { path: '/coord/reports', label: 'Reportes', icon: <BarChart2 size={18} /> },
-    { path: '/coord/export', label: 'Exportar', icon: <Download size={18} /> },
-    { path: '/coord/chat', label: 'Chat', icon: <MessageSquare size={18} /> },
-    { path: '/coord/settings', label: 'Configuración', icon: <Settings size={18} /> },
+    { path: '/coord',                label: 'Dashboard',      icon: <LayoutDashboard size={18} /> },
+    { path: '/coord/team',           label: 'Equipo',         icon: <Users size={18} /> },
+    { path: '/coord/municipalities', label: 'Municipios',     icon: <MapPin size={18} /> },
+    { path: '/coord/families',       label: 'Familias',       icon: <UserCheck size={18} /> },
+    { path: '/coord/reports',        label: 'Informes',       icon: <BarChart2 size={18} /> },
+    { path: '/coord/observations',   label: 'Observaciones',  icon: <MessageSquare size={18} /> },
+    { path: '/coord/settings',       label: 'Configuración',  icon: <Settings size={18} /> },
   ],
-  assistant: [
-    { path: '/assist', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
-    { path: '/assist/technicians', label: 'Mis Técnicos', icon: <UserCheck size={18} /> },
-    { path: '/assist/review', label: 'Revisión', icon: <ClipboardList size={18} /> },
-    { path: '/assist/map', label: 'Mapa de Campo', icon: <Map size={18} /> },
-    { path: '/assist/chat', label: 'Chat', icon: <MessageSquare size={18} /> },
-    { path: '/assist/incidents', label: 'Novedades', icon: <AlertCircle size={18} /> },
+  support: [
+    { path: '/apoyo',                label: 'Dashboard',       icon: <LayoutDashboard size={18} /> },
+    { path: '/apoyo/professionals',  label: 'Profesionales',   icon: <Users size={18} /> },
+    { path: '/apoyo/review',         label: 'Revisión',        icon: <ClipboardList size={18} /> },
+    { path: '/apoyo/observations',   label: 'Observaciones',   icon: <AlertCircle size={18} /> },
   ],
-  technician: [],
+  professional: [],
+}
+
+const rolLabels: Record<UserRole, string> = {
+  admin: 'Administrador',
+  coordinator: 'Coordinador',
+  support: 'Apoyo Administrativo',
+  professional: 'Profesional de Campo',
 }
 
 interface SidebarProps {
@@ -65,7 +58,7 @@ export function Sidebar({ role }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const { user, signOut } = useAuthStore()
   const navigate = useNavigate()
-  const items = navItems[role]
+  const items = navItems[role] ?? []
 
   const handleLogout = async () => {
     await signOut()
@@ -73,15 +66,10 @@ export function Sidebar({ role }: SidebarProps) {
   }
 
   const SidebarContent = () => (
-    <div className={cn(
-      'h-full flex flex-col transition-all duration-300',
-      'bg-brand-primary',
-    )}>
+    <div className={cn('h-full flex flex-col transition-all duration-300')}
+         style={{ background: '#1B3A4B' }}>
       {/* Logo */}
-      <div className={cn(
-        'flex items-center gap-3 px-4 py-5 border-b border-white/10',
-        collapsed && 'justify-center px-2',
-      )}>
+      <div className={cn('flex items-center gap-3 px-4 py-5 border-b border-white/10', collapsed && 'justify-center px-2')}>
         <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
           <span className="text-white font-bold text-sm">CG</span>
         </div>
@@ -99,9 +87,16 @@ export function Sidebar({ role }: SidebarProps) {
           <NavLink
             key={item.path}
             to={item.path}
+            end={item.path === '/admin' || item.path === '/coord' || item.path === '/apoyo'}
             onClick={() => setMobileOpen(false)}
             className={({ isActive }) =>
-              cn('sidebar-nav-item', isActive && 'active', collapsed && 'justify-center px-2')
+              cn(
+                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-150',
+                isActive
+                  ? 'bg-white/20 text-white font-semibold'
+                  : 'text-white/70 hover:bg-white/10 hover:text-white',
+                collapsed && 'justify-center px-2',
+              )
             }
             title={collapsed ? item.label : undefined}
           >
@@ -111,39 +106,27 @@ export function Sidebar({ role }: SidebarProps) {
         ))}
       </nav>
 
-      {/* User + Collapse */}
+      {/* User + Actions */}
       <div className="border-t border-white/10 p-3 space-y-2">
-        {/* Sync */}
         {!collapsed && (
           <div className="px-1">
             <SyncIndicator />
           </div>
         )}
-
-        {/* User info */}
-        <div className={cn(
-          'flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 cursor-pointer transition-colors',
-          collapsed && 'justify-center',
-        )}>
+        <div className={cn('flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 cursor-pointer transition-colors', collapsed && 'justify-center')}>
           <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 text-white text-xs font-bold">
             {getInitials(user?.fullName || 'U')}
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
               <div className="text-white text-sm font-medium truncate">{user?.fullName}</div>
-              <div className="text-white/50 text-xs truncate capitalize">{user?.role}</div>
+              <div className="text-white/50 text-xs truncate">{rolLabels[user?.role as UserRole] ?? user?.role}</div>
             </div>
           )}
         </div>
-
-        {/* Logout */}
         <button
           onClick={handleLogout}
-          className={cn(
-            'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10',
-            'text-sm transition-colors duration-200',
-            collapsed && 'justify-center',
-          )}
+          className={cn('w-full flex items-center gap-2 px-3 py-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 text-sm transition-colors duration-200', collapsed && 'justify-center')}
         >
           <LogOut size={16} />
           {!collapsed && <span>Cerrar sesión</span>}
@@ -155,16 +138,12 @@ export function Sidebar({ role }: SidebarProps) {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className={cn(
-        'hidden lg:flex flex-col flex-shrink-0 h-screen sticky top-0',
-        'transition-all duration-300',
-        collapsed ? 'w-16' : 'w-60',
-      )}>
+      <div className={cn('hidden lg:flex flex-col flex-shrink-0 h-screen sticky top-0 transition-all duration-300', collapsed ? 'w-16' : 'w-60')}>
         <SidebarContent />
-        {/* Collapse toggle */}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="absolute -right-3 top-20 w-6 h-6 bg-brand-primary text-white rounded-full flex items-center justify-center shadow-md hover:bg-brand-secondary transition-colors z-10"
+          className="absolute -right-3 top-20 w-6 h-6 text-white rounded-full flex items-center justify-center shadow-md z-10"
+          style={{ background: '#1B3A4B' }}
         >
           {collapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
         </button>
@@ -173,12 +152,13 @@ export function Sidebar({ role }: SidebarProps) {
       {/* Mobile Hamburger */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-40 w-10 h-10 bg-brand-primary text-white rounded-xl flex items-center justify-center shadow-lg"
+        className="lg:hidden fixed top-4 left-4 z-40 w-10 h-10 text-white rounded-xl flex items-center justify-center shadow-lg"
+        style={{ background: '#1B3A4B' }}
       >
         <Menu size={20} />
       </button>
 
-      {/* Mobile Sidebar Overlay */}
+      {/* Mobile Overlay */}
       <AnimatePresence>
         {mobileOpen && (
           <>
@@ -213,7 +193,6 @@ export function Sidebar({ role }: SidebarProps) {
   )
 }
 
-// Top Bar for admin views
 interface TopBarProps {
   title: string
   subtitle?: string
@@ -221,11 +200,6 @@ interface TopBarProps {
 }
 
 export function TopBar({ title, subtitle, actions }: TopBarProps) {
-  const { user } = useAuthStore()
-  const { unreadCount: realtimeUnread } = useRealtimeNotifications()
-  const { data: notifData } = useNotifications(user?.id)
-  const unreadCount = realtimeUnread + (notifData?.total ?? 0)
-
   return (
     <header className="bg-white border-b border-border px-6 py-4 flex items-center justify-between sticky top-0 z-30">
       <div className="ml-10 lg:ml-0">
@@ -236,15 +210,7 @@ export function TopBar({ title, subtitle, actions }: TopBarProps) {
         {actions}
         <button className="relative w-9 h-9 rounded-full bg-muted flex items-center justify-center hover:bg-accent transition-colors">
           <Bell size={16} className="text-muted-foreground" />
-          {unreadCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 min-w-[1rem] h-4 px-0.5 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center font-bold">
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </span>
-          )}
         </button>
-        <div className="w-9 h-9 rounded-full bg-brand-primary flex items-center justify-center text-white text-sm font-bold">
-          {getInitials(user?.fullName || 'U')}
-        </div>
       </div>
     </header>
   )

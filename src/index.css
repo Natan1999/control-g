@@ -6,26 +6,26 @@
 
 @layer base {
   :root {
-    /* Gobernación de Bolívar Palette */
-    --background: 210 40% 98%;
-    --foreground: 210 60% 10%;
+    /* Control G — Paleta institucional #1B3A4B */
+    --background: 210 25% 97%;
+    --foreground: 210 40% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 210 60% 10%;
+    --card-foreground: 210 40% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 210 60% 10%;
-    
-    /* Institutional Blue: #003366 */
-    --primary: 210 100% 20%;
+    --popover-foreground: 210 40% 11%;
+
+    /* Primary: #1B3A4B — Azul oscuro institucional */
+    --primary: 201 47% 19%;
     --primary-foreground: 0 0% 100%;
-    
-    /* Institutional Gold: #FFCC00 (as secondary/accent) */
-    --secondary: 48 100% 50%;
-    --secondary-foreground: 210 100% 10%;
-    
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 48 100% 96%;
-    --accent-foreground: 210 100% 20%;
+
+    /* Secondary: #3D7B9E — Azul medio */
+    --secondary: 201 44% 43%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 20% 94%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 142 54% 40%;
+    --accent-foreground: 0 0% 100%;
     
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;

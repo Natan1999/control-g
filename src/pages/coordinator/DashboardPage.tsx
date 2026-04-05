@@ -1,209 +1,160 @@
-import { useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ClipboardList, Users, TrendingUp, Clock, CheckCircle } from 'lucide-react'
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { motion } from 'framer-motion'
-import { KPICard, ResponseRow, TeamMemberRow, PageWrapper } from '@/components/shared'
+import { useState, useEffect } from 'react'
+import { Users, CheckCircle, Clock, TrendingUp, RefreshCw } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
+import { Query } from 'appwrite'
 import { useAuthStore } from '@/stores/authStore'
-import { SERVICE_MOMENTS } from '@/config/moments'
-import { useProjects, useFormResponses, useForms, useProjectMembers } from '@/hooks/useAppwriteQuery'
+import type { ProfessionalProgress } from '@/types'
 
-// Fallback chart data until enough real data is collected
-const generateEmptyDailyData = () => {
-  const data = []
-  for (let i = 25; i > 0; i--) {
-    const d = new Date()
-    d.setDate(d.getDate() - i)
-    data.push({ name: `${d.getDate()} ${d.toLocaleString('default', { month: 'short' })}`, value: 0 })
-  }
-  return data
+interface Summary {
+  totalFamilies: number
+  completedFamilies: number
+  inProgressFamilies: number
+  pendingFamilies: number
 }
-
-const EMPTY_DAILY_DATA = generateEmptyDailyData()
-const ZONE_DATA = [{ name: 'General', value: 0, total: 100 }]
 
 export default function CoordDashboard() {
   const { user } = useAuthStore()
-  const navigate = useNavigate()
+  const [summary, setSummary] = useState<Summary>({ totalFamilies: 0, completedFamilies: 0, inProgressFamilies: 0, pendingFamilies: 0 })
+  const [professionals, setProfessionals] = useState<ProfessionalProgress[]>([])
+  const [loading, setLoading] = useState(true)
+  const [entityName, setEntityName] = useState('')
 
-  // ── React Query hooks (caching automático) ──────────────────────────────────
-  const { data: formsData, isPending: formsLoading } = useForms(user?.organizationId)
-  const { data: responsesData, isPending: responsesLoading } = useFormResponses(user?.organizationId, { limit: 50 })
-  const { data: pendingData, isPending: pendingLoading } = useFormResponses(user?.organizationId, { status: 'in_review', limit: 1 })
-  const { data: projectsData, isPending: projectsLoading } = useProjects(user?.organizationId)
+  useEffect(() => { load() }, [user?.entityId])
 
-  // Get members of the first project
-  const firstProjectId = projectsData?.documents?.[0]?.$id
-  const { data: membersData, isPending: membersLoading } = useProjectMembers(firstProjectId)
+  async function load() {
+    if (!user?.entityId) { setLoading(false); return }
+    setLoading(true)
+    try {
+      try {
+        const entity = await databases.getDocument(DATABASE_ID, COLLECTION_IDS.ENTITIES, user.entityId)
+        setEntityName(entity.name)
+      } catch { setEntityName('') }
 
-  const isPending = formsLoading || responsesLoading || pendingLoading || projectsLoading || membersLoading
+      const familiesRes = await databases.listDocuments(DATABASE_ID, COLLECTION_IDS.FAMILIES, [
+        Query.equal('entity_id', user.entityId), Query.limit(500),
+      ])
+      const families = familiesRes.documents
+      const completed = families.filter((f: any) => f.overall_status === 'completed').length
+      const inProgress = families.filter((f: any) => f.overall_status === 'in_progress').length
+      setSummary({ totalFamilies: families.length, completedFamilies: completed, inProgressFamilies: inProgress, pendingFamilies: families.length - completed - inProgress })
 
-  // ── Derived values (memoized) ───────────────────────────────────────────────
-  const stats = useMemo(() => ({
-    formsDesigned:     formsData?.total ?? 0,
-    formsFilled:       responsesData?.total ?? 0,
-    activeTechs:       membersData?.length ?? 0,
-    assistants:        0,
-    progress:          (responsesData?.total ?? 0) > 0 ? 100 : 0,
-    pendingValidation: pendingData?.total ?? 0,
-  }), [formsData, responsesData, pendingData, membersData])
+      const usersRes = await databases.listDocuments(DATABASE_ID, COLLECTION_IDS.USER_PROFILES, [
+        Query.equal('entity_id', user.entityId), Query.equal('role', 'professional'), Query.limit(50),
+      ])
 
-  const recentResponses = useMemo(() =>
-    (responsesData?.documents ?? []).slice(0, 5).map((doc: any) => {
-      const moment = SERVICE_MOMENTS.find((m) => m.formId === doc.form_id)
-      return {
-        id:            doc.$id,
-        localId:       doc.local_id,
-        technicianName: doc.technician_name || 'Técnico ' + doc.technician_id?.substring(0, 4),
-        zoneName:      doc.zone_name || doc.zone_id || 'N/A',
-        formName:      moment ? moment.name : 'Formulario ' + doc.form_id?.substring(0, 4),
-        createdAt:     doc.$createdAt,
-        status:        doc.status,
-      }
-    }),
-  [responsesData])
+      const progressList: ProfessionalProgress[] = usersRes.documents.map((prof: any) => {
+        const pf = families.filter((f: any) => f.professional_id === prof.user_id)
+        const exAnte = pf.filter((f: any) => f.ex_ante_status === 'completed').length
+        const e1 = pf.filter((f: any) => f.encounter_1_status === 'completed').length
+        const e2 = pf.filter((f: any) => f.encounter_2_status === 'completed').length
+        const e3 = pf.filter((f: any) => f.encounter_3_status === 'completed').length
+        const exPost = pf.filter((f: any) => f.ex_post_status === 'completed').length
+        const total = pf.length * 5
+        const done = exAnte + e1 + e2 + e3 + exPost
+        return {
+          professionalId: prof.user_id,
+          professionalName: prof.full_name,
+          municipalities: [],
+          familiesTarget: pf.length,
+          exAnte, encounter1: e1, encounter2: e2, encounter3: e3, exPost,
+          percentageComplete: total > 0 ? Math.round((done / total) * 100) : 0,
+          lastSyncAt: prof.last_sync_at,
+        }
+      })
+      setProfessionals(progressList)
+    } catch { }
+    setLoading(false)
+  }
 
-  const teamMembers = useMemo(() =>
-    (membersData ?? []).slice(0, 5).map((m: any) => ({
-      id:             m.$id,
-      user:           { fullName: m.user_id },
-      assignedZoneId: m.assigned_zone_id,
-      formsToday:     0,
-      isOnline:       true,
-      isPending:      false,
-    })),
-  [membersData])
+  const pct = summary.totalFamilies > 0 ? Math.round((summary.completedFamilies / summary.totalFamilies) * 100) : 0
+
+  const kpis = [
+    { label: 'Familias meta', value: summary.totalFamilies, icon: <Users size={20} />, color: '#1B3A4B' },
+    { label: 'Completadas', value: summary.completedFamilies, icon: <CheckCircle size={20} />, color: '#27AE60' },
+    { label: 'En progreso', value: summary.inProgressFamilies, icon: <Clock size={20} />, color: '#F39C12' },
+    { label: '% Avance', value: `${pct}%`, icon: <TrendingUp size={20} />, color: '#3D7B9E' },
+  ]
 
   return (
-    <PageWrapper>
+    <div className="p-6 max-w-7xl mx-auto">
       <TopBar
-        title={`Buenos días, ${user?.fullName?.split(' ')[0] || 'Coordinador'} 👋`}
-        subtitle="Resumen del proyecto activo"
+        title="Dashboard Coordinador"
+        subtitle={entityName || 'Seguimiento en tiempo real'}
+        actions={
+          <button onClick={load} className="p-2 hover:bg-muted rounded-lg transition-colors" title="Actualizar">
+            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+          </button>
+        }
       />
 
-      <div className="p-6 space-y-6">
-        {/* KPIs */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-          <KPICard label="Formularios diseñados"     value={isPending ? '...' : stats.formsDesigned}     icon={<ClipboardList size={18} />} />
-          <KPICard label="Formularios diligenciados" value={isPending ? '...' : stats.formsFilled}       icon={<CheckCircle size={18} />}   colorClass="bg-green-50 text-green-600" />
-          <KPICard label="Técnicos activos"          value={isPending ? '...' : stats.activeTechs}       icon={<Users size={18} />}         colorClass="bg-blue-50 text-blue-600" />
-          <KPICard label="Asistentes"                value={isPending ? '...' : stats.assistants}        icon={<Users size={18} />}         colorClass="bg-indigo-50 text-indigo-600" />
-          <KPICard label="Avance general"            value={isPending ? '...' : stats.progress}          icon={<TrendingUp size={18} />}    colorClass="bg-orange-50 text-orange-600" suffix="%" />
-          <KPICard label="Pendientes validación"     value={isPending ? '...' : stats.pendingValidation} icon={<Clock size={18} />}         colorClass="bg-yellow-50 text-yellow-600" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+        {kpis.map(kpi => (
+          <div key={kpi.label} className="bg-white rounded-2xl border border-border p-5 shadow-sm">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white mb-3" style={{ background: kpi.color }}>
+              {kpi.icon}
+            </div>
+            <div className="text-2xl font-black text-foreground">{kpi.value}</div>
+            <div className="text-xs text-muted-foreground mt-1">{kpi.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-white rounded-2xl border border-border p-5 shadow-sm mt-4">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-semibold">Avance general de la operación</span>
+          <span className="text-sm font-bold" style={{ color: '#1B3A4B' }}>{pct}%</span>
         </div>
-
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Daily chart */}
-          <div className="lg:col-span-2 bg-card rounded-2xl p-5 border border-border shadow-sm">
-            <h3 className="font-bold text-foreground mb-4">Recolección diaria — últimos 25 días</h3>
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={EMPTY_DAILY_DATA}>
-                <defs>
-                  <linearGradient id="grad1" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#003366" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="#003366" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} interval={4} />
-                <YAxis tick={{ fontSize: 11 }} />
-                <Tooltip />
-                <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2.5} fill="url(#grad1)" name="Formularios" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Zone progress */}
-          <div className="bg-card rounded-2xl p-5 border border-border shadow-sm">
-            <h3 className="font-bold text-foreground mb-4">Avance por zona</h3>
-            <div className="space-y-3">
-              {ZONE_DATA.map((zone: { name: string; value: number; total: number }) => {
-                const total = typeof zone.total === 'number' ? zone.total : 1
-                const pct   = Math.round((zone.value / total) * 100)
-                return (
-                  <div key={zone.name}>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="font-medium truncate">{zone.name}</span>
-                      <span className="text-muted-foreground ml-2">{pct}%</span>
-                    </div>
-                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${pct}%` }}
-                        transition={{ duration: 0.8, delay: 0.1 }}
-                        className="h-full rounded-full"
-                        style={{ backgroundColor: pct >= 80 ? '#27AE60' : pct >= 50 ? '#F39C12' : 'hsl(var(--primary))' }}
-                      />
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* Recent responses */}
-          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
-            <div className="px-5 py-4 border-b border-border flex items-center justify-between">
-              <h3 className="font-bold text-foreground">Últimos formularios recibidos</h3>
-              <button
-                onClick={() => navigate('/coord/data')}
-                className="text-xs text-brand-primary hover:underline"
-                aria-label="Ver todos los formularios recibidos"
-              >
-                Ver todos →
-              </button>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-muted/20">
-                    {['ID', 'Técnico', 'Zona', 'Formulario', 'Fecha', 'Estado'].map(h => (
-                      <th key={h} className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {recentResponses.map((r: any) => <ResponseRow key={r.id} response={r} />)}
-                  {recentResponses.length === 0 && !isPending && (
-                    <tr><td colSpan={6} className="p-4 text-center text-sm text-muted-foreground">No hay respuestas.</td></tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Active team */}
-          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
-            <div className="px-5 py-4 border-b border-border flex items-center justify-between">
-              <h3 className="font-bold text-foreground">Equipo en campo</h3>
-              <div className="flex items-center gap-1.5 text-xs text-green-600 font-medium">
-                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                {teamMembers.length} en línea
-              </div>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-muted/20">
-                    {['Técnico', 'Zona', 'Hoy', 'Último sync', 'Estado'].map(h => (
-                      <th key={h} className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {teamMembers.map((m: any) => <TeamMemberRow key={m.id} member={m} />)}
-                  {teamMembers.length === 0 && !isPending && (
-                    <tr><td colSpan={5} className="p-4 text-center text-sm text-muted-foreground">No hay equipo activo.</td></tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
+        <div className="h-3 bg-muted rounded-full overflow-hidden">
+          <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: '#1B3A4B' }} />
         </div>
       </div>
-    </PageWrapper>
+
+      <div className="bg-white rounded-2xl border border-border shadow-sm mt-4 overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
+          <h2 className="font-bold">Avance por Profesional</h2>
+        </div>
+        {loading ? (
+          <div className="p-8 text-center text-muted-foreground text-sm">Cargando datos...</div>
+        ) : professionals.length === 0 ? (
+          <div className="p-8 text-center text-muted-foreground text-sm">
+            No hay profesionales asignados aún. Ve a <strong>Equipo</strong> para invitar profesionales.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border bg-muted/30">
+                  {['Profesional','Familias','Ex-Antes','M1','M2','M3','Ex-Post','% Avance'].map(h => (
+                    <th key={h} className="text-left px-4 py-3 font-semibold text-muted-foreground whitespace-nowrap">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {professionals.map(p => (
+                  <tr key={p.professionalId} className="hover:bg-muted/20 transition-colors">
+                    <td className="px-4 py-3 font-medium whitespace-nowrap">{p.professionalName}</td>
+                    <td className="px-4 py-3 text-center">{p.familiesTarget}</td>
+                    <td className="px-4 py-3 text-center">{p.exAnte}/{p.familiesTarget}</td>
+                    <td className="px-4 py-3 text-center">{p.encounter1}/{p.familiesTarget}</td>
+                    <td className="px-4 py-3 text-center">{p.encounter2}/{p.familiesTarget}</td>
+                    <td className="px-4 py-3 text-center">{p.encounter3}/{p.familiesTarget}</td>
+                    <td className="px-4 py-3 text-center">{p.exPost}/{p.familiesTarget}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden min-w-[60px]">
+                          <div className="h-full rounded-full" style={{ width: `${p.percentageComplete}%`, background: p.percentageComplete === 100 ? '#27AE60' : '#1B3A4B' }} />
+                        </div>
+                        <span className="text-xs font-semibold w-10 text-right">{p.percentageComplete}%</span>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
   )
 }

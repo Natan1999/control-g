@@ -1,8 +1,8 @@
 import React, { ReactNode } from 'react'
 import { TrendingUp, TrendingDown } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { cn, getInitials, formatRelativeTime } from '@/lib/utils'
-import type { FormResponse, TeamMember } from '@/types'
+import { cn, getInitials } from '@/lib/utils'
+// FormResponse and TeamMember legacy types removed — use new domain types from @/types
 
 // ─── KPI Card ───────────────────────────────────────────────────────────────
 
@@ -153,52 +153,3 @@ export function SyncIndicator() {
   )
 }
 
-// ─── Response Row ─────────────────────────────────────────────────────────────
-
-export function ResponseRow({ response }: { response: FormResponse }) {
-  return (
-    <tr className="hover:bg-muted/30 transition-colors cursor-pointer">
-      <td className="px-4 py-3 text-xs font-mono text-muted-foreground">{response.localId.slice(-8)}</td>
-      <td className="px-4 py-3">
-        <div className="flex items-center gap-2">
-          <Avatar name={response.technicianName || ''} size="sm" />
-          <span className="text-sm font-medium">{response.technicianName}</span>
-        </div>
-      </td>
-      <td className="px-4 py-3 text-sm text-muted-foreground">{response.zoneName}</td>
-      <td className="px-4 py-3 text-sm max-w-[160px] truncate">{response.formName}</td>
-      <td className="px-4 py-3 text-xs text-muted-foreground">{response.syncedAt && formatRelativeTime(response.syncedAt)}</td>
-      <td className="px-4 py-3"><StatusBadge status={response.status} /></td>
-    </tr>
-  )
-}
-
-// ─── Team Member Row ──────────────────────────────────────────────────────────
-
-export function TeamMemberRow({ member }: { member: TeamMember }) {
-  return (
-    <tr className="hover:bg-muted/30 transition-colors">
-      <td className="px-4 py-3">
-        <div className="flex items-center gap-2.5">
-          <div className="relative">
-            <Avatar name={member.user.fullName} size="sm" />
-            <span className={cn('absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white', member.isOnline ? 'bg-green-500' : 'bg-gray-300')} />
-          </div>
-          <div>
-            <div className="text-sm font-semibold">{member.user.fullName}</div>
-            <div className="text-xs text-muted-foreground">{member.user.email}</div>
-          </div>
-        </div>
-      </td>
-      <td className="px-4 py-3 text-sm text-muted-foreground">Zona {member.assignedZoneId?.slice(-3)}</td>
-      <td className="px-4 py-3 text-sm font-bold">{member.formsToday ?? 0}</td>
-      <td className="px-4 py-3 text-xs text-muted-foreground">{member.isOnline ? 'Hace 30 min' : 'Hace 4h'}</td>
-      <td className="px-4 py-3">
-        <span className={cn('inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full', member.isOnline ? 'bg-green-100 text-green-700' : member.isPending ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-600')}>
-          <span className={cn('w-1.5 h-1.5 rounded-full', member.isOnline ? 'bg-green-500' : member.isPending ? 'bg-yellow-500' : 'bg-gray-400')} />
-          {member.isOnline ? 'En campo' : member.isPending ? 'Con pendientes' : 'Offline'}
-        </span>
-      </td>
-    </tr>
-  )
-}

@@ -6,17 +6,10 @@ import { useAuthStore } from '@/stores/authStore'
 import type { UserRole } from '@/types'
 
 const ROLE_ROUTES: Record<UserRole, string> = {
-  superadmin: '/admin',
-  coordinator: '/coord',
-  assistant:   '/assist',
-  technician:  '/field',
-}
-
-const ROLE_LABELS: Record<UserRole, { label: string; color: string; desc: string }> = {
-  superadmin:  { label: 'Superadmin',  color: 'bg-slate-700',    desc: 'Panel de administración global' },
-  coordinator: { label: 'Coordinador', color: 'bg-brand-primary', desc: 'Gestión de proyectos y equipo' },
-  assistant:   { label: 'Asistente',   color: 'bg-teal-600',     desc: 'Supervisión y revisión de datos' },
-  technician:  { label: 'Técnico',     color: 'bg-orange-500',   desc: 'Recolección de datos en campo' },
+  admin:        '/admin',
+  coordinator:  '/coord',
+  support:      '/apoyo',
+  professional: '/field',
 }
 
 export default function LoginPage() {
