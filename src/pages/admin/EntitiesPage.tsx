@@ -66,6 +66,7 @@ export default function AdminEntitiesPage() {
         contract_object: form.contract_object, operator_name: form.operator_name,
         department: form.department, period_start: form.period_start, period_end: form.period_end,
         families_per_municipality: form.families_per_municipality, status: 'active',
+        created_by: form.coordinator_email || null,
       })
       // Create municipalities
       for (const mun of form.municipalities) {

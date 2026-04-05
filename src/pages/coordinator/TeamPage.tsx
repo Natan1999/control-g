@@ -79,6 +79,7 @@ export default function TeamPage() {
         {
           user_id: ID.unique(),
           full_name: form.full_name,
+          email: form.email.trim().toLowerCase(),
           entity_id: user?.entityId ?? null,
           role: form.role,
           status: 'active',

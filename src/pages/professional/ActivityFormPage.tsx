@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, CheckCircle, Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react'
 import SignatureCanvas from 'react-signature-canvas'
 import { MobileTopBar } from '@/components/layout/BottomNav'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
+import { databases, storage, DATABASE_ID, COLLECTION_IDS, BUCKET_IDS } from '@/lib/appwrite'
 import { ID } from 'appwrite'
 import { useAuthStore } from '@/stores/authStore'
 import { cn } from '@/lib/utils'
@@ -943,6 +943,35 @@ export default function ActivityFormPage() {
 
   useEffect(() => { autoSave() }, [exAnteData, autoSave])
 
+  // Auto-save encounter/ex-post formData to localStorage (simpler — no signatures/blobs)
+  const encounterSaveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(() => {
+    if (actType === 'ex_ante' || !familyId) return
+    if (encounterSaveTimeout.current) clearTimeout(encounterSaveTimeout.current)
+    encounterSaveTimeout.current = setTimeout(() => {
+      try {
+        const key = `cg_draft_${actType}_${familyId}`
+        const toSave = { ...formData, _photoFile: undefined } // exclude File object
+        localStorage.setItem(key, JSON.stringify(toSave))
+        setAutoSaveMsg('Guardado automáticamente ✓')
+        setTimeout(() => setAutoSaveMsg(''), 2000)
+      } catch { /* silent */ }
+    }, 500)
+  }, [formData, actType, familyId])
+
+  // Restore encounter draft on mount
+  useEffect(() => {
+    if (actType === 'ex_ante' || !familyId) return
+    try {
+      const key = `cg_draft_${actType}_${familyId}`
+      const raw = localStorage.getItem(key)
+      if (raw) {
+        const saved = JSON.parse(raw)
+        setFormData((prev: any) => ({ ...prev, ...saved }))
+      }
+    } catch { /* silent */ }
+  }, [actType, familyId])
+
   // Restore draft on mount
   useEffect(() => {
     if (actType !== 'ex_ante' || !familyId) return
@@ -1043,6 +1072,33 @@ export default function ActivityFormPage() {
         signatureDataUrl = sigRef.current.toDataURL('image/png')
       }
 
+      // Upload photo if present (encounters/ex-post)
+      let photoUrl: string | null = null
+      const photoFile = formData._photoFile as File | undefined
+      if (photoFile && navigator.onLine) {
+        try {
+          const uploaded = await storage.createFile(
+            BUCKET_IDS.FIELD_PHOTOS,
+            ID.unique(),
+            photoFile
+          )
+          photoUrl = uploaded.$id
+        } catch { /* photo upload failure is non-blocking */ }
+      } else if (photoFile && !navigator.onLine) {
+        // Queue photo for upload when online
+        try {
+          await localDB.mediaQueue.add({
+            id: ID.unique(),
+            activityLocalId: 'pending',
+            file: photoFile,
+            name: photoFile.name,
+            mimeType: photoFile.type,
+            bucketId: BUCKET_IDS.FIELD_PHOTOS,
+            status: 'pending',
+          })
+        } catch { /* silent */ }
+      }
+
       const activityDoc: Record<string, any> = {
         entity_id: family.entity_id,
         family_id: family.$id,
@@ -1079,6 +1135,7 @@ export default function ActivityFormPage() {
         Object.assign(activityDoc, {
           topic: formData.topic,
           description: formData.description,
+          photo_url: photoUrl ?? undefined,
           beneficiary_signature_url: signatureDataUrl ?? undefined,
         })
       } else if (actType === 'ex_post') {
@@ -1086,20 +1143,12 @@ export default function ActivityFormPage() {
           positive_impact: formData.positive_impact,
           program_evaluation: formData.program_evaluation,
           professional_evaluation: formData.professional_evaluation,
+          photo_url: photoUrl ?? undefined,
           beneficiary_signature_url: signatureDataUrl ?? undefined,
         })
       }
 
-      if (navigator.onLine) {
-        await databases.createDocument(DATABASE_ID, COLLECTION_IDS.ACTIVITIES, ID.unique(), activityDoc)
-      } else {
-        // Queue offline
-        const queue = JSON.parse(localStorage.getItem('cg_offline_queue') ?? '[]')
-        queue.push({ type: 'activity', id: ID.unique(), data: activityDoc, familyId: family.$id, familyUpdate: null })
-        localStorage.setItem('cg_offline_queue', JSON.stringify(queue))
-      }
-
-      // Update family status
+      // Build family status updates
       const familyUpdates: Record<string, any> = {}
       familyUpdates[`${actType}_status`] = 'completed'
       familyUpdates[`${actType}_date`] = actType === 'ex_ante' ? exAnteData.activityDate : formData.activity_date
@@ -1121,12 +1170,37 @@ export default function ActivityFormPage() {
       familyUpdates.overall_status = allDone ? 'completed' : anyDone ? 'in_progress' : 'pending'
 
       if (navigator.onLine) {
+        await databases.createDocument(DATABASE_ID, COLLECTION_IDS.ACTIVITIES, ID.unique(), activityDoc)
         await databases.updateDocument(DATABASE_ID, COLLECTION_IDS.FAMILIES, family.$id, familyUpdates)
+      } else {
+        // Queue activity + family update for later sync
+        const queue = JSON.parse(localStorage.getItem('cg_offline_queue') ?? '[]')
+        queue.push({
+          type: 'activity',
+          id: ID.unique(),
+          data: activityDoc,
+          familyId: family.$id,
+          familyUpdate: familyUpdates,
+        })
+        localStorage.setItem('cg_offline_queue', JSON.stringify(queue))
+
+        // Update local cache immediately so the UI reflects the change
+        const cacheKey = `cg_families_${family.entity_id}`
+        try {
+          const cached = JSON.parse(localStorage.getItem(cacheKey) ?? '[]')
+          const idx = cached.findIndex((f: any) => f.$id === family.$id)
+          if (idx >= 0) {
+            cached[idx] = { ...cached[idx], ...familyUpdates }
+            localStorage.setItem(cacheKey, JSON.stringify(cached))
+          }
+        } catch { /* silent */ }
       }
 
-      // Delete draft if ex_ante
+      // Delete draft
       if (actType === 'ex_ante') {
         await localDB.characterizations.delete(`draft_${familyId}`)
+      } else {
+        localStorage.removeItem(`cg_draft_${actType}_${familyId}`)
       }
 
       setToast({ message: '¡Listo! Actividad registrada exitosamente.', type: 'success' })
