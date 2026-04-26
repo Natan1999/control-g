@@ -5,6 +5,7 @@ import type { UserRole } from '@/types'
 
 // Auth
 import LoginPage from '@/pages/auth/LoginPage'
+import LandingPage from '@/pages/landing/LandingPage'
 
 // Layout
 import { Sidebar } from '@/components/layout/Sidebar'
@@ -171,8 +172,9 @@ export default function App() {
         </ProtectedLayout>
       } />
 
-      <Route path="/" element={<Navigate to={user ? defaultRoutes[user.role as UserRole] : '/login'} replace />} />
-      <Route path="*" element={<Navigate to={user ? defaultRoutes[user.role as UserRole] : '/login'} replace />} />
+      {/* Root: landing page for web, redirect to dashboard if already logged in */}
+      <Route path="/" element={user ? <Navigate to={defaultRoutes[user.role as UserRole]} replace /> : <LandingPage />} />
+      <Route path="*" element={<Navigate to={user ? defaultRoutes[user.role as UserRole] : '/'} replace />} />
     </Routes>
   )
 }
