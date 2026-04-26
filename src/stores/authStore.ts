@@ -11,6 +11,7 @@ import {
   getSession,
   type UserProfile,
 } from '@/lib/appwrite-auth'
+import { Network } from '@capacitor/network'
 import { updateLocalCache } from '@/lib/sync-engine'
 
 function profileToUser(profile: UserProfile, email: string): User {
@@ -85,9 +86,19 @@ export const useAuthStore = create<AuthState>()(
       },
 
       restore: async () => {
-        if (!get().isAuthenticated) return
+        const { isAuthenticated, user: currentUser } = get()
+        if (!isAuthenticated || !currentUser) return
+        
         set({ isLoading: true })
         try {
+          // Check connectivity first
+          const status = await Network.getStatus()
+          if (!status.connected) {
+            console.log('Restoring session from cache (offline mode)')
+            set({ isLoading: false })
+            return
+          }
+
           const authUser = await getSession()
           if (authUser?.profile) {
             const user = profileToUser(authUser.profile, authUser.email)
@@ -95,7 +106,14 @@ export const useAuthStore = create<AuthState>()(
           } else {
             set({ user: null, profileId: null, isAuthenticated: false, isLoading: false })
           }
-        } catch {
+        } catch (err) {
+          console.error('Session restore error:', err)
+          // If offline, keep current state
+          const status = await Network.getStatus()
+          if (!status.connected) {
+             set({ isLoading: false })
+             return
+          }
           set({ user: null, profileId: null, isAuthenticated: false, isLoading: false })
         }
       },

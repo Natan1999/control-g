@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Control G</string>
+    <string name="title_activity_main">Control G</string>
+    <string name="package_name">com.drandigital.controlg</string>
+    <string name="custom_url_scheme">com.drandigital.controlg</string>
+</resources>

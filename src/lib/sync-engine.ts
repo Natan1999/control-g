@@ -1,7 +1,7 @@
 import { Network } from '@capacitor/network'
 import { useSyncStore } from '@/stores/syncStore'
-import { databases, DATABASE_ID, COLLECTION_IDS } from './appwrite'
-import { Query } from 'appwrite'
+import { databases, storage, DATABASE_ID, COLLECTION_IDS, BUCKET_IDS } from './appwrite'
+import { ID, Query } from 'appwrite'
 
 let syncInterval: ReturnType<typeof setInterval> | null = null
 const SYNC_INTERVAL_MS = 30_000 // 30 seconds
@@ -139,10 +139,30 @@ export async function processSyncQueue() {
       }
     }
 
+    // 4. Process Media Queue
+    const pendingMedia = await localDB.mediaQueue
+      .where('status')
+      .equals('pending')
+      .toArray()
+
+    for (const media of pendingMedia) {
+      try {
+        // Map common bucket names to actual IDs
+        let targetBucket: string = BUCKET_IDS.FIELD_PHOTOS
+        if (media.bucketId === 'signatures') targetBucket = BUCKET_IDS.SIGNATURES
+        
+        await storage.createFile(targetBucket, ID.unique(), media.file as File)
+        await localDB.mediaQueue.update(media.id, { status: 'uploaded' })
+      } catch (err: any) {
+        console.error('Error uploading media:', err)
+      }
+    }
+
     // Update pending count state
     const currentPending = 
       (await localDB.activities.where('status').equals('pending').count()) +
-      (await localDB.formResponses.where('status').equals('completed').count())
+      (await localDB.formResponses.where('status').equals('completed').count()) +
+      (await localDB.mediaQueue.where('status').equals('pending').count())
 
     if (currentPending === 0) {
       store.setSyncComplete()

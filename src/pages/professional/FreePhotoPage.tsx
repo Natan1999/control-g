@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  Camera, MapPin, FileText, ChevronLeft, 
+  Camera as CameraIcon, MapPin, FileText, ChevronLeft, 
   X, Image as ImageIcon, Loader2, Save,
   CheckCircle2, AlertCircle
 } from 'lucide-react'
-// Removed uuid import, using crypto.randomUUID()
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera'
+import { Geolocation } from '@capacitor/geolocation'
 import { localDB } from '@/lib/dexie-db'
 import { useAuthStore } from '@/stores/authStore'
 import { useSyncStore } from '@/stores/syncStore'
@@ -30,35 +31,53 @@ export default function FreePhotoPage() {
     fetchLocation()
   }, [])
 
-  const fetchLocation = () => {
-    if (!navigator.geolocation) return
-    
+  const fetchLocation = async () => {
     setIsLoadingLocation(true)
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
-        setIsLoadingLocation(false)
-      },
-      (err) => {
-        console.error('Location error:', err)
-        setIsLoadingLocation(false)
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-    )
+    try {
+      const pos = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0
+      })
+      setLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+    } catch (err) {
+      console.error('Location error:', err)
+      setError('No se pudo obtener la ubicación GPS automática.')
+    } finally {
+      setIsLoadingLocation(false)
+    }
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (!files) return
+  const takePhoto = async () => {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera,
+        saveToGallery: true
+      })
 
-    const newPhotos = Array.from(files).map(file => ({
-      id: crypto.randomUUID(),
-      url: URL.createObjectURL(file),
-      file
-    }))
+      if (image.webPath) {
+        // Fetch the blob from the path
+        const response = await fetch(image.webPath)
+        const blob = await response.blob()
+        const file = new File([blob], `capture_${Date.now()}.jpg`, { type: 'image/jpeg' })
 
-    setPhotos(prev => [...prev, ...newPhotos])
-    setError(null)
+        const newPhoto = {
+          id: crypto.randomUUID(),
+          url: image.webPath,
+          file
+        }
+        setPhotos(prev => [...prev, newPhoto])
+        setError(null)
+      }
+    } catch (err: any) {
+      if (err.message !== 'User cancelled photos app') {
+        console.error('Camera error:', err)
+        setError('Error al activar la cámara nativa.')
+      }
+    }
   }
 
   const removePhoto = (id: string) => {
@@ -145,7 +164,7 @@ export default function FreePhotoPage() {
            <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
-                  <Camera size={20} />
+                  <CameraIcon size={20} />
                 </div>
                 <h2 className="font-black text-slate-900 uppercase tracking-tight text-sm">Registros Fotográficos</h2>
               </div>
@@ -156,20 +175,15 @@ export default function FreePhotoPage() {
 
            {/* Photo Grid */}
            <div className="grid grid-cols-2 gap-4">
-              <label className="aspect-square rounded-[24px] border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-slate-50 hover:border-blue-300 transition-all active:scale-95 group">
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  capture="environment" 
-                  multiple 
-                  className="hidden" 
-                  onChange={handleFileChange}
-                />
+              <button 
+                onClick={takePhoto}
+                className="aspect-square rounded-[24px] border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-slate-50 hover:border-blue-300 transition-all active:scale-95 group"
+              >
                 <div className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform">
-                  <Camera size={24} />
+                  <CameraIcon size={24} />
                 </div>
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Capturar</span>
-              </label>
+              </button>
 
               <AnimatePresence>
                 {photos.map((photo, index) => (

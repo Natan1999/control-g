@@ -7,6 +7,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { Loader2, ArrowLeft, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { localDB } from '@/lib/dexie-db'
+import { Geolocation } from '@capacitor/geolocation'
 
 const FormResponderPage: React.FC = () => {
   const { formId } = useParams<{ formId: string }>()
@@ -66,6 +67,19 @@ const FormResponderPage: React.FC = () => {
     if (!formDef || !user) return
 
     try {
+      // Automatic GPS capture for every form submission
+      let lat = 0, lng = 0
+      try {
+        const pos = await Geolocation.getCurrentPosition({
+          enableHighAccuracy: true,
+          timeout: 10000
+        })
+        lat = pos.coords.latitude
+        lng = pos.coords.longitude
+      } catch (gpsError) {
+        console.warn('Could not capture GPS for form:', gpsError)
+      }
+
       // Create a local response object for Dexie
       // This is the CRITICAL part for offline-first
       await localDB.formResponses.add({
@@ -74,7 +88,14 @@ const FormResponderPage: React.FC = () => {
         entityId: formDef.entityId,
         professionalId: user.id,
         familyId: '', // Would be linked if we had a family context
-        answers: answers,
+        answers: {
+          ...answers,
+          _metadata: {
+            lat,
+            lng,
+            capturedAt: Date.now()
+          }
+        },
         status: 'completed', // Ready to be synced
         createdAt: Date.now(),
         updatedAt: Date.now()
