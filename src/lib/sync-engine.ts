@@ -18,9 +18,9 @@ export async function isOnline(): Promise<boolean> {
 
 async function pendingCount() {
   const [activities, responses, media] = await Promise.all([
-    localDB.activities.where('status').equals('pending').count(),
+    localDB.activities.filter(item => item.status !== 'synced').count(),
     localDB.formResponses.where('status').equals('completed').count(),
-    localDB.mediaQueue.where('status').equals('pending').count(),
+    localDB.mediaQueue.filter(item => item.status !== 'uploaded').count(),
   ])
   let legacy = 0
   try {
@@ -97,7 +97,9 @@ async function syncLegacyQueue() {
 }
 
 async function syncMediaQueue() {
-  const pending = await localDB.mediaQueue.where('status').equals('pending').toArray()
+  // Failed entries from earlier versions are deliberately retried too. Field
+  // evidence must remain queued until a connection eventually succeeds.
+  const pending = await localDB.mediaQueue.filter(item => item.status !== 'uploaded').toArray()
   for (const media of pending) {
     try {
       const bucket = media.bucketId === BUCKET_IDS.SIGNATURES ? BUCKET_IDS.SIGNATURES : BUCKET_IDS.FIELD_PHOTOS
@@ -107,7 +109,7 @@ async function syncMediaQueue() {
       const attempts = (media.retryCount || 0) + 1
       await localDB.mediaQueue.update(media.id, {
         retryCount: attempts,
-        status: attempts >= 5 ? 'failed' : 'pending',
+        status: 'pending',
       })
     }
   }
@@ -117,10 +119,19 @@ async function uploadedMedia(parentLocalId: string): Promise<LocalMedia[]> {
   return localDB.mediaQueue.where('activityLocalId').equals(parentLocalId).filter(item => item.status === 'uploaded').toArray()
 }
 
+async function hasUnresolvedMedia(parentLocalId: string) {
+  return (await localDB.mediaQueue
+    .where('activityLocalId')
+    .equals(parentLocalId)
+    .filter(item => item.status !== 'uploaded')
+    .count()) > 0
+}
+
 async function syncActivities() {
-  const pending = await localDB.activities.where('status').equals('pending').toArray()
+  const pending = await localDB.activities.filter(item => item.status !== 'synced').toArray()
   for (const activity of pending) {
     try {
+      if (await hasUnresolvedMedia(activity.localId)) continue
       const payload = JSON.parse(activity.data)
       const media = await uploadedMedia(activity.localId)
       const photo = media.find(item => item.bucketId !== BUCKET_IDS.SIGNATURES)
@@ -147,7 +158,7 @@ async function syncActivities() {
       const attempts = (activity.retryCount || 0) + 1
       await localDB.activities.update(activity.localId, {
         retryCount: attempts,
-        status: attempts >= 5 ? 'failed' : 'pending',
+        status: 'pending',
       })
     }
   }
@@ -157,6 +168,7 @@ async function syncFormResponses() {
   const pending = await localDB.formResponses.where('status').equals('completed').toArray()
   for (const response of pending) {
     try {
+      if (await hasUnresolvedMedia(response.localId)) continue
       const answers = structuredClone(response.answers)
       const media = await uploadedMedia(response.localId)
       for (const item of media) {

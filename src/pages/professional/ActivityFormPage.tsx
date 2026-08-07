@@ -1084,17 +1084,27 @@ export default function ActivityFormPage() {
       // follow exactly the same idempotent path.
       const photoFile = formData._photoFile as File | undefined
       if (photoFile) {
-        try {
-          await localDB.mediaQueue.add({
-            id: ID.unique(),
-            activityLocalId,
-            file: photoFile,
-            name: photoFile.name,
-            mimeType: photoFile.type,
-            bucketId: BUCKET_IDS.FIELD_PHOTOS,
-            status: 'pending',
-          })
-        } catch { /* silent */ }
+        await localDB.mediaQueue.add({
+          id: ID.unique(),
+          activityLocalId,
+          file: photoFile,
+          name: photoFile.name,
+          mimeType: photoFile.type,
+          bucketId: BUCKET_IDS.FIELD_PHOTOS,
+          status: 'pending',
+        })
+      }
+      if (signatureDataUrl) {
+        const signatureBlob = await (await fetch(signatureDataUrl)).blob()
+        await localDB.mediaQueue.add({
+          id: ID.unique(),
+          activityLocalId,
+          file: signatureBlob,
+          name: 'firma-beneficiario.png',
+          mimeType: 'image/png',
+          bucketId: BUCKET_IDS.SIGNATURES,
+          status: 'pending',
+        })
       }
 
       const activityDoc: Record<string, any> = {
@@ -1127,20 +1137,20 @@ export default function ActivityFormPage() {
             },
             members: exAnteData.members,
           }),
-          beneficiary_signature_url: signatureDataUrl ?? undefined,
+          beneficiary_signature_url: undefined,
         })
       } else if (['encounter_1', 'encounter_2', 'encounter_3'].includes(actType)) {
         Object.assign(activityDoc, {
           topic: formData.topic,
           description: formData.description,
-          beneficiary_signature_url: signatureDataUrl ?? undefined,
+          beneficiary_signature_url: undefined,
         })
       } else if (actType === 'ex_post') {
         Object.assign(activityDoc, {
           positive_impact: formData.positive_impact,
           program_evaluation: formData.program_evaluation,
           professional_evaluation: formData.professional_evaluation,
-          beneficiary_signature_url: signatureDataUrl ?? undefined,
+          beneficiary_signature_url: undefined,
         })
       }
 

@@ -1,7 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "Construyendo Control G 2.0..."
+CONTROL_G_VERSION="$(node -p "require('./package.json').version")"
+echo "Construyendo Control G ${CONTROL_G_VERSION}..."
 npm run build
 npx cap sync android
 

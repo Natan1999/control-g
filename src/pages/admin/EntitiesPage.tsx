@@ -158,7 +158,7 @@ export default function AdminEntitiesPage() {
           })
         }
 
-        // 3. The Edge Function creates Auth + profile atomically with service_role.
+        // 3. The protected Supabase RPC creates Auth + profile atomically.
         await account.create(
           ID.unique(),
           form.coordinator_email,

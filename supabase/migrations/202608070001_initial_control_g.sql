@@ -256,6 +256,121 @@ returns boolean language sql stable security definer set search_path = public as
   select coalesce(public.current_profile_role() = 'admin', false)
 $$;
 
+-- Creates an Auth user without exposing service_role to the web client. The
+-- caller is resolved from the JWT and the role/entity rules are enforced again
+-- inside this SECURITY DEFINER function, independently of the UI.
+create or replace function public.admin_create_user(
+  p_email text,
+  p_password text,
+  p_full_name text,
+  p_role text default 'professional',
+  p_entity_id text default null
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  caller_role text;
+  caller_entity_id text;
+  normalized_email text := lower(trim(p_email));
+  normalized_name text := trim(p_full_name);
+  new_user_id uuid := gen_random_uuid();
+begin
+  select profile.role, profile.entity_id
+    into caller_role, caller_entity_id
+  from public.user_profiles profile
+  where profile.user_id = auth.uid() and profile.status = 'active'
+  limit 1;
+
+  if caller_role not in ('admin', 'coordinator') then
+    raise exception 'No tienes permiso para crear usuarios.' using errcode = '42501';
+  end if;
+  if normalized_email = '' or normalized_email !~* '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$' then
+    raise exception 'El correo no es válido.' using errcode = '22023';
+  end if;
+  if normalized_name = '' or char_length(p_password) < 12 then
+    raise exception 'Nombre y contraseña de al menos 12 caracteres son obligatorios.' using errcode = '22023';
+  end if;
+  if p_role is null or p_role not in ('admin', 'coordinator', 'support', 'professional') then
+    raise exception 'El rol no es válido.' using errcode = '22023';
+  end if;
+  if caller_role = 'coordinator' and (
+    p_role not in ('support', 'professional') or p_entity_id is distinct from caller_entity_id
+  ) then
+    raise exception 'Un coordinador solo puede crear equipo dentro de su entidad.' using errcode = '42501';
+  end if;
+  if p_role <> 'admin' and p_entity_id is null then
+    raise exception 'La entidad es obligatoria para este rol.' using errcode = '22023';
+  end if;
+  if exists (select 1 from auth.users where lower(email) = normalized_email) then
+    raise exception 'Ya existe una cuenta con este correo.' using errcode = '23505';
+  end if;
+
+  insert into auth.users (
+    instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+    confirmation_token, recovery_token, email_change_token_new, email_change,
+    raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+    phone_change, phone_change_token, email_change_token_current,
+    email_change_confirm_status, reauthentication_token, is_sso_user, is_anonymous
+  ) values (
+    '00000000-0000-0000-0000-000000000000', new_user_id,
+    'authenticated', 'authenticated', normalized_email,
+    extensions.crypt(p_password, extensions.gen_salt('bf')), now(),
+    '', '', '', '',
+    jsonb_build_object('provider', 'email', 'providers', jsonb_build_array('email')),
+    jsonb_build_object(
+      'sub', new_user_id::text,
+      'email', normalized_email,
+      'email_verified', true,
+      'phone_verified', false,
+      'full_name', normalized_name,
+      'role', p_role,
+      'entity_id', p_entity_id,
+      'must_change_password', true
+    ),
+    now(), now(), '', '', '', 0, '', false, false
+  );
+
+  insert into auth.identities (
+    provider_id, user_id, identity_data, provider,
+    last_sign_in_at, created_at, updated_at
+  ) values (
+    new_user_id::text, new_user_id,
+    jsonb_build_object(
+      'sub', new_user_id::text,
+      'email', normalized_email,
+      'email_verified', false,
+      'phone_verified', false
+    ),
+    'email', now(), now(), now()
+  );
+
+  insert into public.user_profiles (
+    user_id, entity_id, full_name, email, role, status, must_change_password
+  ) values (
+    new_user_id, p_entity_id, normalized_name, normalized_email,
+    p_role, 'active', true
+  );
+
+  insert into public.audit_log (entity_id, user_id, action, table_name, record_id, metadata)
+  values (
+    coalesce(p_entity_id, caller_entity_id), auth.uid(), 'create_user',
+    'user_profiles', new_user_id::text,
+    jsonb_build_object('email', normalized_email, 'role', p_role)
+  );
+
+  return jsonb_build_object('user', jsonb_build_object(
+    'id', new_user_id,
+    'email', normalized_email,
+    'user_metadata', jsonb_build_object('full_name', normalized_name)
+  ));
+end;
+$$;
+revoke all on function public.admin_create_user(text,text,text,text,text) from public, anon;
+grant execute on function public.admin_create_user(text,text,text,text,text) to authenticated;
+
 alter table public.entities enable row level security;
 alter table public.user_profiles enable row level security;
 alter table public.entity_municipalities enable row level security;

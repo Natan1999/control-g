@@ -138,7 +138,7 @@ export default function FormRenderer({
   return (
     <div className="max-w-3xl mx-auto space-y-8 pb-32 px-4 shadow-sm">
       {/* Header & Progress */}
-      <div className="bg-white p-8 rounded-[40px] border border-slate-100 shadow-xl shadow-blue-900/5 border-t-8 border-t-[#0038A8]">
+      <div className="bg-white p-5 sm:p-8 rounded-[28px] sm:rounded-[40px] border border-slate-100 shadow-xl shadow-blue-900/5 border-t-8 border-t-[#0038A8]">
         <div className="flex items-center justify-between mb-6">
           <div className="flex-1 min-w-0 pr-4">
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight truncate">
@@ -187,7 +187,7 @@ export default function FormRenderer({
       </AnimatePresence>
 
       {/* Navigation Bars */}
-      <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/90 backdrop-blur-xl border-t border-slate-100 z-50">
+      <div className="fixed bottom-0 left-0 right-0 p-4 sm:p-6 safe-bottom bg-white/90 backdrop-blur-xl border-t border-slate-100 z-50">
         <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
           <button
             onClick={handleBack}

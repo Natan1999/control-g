@@ -203,14 +203,14 @@ interface TopBarProps {
 
 export function TopBar({ title, subtitle, actions }: TopBarProps) {
   return (
-    <header className="bg-white border-b border-border px-6 py-4 flex items-center justify-between sticky top-0 z-30">
-      <div className="ml-10 lg:ml-0">
-        <h1 className="text-xl font-bold text-foreground">{title}</h1>
-        {subtitle && <p className="text-sm text-muted-foreground mt-0.5">{subtitle}</p>}
+    <header className="bg-white border-b border-border px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-2 sm:gap-4 sticky top-0 z-30">
+      <div className="ml-12 lg:ml-0 min-w-0 flex-1">
+        <h1 className="text-lg sm:text-xl font-bold text-foreground truncate">{title}</h1>
+        {subtitle && <p className="hidden sm:block text-sm text-muted-foreground mt-0.5 truncate">{subtitle}</p>}
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
         {actions}
-        <button className="relative w-9 h-9 rounded-full bg-muted flex items-center justify-center hover:bg-accent transition-colors">
+        <button aria-label="Notificaciones" className="hidden sm:flex relative w-9 h-9 rounded-full bg-muted items-center justify-center hover:bg-accent transition-colors">
           <Bell size={16} className="text-muted-foreground" />
         </button>
       </div>

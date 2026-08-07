@@ -170,7 +170,9 @@ export const storage = {
     const originalName = file instanceof File ? file.name : 'archivo.bin'
     const path = `${profile?.entity_id || 'global'}/${authData.user.id}/${fileId}/${safeFilename(originalName)}`
     const { data, error } = await supabase.storage.from(bucketId).upload(path, file, {
-      upsert: false,
+      // A deterministic path plus upsert makes media recovery idempotent if the
+      // app closes after the upload but before IndexedDB records completion.
+      upsert: true,
       contentType: file.type || undefined,
     })
     if (error) throw new BackendError(error.message, 500)
@@ -191,14 +193,12 @@ export const account = {
     name: string,
     options: ManagedUserOptions = {},
   ) {
-    const { data, error } = await supabase.functions.invoke('admin-create-user', {
-      body: {
-        email: email.trim().toLowerCase(),
-        password,
-        fullName: name.trim(),
-        role: options.role || 'professional',
-        entityId: options.entityId ?? null,
-      },
+    const { data, error } = await supabase.rpc('admin_create_user', {
+      p_email: email.trim().toLowerCase(),
+      p_password: password,
+      p_full_name: name.trim(),
+      p_role: options.role || 'professional',
+      p_entity_id: options.entityId ?? null,
     })
     if (error) throw new BackendError(error.message, 500)
     if (data?.error) throw new BackendError(data.error, data.status || 400)

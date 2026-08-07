@@ -43,6 +43,19 @@ test('el motor sincroniza medios antes de enviar respuestas y actividades', asyn
   const responses = source.indexOf('await syncFormResponses()')
   assert.ok(media > 0 && media < activities && activities < responses)
   assert.match(source, /isDuplicate/)
+  assert.match(source, /hasUnresolvedMedia/)
+  assert.match(source, /item\.status !== 'uploaded'/)
+  assert.doesNotMatch(source, /attempts >= 5 \? 'failed'/)
+})
+
+test('la creación de usuarios se protege dentro de Supabase', async () => {
+  const sql = await read('supabase/migrations/202608070001_initial_control_g.sql')
+  const backend = await read('src/lib/backend.ts')
+  assert.match(sql, /function public\.admin_create_user/)
+  assert.match(sql, /caller_role not in \('admin', 'coordinator'\)/)
+  assert.match(sql, /grant execute on function public\.admin_create_user/)
+  assert.match(backend, /supabase\.rpc\('admin_create_user'/)
+  assert.doesNotMatch(backend, /functions\.invoke\('admin-create-user'/)
 })
 
 async function filesUnder(path) {

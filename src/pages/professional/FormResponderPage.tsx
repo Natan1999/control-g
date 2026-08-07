@@ -84,18 +84,21 @@ const FormResponderPage: React.FC = () => {
 
       const localId = crypto.randomUUID()
       const storedAnswers: Record<string, any> = { ...answers }
+      const fieldTypes = new Map(formDef.pages.flatMap(page => page.fields).map(field => [field.id, field.type]))
 
       for (const [fieldId, value] of Object.entries(answers)) {
-        if (value instanceof Blob) {
+        const isSignature = fieldTypes.get(fieldId) === 'signature' && typeof value === 'string' && value.startsWith('data:image/')
+        if (value instanceof Blob || isSignature) {
+          const mediaBlob = value instanceof Blob ? value : await (await fetch(value)).blob()
           const mediaId = crypto.randomUUID()
           await localDB.mediaQueue.add({
             id: mediaId,
             activityLocalId: localId,
             answerFieldId: fieldId,
-            file: value,
-            name: value instanceof File ? value.name : `${fieldId}.jpg`,
-            mimeType: value.type || 'image/jpeg',
-            bucketId: BUCKET_IDS.FIELD_PHOTOS,
+            file: mediaBlob,
+            name: value instanceof File ? value.name : `${fieldId}.${isSignature ? 'png' : 'jpg'}`,
+            mimeType: mediaBlob.type || (isSignature ? 'image/png' : 'image/jpeg'),
+            bucketId: isSignature ? BUCKET_IDS.SIGNATURES : BUCKET_IDS.FIELD_PHOTOS,
             status: 'pending',
           })
           storedAnswers[fieldId] = { pendingMediaId: mediaId }

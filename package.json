@@ -1,7 +1,7 @@
 {
   "name": "control-g",
   "private": true,
-  "version": "2.0.0",
+  "version": "2.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,6 +10,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "backend:check": "node scripts/check-supabase.mjs",
+    "backend:verify": "node scripts/verify-supabase.mjs",
     "backend:seed": "node scripts/seed-supabase.mjs",
     "android:sync": "npm run build && cap sync android",
     "android:apk": "bash scripts/build-apk.sh"

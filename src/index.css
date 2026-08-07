@@ -95,6 +95,10 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
 
+  .safe-bottom {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+
   .bottom-nav-item {
     @apply flex flex-col items-center justify-center gap-1 flex-1 py-2;
     @apply text-gray-400 transition-colors duration-200;

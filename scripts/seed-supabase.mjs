@@ -67,7 +67,29 @@ async function upsertAccount(account) {
     must_change_password: true,
   }, { onConflict: 'user_id' })
   if (profileError) throw profileError
+  return user
 }
 
-for (const account of accounts) await upsertAccount(account)
-console.log(`Listo: ${accounts.length} cuentas y perfiles verificados.`)
+for (const account of accounts) {
+  const user = await upsertAccount(account)
+  if (account.role === 'professional' && account.entityId) {
+    const { data: municipalities, error: municipalityError } = await supabase
+      .from('entity_municipalities')
+      .select('id')
+      .eq('entity_id', account.entityId)
+    if (municipalityError) throw municipalityError
+
+    const assignments = (municipalities || []).map(municipality => ({
+      entity_id: account.entityId,
+      professional_id: user.id,
+      municipality_id: municipality.id,
+    }))
+    if (assignments.length) {
+      const { error: assignmentError } = await supabase
+        .from('professional_assignments')
+        .upsert(assignments, { onConflict: 'professional_id,municipality_id' })
+      if (assignmentError) throw assignmentError
+    }
+  }
+}
+console.log(`Listo: ${accounts.length} cuentas, perfiles y asignaciones verificados.`)
