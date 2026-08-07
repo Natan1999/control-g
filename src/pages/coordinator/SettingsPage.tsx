@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { User, Lock, Building2, CheckCircle, AlertCircle } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { PageWrapper } from '@/components/shared'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
-import { Query } from 'appwrite'
-import { updatePassword } from '@/lib/appwrite-auth'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { Query } from '@/lib/backend'
+import { updatePassword } from '@/lib/auth'
 import { useAuthStore } from '@/stores/authStore'
 
 export default function SettingsPage() {
@@ -33,7 +33,7 @@ export default function SettingsPage() {
     } finally {
       setEntityLoading(false)
     }
-  }, [user?.entityId])
+  }, [user])
 
   useEffect(() => {
     if (user?.entityId) loadEntity()

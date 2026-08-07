@@ -78,7 +78,7 @@ export interface LocalActivity {
   type: 'activity';
   familyId: string;
   activityType: string;
-  data: string;                      // JSON payload for Appwrite
+  data: string;                      // JSON payload for Supabase
   familyUpdate: string | null;       // JSON payload for family doc update
   status: 'pending' | 'synced' | 'failed';
   createdAt: number;
@@ -95,7 +95,10 @@ export interface LocalMedia {
   mimeType: string;
   bucketId: string;
   status: 'pending' | 'uploaded' | 'failed';
-  appwriteFileId?: string;
+  storagePath?: string;
+  answerFieldId?: string;
+  remotePath?: string;
+  retryCount?: number;
 }
 
 export interface LocalFormResponse {
@@ -124,6 +127,12 @@ export class ControlGDatabase extends Dexie {
       characterizations: 'localId, familyId, entityId, professionalId, status',
       activities: 'localId, familyId, activityType, status, createdAt',
       mediaQueue: 'id, activityLocalId, status',
+      formResponses: 'localId, formId, familyId, status, createdAt',
+    });
+    this.version(3).stores({
+      characterizations: 'localId, familyId, entityId, professionalId, status',
+      activities: 'localId, familyId, activityType, status, createdAt',
+      mediaQueue: 'id, activityLocalId, status, answerFieldId',
       formResponses: 'localId, formId, familyId, status, createdAt',
     });
   }

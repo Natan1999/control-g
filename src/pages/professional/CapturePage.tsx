@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { 
   Search, Camera, ClipboardList, Clock, 
@@ -6,16 +6,18 @@ import {
   FileText, History
 } from 'lucide-react'
 import { MobileTopBar, BottomNav } from '@/components/layout/BottomNav'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
-import { Query } from 'appwrite'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import { useSyncStore } from '@/stores/syncStore'
 import { localDB } from '@/lib/dexie-db'
+import { getCachedForms } from '@/lib/sync-engine'
 import { Button } from '@/components/ui/button'
 
 interface FormDef {
   $id: string
-  name: string
+  name?: string
+  title?: string
   description?: string
   v: number
   updated_at?: string
@@ -30,12 +32,7 @@ export default function FieldCapturePage() {
   const [loading, setLoading] = useState(true)
   const [todayCount, setTodayCount] = useState(0)
 
-  useEffect(() => {
-    loadForms()
-    loadTodayMetrics()
-  }, [])
-
-  async function loadTodayMetrics() {
+  const loadTodayMetrics = useCallback(async () => {
     try {
       const startOfDay = new Date().setHours(0, 0, 0, 0)
       const count = await localDB.formResponses
@@ -46,26 +43,32 @@ export default function FieldCapturePage() {
     } catch (error) {
       console.error('Error loading today metrics:', error)
     }
-  }
+  }, [])
 
-  async function loadForms() {
+  const loadForms = useCallback(async () => {
     setLoading(true)
     try {
-      // In a real production scenario, we'd check sync-engine's local cache
       const res = await databases.listDocuments(DATABASE_ID, COLLECTION_IDS.FORMS, [
+        Query.equal('entity_id', [user?.entityId || '', 'global']),
+        Query.equal('status', 'published'),
         Query.orderDesc('$updatedAt'),
         Query.limit(50)
       ])
       setForms(res.documents as unknown as FormDef[])
     } catch (error) {
-      console.error('Error loading forms:', error)
+      setForms(getCachedForms(user?.entityId) as FormDef[])
     } finally {
       setLoading(false)
     }
-  }
+  }, [user?.entityId])
+
+  useEffect(() => {
+    void loadForms()
+    void loadTodayMetrics()
+  }, [loadForms, loadTodayMetrics])
 
   const filteredForms = forms.filter(f => 
-    f.name.toLowerCase().includes(search.toLowerCase()) ||
+    (f.name || f.title || '').toLowerCase().includes(search.toLowerCase()) ||
     f.description?.toLowerCase().includes(search.toLowerCase())
   )
 
@@ -179,7 +182,7 @@ export default function FieldCapturePage() {
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm font-extrabold text-slate-900 group-hover:text-[#0038A8] transition-colors truncate">
-                        {form.name}
+                        {form.name || form.title}
                       </h3>
                       <p className="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">
                         {form.description || 'Formulario técnico de recolección de datos georreferenciados.'}

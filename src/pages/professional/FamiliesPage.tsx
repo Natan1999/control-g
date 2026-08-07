@@ -2,9 +2,10 @@ import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, CheckCircle, Circle } from 'lucide-react'
 import { MobileTopBar, BottomNav } from '@/components/layout/BottomNav'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
-import { Query } from 'appwrite'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
+import { getCachedFamilies } from '@/lib/sync-engine'
 import { cn } from '@/lib/utils'
 
 interface FamilyDoc {
@@ -90,9 +91,13 @@ export default function FieldFamiliesPage() {
         Query.limit(100),
       ])
       setFamilies(res.documents as unknown as FamilyDoc[])
-    } catch { /* silent */ }
+    } catch {
+      const cached = getCachedFamilies(user?.entityId)
+        .filter((family: any) => family.professional_id === user.id)
+      setFamilies(cached as FamilyDoc[])
+    }
     setLoading(false)
-  }, [user?.id])
+  }, [user?.id, user?.entityId])
 
   useEffect(() => { load() }, [load])
 

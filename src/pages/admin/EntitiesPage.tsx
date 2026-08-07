@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { Plus, Building2, X, ChevronDown, Search, MapPin, Calendar, Users, Mail, Hash } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TopBar } from '@/components/layout/Sidebar'
-import { account, databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
-import { ID, Query } from 'appwrite'
+import { account, databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { ID, Query } from '@/lib/backend'
 import { getDepartments, getMunicipalities, Department, Municipality } from '@/services/geographyService'
 
 interface EntityForm {
@@ -124,30 +124,14 @@ export default function AdminEntitiesPage() {
       showToast('Completa todos los campos obligatorios (*)', 'error')
       return
     }
-    if (form.coordinator_password.length < 8) {
-      showToast('La contraseña del coordinador debe tener al menos 8 caracteres', 'error')
+    if (form.coordinator_password.length < 10) {
+      showToast('La contraseña del coordinador debe tener al menos 10 caracteres', 'error')
       return
     }
 
     setSaving(true)
     try {
-      // 1. Create Appwrite Auth account for coordinator
-      let coordinatorUserId = ''
-      try {
-        const authUser = await account.create(
-          ID.unique(),
-          form.coordinator_email,
-          form.coordinator_password,
-          form.coordinator_name,
-        )
-        coordinatorUserId = authUser.$id
-      } catch (authErr: any) {
-        // 409 = account already exists — link by email, profile created next
-        if (authErr?.code !== 409) throw authErr
-        showToast('Email ya registrado — creando perfil vinculado', 'success')
-      }
-
-      // 2. Create Entity
+      // 1. Create the tenant before its coordinator account.
       const entity = await databases.createDocument(DATABASE_ID, COLLECTION_IDS.ENTITIES, ID.unique(), {
         name: form.name,
         nit: form.nit,
@@ -162,26 +146,30 @@ export default function AdminEntitiesPage() {
         created_by: form.coordinator_email,
       })
 
-      // 3. Create municipality records
-      for (const mun of form.municipalities) {
-        await databases.createDocument(DATABASE_ID, COLLECTION_IDS.ENTITY_MUNICIPALITIES, ID.unique(), {
-          entity_id: entity.$id,
-          municipality_name: mun.name,
-          department: form.department_name,
-          families_target: form.families_per_municipality,
-          dane_code: mun.id,
-        })
-      }
+      try {
+        // 2. Configure its municipalities.
+        for (const mun of form.municipalities) {
+          await databases.createDocument(DATABASE_ID, COLLECTION_IDS.ENTITY_MUNICIPALITIES, ID.unique(), {
+            entity_id: entity.$id,
+            municipality_name: mun.name,
+            department: form.department_name,
+            families_target: form.families_per_municipality,
+            dane_code: mun.id,
+          })
+        }
 
-      // 4. Create coordinator profile linked to entity
-      await databases.createDocument(DATABASE_ID, COLLECTION_IDS.USER_PROFILES, ID.unique(), {
-        ...(coordinatorUserId ? { user_id: coordinatorUserId } : {}),
-        full_name: form.coordinator_name,
-        email: form.coordinator_email,
-        role: 'coordinator',
-        entity_id: entity.$id,
-        status: 'active',
-      })
+        // 3. The Edge Function creates Auth + profile atomically with service_role.
+        await account.create(
+          ID.unique(),
+          form.coordinator_email,
+          form.coordinator_password,
+          form.coordinator_name,
+          { role: 'coordinator', entityId: entity.$id },
+        )
+      } catch (setupError) {
+        await databases.deleteDocument(DATABASE_ID, COLLECTION_IDS.ENTITIES, entity.$id).catch(() => {})
+        throw setupError
+      }
 
       showToast(`Entidad "${form.name}" y coordinador creados exitosamente`)
       setShowForm(false)

@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { Users, Search, X, ChevronDown, UserPlus } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { PageWrapper } from '@/components/shared'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
-import { Query, ID } from 'appwrite'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { Query, ID } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 
 type OverallFilter = 'all' | 'pending' | 'in_progress' | 'completed'
@@ -92,7 +92,7 @@ export default function FamiliesPage() {
     } finally {
       setLoading(false)
     }
-  }, [user?.entityId, user?.fullName])
+  }, [user])
 
   useEffect(() => {
     if (user?.entityId) loadAll()

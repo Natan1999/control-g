@@ -1,20 +1,21 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-echo "🚀 Iniciando proceso de generación de APK para Control G..."
-
-# 1. Limpiar y Construir el Proyecto Vite
-echo "📦 Construyendo assets de producción..."
+echo "Construyendo Control G 2.0..."
 npm run build
-
-# 2. Sincronizar con Capacitor
-echo "🔄 Sincronizando con Capacitor (Android)..."
 npx cap sync android
 
-# 3. Configurar JAVA_HOME y Compilar APK con Gradle
-export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-19.jdk/Contents/Home"
-cd android
-echo "🛠️ Compilando APK Debug con Gradle (JDK 19)..."
-./gradlew assembleDebug
+if [ -z "${JAVA_HOME:-}" ] || [ ! -x "${JAVA_HOME}/bin/java" ]; then
+  if command -v /usr/libexec/java_home >/dev/null 2>&1; then
+    control_g_java_home="$(/usr/libexec/java_home -v 21 2>/dev/null || /usr/libexec/java_home)"
+    export JAVA_HOME="$control_g_java_home"
+  fi
+fi
 
-echo "✅ APK Generado exitosamente en: android/app/build/outputs/apk/debug/app-debug.apk"
+java -version
+(
+  cd android
+  ./gradlew testDebugUnitTest assembleDebug
+)
+
+echo "APK listo: android/app/build/outputs/apk/debug/app-debug.apk"

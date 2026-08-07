@@ -9,6 +9,7 @@ node_modules/
 # Build
 dist/
 dist-ssr/
+tmp/
 
 # Environment — NUNCA en git
 .env
@@ -30,4 +31,3 @@ Thumbs.db
 
 # Mobile Apps
 *.apk
-

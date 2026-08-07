@@ -38,7 +38,7 @@ export default function FieldProfilePage() {
     setPwError('')
     if (pwForm.next.length < 8) { setPwError('La nueva contraseña debe tener al menos 8 caracteres.'); return }
     if (pwForm.next !== pwForm.confirm) { setPwError('Las contraseñas no coinciden.'); return }
-    // Password change would call Appwrite account.updatePassword here
+    // Password changes are handled by Supabase Auth.
     alert('Funcionalidad de cambio de contraseña disponible próximamente.')
   }
 

@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Users, Mail, X, ChevronRight } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
-import { Query } from 'appwrite'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 
 interface ProfessionalRow {

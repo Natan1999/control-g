@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Download, AlertCircle } from 'lucide-react'
 import { MobileTopBar, BottomNav } from '@/components/layout/BottomNav'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
-import { Query } from 'appwrite'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
+import { getCachedFamilies } from '@/lib/sync-engine'
 
 interface FamilyDoc {
   $id: string
@@ -60,9 +61,12 @@ export default function FieldReportsPage() {
       ])
       setFamilies(famRes.documents as unknown as FamilyDoc[])
       setObservations(obsRes.documents as unknown as ObsDoc[])
-    } catch { /* silent */ }
+    } catch {
+      setFamilies(getCachedFamilies(user?.entityId).filter((family: any) => family.professional_id === user.id))
+      setObservations([])
+    }
     setLoading(false)
-  }, [user?.id])
+  }, [user?.id, user?.entityId])
 
   useEffect(() => { load() }, [load])
 

@@ -9,8 +9,8 @@ import {
 import { motion, Reorder, AnimatePresence } from 'framer-motion'
 import { useParams, useNavigate } from 'react-router-dom'
 import { TopBar } from '@/components/layout/Sidebar'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
-import { ID, Query } from 'appwrite'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { ID, Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import { FormField, FormDefinition, FormPage, FormFieldType, ActivityType, Entity } from '@/types'
 

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { useAuthStore } from '@/stores/authStore'
-import { updatePassword } from '@/lib/appwrite-auth'
+import { updatePassword } from '@/lib/auth'
 
 export default function AdminSettingsPage() {
   const { user } = useAuthStore()

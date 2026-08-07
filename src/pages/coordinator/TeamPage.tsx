@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { UserPlus, X, Check, Users } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { PageWrapper } from '@/components/shared'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
-import { Query, ID } from 'appwrite'
+import { account, databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { Query, ID } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 
 const COLORS = {
@@ -37,7 +37,13 @@ const STATUS_LABELS: Record<string, string> = {
   suspended: 'Suspendido',
 }
 
-type InviteRole = 'coordinator' | 'support' | 'professional'
+type InviteRole = 'support' | 'professional'
+
+function temporaryPassword() {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789'
+  const bytes = crypto.getRandomValues(new Uint8Array(12))
+  return `Cg!${Array.from(bytes, byte => alphabet[byte % alphabet.length]).join('')}9a`
+}
 
 export default function TeamPage() {
   const { user } = useAuthStore()
@@ -65,7 +71,7 @@ export default function TeamPage() {
     } finally {
       setLoading(false)
     }
-  }, [user?.entityId])
+  }, [user])
 
   useEffect(() => {
     if (user?.entityId) loadMembers()
@@ -79,25 +85,16 @@ export default function TeamPage() {
     setInviting(true)
     setFormError('')
     try {
-      await databases.createDocument(
-        DATABASE_ID,
-        COLLECTION_IDS.USER_PROFILES,
+      const password = temporaryPassword()
+      await account.create(
         ID.unique(),
-        {
-          user_id: ID.unique(),
-          full_name: form.full_name,
-          email: form.email.trim().toLowerCase(),
-          entity_id: user?.entityId ?? null,
-          role: form.role,
-          status: 'active',
-          signature_url: null,
-          phone: null,
-          avatar_url: null,
-          last_seen_at: null,
-          last_sync_at: null,
-        }
+        form.email,
+        password,
+        form.full_name,
+        { role: form.role, entityId: user?.entityId ?? null },
       )
-      showToast('Invitación enviada. El miembro debe registrarse con este email.')
+      await navigator.clipboard?.writeText(password).catch(() => {})
+      showToast(`Cuenta creada. Clave temporal: ${password} (copiada al portapapeles)`)
       setShowModal(false)
       setForm({ full_name: '', email: '', role: 'professional' })
       loadMembers()
@@ -111,7 +108,7 @@ export default function TeamPage() {
 
   function showToast(msg: string) {
     setToast(msg)
-    setTimeout(() => setToast(''), 4000)
+    setTimeout(() => setToast(''), 15000)
   }
 
   function closeModal() {
@@ -235,7 +232,6 @@ export default function TeamPage() {
                   onChange={e => setForm(p => ({ ...p, role: e.target.value as InviteRole }))}
                   className="w-full px-4 py-2.5 rounded-xl border border-input text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A4B]/30"
                 >
-                  <option value="coordinator">Coordinador</option>
                   <option value="support">Apoyo Administrativo</option>
                   <option value="professional">Profesional</option>
                 </select>

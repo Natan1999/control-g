@@ -10,6 +10,7 @@ import SignatureField from './SignatureField'
 import MunicipalityPicker from './MunicipalityPicker'
 import GPSField from './GPSField'
 import RepeatGroup from './RepeatGroup'
+import PhotoField from './PhotoField'
 
 interface DynamicFieldProps {
   field: FormField;
@@ -172,6 +173,9 @@ export default function DynamicField({ field, value, onChange, error, disabled }
 
       case 'signature':
         return <SignatureField value={value} onChange={onChange} disabled={disabled} />
+
+      case 'photo':
+        return <PhotoField value={value || null} onChange={onChange} disabled={disabled} />
 
       case 'gps':
         return <GPSField value={value} onChange={onChange} disabled={disabled} />
