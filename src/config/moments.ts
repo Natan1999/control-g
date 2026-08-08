@@ -3,14 +3,14 @@
  * =================================================
  * Este archivo mapea los 5 momentos definidos en la
  * metodología de la Gobernación de Bolívar con sus
- * respectivos IDs de formularios en Appwrite.
+ * respectivos IDs de formularios en Supabase.
  */
 
 export interface MomentConfig {
   id: string;
   name: string;
   label: string;
-  formId: string; // ID real en Appwrite COLLECTION_IDS.FORMS
+  formId: string; // ID real en Supabase COLLECTION_IDS.FORMS
   completionField: string; // Campo en COLLECTION_IDS.BENEFICIARY_FAMILIES
   responseField: string;   // Campo para guardar la última Response ID
 }

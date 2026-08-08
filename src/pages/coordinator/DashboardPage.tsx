@@ -7,8 +7,8 @@ import {
   PieChart, Pie, Cell, Legend, LineChart, Line,
 } from 'recharts'
 import { TopBar } from '@/components/layout/Sidebar'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
-import { Query } from 'appwrite'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import type { ProfessionalProgress } from '@/types'
 

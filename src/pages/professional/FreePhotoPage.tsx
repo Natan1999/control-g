@@ -10,13 +10,13 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera'
 import { Geolocation } from '@capacitor/geolocation'
 import { localDB } from '@/lib/dexie-db'
 import { useAuthStore } from '@/stores/authStore'
-import { useSyncStore } from '@/stores/syncStore'
+import { BUCKET_IDS } from '@/lib/backend'
+import { isOnline, processSyncQueue, refreshPendingCount } from '@/lib/sync-engine'
 import { Button } from '@/components/ui/button'
 
 export default function FreePhotoPage() {
   const navigate = useNavigate()
   const { user } = useAuthStore()
-  const incrementPending = useSyncStore(state => state.incrementPending)
   
   const [photos, setPhotos] = useState<{ id: string; url: string; file: File }[]>([])
   const [description, setDescription] = useState('')
@@ -116,23 +116,25 @@ export default function FreePhotoPage() {
       })
 
       // 2. Add photos to media queue
-      for (const photo of photos) {
+      for (const [index, photo] of photos.entries()) {
         await localDB.mediaQueue.add({
           id: crypto.randomUUID(),
           activityLocalId: localId, // Linked to the form response
+          answerFieldId: `evidence_${index + 1}`,
           file: photo.file,
           name: `evidence_${now}_${photo.id}.jpg`,
           mimeType: photo.file.type || 'image/jpeg',
-          bucketId: 'evidence',
+          bucketId: BUCKET_IDS.FIELD_PHOTOS,
           status: 'pending'
         })
       }
 
-      incrementPending()
+      await refreshPendingCount()
+      if (await isOnline()) void processSyncQueue()
       
       // Success animation then navigate
       setIsSaving(false)
-      navigate('/professional/capture?success=true')
+      navigate('/field/capture?success=true')
     } catch (err) {
       console.error('Save error:', err)
       setError('Error al guardar la evidencia localmente')

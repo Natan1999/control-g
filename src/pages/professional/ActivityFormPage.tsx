@@ -3,12 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, CheckCircle, Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react'
 import SignatureCanvas from 'react-signature-canvas'
 import { MobileTopBar } from '@/components/layout/BottomNav'
-import { databases, storage, DATABASE_ID, COLLECTION_IDS, BUCKET_IDS } from '@/lib/appwrite'
-import { ID } from 'appwrite'
+import { databases, DATABASE_ID, COLLECTION_IDS, BUCKET_IDS } from '@/lib/backend'
+import { ID } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import { cn } from '@/lib/utils'
 import { localDB, type FamilyMember, type LocalCharacterization } from '@/lib/dexie-db'
-import { isOnline } from '@/lib/sync-engine'
+import { getCachedFamilies, isOnline, processSyncQueue, refreshPendingCount } from '@/lib/sync-engine'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -897,9 +897,12 @@ export default function ActivityFormPage() {
           }))
         }
       })
-      .catch(() => setFamily(null))
+      .catch(() => {
+        const cached = getCachedFamilies(user?.entityId).find((item: any) => item.$id === familyId)
+        setFamily((cached as FamilyDoc) || null)
+      })
       .finally(() => setLoadingFamily(false))
-  }, [familyId, actType])
+  }, [familyId, actType, user?.entityId])
 
   // Auto-save to IndexedDB when ex_ante data changes
   const autosaveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -1075,31 +1078,33 @@ export default function ActivityFormPage() {
 
       const online = await isOnline()
 
-      // Upload photo if present (encounters/ex-post)
-      let photoUrl: string | null = null
+      const activityLocalId = ID.unique()
+
+      // Media is always queued first. This makes online and offline submissions
+      // follow exactly the same idempotent path.
       const photoFile = formData._photoFile as File | undefined
-      if (photoFile && online) {
-        try {
-          const uploaded = await storage.createFile(
-            BUCKET_IDS.FIELD_PHOTOS,
-            ID.unique(),
-            photoFile
-          )
-          photoUrl = uploaded.$id
-        } catch { /* photo upload failure is non-blocking */ }
-      } else if (photoFile && !online) {
-        // Queue photo for upload when online
-        try {
-          await localDB.mediaQueue.add({
-            id: ID.unique(),
-            activityLocalId: 'pending',
-            file: photoFile,
-            name: photoFile.name,
-            mimeType: photoFile.type,
-            bucketId: BUCKET_IDS.FIELD_PHOTOS,
-            status: 'pending',
-          })
-        } catch { /* silent */ }
+      if (photoFile) {
+        await localDB.mediaQueue.add({
+          id: ID.unique(),
+          activityLocalId,
+          file: photoFile,
+          name: photoFile.name,
+          mimeType: photoFile.type,
+          bucketId: BUCKET_IDS.FIELD_PHOTOS,
+          status: 'pending',
+        })
+      }
+      if (signatureDataUrl) {
+        const signatureBlob = await (await fetch(signatureDataUrl)).blob()
+        await localDB.mediaQueue.add({
+          id: ID.unique(),
+          activityLocalId,
+          file: signatureBlob,
+          name: 'firma-beneficiario.png',
+          mimeType: 'image/png',
+          bucketId: BUCKET_IDS.SIGNATURES,
+          status: 'pending',
+        })
       }
 
       const activityDoc: Record<string, any> = {
@@ -1109,7 +1114,7 @@ export default function ActivityFormPage() {
         municipality_id: family.municipality_id,
         activity_type: actType,
         activity_date: actType === 'ex_ante' ? exAnteData.activityDate : formData.activity_date,
-        local_id: ID.unique(),
+        local_id: activityLocalId,
         status: 'synced',
       }
 
@@ -1132,22 +1137,20 @@ export default function ActivityFormPage() {
             },
             members: exAnteData.members,
           }),
-          beneficiary_signature_url: signatureDataUrl ?? undefined,
+          beneficiary_signature_url: undefined,
         })
       } else if (['encounter_1', 'encounter_2', 'encounter_3'].includes(actType)) {
         Object.assign(activityDoc, {
           topic: formData.topic,
           description: formData.description,
-          photo_url: photoUrl ?? undefined,
-          beneficiary_signature_url: signatureDataUrl ?? undefined,
+          beneficiary_signature_url: undefined,
         })
       } else if (actType === 'ex_post') {
         Object.assign(activityDoc, {
           positive_impact: formData.positive_impact,
           program_evaluation: formData.program_evaluation,
           professional_evaluation: formData.professional_evaluation,
-          photo_url: photoUrl ?? undefined,
-          beneficiary_signature_url: signatureDataUrl ?? undefined,
+          beneficiary_signature_url: undefined,
         })
       }
 
@@ -1172,32 +1175,28 @@ export default function ActivityFormPage() {
       const anyDone = Object.values(newStatuses).some(s => s === 'completed')
       familyUpdates.overall_status = allDone ? 'completed' : anyDone ? 'in_progress' : 'pending'
 
-      if (online) {
-        await databases.createDocument(DATABASE_ID, COLLECTION_IDS.ACTIVITIES, ID.unique(), activityDoc)
-        await databases.updateDocument(DATABASE_ID, COLLECTION_IDS.FAMILIES, family.$id, familyUpdates)
-      } else {
-        // Queue activity + family update for later sync
-        const queue = JSON.parse(localStorage.getItem('cg_offline_queue') ?? '[]')
-        queue.push({
-          type: 'activity',
-          id: ID.unique(),
-          data: activityDoc,
-          familyId: family.$id,
-          familyUpdate: familyUpdates,
-        })
-        localStorage.setItem('cg_offline_queue', JSON.stringify(queue))
+      await localDB.activities.put({
+        localId: activityLocalId,
+        type: 'activity',
+        familyId: family.$id,
+        activityType: actType,
+        data: JSON.stringify(activityDoc),
+        familyUpdate: JSON.stringify(familyUpdates),
+        status: 'pending',
+        createdAt: Date.now(),
+        retryCount: 0,
+      })
 
-        // Update local cache immediately so the UI reflects the change
-        const cacheKey = `cg_families_${family.entity_id}`
-        try {
-          const cached = JSON.parse(localStorage.getItem(cacheKey) ?? '[]')
-          const idx = cached.findIndex((f: any) => f.$id === family.$id)
-          if (idx >= 0) {
-            cached[idx] = { ...cached[idx], ...familyUpdates }
-            localStorage.setItem(cacheKey, JSON.stringify(cached))
-          }
-        } catch { /* silent */ }
-      }
+      // Update the local cache immediately so the UI reflects the completed step.
+      const cacheKey = `cg_families_${family.entity_id}`
+      try {
+        const cached = JSON.parse(localStorage.getItem(cacheKey) ?? '[]')
+        const idx = cached.findIndex((f: any) => f.$id === family.$id)
+        if (idx >= 0) {
+          cached[idx] = { ...cached[idx], ...familyUpdates }
+          localStorage.setItem(cacheKey, JSON.stringify(cached))
+        }
+      } catch { /* silent */ }
 
       // Delete draft
       if (actType === 'ex_ante') {
@@ -1206,7 +1205,9 @@ export default function ActivityFormPage() {
         localStorage.removeItem(`cg_draft_${actType}_${familyId}`)
       }
 
-      setToast({ message: '¡Listo! Actividad registrada exitosamente.', type: 'success' })
+      await refreshPendingCount()
+      if (await isOnline()) void processSyncQueue()
+      setToast({ message: online ? '¡Listo! Actividad registrada exitosamente.' : 'Guardado sin conexión. Se subirá automáticamente al recuperar señal.', type: 'success' })
       setTimeout(() => navigate('/field/families'), 1800)
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Error al guardar'

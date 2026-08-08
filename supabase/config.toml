@@ -1,0 +1,13 @@
+project_id = "control-g"
+
+[api]
+enabled = true
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 5000
+
+[auth]
+enabled = true
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["http://localhost:5173", "com.drandigital.controlg://login-callback"]
+enable_signup = false

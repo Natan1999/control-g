@@ -1,16 +1,16 @@
 /**
- * Control G — Auth Store (Zustand + Appwrite)
+ * Control G — Auth Store (Zustand + Supabase)
  */
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { User, UserRole } from '@/types'
 import {
-  login as appwriteLogin,
-  logout as appwriteLogout,
+  login as backendLogin,
+  logout as backendLogout,
   getSession,
   type UserProfile,
-} from '@/lib/appwrite-auth'
+} from '@/lib/auth'
 import { Network } from '@capacitor/network'
 import { updateLocalCache } from '@/lib/sync-engine'
 
@@ -57,9 +57,12 @@ export const useAuthStore = create<AuthState>()(
       signIn: async (email, password) => {
         set({ isLoading: true, error: null })
         try {
-          const authUser = await appwriteLogin(email, password)
+          const authUser = await backendLogin(email, password)
           if (!authUser.profile) {
             throw new Error('Tu cuenta no tiene un perfil configurado. Contacta al administrador.')
+          }
+          if (authUser.profile.status !== 'active') {
+            throw new Error('Tu cuenta está inactiva o suspendida. Contacta al administrador.')
           }
           const user = profileToUser(authUser.profile, authUser.email)
           set({ user, profileId: authUser.profile.$id, isAuthenticated: true, isLoading: false, error: null })
@@ -77,7 +80,7 @@ export const useAuthStore = create<AuthState>()(
       signOut: async () => {
         set({ isLoading: true })
         try {
-          await appwriteLogout()
+          await backendLogout()
         } catch {
           // Session may have already expired
         } finally {

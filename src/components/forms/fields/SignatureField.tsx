@@ -30,18 +30,18 @@ export default function SignatureField({ value, onChange, disabled }: SignatureF
   return (
     <div className="space-y-3">
       {value ? (
-        <div className="relative group">
+        <div className="relative">
           <img 
             src={value} 
             alt="Firma" 
             className="w-full h-40 bg-white border border-slate-200 rounded-2xl object-contain shadow-inner" 
           />
-          <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center gap-3">
+          <div className="absolute right-3 top-3">
             <button 
               onClick={clear}
-              className="bg-white text-rose-500 font-bold px-4 py-2 rounded-xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all text-xs"
+              className="bg-white/95 text-rose-600 font-bold px-3 py-2 rounded-xl flex items-center gap-2 active:scale-95 transition-all text-xs shadow-lg border border-rose-100"
             >
-              <Trash2 size={16} /> Borrar Firma
+              <Trash2 size={16} /> Borrar
             </button>
           </div>
         </div>

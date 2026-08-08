@@ -31,32 +31,15 @@ export default defineConfig({
         // Runtime caching strategies
         runtimeCaching: [
           {
-            // Cache Appwrite API responses for families (offline read)
-            urlPattern: /https:\/\/.*appwrite.*\/databases\/.*\/families.*/i,
-            handler: 'StaleWhileRevalidate',
+            // Supabase reads get a short network-first cache. Field records and
+            // mutations are persisted separately in IndexedDB by the sync engine.
+            urlPattern: /https:\/\/controlg2\.dran\.cloud\/rest\/v1\/.*/i,
+            handler: 'NetworkFirst',
+            method: 'GET',
             options: {
-              cacheName: 'appwrite-families',
-              expiration: { maxEntries: 200, maxAgeSeconds: 7 * 24 * 60 * 60 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-          {
-            // Cache Appwrite user profiles
-            urlPattern: /https:\/\/.*appwrite.*\/databases\/.*\/user_profiles.*/i,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'appwrite-profiles',
-              expiration: { maxEntries: 100, maxAgeSeconds: 24 * 60 * 60 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-          {
-            // Cache Appwrite municipalities
-            urlPattern: /https:\/\/.*appwrite.*\/databases\/.*\/entity_municipalities.*/i,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'appwrite-municipalities',
-              expiration: { maxEntries: 100, maxAgeSeconds: 24 * 60 * 60 },
+              cacheName: 'control-g-supabase-read-cache',
+              networkTimeoutSeconds: 5,
+              expiration: { maxEntries: 500, maxAgeSeconds: 7 * 24 * 60 * 60 },
               cacheableResponse: { statuses: [0, 200] },
             },
           },

@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Building2, Users, CheckCircle, Plus, TrendingUp } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
-import { Query } from 'appwrite'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { Query } from '@/lib/backend'
 
 interface Stats {
   totalEntities: number

@@ -2,15 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import FormRenderer from '@/components/forms/FormRenderer'
 import { FormDefinition } from '@/types'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import { Loader2, ArrowLeft, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { localDB } from '@/lib/dexie-db'
+import { BUCKET_IDS } from '@/lib/backend'
+import { isOnline, processSyncQueue, refreshPendingCount } from '@/lib/sync-engine'
 import { Geolocation } from '@capacitor/geolocation'
 
 const FormResponderPage: React.FC = () => {
-  const { formId } = useParams<{ formId: string }>()
+  const { formId, familyId } = useParams<{ formId: string; familyId?: string }>()
   const { user } = useAuthStore()
   const navigate = useNavigate()
   const [formDef, setFormDef] = useState<FormDefinition | null>(null)
@@ -25,7 +27,7 @@ const FormResponderPage: React.FC = () => {
         let doc: any
 
         try {
-          // 1. Try to load from Appwrite
+          // 1. Try to load from Supabase
           doc = await databases.getDocument(
             DATABASE_ID,
             COLLECTION_IDS.FORMS,
@@ -47,7 +49,7 @@ const FormResponderPage: React.FC = () => {
           title: doc.name || doc.title || '',
           description: doc.description || '',
           type: doc.type || 'ex_ante',
-          pages: JSON.parse(doc.pages_json || doc.definition || '[]'),
+          pages: JSON.parse(doc.definition || doc.pages_json || '[]'),
           status: doc.status || 'published',
           version: doc.v || 1,
           createdAt: doc.$createdAt,
@@ -80,16 +82,37 @@ const FormResponderPage: React.FC = () => {
         console.warn('Could not capture GPS for form:', gpsError)
       }
 
-      // Create a local response object for Dexie
-      // This is the CRITICAL part for offline-first
+      const localId = crypto.randomUUID()
+      const storedAnswers: Record<string, any> = { ...answers }
+      const fieldTypes = new Map(formDef.pages.flatMap(page => page.fields).map(field => [field.id, field.type]))
+
+      for (const [fieldId, value] of Object.entries(answers)) {
+        const isSignature = fieldTypes.get(fieldId) === 'signature' && typeof value === 'string' && value.startsWith('data:image/')
+        if (value instanceof Blob || isSignature) {
+          const mediaBlob = value instanceof Blob ? value : await (await fetch(value)).blob()
+          const mediaId = crypto.randomUUID()
+          await localDB.mediaQueue.add({
+            id: mediaId,
+            activityLocalId: localId,
+            answerFieldId: fieldId,
+            file: mediaBlob,
+            name: value instanceof File ? value.name : `${fieldId}.${isSignature ? 'png' : 'jpg'}`,
+            mimeType: mediaBlob.type || (isSignature ? 'image/png' : 'image/jpeg'),
+            bucketId: isSignature ? BUCKET_IDS.SIGNATURES : BUCKET_IDS.FIELD_PHOTOS,
+            status: 'pending',
+          })
+          storedAnswers[fieldId] = { pendingMediaId: mediaId }
+        }
+      }
+
       await localDB.formResponses.add({
-        localId: crypto.randomUUID(),
+        localId,
         formId: formDef.id,
         entityId: formDef.entityId,
         professionalId: user.id,
-        familyId: '', // Would be linked if we had a family context
+        familyId: familyId || null,
         answers: {
-          ...answers,
+          ...storedAnswers,
           _metadata: {
             lat,
             lng,
@@ -101,8 +124,8 @@ const FormResponderPage: React.FC = () => {
         updatedAt: Date.now()
       })
 
-      // We trigger a sync attempt silently
-      // In a real app, the sync-engine would pick this up via Dexie hooks or periodic checks
+      await refreshPendingCount()
+      if (await isOnline()) void processSyncQueue()
       navigate('/field/capture')
     } catch (err) {
       console.error('Failed to save response:', err)

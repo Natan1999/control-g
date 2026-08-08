@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { AlertCircle, Plus, X } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
-import { Query, ID } from 'appwrite'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { Query, ID } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 
 interface ObsRow {
@@ -73,7 +73,7 @@ export default function ApoyoObservationsPage() {
       if (profIds.length > 0) {
         // Load observations TO professionals
         const toRes = await databases.listDocuments(DATABASE_ID, COLLECTION_IDS.OBSERVATIONS, [
-          Query.equal('to_user_id', profIds.slice(0, 25)), // Appwrite limit
+          Query.equal('to_user_id', profIds.slice(0, 100)),
           Query.limit(100),
           Query.orderDesc('$createdAt'),
         ])

@@ -9,8 +9,8 @@ import {
 import { motion, Reorder, AnimatePresence } from 'framer-motion'
 import { useParams, useNavigate } from 'react-router-dom'
 import { TopBar } from '@/components/layout/Sidebar'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
-import { ID, Query } from 'appwrite'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { ID, Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import { FormField, FormDefinition, FormPage, FormFieldType, ActivityType, Entity } from '@/types'
 
@@ -43,6 +43,62 @@ const FIELD_TYPES: { type: FormFieldType; label: string; icon: any; category: st
   { type: 'phone',         label: 'Teléfono',        icon: Phone,         category: 'Contacto' },
   { type: 'email',         label: 'Email',           icon: Mail,          category: 'Contacto' },
 ]
+
+function FormFieldPreview({ field }: { field: FormField }) {
+  const options = field.options?.slice(0, 4) ?? []
+
+  if (field.type === 'note') {
+    return <div className="rounded-2xl bg-blue-50 border border-blue-100 p-4 text-sm text-blue-900">{field.label}</div>
+  }
+
+  if (field.type === 'photo' || field.type === 'signature' || field.type === 'file') {
+    const Icon = field.type === 'photo' ? Camera : field.type === 'signature' ? PenTool : FileText
+    const hint = field.type === 'photo' ? 'Tomar o adjuntar fotografía' : field.type === 'signature' ? 'Firmar en la pantalla' : 'Adjuntar archivo'
+    return (
+      <div>
+        <div className="text-sm font-semibold text-slate-800 mb-2">{field.label}{field.required && <span className="text-rose-500"> *</span>}</div>
+        <div className="min-h-28 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-2 text-slate-400">
+          <Icon size={24} />
+          <span className="text-xs font-medium">{hint}</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (['select', 'multi_select', 'radio', 'checkbox'].includes(field.type)) {
+    return (
+      <div>
+        <div className="text-sm font-semibold text-slate-800 mb-2">{field.label}{field.required && <span className="text-rose-500"> *</span>}</div>
+        <div className="space-y-2">
+          {(options.length ? options : [{ label: 'Opción de respuesta', value: 'option' }]).map(option => (
+            <div key={option.value} className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-500">
+              <span className={`w-4 h-4 border-2 border-slate-300 ${field.type === 'radio' ? 'rounded-full' : 'rounded'}`} />
+              {option.label}
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (field.type === 'repeat_group') {
+    return (
+      <div>
+        <div className="text-sm font-semibold text-slate-800 mb-2">{field.label}{field.required && <span className="text-rose-500"> *</span>}</div>
+        <div className="rounded-2xl border border-slate-200 p-4 text-center text-xs font-semibold text-slate-400">Grupo repetible de integrantes</div>
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <div className="text-sm font-semibold text-slate-800 mb-2">{field.label}{field.required && <span className="text-rose-500"> *</span>}</div>
+      <div className="h-12 rounded-xl border border-slate-200 bg-white px-3 flex items-center text-sm text-slate-400">
+        {field.type === 'date' ? 'dd/mm/aaaa' : field.type === 'time' ? '--:--' : field.type === 'gps' ? 'Capturar ubicación' : 'Respuesta'}
+      </div>
+    </div>
+  )
+}
 
 export default function FormBuilderPage() {
   const { user } = useAuthStore()
@@ -170,11 +226,14 @@ export default function FormBuilderPage() {
     try {
       const payload = {
         entity_id: selectedEntityId,
+        name: form.title,
         title: form.title,
+        description: form.description,
         type: form.type,
         definition: JSON.stringify(form.pages),
-        status: form.status,
+        status: 'published',
         version: form.version || 1,
+        v: form.version || 1,
       }
       
       if (id) {
@@ -198,17 +257,18 @@ export default function FormBuilderPage() {
   }, [selectedEntityId, form, id, navigate, user?.role])
 
   return (
-    <div className="flex flex-col h-screen bg-slate-50 overflow-hidden">
+    <div className="flex flex-col h-full min-h-0 bg-slate-50 overflow-hidden">
       <TopBar 
         title={form.title || 'Diseño de Formulario'}
         subtitle={id ? `Editando: ${form.title}` : (user?.role === 'admin' ? "Constructor de formularios para cualquier entidad" : "Constructor universal de caracterizaciones")}
         actions={
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 sm:gap-3">
              {user?.role === 'admin' && (
               <select
                 value={selectedEntityId}
                 onChange={(e) => setSelectedEntityId(e.target.value)}
-                className="px-4 py-2 bg-slate-100 border-none rounded-xl text-xs font-bold text-slate-700 focus:ring-2 focus:ring-blue-500/20"
+                aria-label="Entidad del formulario"
+                className="hidden md:block max-w-52 px-4 py-2 bg-slate-100 border-none rounded-xl text-xs font-bold text-slate-700 focus:ring-2 focus:ring-blue-500/20"
               >
                 <option value="">Seleccionar Entidad...</option>
                 {entities.map(e => (
@@ -217,20 +277,22 @@ export default function FormBuilderPage() {
               </select>
             )}
             <button 
-              onClick={() => setPreview(!preview)}
-              className="flex items-center gap-2 px-4 py-2 text-slate-600 font-bold hover:bg-slate-100 rounded-xl transition-all"
+              onClick={() => { setPreview(!preview); setSelectedFieldId(null) }}
+              aria-label={preview ? 'Volver a editar' : 'Vista previa'}
+              className="w-10 h-10 sm:w-auto sm:h-auto flex items-center justify-center gap-2 sm:px-4 sm:py-2 text-slate-600 font-bold hover:bg-slate-100 rounded-xl transition-all"
             >
               {preview ? <Layout size={18} /> : <Eye size={18} />}
-              {preview ? 'Editar' : 'Vista Previa'}
+              <span className="hidden sm:inline">{preview ? 'Editar' : 'Vista Previa'}</span>
             </button>
             <button 
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-6 py-2.5 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 active:scale-95 transition-all disabled:opacity-50"
+              aria-label={saving ? 'Guardando formulario' : 'Publicar formulario'}
+              className="w-10 h-10 sm:w-auto sm:h-auto flex items-center justify-center gap-2 sm:px-6 sm:py-2.5 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 active:scale-95 transition-all disabled:opacity-50"
               style={{ background: COLORS.primary }}
             >
               <Save size={18} />
-              {saving ? 'Guardando...' : 'Publicar'}
+              <span className="hidden sm:inline">{saving ? 'Guardando...' : 'Publicar'}</span>
             </button>
           </div>
         }
@@ -238,7 +300,7 @@ export default function FormBuilderPage() {
 
       <div className="flex-1 flex overflow-hidden">
         {/* Left Toolbox */}
-        <aside className="w-72 bg-white border-r border-slate-200 flex flex-col shadow-sm z-10">
+        {!preview && <aside className="hidden lg:flex w-72 bg-white border-r border-slate-200 flex-col shadow-sm z-10">
           <div className="p-4 border-b border-slate-100 bg-slate-50/50">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest px-2">Herramientas</h3>
           </div>
@@ -265,18 +327,36 @@ export default function FormBuilderPage() {
               </div>
             ))}
           </div>
-        </aside>
+        </aside>}
 
         {/* Center Canvas */}
-        <main className="flex-1 overflow-y-auto p-12 bg-slate-50/30">
+        <main className="flex-1 min-w-0 overflow-y-auto p-4 sm:p-6 lg:p-12 bg-slate-50/30">
           <div className="max-w-3xl mx-auto space-y-8">
+            {!preview && (
+              <div className="lg:hidden sticky top-0 z-20 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-slate-50/95 backdrop-blur border-b border-slate-200 shadow-sm">
+                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Agregar campo</p>
+                <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+                  {FIELD_TYPES.map(fieldType => (
+                    <button
+                      key={fieldType.type}
+                      onClick={() => addField(fieldType.type)}
+                      className="flex-shrink-0 w-20 min-h-16 rounded-xl border border-slate-200 bg-white px-2 py-2 flex flex-col items-center justify-center gap-1 text-[10px] font-semibold text-slate-600 active:bg-blue-50 active:text-blue-700"
+                    >
+                      <fieldType.icon size={17} />
+                      <span className="leading-tight text-center">{fieldType.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Header Settings */}
-            <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm border-t-4" style={{ borderColor: COLORS.primary }}>
+            <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-[32px] border border-slate-100 shadow-sm border-t-4" style={{ borderColor: COLORS.primary }}>
                <input 
                 value={form.title} 
                 onChange={e => setForm({...form, title: e.target.value})}
                 placeholder="Título del Formulario"
-                className="text-2xl font-black text-slate-900 w-full focus:outline-none mb-2"
+                className="text-xl sm:text-2xl font-black text-slate-900 w-full focus:outline-none mb-2"
                />
                <textarea
                 value={form.description}
@@ -285,6 +365,35 @@ export default function FormBuilderPage() {
                 className="text-sm text-slate-400 w-full resize-none focus:outline-none bg-transparent"
                 rows={2}
                />
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-4 border-t border-slate-100">
+                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                   Tipo de caracterización
+                   <select
+                     value={form.type}
+                     onChange={e => setForm({ ...form, type: e.target.value as ActivityType })}
+                     className="mt-2 w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 normal-case tracking-normal"
+                   >
+                     <option value="ex_ante">Ex-Antes</option>
+                     <option value="encounter_1">Momento 1</option>
+                     <option value="encounter_2">Momento 2</option>
+                     <option value="encounter_3">Momento 3</option>
+                     <option value="ex_post">Ex-Post</option>
+                   </select>
+                 </label>
+                 {user?.role === 'admin' && (
+                   <label className="md:hidden text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                     Entidad
+                     <select
+                       value={selectedEntityId}
+                       onChange={e => setSelectedEntityId(e.target.value)}
+                       className="mt-2 w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 normal-case tracking-normal"
+                     >
+                       <option value="">Seleccionar entidad...</option>
+                       {entities.map(entity => <option key={entity.id} value={entity.id}>{entity.name}</option>)}
+                     </select>
+                   </label>
+                 )}
+               </div>
             </div>
 
             {/* Pagination Tabs */}
@@ -302,20 +411,54 @@ export default function FormBuilderPage() {
                   {p.title}
                 </button>
               ))}
-              <button 
-                onClick={addPage}
-                className="w-10 h-10 rounded-2xl border border-dashed border-slate-300 flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all"
-              >
-                <Plus size={18} />
-              </button>
+              {!preview && (
+                <button
+                  onClick={addPage}
+                  aria-label="Añadir página"
+                  className="w-10 h-10 flex-shrink-0 rounded-2xl border border-dashed border-slate-300 flex items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all"
+                >
+                  <Plus size={18} />
+                </button>
+              )}
             </div>
+
+            {!preview && (
+              <label className="block bg-white border border-slate-100 rounded-2xl p-4 shadow-sm text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                Nombre de esta página o momento
+                <input
+                  value={activePage.title}
+                  onChange={event => {
+                    const newPages = [...form.pages!]
+                    newPages[activePageIdx] = { ...activePage, title: event.target.value }
+                    setForm({ ...form, pages: newPages })
+                  }}
+                  className="mt-2 w-full text-base font-bold text-slate-800 normal-case tracking-normal focus:outline-none"
+                />
+              </label>
+            )}
 
             {/* Field List */}
             <div className="space-y-4 min-h-[400px]">
-              {activePage.fields.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-24 bg-white/50 border-2 border-dashed border-slate-200 rounded-[32px]">
+              {preview ? (
+                <div className="max-w-md mx-auto rounded-[32px] bg-white border border-slate-200 shadow-2xl overflow-hidden">
+                  <div className="px-6 py-5 text-white" style={{ background: COLORS.primary }}>
+                    <div className="text-[10px] uppercase tracking-[0.2em] text-white/70 font-bold">Vista móvil</div>
+                    <h3 className="text-xl font-black mt-1">{form.title}</h3>
+                    <p className="text-sm text-white/75 mt-1">{activePage.title}</p>
+                  </div>
+                  <div className="p-5 space-y-6">
+                    {activePage.fields.length === 0 ? (
+                      <p className="py-12 text-center text-sm text-slate-400">Esta página todavía no tiene preguntas.</p>
+                    ) : activePage.fields.map(field => <FormFieldPreview key={field.id} field={field} />)}
+                  </div>
+                  <div className="p-5 border-t border-slate-100">
+                    <div className="h-12 rounded-xl flex items-center justify-center text-sm font-bold text-white" style={{ background: COLORS.primary }}>Guardar y continuar</div>
+                  </div>
+                </div>
+              ) : activePage.fields.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 sm:py-24 px-6 bg-white/50 border-2 border-dashed border-slate-200 rounded-[32px] text-center">
                   <Layout size={40} className="text-slate-200 mb-4" />
-                  <p className="text-slate-400 text-sm font-medium">Arrastra o haz clic en una herramienta para comenzar</p>
+                  <p className="text-slate-400 text-sm font-medium">Elige un tipo de campo para comenzar</p>
                 </div>
               ) : (
                 <Reorder.Group axis="y" values={activePage.fields} onReorder={(newFields) => {
@@ -328,26 +471,26 @@ export default function FormBuilderPage() {
                       key={f.id} 
                       value={f}
                       onClick={() => setSelectedFieldId(f.id)}
-                      className={`group relative bg-white p-6 rounded-3xl border transition-all cursor-pointer ${
+                      className={`group relative bg-white p-4 sm:p-6 rounded-3xl border transition-all cursor-pointer ${
                         selectedFieldId === f.id ? 'border-blue-500 shadow-xl shadow-blue-500/5 ring-4 ring-blue-50' : 'border-slate-100 hover:border-slate-200 shadow-sm'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-4 flex-1">
+                        <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
                           <div className="cursor-grab text-slate-200 group-hover:text-slate-400 trasition-colors">
                             <GripVertical size={20} />
                           </div>
-                          <div>
+                          <div className="min-w-0">
                             <div className="flex items-center gap-2 mb-1">
                               {FIELD_TYPES.find(t => t.type === f.type)?.icon && (
                                 <div className="text-slate-400" ><Layout size={14}/></div>
                               )}
                               <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">{f.type}</span>
                             </div>
-                            <h4 className="font-bold text-slate-800">{f.label}</h4>
+                            <h4 className="font-bold text-slate-800 break-words">{f.label}</h4>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                           <button onClick={(e) => { e.stopPropagation(); deleteField(f.id); }} className="p-2 hover:bg-rose-50 text-rose-500 rounded-xl transition-colors">
                             <Trash2 size={18} />
                           </button>
@@ -364,13 +507,23 @@ export default function FormBuilderPage() {
         {/* Right Settings Sidebar */}
         <AnimatePresence>
           {selectedFieldId && (
-            <motion.aside
-              initial={{ x: 300, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: 300, opacity: 0 }}
-              className="w-80 bg-white border-l border-slate-200 shadow-2xl z-20 flex flex-col overflow-hidden"
-            >
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <>
+              <motion.button
+                type="button"
+                aria-label="Cerrar propiedades"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setSelectedFieldId(null)}
+                className="lg:hidden fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-[1px]"
+              />
+              <motion.aside
+                initial={{ y: 80, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 80, opacity: 0 }}
+                className="fixed inset-x-0 bottom-0 max-h-[82vh] w-full rounded-t-[28px] bg-white border-t border-slate-200 shadow-2xl z-50 flex flex-col overflow-hidden lg:relative lg:inset-auto lg:max-h-none lg:w-80 lg:rounded-none lg:border-t-0 lg:border-l lg:z-20"
+              >
+              <div className="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div className="flex items-center gap-2">
                   <Settings2 size={18} className="text-slate-400" />
                   <h3 className="font-bold text-slate-900">Propiedades</h3>
@@ -380,7 +533,7 @@ export default function FormBuilderPage() {
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-6 space-y-8">
+              <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-8">
                 {/* Find current field */}
                 {(() => {
                   const f = activePage.fields.find(x => x.id === selectedFieldId)
@@ -462,7 +615,8 @@ export default function FormBuilderPage() {
                   )
                 })()}
               </div>
-            </motion.aside>
+              </motion.aside>
+            </>
           )}
         </AnimatePresence>
       </div>

@@ -46,7 +46,7 @@ export default function LoginPage() {
   const { signIn, isLoading, error, clearError } = useAuthStore()
   const navigate = useNavigate()
 
-  // ── Login real con Appwrite ────────────────────────────────────────────────
+  // ── Login real con Supabase ────────────────────────────────────────────────
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     if (isBlocked) return
@@ -136,7 +136,7 @@ export default function LoginPage() {
           {[
             { icon: <Wifi size={16} />,   text: '100% offline-first — sin internet funciona igual' },
             { icon: <MapPin size={16} />, text: 'Geolocalización y mapas de zona' },
-            { icon: <Shield size={16} />, text: 'Cifrado E2E y cumplimiento Ley 1581' },
+            { icon: <Shield size={16} />, text: 'Acceso por roles y aislamiento seguro por entidad' },
           ].map((f, i) => (
             <motion.div
               key={i}
@@ -230,7 +230,7 @@ export default function LoginPage() {
               </motion.div>
             )}
 
-            {/* Error Appwrite */}
+            {/* Error Supabase */}
             {error && !isBlocked && (
               <motion.div
                 initial={{ opacity: 0, y: -8 }}

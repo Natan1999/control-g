@@ -7,8 +7,8 @@ import {
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TopBar } from '@/components/layout/Sidebar'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
-import { Query } from 'appwrite'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import { FormDefinition, UserRole } from '@/types'
 import { cn } from '@/lib/utils'
@@ -93,16 +93,17 @@ export default function FormsListPage() {
         actions={
           <button 
             onClick={() => navigate(`${basePath}/new`)}
-            className="flex items-center gap-2 px-6 py-2.5 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 active:scale-95 transition-all"
+            aria-label="Nuevo formulario"
+            className="flex items-center justify-center gap-2 w-10 h-10 sm:w-auto sm:h-auto sm:px-6 sm:py-2.5 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 active:scale-95 transition-all"
             style={{ background: COLORS.primary }}
           >
             <Plus size={18} />
-            Nuevo Formulario
+            <span className="hidden sm:inline">Nuevo Formulario</span>
           </button>
         }
       />
 
-      <div className="flex-1 overflow-y-auto p-6 lg:p-8">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
         <div className="max-w-6xl mx-auto space-y-6">
           
           {/* Search & Stats */}

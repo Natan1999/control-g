@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Users, CheckCircle, TrendingUp, AlertTriangle, Clock } from 'lucide-react'
 import { MobileTopBar, BottomNav } from '@/components/layout/BottomNav'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
-import { Query } from 'appwrite'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
+import { getCachedFamilies } from '@/lib/sync-engine'
+import { useSyncStore } from '@/stores/syncStore'
 
 interface FamilyDoc {
   $id: string
@@ -51,6 +53,7 @@ function getLastCompletedActivity(f: FamilyDoc): string | null {
 
 export default function FieldHome() {
   const { user } = useAuthStore()
+  const pendingSync = useSyncStore(state => state.pendingCount)
   const [families, setFamilies] = useState<FamilyDoc[]>([])
   const [observations, setObservations] = useState<ObsDoc[]>([])
   const [municipalityName, setMunicipalityName] = useState('')
@@ -83,9 +86,12 @@ export default function FieldHome() {
           setMunicipalityName((muni as any).municipality_name ?? '')
         } catch { /* silent */ }
       }
-    } catch { /* silent */ }
+    } catch {
+      setFamilies(getCachedFamilies(user?.entityId).filter((family: any) => family.professional_id === user.id))
+      setObservations([])
+    }
     setLoading(false)
-  }, [user?.id])
+  }, [user?.id, user?.entityId])
 
   useEffect(() => { load() }, [load])
 
@@ -110,7 +116,7 @@ export default function FieldHome() {
     { label: 'Asignadas', value: total, color: '#1B3A4B', icon: <Users size={16} /> },
     { label: 'Completadas', value: completed, color: '#27AE60', icon: <CheckCircle size={16} /> },
     { label: '% Avance', value: `${pct}%`, color: '#3D7B9E', icon: <TrendingUp size={16} /> },
-    { label: 'Pendientes sync', value: 0, color: '#95A5A6', icon: <Clock size={16} /> },
+    { label: 'Pendientes sync', value: pendingSync, color: '#95A5A6', icon: <Clock size={16} /> },
   ]
 
   return (

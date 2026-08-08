@@ -1,15 +1,13 @@
 /**
  * Control G — geographyService (DIVIPOLA / DANE Integration)
  *
- * Strategy (three tiers):
- *   1. DANE ArcGIS FeatureServer (official, may have CORS issues in browser)
- *   2. api-colombia.com (unofficial but reliable, JSON REST)
- *   3. Static fallback embedded in code (always works offline)
+ * Departments are embedded so the selector is always instant and available
+ * offline. Municipalities use the local cache, the embedded catalogue and,
+ * when necessary, the public APIs as an online enrichment source.
  */
 
 const DANE_ARCGIS_BASE =
   'https://geoportal.dane.gov.co/mparcgis/rest/services/Divipola/Serv_DIVIPOLA_MGN_2025/FeatureServer';
-const LAYER_DEPARTAMENTO = 319;
 const LAYER_MUNICIPIO = 317;
 const LAYER_CENTRO_POBLADO = 305;
 
@@ -476,7 +474,7 @@ const STATIC_MUNICIPALITIES: Record<string, Municipality[]> = {
 };
 
 // ─── Cache ────────────────────────────────────────────────────────────────────
-const _deptCache: Department[] | null = null;
+let _deptCache: Department[] | null = null;
 const _muniCache: Record<string, Municipality[]> = {};
 
 export interface Department {
@@ -501,53 +499,21 @@ export interface Settlement {
 export async function getDepartments(): Promise<Department[]> {
   if (_deptCache) return _deptCache;
 
-  // Check localStorage cache first
-  const cached = localStorage.getItem('divipola_departments');
+  const cached = typeof localStorage === 'undefined'
+    ? null
+    : localStorage.getItem('divipola_departments');
   if (cached) {
-    try { return JSON.parse(cached); } catch { /* ignore */ }
+    try {
+      _deptCache = JSON.parse(cached);
+      return _deptCache!;
+    } catch { /* use the embedded catalogue */ }
   }
 
-  // Tier 1: DANE ArcGIS
-  try {
-    const params = new URLSearchParams({ where: '1=1', outFields: 'DPTO_CCDGO,DPTO_CNMBRE', f: 'json' });
-    const res = await fetch(`${DANE_ARCGIS_BASE}/${LAYER_DEPARTAMENTO}/query?${params}`, { signal: AbortSignal.timeout(8000) });
-    if (!res.ok) throw new Error('DANE ArcGIS no responde');
-    const data = await res.json();
-    if (!data.features?.length) throw new Error('Sin datos DANE');
-    const map = new Map<string, Department>();
-    data.features.forEach((f: any) => {
-      const id = f.attributes.DPTO_CCDGO;
-      const name = f.attributes.DPTO_CNMBRE;
-      if (id && name && !map.has(id)) map.set(id, { id, name: name.toUpperCase().trim() });
-    });
-    const result = Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
-    if (result.length > 0) {
-      localStorage.setItem('divipola_departments', JSON.stringify(result));
-      return result;
-    }
-  } catch (e) {
-    console.warn('DANE ArcGIS depts failed:', (e as Error).message);
+  _deptCache = COLOMBIA_DEPARTMENTS;
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('divipola_departments', JSON.stringify(_deptCache));
   }
-
-  // Tier 2: api-colombia.com
-  try {
-    const res = await fetch(`${API_COLOMBIA_BASE}/Department`, { signal: AbortSignal.timeout(8000) });
-    if (!res.ok) throw new Error('api-colombia no responde');
-    const data: any[] = await res.json();
-    const result: Department[] = data.map((d: any) => ({
-      id: String(d.id).padStart(2, '0'),
-      name: (d.name ?? d.nombre ?? '').toUpperCase().trim(),
-    })).filter(d => d.id && d.name).sort((a, b) => a.name.localeCompare(b.name));
-    if (result.length > 0) {
-      localStorage.setItem('divipola_departments', JSON.stringify(result));
-      return result;
-    }
-  } catch (e) {
-    console.warn('api-colombia depts failed:', (e as Error).message);
-  }
-
-  // Tier 3: Static fallback
-  return COLOMBIA_DEPARTMENTS;
+  return _deptCache;
 }
 
 // ─── Municipalities ───────────────────────────────────────────────────────────
@@ -559,7 +525,7 @@ export async function getMunicipalities(departmentId: string): Promise<Municipal
 
   // Check localStorage cache
   const cacheKey = `divipola_munis_${departmentId}`;
-  const cached = localStorage.getItem(cacheKey);
+  const cached = typeof localStorage === 'undefined' ? null : localStorage.getItem(cacheKey);
   if (cached) {
     try {
       const parsed = JSON.parse(cached);
@@ -567,6 +533,18 @@ export async function getMunicipalities(departmentId: string): Promise<Municipal
       return parsed;
     } catch { /* ignore */ }
   }
+
+  const staticResult = STATIC_MUNICIPALITIES[departmentId] ?? [];
+  const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
+
+  // Bolívar is complete in the bundled catalogue. Prefer it even online so
+  // field workers never wait for an external service before starting a form.
+  if (staticResult.length > 0 && (offline || departmentId === '13')) {
+    _muniCache[departmentId] = staticResult;
+    return staticResult;
+  }
+
+  if (offline) return [];
 
   // Tier 1: DANE ArcGIS
   try {
@@ -589,7 +567,7 @@ export async function getMunicipalities(departmentId: string): Promise<Municipal
     });
     const result = Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
     if (result.length > 0) {
-      localStorage.setItem(cacheKey, JSON.stringify(result));
+      if (typeof localStorage !== 'undefined') localStorage.setItem(cacheKey, JSON.stringify(result));
       _muniCache[departmentId] = result;
       return result;
     }
@@ -610,7 +588,7 @@ export async function getMunicipalities(departmentId: string): Promise<Municipal
       departmentId,
     })).filter(m => m.id && m.name).sort((a, b) => a.name.localeCompare(b.name));
     if (result.length > 0) {
-      localStorage.setItem(cacheKey, JSON.stringify(result));
+      if (typeof localStorage !== 'undefined') localStorage.setItem(cacheKey, JSON.stringify(result));
       _muniCache[departmentId] = result;
       return result;
     }
@@ -619,7 +597,6 @@ export async function getMunicipalities(departmentId: string): Promise<Municipal
   }
 
   // Tier 3: Static fallback
-  const staticResult = STATIC_MUNICIPALITIES[departmentId] ?? [];
   if (staticResult.length > 0) {
     _muniCache[departmentId] = staticResult;
   }
@@ -630,6 +607,7 @@ export async function getMunicipalities(departmentId: string): Promise<Municipal
 
 export async function getSettlements(municipalityId: string): Promise<Settlement[]> {
   if (!municipalityId) return [];
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) return [];
   try {
     const params = new URLSearchParams({
       where: `MPIO_CCDGO = '${municipalityId}'`,

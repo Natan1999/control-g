@@ -5,10 +5,9 @@ import {
 } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { PageWrapper } from '@/components/shared'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
-import { Query } from 'appwrite'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
-// @ts-ignore — jsPDF default export
 import { jsPDF } from 'jspdf'
 
 type ActivityTypeOption = 'ex_ante' | 'encounter_1' | 'encounter_2' | 'encounter_3' | 'ex_post'

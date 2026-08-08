@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { MapPin, Users, UserCheck, X, ChevronDown, Plus, Pencil, Trash2, UserMinus } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { PageWrapper } from '@/components/shared'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/appwrite'
-import { Query, ID } from 'appwrite'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { Query, ID } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import { getDepartments, getMunicipalities, Department, Municipality } from '@/services/geographyService'
 import { Search, Loader2, Globe } from 'lucide-react'
@@ -99,7 +99,7 @@ export default function MunicipalitiesPage() {
     } finally {
       setLoading(false)
     }
-  }, [user?.entityId, user?.fullName])
+  }, [user])
 
   useEffect(() => { if (user?.entityId) loadAll() }, [user?.entityId, loadAll])
 
