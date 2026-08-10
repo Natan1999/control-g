@@ -3,7 +3,7 @@ set -euo pipefail
 
 CONTROL_G_VERSION="$(node -p "require('./package.json').version")"
 echo "Construyendo Control G ${CONTROL_G_VERSION}..."
-npm run build
+VITE_NATIVE_BUILD=true npm run build
 npx cap sync android
 
 if [ -z "${JAVA_HOME:-}" ] || [ ! -x "${JAVA_HOME}/bin/java" ]; then
