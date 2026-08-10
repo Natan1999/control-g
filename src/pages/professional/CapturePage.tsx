@@ -11,7 +11,7 @@ import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import { useSyncStore } from '@/stores/syncStore'
 import { localDB } from '@/lib/dexie-db'
-import { getCachedForms } from '@/lib/sync-engine'
+import { getCachedForms, isOnline } from '@/lib/sync-engine'
 import { Button } from '@/components/ui/button'
 
 interface FormDef {
@@ -47,6 +47,14 @@ export default function FieldCapturePage() {
 
   const loadForms = useCallback(async () => {
     setLoading(true)
+    const cachedForms = getCachedForms(user?.entityId) as FormDef[]
+    if (cachedForms.length > 0) setForms(cachedForms)
+
+    if (!(await isOnline())) {
+      setLoading(false)
+      return
+    }
+
     try {
       const res = await databases.listDocuments(DATABASE_ID, COLLECTION_IDS.FORMS, [
         Query.equal('entity_id', [user?.entityId || '', 'global']),
@@ -56,7 +64,7 @@ export default function FieldCapturePage() {
       ])
       setForms(res.documents as unknown as FormDef[])
     } catch (error) {
-      setForms(getCachedForms(user?.entityId) as FormDef[])
+      setForms(cachedForms)
     } finally {
       setLoading(false)
     }

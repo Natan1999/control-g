@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { Capacitor } from '@capacitor/core'
 import { useAuthStore } from '@/stores/authStore'
 import type { UserRole } from '@/types'
 
@@ -71,6 +72,7 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
 export default function App() {
   const { user, restore } = useAuthStore()
   const [ready, setReady] = useState(false)
+  const unauthenticatedEntry = Capacitor.isNativePlatform() ? '/login' : '/'
 
   useSync()
 
@@ -172,9 +174,15 @@ export default function App() {
         </ProtectedLayout>
       } />
 
-      {/* Root: landing page for web, redirect to dashboard if already logged in */}
-      <Route path="/" element={user ? <Navigate to={defaultRoutes[user.role as UserRole]} replace /> : <LandingPage />} />
-      <Route path="*" element={<Navigate to={user ? defaultRoutes[user.role as UserRole] : '/'} replace />} />
+      {/* The website keeps its landing page; the installed APK opens at login. */}
+      <Route path="/" element={
+        user
+          ? <Navigate to={defaultRoutes[user.role as UserRole]} replace />
+          : Capacitor.isNativePlatform()
+            ? <Navigate to="/login" replace />
+            : <LandingPage />
+      } />
+      <Route path="*" element={<Navigate to={user ? defaultRoutes[user.role as UserRole] : unauthenticatedEntry} replace />} />
     </Routes>
   )
 }

@@ -48,6 +48,26 @@ test('el motor sincroniza medios antes de enviar respuestas y actividades', asyn
   assert.doesNotMatch(source, /attempts >= 5 \? 'failed'/)
 })
 
+test('el APK abre en login y la web conserva la landing', async () => {
+  const source = await read('src/App.tsx')
+  assert.match(source, /Capacitor\.isNativePlatform\(\)/)
+  assert.match(source, /\? <Navigate to="\/login" replace \/>/)
+  assert.match(source, /: <LandingPage \/>/)
+})
+
+test('la captura offline usa caché, conserva borradores y encola respuestas', async () => {
+  const capture = await read('src/pages/professional/CapturePage.tsx')
+  const responder = await read('src/pages/professional/FormResponderPage.tsx')
+  const auth = await read('src/stores/authStore.ts')
+  assert.match(capture, /if \(!\(await isOnline\(\)\)\)/)
+  assert.match(responder, /status: 'draft'/)
+  assert.match(responder, /status: 'completed'/)
+  assert.match(responder, /localDB\.formResponses\.put/)
+  assert.match(responder, /if \(await isOnline\(\)\) void processSyncQueue\(\)/)
+  assert.match(auth, /if \(!status\.connected\)/)
+  assert.match(auth, /await updateLocalCache\(user\.entityId\)/)
+})
+
 test('la creación de usuarios se protege dentro de Supabase', async () => {
   const sql = await read('supabase/migrations/202608070001_initial_control_g.sql')
   const backend = await read('src/lib/backend.ts')

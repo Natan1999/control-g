@@ -66,9 +66,10 @@ export const useAuthStore = create<AuthState>()(
           }
           const user = profileToUser(authUser.profile, authUser.email)
           set({ user, profileId: authUser.profile.$id, isAuthenticated: true, isLoading: false, error: null })
-          // Pre-cache offline data for field professionals
+          // Complete the first offline package while the authenticated
+          // connection is still available. Previous cache remains on errors.
           if (user.entityId) {
-            updateLocalCache(user.entityId).catch(() => {})
+            await updateLocalCache(user.entityId)
           }
         } catch (err) {
           const msg = err instanceof Error ? err.message : 'Error al iniciar sesión'

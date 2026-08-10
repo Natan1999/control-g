@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import FormRenderer from '@/components/forms/FormRenderer'
 import { FormDefinition } from '@/types'
@@ -8,7 +8,7 @@ import { Loader2, ArrowLeft, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { localDB } from '@/lib/dexie-db'
 import { BUCKET_IDS } from '@/lib/backend'
-import { isOnline, processSyncQueue, refreshPendingCount } from '@/lib/sync-engine'
+import { getCachedForms, isOnline, processSyncQueue, refreshPendingCount } from '@/lib/sync-engine'
 import { Geolocation } from '@capacitor/geolocation'
 
 const FormResponderPage: React.FC = () => {
@@ -16,7 +16,9 @@ const FormResponderPage: React.FC = () => {
   const { user } = useAuthStore()
   const navigate = useNavigate()
   const [formDef, setFormDef] = useState<FormDefinition | null>(null)
+  const [initialAnswers, setInitialAnswers] = useState<Record<string, any>>({})
   const [loading, setLoading] = useState(true)
+  const draftLocalId = useRef<string>(crypto.randomUUID())
 
   useEffect(() => {
     const loadForm = async () => {
@@ -24,23 +26,36 @@ const FormResponderPage: React.FC = () => {
       setLoading(true)
 
       try {
-        let doc: any
+        let doc: any = getCachedForms(user?.entityId).find((form: any) => form.$id === formId)
 
-        try {
-          // 1. Try to load from Supabase
-          doc = await databases.getDocument(
-            DATABASE_ID,
-            COLLECTION_IDS.FORMS,
-            formId
-          )
-        } catch (apiError) {
-          console.warn('Network error loading form, trying local cache...', apiError)
-          // 2. Try to load from local cache
-          const cachedRaw = localStorage.getItem(`cg_forms_${user?.entityId}`)
-          const cachedForms = cachedRaw ? JSON.parse(cachedRaw) : []
-          doc = cachedForms.find((f: any) => f.$id === formId)
-          
-          if (!doc) throw apiError // If still not found, fail
+        if (await isOnline()) {
+          try {
+            doc = await databases.getDocument(
+              DATABASE_ID,
+              COLLECTION_IDS.FORMS,
+              formId
+            )
+          } catch (apiError) {
+            console.warn('No fue posible actualizar el formulario; se usará la copia local.', apiError)
+            if (!doc) throw apiError
+          }
+        }
+
+        if (!doc) throw new Error('El formulario no está disponible en la copia local.')
+
+        if (user?.id) {
+          const drafts = await localDB.formResponses
+            .where('formId')
+            .equals(formId)
+            .filter(response => response.status === 'draft'
+              && response.professionalId === user.id
+              && response.familyId === (familyId || null))
+            .toArray()
+          const draft = drafts.sort((a, b) => b.updatedAt - a.updatedAt)[0]
+          if (draft) {
+            draftLocalId.current = draft.localId
+            setInitialAnswers(draft.answers)
+          }
         }
 
         setFormDef({
@@ -63,7 +78,24 @@ const FormResponderPage: React.FC = () => {
     }
 
     loadForm()
-  }, [formId, user?.entityId])
+  }, [familyId, formId, user?.entityId, user?.id])
+
+  const handleSaveDraft = async (answers: Record<string, any>) => {
+    if (!formDef || !user) return
+    const now = Date.now()
+    const existing = await localDB.formResponses.get(draftLocalId.current)
+    await localDB.formResponses.put({
+      localId: draftLocalId.current,
+      formId: formDef.id,
+      entityId: user.entityId || formDef.entityId,
+      professionalId: user.id,
+      familyId: familyId || null,
+      answers,
+      status: 'draft',
+      createdAt: existing?.createdAt || now,
+      updatedAt: now,
+    })
+  }
 
   const handleSubmit = async (answers: Record<string, any>) => {
     if (!formDef || !user) return
@@ -82,7 +114,7 @@ const FormResponderPage: React.FC = () => {
         console.warn('Could not capture GPS for form:', gpsError)
       }
 
-      const localId = crypto.randomUUID()
+      const localId = draftLocalId.current
       const storedAnswers: Record<string, any> = { ...answers }
       const fieldTypes = new Map(formDef.pages.flatMap(page => page.fields).map(field => [field.id, field.type]))
 
@@ -105,10 +137,11 @@ const FormResponderPage: React.FC = () => {
         }
       }
 
-      await localDB.formResponses.add({
+      const existingDraft = await localDB.formResponses.get(localId)
+      await localDB.formResponses.put({
         localId,
         formId: formDef.id,
-        entityId: formDef.entityId,
+        entityId: user.entityId || formDef.entityId,
         professionalId: user.id,
         familyId: familyId || null,
         answers: {
@@ -120,7 +153,7 @@ const FormResponderPage: React.FC = () => {
           }
         },
         status: 'completed', // Ready to be synced
-        createdAt: Date.now(),
+        createdAt: existingDraft?.createdAt || Date.now(),
         updatedAt: Date.now()
       })
 
@@ -202,7 +235,9 @@ const FormResponderPage: React.FC = () => {
       <div className="pt-8 pb-32">
         <FormRenderer 
           definition={formDef}
+          initialData={initialAnswers}
           onSubmit={handleSubmit}
+          onSaveDraft={handleSaveDraft}
         />
       </div>
     </div>
