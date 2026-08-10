@@ -93,6 +93,13 @@ test('los errores de sincronización permanecen visibles y las respuestas tienen
   assert.match(responses, /createSignedUrl/)
 })
 
+test('la verificación integral crea y elimina una asignación temporal', async () => {
+  const verify = await read('scripts/verify-supabase.mjs')
+  assert.match(verify, /from\('form_assignments'\)\.insert/)
+  assert.match(verify, /visibleForms\.length === 1/)
+  assert.match(verify, /from\('form_assignments'\)\.delete/)
+})
+
 test('la creación de usuarios se protege dentro de Supabase', async () => {
   const sql = await read('supabase/migrations/202608070001_initial_control_g.sql')
   const backend = await read('src/lib/backend.ts')

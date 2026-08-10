@@ -25,6 +25,7 @@ const temporaryPassword = `Cg!${randomUUID()}Aa1`
 const localId = `verification-${randomUUID()}`
 let temporaryUserId = null
 let uploadedPath = null
+let temporaryFormAssignmentId = null
 
 function ensure(condition, message) {
   if (!condition) throw new Error(message)
@@ -68,6 +69,15 @@ try {
   if (assignmentError) throw assignmentError
   ensure(assignmentCount >= 5, `Se esperaban al menos 5 asignaciones y se encontraron ${assignmentCount}.`)
 
+  const { data: assignedForm, error: formLookupError } = await adminClient
+    .from('forms')
+    .select('id')
+    .eq('entity_id', 'gov-bolivar-2026')
+    .eq('status', 'published')
+    .limit(1)
+    .single()
+  if (formLookupError) throw formLookupError
+
   const { data: created, error: createError } = await adminClient.rpc('admin_create_user', {
     p_email: temporaryEmail,
     p_password: temporaryPassword,
@@ -78,6 +88,17 @@ try {
   if (createError) throw createError
   temporaryUserId = created?.user?.id
   ensure(temporaryUserId, 'La RPC no devolvió el usuario creado.')
+
+  temporaryFormAssignmentId = randomUUID()
+  const { error: formAssignmentError } = await adminClient.from('form_assignments').insert({
+    id: temporaryFormAssignmentId,
+    entity_id: 'gov-bolivar-2026',
+    form_id: assignedForm.id,
+    professional_id: temporaryUserId,
+    assigned_by: session.user.id,
+    status: 'active',
+  })
+  if (formAssignmentError) throw formAssignmentError
 
   const professionalClient = createClient(url, anonKey, clientOptions)
   const { data: professionalSession, error: professionalLoginError } = await professionalClient.auth.signInWithPassword({
@@ -109,17 +130,19 @@ try {
     .upload(uploadedPath, pixel, { contentType: 'image/png', upsert: true })
   if (uploadError) throw uploadError
 
-  const { data: form, error: formLookupError } = await professionalClient
+  const { data: visibleForms, error: visibleFormsError } = await professionalClient
     .from('forms')
     .select('id')
     .eq('entity_id', 'gov-bolivar-2026')
     .eq('status', 'published')
-    .limit(1)
-    .single()
-  if (formLookupError) throw formLookupError
+  if (visibleFormsError) throw visibleFormsError
+  ensure(
+    visibleForms.length === 1 && visibleForms[0].id === assignedForm.id,
+    'El profesional no recibió exclusivamente el formulario asignado.',
+  )
 
   const response = {
-    form_id: form.id,
+    form_id: assignedForm.id,
     entity_id: 'gov-bolivar-2026',
     family_id: null,
     professional_id: temporaryUserId,
@@ -148,6 +171,7 @@ try {
 } finally {
   await serviceClient.from('form_responses').delete().eq('local_id', localId)
   if (uploadedPath) await serviceClient.storage.from('field-photos').remove([uploadedPath])
+  if (temporaryFormAssignmentId) await serviceClient.from('form_assignments').delete().eq('id', temporaryFormAssignmentId)
   if (temporaryUserId) {
     await serviceClient.from('audit_log').delete().eq('record_id', temporaryUserId)
     await serviceClient.from('user_profiles').delete().eq('user_id', temporaryUserId)
