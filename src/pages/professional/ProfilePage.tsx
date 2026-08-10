@@ -15,6 +15,7 @@ export default function FieldProfilePage() {
 
   const [pwForm, setPwForm] = useState({ current: '', next: '', confirm: '' })
   const [pwError, setPwError] = useState('')
+  const [syncMessage, setSyncMessage] = useState('')
 
   const handleLogout = async () => {
     await signOut()
@@ -22,14 +23,19 @@ export default function FieldProfilePage() {
   }
 
   const handleSync = async () => {
+    setSyncMessage('')
     setStatus('syncing')
     try {
-      await processSyncQueue()
+      const result = await processSyncQueue()
       if (user?.entityId) {
-        await updateLocalCache(user.entityId)
+        await updateLocalCache(user.entityId, user.id, user.role)
       }
+      setSyncMessage(result.synced
+        ? 'Sincronización completada. La información ya está disponible para coordinación.'
+        : `${result.pendingCount} registro(s) siguen pendientes. ${result.errors[0] || 'Se reintentará automáticamente.'}`)
     } catch {
       setStatus('error')
+      setSyncMessage('No fue posible completar la sincronización. Los datos permanecen guardados en este dispositivo.')
     }
   }
 
@@ -95,6 +101,14 @@ export default function FieldProfilePage() {
                 <RefreshCw size={16} className={status === 'syncing' ? 'animate-spin' : ''} />
                 {status === 'syncing' ? 'Sincronizando...' : 'Sincronizar ahora'}
               </button>
+              {syncMessage && (
+                <p className={cn('text-xs font-semibold rounded-xl p-3', {
+                  'bg-emerald-50 text-emerald-700': status === 'synced',
+                  'bg-amber-50 text-amber-800': status !== 'synced',
+                })}>
+                  {syncMessage}
+                </p>
+              )}
             </div>
           </div>
         </div>

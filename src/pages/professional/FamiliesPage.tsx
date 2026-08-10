@@ -5,7 +5,7 @@ import { MobileTopBar, BottomNav } from '@/components/layout/BottomNav'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
 import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
-import { getCachedFamilies } from '@/lib/sync-engine'
+import { getCachedFamilies, isOnline } from '@/lib/sync-engine'
 import { cn } from '@/lib/utils'
 
 interface FamilyDoc {
@@ -85,6 +85,15 @@ export default function FieldFamiliesPage() {
   const load = useCallback(async () => {
     if (!user?.id) { setLoading(false); return }
     setLoading(true)
+    const cached = getCachedFamilies(user?.entityId)
+      .filter((family: any) => family.professional_id === user.id) as FamilyDoc[]
+    if (cached.length > 0) setFamilies(cached)
+
+    if (!(await isOnline())) {
+      setLoading(false)
+      return
+    }
+
     try {
       const res = await databases.listDocuments(DATABASE_ID, COLLECTION_IDS.FAMILIES, [
         Query.equal('professional_id', user.id),
@@ -92,9 +101,7 @@ export default function FieldFamiliesPage() {
       ])
       setFamilies(res.documents as unknown as FamilyDoc[])
     } catch {
-      const cached = getCachedFamilies(user?.entityId)
-        .filter((family: any) => family.professional_id === user.id)
-      setFamilies(cached as FamilyDoc[])
+      setFamilies(cached)
     }
     setLoading(false)
   }, [user?.id, user?.entityId])

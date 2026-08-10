@@ -8,6 +8,7 @@ export const COLLECTION_IDS = {
   ENTITY_MUNICIPALITIES:    'entity_municipalities',
   USER_PROFILES:            'user_profiles',
   PROFESSIONAL_ASSIGNMENTS: 'professional_assignments',
+  FORM_ASSIGNMENTS:         'form_assignments',
   FAMILIES:                 'families',
   ACTIVITIES:               'activities',
   OBSERVATIONS:             'observations',
@@ -177,6 +178,12 @@ export const storage = {
     })
     if (error) throw new BackendError(error.message, 500)
     return { $id: data.path, path: data.path }
+  },
+
+  async createSignedUrl(bucketId: string, path: string, expiresIn = 3600) {
+    const { data, error } = await supabase.storage.from(bucketId).createSignedUrl(path, expiresIn)
+    if (error) throw new BackendError(error.message, 500)
+    return data.signedUrl
   },
 }
 

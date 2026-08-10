@@ -48,6 +48,51 @@ test('el motor sincroniza medios antes de enviar respuestas y actividades', asyn
   assert.doesNotMatch(source, /attempts >= 5 \? 'failed'/)
 })
 
+test('el APK abre en login y la web conserva la landing', async () => {
+  const source = await read('src/App.tsx')
+  assert.match(source, /Capacitor\.isNativePlatform\(\)/)
+  assert.match(source, /\? <Navigate to="\/login" replace \/>/)
+  assert.match(source, /: <LandingPage \/>/)
+})
+
+test('la captura offline usa caché, conserva borradores y encola respuestas', async () => {
+  const capture = await read('src/pages/professional/CapturePage.tsx')
+  const responder = await read('src/pages/professional/FormResponderPage.tsx')
+  const auth = await read('src/stores/authStore.ts')
+  assert.match(capture, /getCachedFormAssignments/)
+  assert.match(capture, /if \(!connected\)/)
+  assert.match(responder, /status: 'draft'/)
+  assert.match(responder, /status: 'completed'/)
+  assert.match(responder, /localDB\.formResponses\.put/)
+  assert.match(responder, /await processSyncQueue\(\)/)
+  assert.match(responder, /savedResponse\?\.status === 'synced'/)
+  assert.match(auth, /if \(!status\.connected\)/)
+  assert.match(auth, /await updateLocalCache\(user\.entityId, user\.id, user\.role\)/)
+})
+
+test('solo se descargan formularios asignados al profesional', async () => {
+  const sql = await read('supabase/migrations/202608100001_form_assignments.sql')
+  const capture = await read('src/pages/professional/CapturePage.tsx')
+  const responder = await read('src/pages/professional/FormResponderPage.tsx')
+  assert.match(sql, /create table if not exists public\.form_assignments/)
+  assert.match(sql, /assignment\.professional_id = auth\.uid\(\)/)
+  assert.match(sql, /validate_form_assignment/)
+  assert.match(capture, /assignedFormIds\.has\(form\.\$id\)/)
+  assert.match(responder, /Este formulario no está asignado a tu perfil/)
+})
+
+test('los errores de sincronización permanecen visibles y las respuestas tienen bandeja', async () => {
+  const sync = await read('src/lib/sync-engine.ts')
+  const routes = await read('src/App.tsx')
+  const responses = await read('src/pages/shared/FormResponsesPage.tsx')
+  assert.match(sync, /lastError: message/)
+  assert.match(sync, /store\.setStatus\(errors\.length > 0 \? 'error' : 'offline'\)/)
+  assert.doesNotMatch(sync, /localStorage\.setItem\(`cg_forms_\$\{entityId\}`[^]*setSyncComplete/)
+  assert.match(routes, /path="responses" element=\{<FormResponsesPage \/>\}/)
+  assert.match(responses, /COLLECTION_IDS\.FORM_RESPONSES/)
+  assert.match(responses, /createSignedUrl/)
+})
+
 test('la creación de usuarios se protege dentro de Supabase', async () => {
   const sql = await read('supabase/migrations/202608070001_initial_control_g.sql')
   const backend = await read('src/lib/backend.ts')

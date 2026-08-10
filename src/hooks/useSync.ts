@@ -12,7 +12,7 @@ export function useSync() {
       startSyncEngine();
       const entityId = user.entityId;
       if (entityId) {
-        updateLocalCache(entityId).catch(console.error);
+        updateLocalCache(entityId, user.id, user.role).catch(console.error);
       }
     }
     return () => { stopSyncEngine(); };
@@ -26,7 +26,7 @@ export function useSync() {
     forceSync: () => processSyncQueue(),
     updateCache: () => {
       if (user?.entityId) {
-        return updateLocalCache(user.entityId);
+        return updateLocalCache(user.entityId, user.id, user.role);
       }
     },
   };
