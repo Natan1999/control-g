@@ -50,9 +50,18 @@ test('el motor sincroniza medios antes de enviar respuestas y actividades', asyn
 
 test('el APK abre en login y la web conserva la landing', async () => {
   const source = await read('src/App.tsx')
+  const main = await read('src/main.tsx')
+  const activity = await read('android/app/src/main/java/com/drandigital/controlg/MainActivity.java')
+  const apkBuild = await read('scripts/build-apk.sh')
+  const vite = await read('vite.config.ts')
   assert.match(source, /Capacitor\.isNativePlatform\(\)/)
   assert.match(source, /\? <Navigate to="\/login" replace \/>/)
   assert.match(source, /: <LandingPage \/>/)
+  assert.match(main, /window\.history\.replaceState\(null, '', '\/login'\)/)
+  assert.match(activity, /bridge\.getLocalUrl\(\) \+ LOGIN_PATH/)
+  assert.match(activity, /navigator\.serviceWorker\.getRegistrations/)
+  assert.match(apkBuild, /VITE_NATIVE_BUILD=true npm run build/)
+  assert.match(vite, /injectRegister: isNativeBuild \? null : 'auto'/)
 })
 
 test('la captura offline usa caché, conserva borradores y encola respuestas', async () => {

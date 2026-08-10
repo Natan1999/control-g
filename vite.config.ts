@@ -3,10 +3,16 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 import { VitePWA } from 'vite-plugin-pwa'
 
+const isNativeBuild = process.env.VITE_NATIVE_BUILD === 'true'
+
 export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      // Capacitor already bundles the complete application. Registering the
+      // web PWA worker inside Android can keep an older app shell after an APK
+      // update, so native builds deliberately omit the registration script.
+      injectRegister: isNativeBuild ? null : 'auto',
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {

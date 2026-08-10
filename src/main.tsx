@@ -2,8 +2,15 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Capacitor } from '@capacitor/core'
 import App from './App'
 import './index.css'
+
+// Resolve the native entry before React renders. This prevents even a single
+// landing-page frame if the Android WebView starts at the bundled root URL.
+if (Capacitor.isNativePlatform() && ['/', '/index.html'].includes(window.location.pathname)) {
+  window.history.replaceState(null, '', '/login')
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
