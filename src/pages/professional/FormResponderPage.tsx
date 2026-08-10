@@ -2,13 +2,19 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import FormRenderer from '@/components/forms/FormRenderer'
 import { FormDefinition } from '@/types'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { databases, DATABASE_ID, COLLECTION_IDS, Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import { Loader2, ArrowLeft, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { localDB } from '@/lib/dexie-db'
 import { BUCKET_IDS } from '@/lib/backend'
-import { getCachedForms, isOnline, processSyncQueue, refreshPendingCount } from '@/lib/sync-engine'
+import {
+  getCachedFormAssignments,
+  getCachedForms,
+  isOnline,
+  processSyncQueue,
+  refreshPendingCount,
+} from '@/lib/sync-engine'
 import { Geolocation } from '@capacitor/geolocation'
 
 const FormResponderPage: React.FC = () => {
@@ -18,17 +24,45 @@ const FormResponderPage: React.FC = () => {
   const [formDef, setFormDef] = useState<FormDefinition | null>(null)
   const [initialAnswers, setInitialAnswers] = useState<Record<string, any>>({})
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
   const draftLocalId = useRef<string>(crypto.randomUUID())
 
   useEffect(() => {
     const loadForm = async () => {
       if (!formId) return
       setLoading(true)
+      setLoadError('')
 
       try {
+        const cachedAssignments = getCachedFormAssignments(user?.entityId, user?.id)
+        let assigned = cachedAssignments.some((assignment: any) => assignment.form_id === formId)
+        const connected = await isOnline()
+
+        if (connected && user?.id) {
+          try {
+            const assignmentResult = await databases.listDocuments(
+              DATABASE_ID,
+              COLLECTION_IDS.FORM_ASSIGNMENTS,
+              [
+                Query.equal('form_id', formId),
+                Query.equal('professional_id', user.id),
+                Query.equal('status', 'active'),
+                Query.limit(1),
+              ],
+            )
+            assigned = assignmentResult.documents.length > 0
+          } catch (assignmentError) {
+            if (!assigned) throw assignmentError
+          }
+        }
+
+        if (!assigned) {
+          throw new Error('Este formulario no está asignado a tu perfil. Solicita la asignación a coordinación.')
+        }
+
         let doc: any = getCachedForms(user?.entityId).find((form: any) => form.$id === formId)
 
-        if (await isOnline()) {
+        if (connected) {
           try {
             doc = await databases.getDocument(
               DATABASE_ID,
@@ -72,6 +106,7 @@ const FormResponderPage: React.FC = () => {
         } as FormDefinition)
       } catch (error) {
         console.error('Error loading form:', error)
+        setLoadError(error instanceof Error ? error.message : 'No fue posible cargar el formulario.')
       } finally {
         setLoading(false)
       }
@@ -158,8 +193,13 @@ const FormResponderPage: React.FC = () => {
       })
 
       await refreshPendingCount()
-      if (await isOnline()) void processSyncQueue()
-      navigate('/field/capture')
+      let savedState = 'pending'
+      if (await isOnline()) {
+        await processSyncQueue()
+        const savedResponse = await localDB.formResponses.get(localId)
+        if (savedResponse?.status === 'synced') savedState = 'synced'
+      }
+      navigate(`/field/capture?saved=${savedState}`)
     } catch (err) {
       console.error('Failed to save response:', err)
       alert('Error al guardar la información localmente.')
@@ -184,7 +224,7 @@ const FormResponderPage: React.FC = () => {
           </div>
           <h2 className="text-xl font-black text-slate-900 mb-2">Formulario Indisponible</h2>
           <p className="text-slate-500 text-sm mb-8 leading-relaxed">
-            No pudimos cargar la definición técnica de este formulario. Verifica tu conexión o contacta a soporte.
+            {loadError || 'No pudimos cargar la definición técnica de este formulario. Verifica tu conexión o contacta a soporte.'}
           </p>
           <Button 
             className="w-full h-12 rounded-2xl bg-[#0038A8] hover:bg-[#002868] shadow-lg shadow-blue-900/20" 

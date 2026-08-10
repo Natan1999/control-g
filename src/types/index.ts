@@ -298,3 +298,16 @@ export interface FormResponse {
   syncedAt?: string
   createdAt: string
 }
+
+export interface FormAssignment {
+  id: string
+  entityId: string
+  formId: string
+  professionalId: string
+  assignedBy?: string
+  status: 'active' | 'inactive'
+  startsAt?: string
+  endsAt?: string
+  createdAt: string
+  updatedAt: string
+}

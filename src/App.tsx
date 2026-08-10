@@ -26,6 +26,7 @@ import CoordObservationsPage from '@/pages/coordinator/ObservationsPage'
 import CoordSettingsPage from '@/pages/coordinator/SettingsPage'
 import FormBuilderPage from '@/pages/coordinator/FormBuilderPage'
 import FormsListPage from '@/pages/shared/FormsListPage'
+import FormResponsesPage from '@/pages/shared/FormResponsesPage'
 
 // Apoyo Administrativo
 import ApoyoDashboard from '@/pages/apoyo/DashboardPage'
@@ -41,7 +42,6 @@ import FieldReportsPage from '@/pages/professional/ReportsPage'
 import FieldProfilePage from '@/pages/professional/ProfilePage'
 import ActivityFormPage from '@/pages/professional/ActivityFormPage'
 import FormResponderPage from '@/pages/professional/FormResponderPage'
-import FieldFreePhotoPage from '@/pages/professional/FreePhotoPage'
 
 import { useSync } from '@/hooks/useSync'
 
@@ -117,6 +117,7 @@ export default function App() {
               <Route path="forms" element={<FormsListPage />} />
               <Route path="forms/new" element={<FormBuilderPage />} />
               <Route path="forms/edit/:id" element={<FormBuilderPage />} />
+              <Route path="responses" element={<FormResponsesPage />} />
               <Route path="settings" element={<AdminSettingsPage />} />
             </Routes>
           </DashboardLayout>
@@ -137,6 +138,7 @@ export default function App() {
               <Route path="forms" element={<FormsListPage />} />
               <Route path="forms/new" element={<FormBuilderPage />} />
               <Route path="forms/edit/:id" element={<FormBuilderPage />} />
+              <Route path="responses" element={<FormResponsesPage />} />
               <Route path="settings" element={<CoordSettingsPage />} />
             </Routes>
           </DashboardLayout>
@@ -151,6 +153,7 @@ export default function App() {
               <Route index element={<ApoyoDashboard />} />
               <Route path="professionals" element={<ApoyoProfessionalsPage />} />
               <Route path="review" element={<ApoyoReviewPage />} />
+              <Route path="responses" element={<FormResponsesPage />} />
               <Route path="observations" element={<ApoyoObservationsPage />} />
             </Routes>
           </DashboardLayout>
@@ -169,7 +172,6 @@ export default function App() {
             <Route path="activity/:familyId/:activityType" element={<ActivityFormPage />} />
             <Route path="forms/:formId" element={<FormResponderPage />} />
             <Route path="forms/:formId/:familyId" element={<FormResponderPage />} />
-            <Route path="capture/free-photo" element={<FieldFreePhotoPage />} />
           </Routes>
         </ProtectedLayout>
       } />

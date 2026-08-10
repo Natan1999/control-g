@@ -99,6 +99,7 @@ export interface LocalMedia {
   answerFieldId?: string;
   remotePath?: string;
   retryCount?: number;
+  lastError?: string;
 }
 
 export interface LocalFormResponse {
@@ -111,6 +112,8 @@ export interface LocalFormResponse {
   status: 'draft' | 'completed' | 'synced';
   createdAt: number;
   updatedAt: number;
+  retryCount?: number;
+  lastError?: string;
 }
 
 // ─── Database class ───────────────────────────────────────────────────────────
@@ -134,6 +137,12 @@ export class ControlGDatabase extends Dexie {
       activities: 'localId, familyId, activityType, status, createdAt',
       mediaQueue: 'id, activityLocalId, status, answerFieldId',
       formResponses: 'localId, formId, familyId, status, createdAt',
+    });
+    this.version(4).stores({
+      characterizations: 'localId, familyId, entityId, professionalId, status',
+      activities: 'localId, familyId, activityType, status, createdAt',
+      mediaQueue: 'id, activityLocalId, status, answerFieldId',
+      formResponses: 'localId, formId, familyId, professionalId, status, createdAt',
     });
   }
 }

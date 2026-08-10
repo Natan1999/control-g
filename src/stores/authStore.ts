@@ -69,7 +69,7 @@ export const useAuthStore = create<AuthState>()(
           // Complete the first offline package while the authenticated
           // connection is still available. Previous cache remains on errors.
           if (user.entityId) {
-            await updateLocalCache(user.entityId)
+            await updateLocalCache(user.entityId, user.id, user.role)
           }
         } catch (err) {
           const msg = err instanceof Error ? err.message : 'Error al iniciar sesión'

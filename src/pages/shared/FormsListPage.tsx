@@ -3,15 +3,16 @@ import { useNavigate } from 'react-router-dom'
 import { 
   Plus, Search, Edit2, Trash2, Eye, FileText, 
   ChevronRight, Calendar, Layers, Building2,
-  AlertCircle, MoreVertical, Layout
+  AlertCircle, MoreVertical, Layout, UserCheck
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TopBar } from '@/components/layout/Sidebar'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
 import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
-import { FormDefinition, UserRole } from '@/types'
+import { FormDefinition } from '@/types'
 import { cn } from '@/lib/utils'
+import FormAssignmentDialog from '@/components/forms/FormAssignmentDialog'
 
 const COLORS = {
   primary: '#0038A8',   // Royal Blue
@@ -28,6 +29,8 @@ export default function FormsListPage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [toast, setToast] = useState('')
+  const [assignmentCounts, setAssignmentCounts] = useState<Record<string, number>>({})
+  const [assigningForm, setAssigningForm] = useState<(FormDefinition & { entity_id?: string; $id?: string }) | null>(null)
 
   const isAdmin = user?.role === 'admin'
   const basePath = isAdmin ? '/admin/forms' : '/coord/forms'
@@ -45,7 +48,27 @@ export default function FormsListPage() {
       }
 
       const res = await databases.listDocuments(DATABASE_ID, COLLECTION_IDS.FORMS, queries)
-      setForms(res.documents as unknown as FormDefinition[])
+      const normalizedForms = res.documents.map((document: any) => ({
+        ...document,
+        id: document.$id,
+        entityId: document.entity_id,
+        version: document.version ?? document.v ?? 1,
+      })) as FormDefinition[]
+      setForms(normalizedForms)
+
+      const assignmentQueries = [Query.limit(2000)]
+      if (!isAdmin && user?.entityId) assignmentQueries.push(Query.equal('entity_id', user.entityId))
+      const assignmentDocs = await databases
+        .listDocuments(DATABASE_ID, COLLECTION_IDS.FORM_ASSIGNMENTS, assignmentQueries)
+        .then(result => result.documents)
+        .catch(() => [])
+      const counts: Record<string, number> = {}
+      assignmentDocs
+        .filter((assignment: any) => assignment.status === 'active')
+        .forEach((assignment: any) => {
+          counts[assignment.form_id] = (counts[assignment.form_id] || 0) + 1
+        })
+      setAssignmentCounts(counts)
 
       // If admin, fetch entities to show names
       if (user?.role === 'admin') {
@@ -62,7 +85,7 @@ export default function FormsListPage() {
     } finally {
       setLoading(false)
     }
-  }, [user?.role, user?.entityId])
+  }, [isAdmin, user?.role, user?.entityId])
 
   useEffect(() => {
     fetchForms()
@@ -105,6 +128,17 @@ export default function FormsListPage() {
 
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
         <div className="max-w-6xl mx-auto space-y-6">
+          <div className="bg-blue-50 border border-blue-100 rounded-3xl p-5 sm:p-6">
+            <div className="flex items-center gap-2 text-blue-800 font-black text-xs uppercase tracking-widest">
+              <UserCheck size={17} /> Flujo recomendado
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mt-4 text-xs text-slate-600">
+              <div><strong className="text-slate-900">1. Diseña</strong><br />Crea o ajusta las preguntas.</div>
+              <div><strong className="text-slate-900">2. Publica</strong><br />Deja el formulario listo para campo.</div>
+              <div><strong className="text-slate-900">3. Asigna</strong><br />Elige exactamente quién puede diligenciarlo.</div>
+              <div><strong className="text-slate-900">4. Revisa</strong><br />Consulta las respuestas recibidas.</div>
+            </div>
+          </div>
           
           {/* Search & Stats */}
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -197,7 +231,20 @@ export default function FormsListPage() {
                     )}
 
                     <div className="pt-4 border-t border-slate-50 flex items-center justify-between">
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setAssigningForm(form)}
+                          className="px-3 py-2 text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-all relative flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider"
+                          title="Asignar a profesionales"
+                        >
+                          <UserCheck size={18} />
+                          <span>Asignar</span>
+                          {assignmentCounts[form.id] > 0 && (
+                            <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-emerald-500 text-white text-[9px] font-black flex items-center justify-center">
+                              {assignmentCounts[form.id]}
+                            </span>
+                          )}
+                        </button>
                         <button 
                           onClick={() => navigate(`${basePath}/edit/${form.id}`)}
                           className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
@@ -236,6 +283,17 @@ export default function FormsListPage() {
             <X size={14} />
           </button>
         </div>
+      )}
+
+      {assigningForm && (
+        <FormAssignmentDialog
+          form={assigningForm}
+          onClose={() => setAssigningForm(null)}
+          onSaved={count => {
+            setAssignmentCounts(current => ({ ...current, [assigningForm.id]: count }))
+            setToast(`Asignación actualizada: ${count} profesionales`)
+          }}
+        />
       )}
     </div>
   )

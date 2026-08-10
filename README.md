@@ -14,7 +14,7 @@ Aplicación multi-entidad para caracterización y acompañamiento psicosocial en
 ## Configuración
 
 1. Copia `.env.example` a `.env.local` y configura únicamente `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` para la aplicación.
-2. Ejecuta la migración `supabase/migrations/202608070001_initial_control_g.sql` en la instancia de Supabase.
+2. Ejecuta, en orden, las migraciones de `supabase/migrations/` en la instancia de Supabase. La migración `202608100001_form_assignments.sql` incorpora la asignación explícita de formularios por profesional.
 3. La migración instala `admin_create_user`, una RPC `SECURITY DEFINER` que valida el JWT, el rol y la entidad antes de crear Auth + perfil en una sola transacción.
 4. Para crear o verificar las cuentas iniciales, define `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` y `CONTROL_G_INITIAL_PASSWORD`, y ejecuta `npm run backend:seed`.
 
