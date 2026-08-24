@@ -5,6 +5,11 @@ import {
   Smartphone, Globe, ChevronRight, Menu, X,
 } from 'lucide-react'
 import { useState } from 'react'
+import { LeadFunnel } from '@/components/marketing/LeadFunnel'
+import { StickyWhatsApp, WhatsAppCta } from '@/components/marketing/WhatsAppCta'
+import { getSeoPage, SEO_PAGES, WHATSAPP_DISPLAY } from '@/lib/marketing'
+
+const LANDING_SEO = getSeoPage('/')!
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -107,14 +112,19 @@ export default function LandingPage() {
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
             <a href="#features" className="hover:text-[#1B3A4B] transition-colors">Funcionalidades</a>
-            <a href="#roles" className="hover:text-[#1B3A4B] transition-colors">Roles</a>
-            <a href="#casos" className="hover:text-[#1B3A4B] transition-colors">Casos de Uso</a>
+            <a href="#soluciones" className="hover:text-[#1B3A4B] transition-colors">Soluciones</a>
+            <WhatsAppCta
+              message={LANDING_SEO.whatsappMessage}
+              placement="nav-inicio"
+              className="px-4 py-2 rounded-xl text-white text-sm font-semibold transition-opacity hover:opacity-90 bg-[#25D366]"
+            >
+              Solicitar demo
+            </WhatsAppCta>
             <Link
               to="/login"
-              className="px-4 py-2 rounded-xl text-white text-sm font-semibold transition-opacity hover:opacity-90"
-              style={{ background: '#1B3A4B' }}
+              className="text-sm font-semibold text-[#1B3A4B] transition-opacity hover:opacity-70"
             >
-              Ingresar
+              Clientes
             </Link>
           </div>
 
@@ -127,22 +137,28 @@ export default function LandingPage() {
         {/* Mobile menu */}
         {menuOpen && (
           <div className="md:hidden bg-white border-t border-gray-100 px-5 py-4 flex flex-col gap-3">
-            {['features', 'roles', 'casos'].map(id => (
+            {['features', 'soluciones', 'casos'].map(id => (
               <a
                 key={id}
                 href={`#${id}`}
                 className="text-sm font-medium text-gray-600 hover:text-[#1B3A4B] capitalize py-1"
                 onClick={() => setMenuOpen(false)}
               >
-                {id === 'features' ? 'Funcionalidades' : id === 'roles' ? 'Roles' : 'Casos de Uso'}
+                {id === 'features' ? 'Funcionalidades' : id === 'soluciones' ? 'Soluciones' : 'Casos de Uso'}
               </a>
             ))}
+            <WhatsAppCta
+              message={LANDING_SEO.whatsappMessage}
+              placement="menu-movil-inicio"
+              className="mt-2 px-4 py-3 rounded-xl text-white text-sm font-semibold text-center bg-[#25D366]"
+            >
+              Solicitar demostración
+            </WhatsAppCta>
             <Link
               to="/login"
-              className="mt-2 px-4 py-3 rounded-xl text-white text-sm font-semibold text-center"
-              style={{ background: '#1B3A4B' }}
+              className="px-4 py-2 text-[#1B3A4B] text-sm font-semibold text-center"
             >
-              Ingresar a Control G
+              Ingreso de clientes
             </Link>
           </div>
         )}
@@ -160,7 +176,7 @@ export default function LandingPage() {
         <div className="relative max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-white/80 text-xs font-semibold uppercase tracking-widest mb-8">
             <Globe size={12} />
-            control.co — Plataforma SaaS de recolección de datos
+            controlg.co — Software de recolección de datos offline
           </div>
 
           <h1 className="text-white text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-6">
@@ -174,14 +190,14 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              to="/login"
-              className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl text-white font-bold text-base transition-transform hover:scale-105 shadow-lg"
-              style={{ background: '#27AE60' }}
+            <WhatsAppCta
+              message={LANDING_SEO.whatsappMessage}
+              placement="hero-inicio"
+              className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl text-white font-bold text-base transition-transform hover:scale-105 shadow-lg bg-[#25D366]"
             >
-              Ingresar a la plataforma
+              Solicitar demostración
               <ArrowRight size={18} />
-            </Link>
+            </WhatsAppCta>
             <a
               href="#features"
               className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl bg-white/10 border border-white/20 text-white font-semibold text-base hover:bg-white/20 transition-colors"
@@ -206,6 +222,33 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── SEARCH-INTENT SOLUTIONS ─────────────────────────────────────── */}
+      <section id="soluciones" className="py-20 px-5 bg-slate-50 border-y border-slate-100">
+        <div className="max-w-6xl mx-auto">
+          <div className="max-w-3xl">
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#3D7B9E' }}>Soluciones por necesidad</span>
+            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mt-2">Tecnología para caracterizar, encuestar y trabajar en territorio</h2>
+            <p className="text-gray-600 mt-4 leading-relaxed">
+              Control G se configura según el instrumento, la entidad y el territorio. Explore cómo resolvemos los principales operativos de información de gobiernos y organizaciones.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-5 mt-10">
+            {SEO_PAGES.filter(page => page.path !== '/').map(page => (
+              <Link
+                key={page.path}
+                to={page.path}
+                className="group p-6 rounded-2xl border border-slate-200 bg-white hover:border-[#3D7B9E] hover:shadow-md transition-all"
+              >
+                <span className="text-xs font-black uppercase tracking-widest text-[#3D7B9E]">{page.eyebrow}</span>
+                <h3 className="text-xl font-black text-slate-900 mt-2 group-hover:text-[#2C6E8A]">{page.heading}</h3>
+                <p className="text-sm text-slate-600 mt-3 leading-relaxed">{page.lead}</p>
+                <span className="inline-flex items-center gap-1.5 mt-5 text-sm font-bold text-green-700">Conocer la solución <ArrowRight size={15} /></span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── OFFLINE BANNER ───────────────────────────────────────────────── */}
       <section className="py-10 px-5" style={{ background: '#F0FDF4' }}>
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
@@ -223,6 +266,31 @@ export default function LandingPage() {
           <div className="flex items-center gap-2 bg-green-100 border border-green-200 rounded-xl px-4 py-2 flex-shrink-0">
             <Wifi size={16} className="text-green-600" />
             <span className="text-green-700 font-bold text-sm whitespace-nowrap">Auto-sync activo</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── COMMERCIAL FUNNEL ───────────────────────────────────────────── */}
+      <section className="py-20 px-5 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <LeadFunnel source="pagina-principal" />
+        </div>
+      </section>
+
+      {/* ── FAQ ─────────────────────────────────────────────────────────── */}
+      <section className="py-20 px-5 bg-slate-50 border-y border-slate-100">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-10">
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#3D7B9E' }}>Preguntas frecuentes</span>
+            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mt-2">Lo que una entidad necesita saber</h2>
+          </div>
+          <div className="space-y-4">
+            {LANDING_SEO.faqs.map(faq => (
+              <details key={faq.question} className="rounded-2xl border border-slate-200 bg-white p-5 open:shadow-sm">
+                <summary className="cursor-pointer list-none font-black text-slate-900 pr-8">{faq.question}</summary>
+                <p className="text-sm text-slate-600 leading-7 mt-3">{faq.answer}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>
@@ -468,16 +536,16 @@ export default function LandingPage() {
           <p className="text-white/60 text-sm mb-8 leading-relaxed">
             Accede a tu plataforma o contacta a DRAN Digital para crear tu entidad.
           </p>
-          <Link
-            to="/login"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-white font-bold text-base hover:opacity-90 transition-opacity shadow-lg"
-            style={{ background: '#27AE60' }}
+          <WhatsAppCta
+            message={LANDING_SEO.whatsappMessage}
+            placement="cta-final-inicio"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-white font-bold text-base hover:opacity-90 transition-opacity shadow-lg bg-[#25D366]"
           >
-            Ingresar a Control G
+            Hablar con un asesor
             <ArrowRight size={18} />
-          </Link>
+          </WhatsAppCta>
           <p className="text-white/30 text-xs mt-6">
-            control.co · DRAN Digital S.A.S. · Todos los derechos reservados
+            controlg.co · DRAN Digital S.A.S. · Colombia y Latinoamérica
           </p>
         </div>
       </section>
@@ -490,17 +558,21 @@ export default function LandingPage() {
               <span className="text-white font-black text-xs">CG</span>
             </div>
             <span className="font-bold text-sm" style={{ color: '#1B3A4B' }}>Control G</span>
-            <span className="text-gray-400 text-xs">— control.co</span>
+            <span className="text-gray-400 text-xs">— controlg.co</span>
           </div>
           <div className="flex items-center gap-5 text-xs text-gray-400">
             <span>DRAN Digital S.A.S.</span>
             <span>·</span>
             <span>Colombia</span>
             <span>·</span>
+            <a href={`tel:${WHATSAPP_DISPLAY.replace(/\s/g, '')}`} className="hover:text-[#1B3A4B] font-medium transition-colors">{WHATSAPP_DISPLAY}</a>
+            <span>·</span>
             <Link to="/login" className="hover:text-[#1B3A4B] font-medium transition-colors">Ingresar</Link>
           </div>
         </div>
       </footer>
+
+      <StickyWhatsApp message={LANDING_SEO.whatsappMessage} />
 
     </div>
   )

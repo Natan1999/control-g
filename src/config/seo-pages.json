@@ -1,0 +1,283 @@
+[
+  {
+    "path": "/",
+    "title": "Control G | Caracterización y encuestas offline",
+    "description": "Software para caracterizaciones, encuestas y levantamiento de información en campo sin internet. Diseñado para entidades públicas de Colombia y Latinoamérica.",
+    "eyebrow": "Tecnología de campo para entidades públicas",
+    "heading": "Caracterizaciones y encuestas sin conexión a internet",
+    "lead": "Control G permite diseñar formularios, asignar equipos, recolectar evidencias sin señal y sincronizar la información cuando vuelve la conectividad.",
+    "keywords": [
+      "software de caracterización social",
+      "encuestas offline Colombia",
+      "aplicación para recolectar datos sin internet",
+      "levantamiento de información en campo",
+      "software para entidades públicas",
+      "formularios offline"
+    ],
+    "whatsappMessage": "Hola, llegué desde controlg.co. Quiero conocer Control G para un proyecto de caracterización o levantamiento de información.",
+    "sections": [
+      {
+        "title": "Recolección confiable aun cuando no hay señal",
+        "body": "Los profesionales descargan sus formularios y asignaciones antes de salir a campo. En veredas, corregimientos y zonas rurales pueden registrar respuestas, fotografías, firmas y ubicación sin depender de una conexión activa."
+      },
+      {
+        "title": "Información organizada para tomar decisiones",
+        "body": "Al recuperar internet, la aplicación sincroniza los registros con la plataforma central. Coordinadores y administradores consultan avances, revisan evidencias y consolidan resultados por equipo, municipio o intervención."
+      }
+    ],
+    "benefits": [
+      "Formularios personalizados sin programar",
+      "Aplicación Android y plataforma web",
+      "Captura offline con sincronización posterior",
+      "Fotografías, firmas y geolocalización",
+      "Asignación de formularios por profesional",
+      "Paneles de seguimiento y control de calidad"
+    ],
+    "faqs": [
+      {
+        "question": "¿Control G funciona completamente sin internet?",
+        "answer": "Sí. Después de iniciar sesión y descargar las asignaciones, el profesional puede diligenciar formularios y guardar evidencias sin conexión. Los registros quedan protegidos en el dispositivo y se sincronizan cuando regresa la señal."
+      },
+      {
+        "question": "¿Se pueden crear formularios diferentes para cada entidad?",
+        "answer": "Sí. Cada entidad configura sus propios formularios, preguntas, validaciones, etapas y equipos. Control G se adapta a caracterizaciones sociales, censos, visitas técnicas, diagnósticos y otros operativos de campo."
+      },
+      {
+        "question": "¿La plataforma sirve para alcaldías y gobernaciones?",
+        "answer": "Sí. Está diseñada para entidades nacionales y territoriales, operadores, ONG y organizaciones que necesitan coordinar equipos y consolidar información recolectada en zonas urbanas o rurales."
+      },
+      {
+        "question": "¿Cómo solicito una demostración?",
+        "answer": "Puede solicitar una demostración por WhatsApp. Un asesor revisará el tipo de entidad, el número de profesionales, los territorios y los formularios requeridos para preparar una propuesta."
+      }
+    ]
+  },
+  {
+    "path": "/software-caracterizacion-social",
+    "title": "Software de caracterización social | Control G",
+    "description": "Plataforma para caracterización social y socioeconómica de hogares, comunidades y beneficiarios. Captura offline para alcaldías y gobernaciones.",
+    "eyebrow": "Caracterización social y socioeconómica",
+    "heading": "Software de caracterización social para entidades y territorios",
+    "lead": "Convierta instrumentos de caracterización en formularios digitales, coordine profesionales y consolide datos de hogares, comunidades y grupos poblacionales, incluso en lugares sin internet.",
+    "keywords": [
+      "software de caracterización social",
+      "aplicación caracterización socioeconómica",
+      "caracterización de población",
+      "caracterización de beneficiarios",
+      "caracterización de hogares Colombia",
+      "sistema de información social"
+    ],
+    "whatsappMessage": "Hola, busco un software de caracterización social para mi entidad. Quiero una demostración de Control G.",
+    "sections": [
+      {
+        "title": "Instrumentos adaptados a cada población",
+        "body": "Configure variables demográficas, composición del hogar, vivienda, educación, salud, ingresos, enfoques diferenciales y cualquier dimensión definida por el proyecto. Los formularios pueden organizarse por momentos, jornadas o líneas de intervención."
+      },
+      {
+        "title": "Trazabilidad desde la visita hasta el informe",
+        "body": "Cada registro conserva el profesional responsable, la fecha, el territorio y las evidencias autorizadas. El equipo coordinador puede revisar la información, devolver observaciones y controlar el avance sin consolidaciones manuales dispersas."
+      },
+      {
+        "title": "Cobertura urbana, rural y rural dispersa",
+        "body": "El modo offline facilita el trabajo en municipios, veredas y zonas con conectividad intermitente. La captura continúa en el dispositivo y la sincronización se ejecuta cuando existe una conexión disponible."
+      }
+    ],
+    "benefits": [
+      "Fichas de hogares y grupos familiares",
+      "Formularios por momentos o intervenciones",
+      "Variables con enfoque diferencial",
+      "Evidencia fotográfica, firma y GPS",
+      "Seguimiento por profesional y territorio",
+      "Exportación y revisión de respuestas"
+    ],
+    "faqs": [
+      {
+        "question": "¿Qué es un software de caracterización social?",
+        "answer": "Es una plataforma que digitaliza la identificación y descripción de personas, hogares, comunidades o grupos de valor mediante formularios, evidencias y reglas de validación, facilitando el análisis y seguimiento de programas."
+      },
+      {
+        "question": "¿Puedo usar los instrumentos que ya tiene mi entidad?",
+        "answer": "Sí. Los cuestionarios existentes pueden configurarse en Control G respetando sus secciones, opciones, validaciones y momentos de aplicación."
+      },
+      {
+        "question": "¿Los profesionales ven todos los formularios?",
+        "answer": "No. Cada profesional ve únicamente los formularios y actividades que le han sido asignados, lo que reduce errores operativos y protege la separación de responsabilidades."
+      },
+      {
+        "question": "¿Funciona para proyectos en diferentes países?",
+        "answer": "Sí. La plataforma es configurable para entidades de Colombia y otros países de Latinoamérica, ajustando territorios, formularios, equipos y flujos de revisión."
+      }
+    ]
+  },
+  {
+    "path": "/encuestas-offline",
+    "title": "Encuestas offline sin internet | Control G",
+    "description": "Aplicación de encuestas offline para Android. Recolecte datos, fotos, firmas y GPS sin conexión y sincronice al recuperar internet.",
+    "eyebrow": "Encuestas offline para Android",
+    "heading": "Encuestas sin internet para equipos que trabajan en campo",
+    "lead": "Recolecte información desde celulares y tabletas Android aunque no haya cobertura. Control G guarda las respuestas localmente y las envía de forma controlada cuando el dispositivo vuelve a conectarse.",
+    "keywords": [
+      "encuestas offline",
+      "encuestas sin internet",
+      "aplicación de encuestas offline Android",
+      "formularios sin conexión",
+      "recolección de datos offline",
+      "app encuestas de campo"
+    ],
+    "whatsappMessage": "Hola, necesito una aplicación para realizar encuestas offline y sincronizarlas después. Quiero conocer Control G.",
+    "sections": [
+      {
+        "title": "Continuidad operativa sin cobertura móvil",
+        "body": "El equipo puede abrir formularios asignados, avanzar por secciones, guardar borradores y completar visitas sin señal. La captura no se interrumpe cuando cambia la calidad de la red."
+      },
+      {
+        "title": "Sincronización cuando vuelve la conexión",
+        "body": "Las respuestas pendientes permanecen en una cola local. Al detectar internet, Control G carga primero las evidencias y después el formulario, manteniendo visible cualquier error que requiera intervención."
+      },
+      {
+        "title": "Datos de campo con mayor contexto",
+        "body": "Además de preguntas abiertas o cerradas, el instrumento puede solicitar fotografías, ubicación GPS, firmas, fechas, selecciones múltiples y grupos repetitivos para registrar integrantes o elementos inspeccionados."
+      }
+    ],
+    "benefits": [
+      "Captura offline en celulares y tabletas",
+      "Guardado automático de borradores",
+      "Sincronización al recuperar señal",
+      "Indicador de registros pendientes",
+      "Validaciones antes de completar",
+      "Evidencias vinculadas a cada respuesta"
+    ],
+    "faqs": [
+      {
+        "question": "¿Necesito internet para diligenciar una encuesta?",
+        "answer": "No. Se necesita conexión para la preparación inicial de la cuenta y las asignaciones, pero los formularios descargados pueden diligenciarse sin internet."
+      },
+      {
+        "question": "¿Qué pasa si cierro la aplicación sin conexión?",
+        "answer": "Los borradores y respuestas pendientes permanecen guardados en el dispositivo. Al volver a abrir la aplicación, el profesional puede continuar o sincronizar cuando haya señal."
+      },
+      {
+        "question": "¿Puedo tomar fotos y ubicación sin internet?",
+        "answer": "Sí. La cámara, la firma y la ubicación del dispositivo pueden utilizarse durante la captura offline. Las evidencias se envían junto con la respuesta al sincronizar."
+      },
+      {
+        "question": "¿La aplicación está disponible para Android?",
+        "answer": "Sí. Control G cuenta con una aplicación Android basada en Capacitor y también ofrece acceso web adaptable para los perfiles administrativos."
+      }
+    ]
+  },
+  {
+    "path": "/levantamiento-informacion-campo",
+    "title": "Levantamiento de información en campo | Control G",
+    "description": "Digitalice censos, visitas y levantamientos de información en campo con formularios, GPS, evidencias y seguimiento centralizado.",
+    "eyebrow": "Operaciones territoriales trazables",
+    "heading": "Levantamiento de información en campo con control y evidencia",
+    "lead": "Planee operativos territoriales, distribuya instrumentos al personal y reciba información lista para revisión. Desde censos comunitarios hasta visitas técnicas y diagnósticos de cobertura.",
+    "keywords": [
+      "levantamiento de información en campo",
+      "software captura de datos en terreno",
+      "aplicación para censos",
+      "sistema de visitas de campo",
+      "recolección de datos georreferenciados",
+      "formularios de campo"
+    ],
+    "whatsappMessage": "Hola, necesito digitalizar un levantamiento de información en campo. Quiero evaluar Control G para mi proyecto.",
+    "sections": [
+      {
+        "title": "Preparación del operativo",
+        "body": "El coordinador crea instrumentos, asigna profesionales y delimita los territorios o grupos de trabajo. Cada persona recibe únicamente las tareas necesarias para su jornada."
+      },
+      {
+        "title": "Captura verificable en terreno",
+        "body": "Los formularios incorporan reglas obligatorias y tipos de respuesta acordes con la visita. La fotografía, firma y geolocalización aportan contexto y trazabilidad cuando el proyecto las requiere."
+      },
+      {
+        "title": "Seguimiento y control de calidad",
+        "body": "La oficina consulta respuestas sincronizadas, identifica pendientes y revisa evidencias desde un panel central. Los roles separan la administración, coordinación, revisión y recolección."
+      }
+    ],
+    "benefits": [
+      "Censos y diagnósticos territoriales",
+      "Visitas sociales o técnicas",
+      "Inventarios e inspecciones",
+      "Control de cobertura por equipo",
+      "Datos georreferenciados",
+      "Revisión central de evidencias"
+    ],
+    "faqs": [
+      {
+        "question": "¿Qué tipos de levantamiento permite Control G?",
+        "answer": "La plataforma puede configurarse para caracterizaciones, censos, encuestas, inventarios, visitas técnicas, diagnósticos, seguimiento a beneficiarios y otros procesos basados en formularios."
+      },
+      {
+        "question": "¿Se pueden asignar formularios a profesionales específicos?",
+        "answer": "Sí. Las asignaciones controlan qué instrumentos ve cada profesional y permiten distribuir el trabajo de acuerdo con el equipo, territorio o intervención."
+      },
+      {
+        "question": "¿Cómo se controla la calidad de la información?",
+        "answer": "Los formularios incluyen campos obligatorios y validaciones. Los perfiles de coordinación y apoyo pueden revisar respuestas y evidencias para detectar inconsistencias."
+      },
+      {
+        "question": "¿Sirve en zonas rurales dispersas?",
+        "answer": "Sí. El diseño offline-first permite continuar el levantamiento sin cobertura y sincronizar después, una necesidad frecuente en áreas rurales y territorios con conectividad inestable."
+      }
+    ]
+  },
+  {
+    "path": "/software-entidades-gobierno",
+    "title": "Software para entidades de gobierno | Control G",
+    "description": "Software para alcaldías, gobernaciones y entidades públicas que realizan caracterizaciones, censos, encuestas y visitas en territorio.",
+    "eyebrow": "Transformación digital del trabajo territorial",
+    "heading": "Software para entidades de gobierno que trabajan en territorio",
+    "lead": "Centralice formularios, equipos, municipios y evidencias en una plataforma configurable. Control G ayuda a alcaldías, gobernaciones y operadores a ejecutar levantamientos con o sin conectividad.",
+    "keywords": [
+      "software para entidades de gobierno",
+      "software para alcaldías",
+      "software para gobernaciones",
+      "plataforma para entidades públicas",
+      "transformación digital territorial",
+      "sistema de caracterización ciudadana"
+    ],
+    "whatsappMessage": "Hola, represento una entidad u operador público y quiero una demostración de Control G para nuestro trabajo territorial.",
+    "sections": [
+      {
+        "title": "Una configuración independiente para cada entidad",
+        "body": "La estructura multi-entidad permite crear formularios, usuarios, territorios y reglas acordes con cada proyecto. Los datos y permisos permanecen separados entre organizaciones."
+      },
+      {
+        "title": "Roles claros para el equipo operativo",
+        "body": "Administradores, coordinadores, personal de apoyo y profesionales de campo cuentan con vistas y permisos específicos. Esto facilita delegar tareas y mantener un flujo de revisión ordenado."
+      },
+      {
+        "title": "Tecnología preparada para condiciones reales",
+        "body": "La aplicación Android sigue operando en áreas sin internet, mientras la plataforma web permite administrar y revisar la operación. Cuando existe conectividad, la información se centraliza para seguimiento institucional."
+      }
+    ],
+    "benefits": [
+      "Entornos separados por entidad",
+      "Gestión de usuarios y permisos",
+      "Cobertura municipal y territorial",
+      "Formularios adaptables al proyecto",
+      "Operación online y offline",
+      "Información consolidada para seguimiento"
+    ],
+    "faqs": [
+      {
+        "question": "¿Control G es exclusivo para una sola gobernación?",
+        "answer": "No. Es una plataforma multi-entidad. Puede configurarse para distintas gobernaciones, alcaldías, entidades nacionales, operadores, fundaciones y organizaciones en Colombia o Latinoamérica."
+      },
+      {
+        "question": "¿Cada entidad puede crear sus propios formularios?",
+        "answer": "Sí. Los coordinadores autorizados pueden diseñar y publicar instrumentos ajustados a sus programas, momentos, territorios y reglas de validación."
+      },
+      {
+        "question": "¿La información de las entidades queda separada?",
+        "answer": "Sí. La arquitectura aplica aislamiento por entidad y permisos por rol para que cada organización acceda únicamente a la información que le corresponde."
+      },
+      {
+        "question": "¿Se puede solicitar una demostración para un proceso contractual?",
+        "answer": "Sí. Por WhatsApp puede describir el alcance, número de usuarios, territorios y formularios. Con esa información se prepara una demostración enfocada en el caso de uso."
+      }
+    ]
+  }
+]

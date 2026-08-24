@@ -14,11 +14,11 @@ export default defineConfig({
       // update, so native builds deliberately omit the registration script.
       injectRegister: isNativeBuild ? null : 'auto',
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+      includeAssets: ['apple-touch-icon.png', 'og-image.png'],
       manifest: {
         name: 'Control G',
         short_name: 'ControlG',
-        description: 'Gestión de programas de atención psicosocial a familias',
+        description: 'Caracterizaciones, encuestas y levantamiento de información en campo con funcionamiento offline',
         theme_color: '#1B3A4B',
         background_color: '#1B3A4B',
         display: 'standalone',
