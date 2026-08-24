@@ -113,6 +113,7 @@ export default function LandingPage() {
           <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
             <a href="#features" className="hover:text-[#1B3A4B] transition-colors">Funcionalidades</a>
             <a href="#soluciones" className="hover:text-[#1B3A4B] transition-colors">Soluciones</a>
+            <Link to="/blog" className="hover:text-[#1B3A4B] transition-colors">Blog</Link>
             <WhatsAppCta
               message={LANDING_SEO.whatsappMessage}
               placement="nav-inicio"
@@ -120,6 +121,7 @@ export default function LandingPage() {
             >
               Solicitar demo
             </WhatsAppCta>
+            <Link to="/blog" className="px-4 py-2 text-[#1B3A4B] text-sm font-semibold text-center" onClick={() => setMenuOpen(false)}>Blog profesional</Link>
             <Link
               to="/login"
               className="text-sm font-semibold text-[#1B3A4B] transition-opacity hover:opacity-70"
@@ -568,6 +570,7 @@ export default function LandingPage() {
             <a href={`tel:${WHATSAPP_DISPLAY.replace(/\s/g, '')}`} className="hover:text-[#1B3A4B] font-medium transition-colors">{WHATSAPP_DISPLAY}</a>
             <span>·</span>
             <Link to="/login" className="hover:text-[#1B3A4B] font-medium transition-colors">Ingresar</Link>
+            <Link to="/blog" className="hover:text-[#1B3A4B] font-medium transition-colors">Blog</Link>
           </div>
         </div>
       </footer>

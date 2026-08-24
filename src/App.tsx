@@ -10,6 +10,9 @@ import LandingPage from '@/pages/landing/LandingPage'
 import SolutionPage from '@/pages/landing/SolutionPage'
 import { MarketingSeo } from '@/components/marketing/MarketingSeo'
 
+const BlogIndexPage = lazy(() => import('@/pages/blog/BlogIndexPage'))
+const BlogPostPage = lazy(() => import('@/pages/blog/BlogPostPage'))
+
 // Layout
 import { Sidebar } from '@/components/layout/Sidebar'
 
@@ -111,6 +114,8 @@ export default function App() {
       <Route path="/encuestas-offline" element={<SolutionPage path="/encuestas-offline" />} />
       <Route path="/levantamiento-informacion-campo" element={<SolutionPage path="/levantamiento-informacion-campo" />} />
       <Route path="/software-entidades-gobierno" element={<SolutionPage path="/software-entidades-gobierno" />} />
+      <Route path="/blog" element={<BlogIndexPage />} />
+      <Route path="/blog/:slug" element={<BlogPostPage />} />
 
       {/* Admin routes */}
       <Route path="/admin/*" element={

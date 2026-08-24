@@ -140,6 +140,31 @@ test('el sitio tiene páginas SEO indexables y embudos hacia WhatsApp', async ()
   assert.ok(pages.every(page => page.faqs.length >= 4), 'Cada intención necesita preguntas frecuentes')
 })
 
+test('el blog SEO tiene contenido profesional, rutas estáticas y datos estructurados', async () => {
+  const posts = JSON.parse(await read('src/config/blog-posts.json'))
+  const app = await read('src/App.tsx')
+  const seo = await read('src/components/marketing/MarketingSeo.tsx')
+  const generator = await read('scripts/generate-seo-pages.mjs')
+  const sitemap = await read('public/sitemap.xml')
+  const index = await read('index.html')
+
+  assert.ok(posts.length >= 15, 'El lanzamiento editorial debe incluir al menos 15 artículos')
+  assert.equal(new Set(posts.map(post => post.slug)).size, posts.length, 'Los slugs deben ser únicos')
+  assert.ok(posts.every(post => post.title.length <= 60), 'Los títulos editoriales deben ser concisos')
+  assert.ok(posts.every(post => post.description.length <= 165), 'Las descripciones editoriales deben ser concisas')
+  assert.ok(posts.every(post => post.sections.length >= 3), 'Cada artículo debe desarrollar la intención de búsqueda')
+  assert.ok(posts.every(post => post.faqs.length >= 3), 'Cada artículo debe responder preguntas frecuentes')
+  assert.ok(posts.filter(post => post.category === 'Comparativas').every(post => post.comparison.length >= 5 && post.sources.length >= 1), 'Las comparativas requieren tabla y fuentes')
+  for (const post of posts) assert.ok(sitemap.includes(`https://www.controlg.co/blog/${post.slug}`), `Falta ${post.slug} en el sitemap`)
+
+  assert.match(app, /path="\/blog"/)
+  assert.match(app, /path="\/blog\/:slug"/)
+  assert.match(seo, /buildBlogStructuredData/)
+  assert.match(generator, /BlogPosting/)
+  assert.match(generator, /rss\.xml/)
+  assert.match(index, /google-site-verification/)
+})
+
 test('la creación de usuarios se protege dentro de Supabase', async () => {
   const sql = await read('supabase/migrations/202608070001_initial_control_g.sql')
   const backend = await read('src/lib/backend.ts')

@@ -18,6 +18,17 @@ Control G es una plataforma de DRAN Digital para caracterizaciones, encuestas y 
 - https://www.controlg.co/encuestas-offline
 - https://www.controlg.co/levantamiento-informacion-campo
 - https://www.controlg.co/software-entidades-gobierno
+- https://www.controlg.co/blog
+
+## Centro editorial
+
+El blog de Control G publica guías profesionales sobre caracterización social, encuestas offline y trabajo de campo en Colombia y Latinoamérica. También ofrece comparaciones neutrales con fuentes oficiales de cada plataforma analizada.
+
+- https://www.controlg.co/blog/software-caracterizacion-social-colombia
+- https://www.controlg.co/blog/encuestas-offline-zonas-rurales
+- https://www.controlg.co/blog/elegir-software-entidades-publicas-latinoamerica
+- https://www.controlg.co/blog/control-g-vs-kobotoolbox
+- https://www.controlg.co/blog/control-g-vs-odk
 
 ## Contacto comercial
 
