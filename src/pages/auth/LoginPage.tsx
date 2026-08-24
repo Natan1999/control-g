@@ -4,6 +4,10 @@ import { motion } from 'framer-motion'
 import { Eye, EyeOff, Loader2, MapPin, Shield, Wifi, AlertCircle } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import type { UserRole } from '@/types'
+import { Capacitor } from '@capacitor/core'
+import { PublicHeader } from '@/components/marketing/PublicHeader'
+
+const LOGIN_WHATSAPP_MESSAGE = 'Hola, quiero conocer Control G para una operación de recolección de información en campo.'
 
 const ROLE_ROUTES: Record<UserRole, string> = {
   admin:        '/admin',
@@ -77,7 +81,9 @@ export default function LoginPage() {
 
 
   return (
-    <div className="min-h-screen flex bg-brand-dark overflow-hidden">
+    <div className="min-h-screen bg-white">
+      {!Capacitor.isNativePlatform() && <PublicHeader message={LOGIN_WHATSAPP_MESSAGE} placement="cabecera-login" />}
+      <div className={`${Capacitor.isNativePlatform() ? 'min-h-screen' : 'min-h-[calc(100vh-72px)]'} flex bg-brand-dark overflow-hidden`}>
       {/* Panel izquierdo */}
       <motion.div
         initial={{ opacity: 0, x: -40 }}
@@ -109,17 +115,8 @@ export default function LoginPage() {
           />
         ))}
 
-        {/* Logo */}
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
-              <span className="text-white font-black text-xl">CG</span>
-            </div>
-            <div>
-              <div className="text-white font-black text-2xl">Control G</div>
-              <div className="text-white/60 text-sm">by DRAN Digital</div>
-            </div>
-          </div>
+          <div className="relative z-10">
+          <div className="mb-8 inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[.16em] text-blue-200">Plataforma institucional offline-first</div>
 
           <h2 className="text-white text-4xl font-black leading-tight">
             Datos del territorio,<br />
@@ -164,13 +161,13 @@ export default function LoginPage() {
         className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-white"
       >
         <div className="w-full max-w-md">
-          {/* Logo móvil */}
-          <div className="lg:hidden flex items-center gap-2 mb-8">
+          {/* El APK no muestra la navegación comercial, por eso conserva su marca aquí. */}
+          {Capacitor.isNativePlatform() && <div className="lg:hidden flex items-center gap-2 mb-8">
             <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center">
               <span className="text-white font-black text-base">CG</span>
             </div>
             <div className="font-black text-xl text-brand-primary">Control G</div>
-          </div>
+          </div>}
 
           <h1 className="text-2xl font-black text-foreground">Iniciar sesión</h1>
           <p className="text-muted-foreground mt-1 mb-8">Accede con tus credenciales institucionales</p>
@@ -261,6 +258,7 @@ export default function LoginPage() {
           </p>
         </div>
       </motion.div>
+      </div>
     </div>
   )
 }

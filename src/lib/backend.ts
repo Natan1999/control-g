@@ -16,6 +16,7 @@ export const COLLECTION_IDS = {
   SYNC_LOG:                 'sync_log',
   FORMS:                    'forms',
   FORM_RESPONSES:           'form_responses',
+  BLOG_POSTS:               'blog_posts',
 } as const
 
 export const BUCKET_IDS = {
@@ -23,6 +24,7 @@ export const BUCKET_IDS = {
   SIGNATURES:   'signatures',
   AVATARS:      'avatars',
   EXPORTS:      'exports',
+  BLOG_IMAGES:  'blog-images',
 } as const
 
 type QueryInstruction =

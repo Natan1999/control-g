@@ -165,6 +165,41 @@ test('el blog SEO tiene contenido profesional, rutas estáticas y datos estructu
   assert.match(index, /google-site-verification/)
 })
 
+test('la navegación pública es coherente y el blog se administra desde Supabase', async () => {
+  const header = await read('src/components/marketing/PublicHeader.tsx')
+  const landing = await read('src/pages/landing/LandingPage.tsx')
+  const solution = await read('src/pages/landing/SolutionPage.tsx')
+  const blogIndex = await read('src/pages/blog/BlogIndexPage.tsx')
+  const blogPost = await read('src/pages/blog/BlogPostPage.tsx')
+  const login = await read('src/pages/auth/LoginPage.tsx')
+  const app = await read('src/App.tsx')
+  const sidebar = await read('src/components/layout/Sidebar.tsx')
+  const migration = await read('supabase/migrations/202608240001_blog_cms.sql')
+  const generator = await read('scripts/generate-seo-pages.mjs')
+
+  assert.match(header, /Plataforma/)
+  assert.match(header, /Caracterización/)
+  assert.match(header, /Encuestas offline/)
+  assert.match(header, /Iniciar sesión/)
+  for (const source of [landing, solution, blogIndex, blogPost, login]) assert.match(source, /<PublicHeader/)
+  assert.equal((landing.match(/Blog profesional/g) || []).length, 0, 'La cabecera no debe duplicar enlaces del blog')
+  assert.match(blogIndex, /blogCover\(post\)/)
+  assert.match(blogPost, /blogCover\(post\)/)
+  assert.match(generator, /absoluteBlogCover/)
+  assert.match(app, /path="blog\/new"/)
+  assert.match(app, /path="blog\/edit\/:id"/)
+  assert.match(sidebar, /Blog y SEO/)
+  assert.match(migration, /create table if not exists public\.blog_posts/)
+  assert.match(migration, /blog_posts_public_read/)
+  assert.match(migration, /blog_posts_admin_write/)
+  assert.match(migration, /blog-images/)
+
+  for (const image of ['comparativas-software-campo.jpg', 'encuestas-offline-rural.jpg', 'gestion-publica-territorial.jpg', 'evidencia-gps-campo.jpg']) {
+    const info = await stat(new URL(`public/blog/${image}`, root))
+    assert.ok(info.size > 100_000 && info.size < 500_000, `La portada ${image} debe estar optimizada`)
+  }
+})
+
 test('la creación de usuarios se protege dentro de Supabase', async () => {
   const sql = await read('supabase/migrations/202608070001_initial_control_g.sql')
   const backend = await read('src/lib/backend.ts')

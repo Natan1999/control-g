@@ -2,7 +2,9 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, CheckCircle2, ChevronRight, FileCheck2, MapPin, ShieldCheck, WifiOff } from 'lucide-react'
 import { LeadFunnel } from '@/components/marketing/LeadFunnel'
 import { StickyWhatsApp, WhatsAppCta } from '@/components/marketing/WhatsAppCta'
-import { getSeoPage, SEO_PAGES, WHATSAPP_DISPLAY } from '@/lib/marketing'
+import { PublicHeader } from '@/components/marketing/PublicHeader'
+import { PublicFooter } from '@/components/marketing/PublicFooter'
+import { getSeoPage, SEO_PAGES } from '@/lib/marketing'
 
 const ICONS = [WifiOff, FileCheck2, MapPin, ShieldCheck, CheckCircle2, ChevronRight]
 
@@ -14,25 +16,7 @@ export default function SolutionPage({ path }: { path: string }) {
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
-      <header className="border-b border-white/10 bg-[#102d3e] text-white">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-          <Link to="/" className="flex items-center gap-2.5" aria-label="Control G, inicio">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/15 font-black">CG</span>
-            <span className="font-black">Control G</span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <Link to="/blog" className="hidden px-4 py-2 text-sm font-semibold text-white/75 transition hover:text-white sm:inline">Blog</Link>
-            <Link to="/login" className="hidden px-4 py-2 text-sm font-semibold text-white/75 transition hover:text-white sm:inline">Clientes</Link>
-            <WhatsAppCta
-              message={page.whatsappMessage}
-              placement={`nav-${page.path.slice(1)}`}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#20bd5a]"
-            >
-              Solicitar demo
-            </WhatsAppCta>
-          </div>
-        </div>
-      </header>
+      <PublicHeader message={page.whatsappMessage} placement={`cabecera-${page.path.slice(1)}`} />
 
       <main>
         <section className="relative overflow-hidden bg-gradient-to-br from-[#102d3e] via-[#1B3A4B] to-[#2C6E8A] px-5 py-20 text-white sm:py-28">
@@ -149,20 +133,7 @@ export default function SolutionPage({ path }: { path: string }) {
         </section>
       </main>
 
-      <footer className="bg-[#102d3e] px-5 py-10 text-white">
-        <div className="mx-auto flex max-w-6xl flex-col justify-between gap-5 sm:flex-row sm:items-center">
-          <div>
-            <div className="font-black">Control G <span className="font-normal text-white/45">by DRAN Digital</span></div>
-            <p className="mt-2 text-xs text-white/50">Caracterización y recolección de datos offline en Colombia y Latinoamérica.</p>
-          </div>
-          <div className="flex flex-wrap items-center gap-5 text-sm text-white/65">
-            <a href={`tel:${WHATSAPP_DISPLAY.replace(/\s/g, '')}`} className="hover:text-white">{WHATSAPP_DISPLAY}</a>
-            <Link to="/login" className="hover:text-white">Ingreso de clientes</Link>
-            <Link to="/blog" className="hover:text-white">Blog</Link>
-            <Link to="/" className="hover:text-white">Inicio</Link>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
 
       <StickyWhatsApp message={page.whatsappMessage} />
     </div>

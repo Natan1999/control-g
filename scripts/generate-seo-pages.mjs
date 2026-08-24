@@ -11,7 +11,33 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const dist = join(root, 'dist')
 const siteUrl = 'https://www.controlg.co'
 const pages = JSON.parse(await readFile(join(root, 'src/config/seo-pages.json'), 'utf8'))
-const blogPosts = JSON.parse(await readFile(join(root, 'src/config/blog-posts.json'), 'utf8'))
+const localBlogPosts = JSON.parse(await readFile(join(root, 'src/config/blog-posts.json'), 'utf8'))
+let blogPosts = localBlogPosts
+
+// Articles created in the admin CMS join the static editorial base on every
+// deployment. If Supabase is unavailable, the build remains deterministic.
+if (process.env.VITE_SUPABASE_URL && process.env.VITE_SUPABASE_ANON_KEY) {
+  try {
+    const response = await fetch(`${process.env.VITE_SUPABASE_URL}/rest/v1/blog_posts?status=eq.published&select=*&order=published_at.desc`, {
+      headers: { apikey: process.env.VITE_SUPABASE_ANON_KEY, Authorization: `Bearer ${process.env.VITE_SUPABASE_ANON_KEY}` },
+    })
+    if (response.ok) {
+      const remote = (await response.json()).map(row => ({
+        id: row.id, slug: row.slug, title: row.title, description: row.description, excerpt: row.excerpt,
+        category: row.category, country: row.country, publishedAt: row.published_at,
+        updatedAt: row.updated_at?.slice(0, 10) || row.published_at, readingMinutes: row.reading_minutes,
+        keywords: row.keywords || [], whatsappMessage: row.whatsapp_message, intro: row.intro || [],
+        sections: row.sections || [], comparison: row.comparison || [], verdict: row.verdict || '',
+        faqs: row.faqs || [], sources: row.sources || [], image: row.image_url, imageAlt: row.image_alt,
+      }))
+      const merged = new Map(localBlogPosts.map(post => [post.slug, post]))
+      remote.forEach(post => merged.set(post.slug, post))
+      blogPosts = [...merged.values()]
+    }
+  } catch {
+    console.warn('Supabase no respondió durante el prerender; se usó el contenido editorial local.')
+  }
+}
 const shell = await readFile(join(dist, 'index.html'), 'utf8')
 
 const escapeHtml = value => String(value)
@@ -19,6 +45,16 @@ const escapeHtml = value => String(value)
   .replaceAll('<', '&lt;')
   .replaceAll('>', '&gt;')
   .replaceAll('"', '&quot;')
+
+const blogCover = post => post.image || (post.category === 'Comparativas'
+  ? '/blog/comparativas-software-campo.jpg'
+  : post.slug.includes('offline') || post.slug.includes('rural')
+    ? '/blog/encuestas-offline-rural.jpg'
+    : post.slug.includes('censo') || post.slug.includes('levantamiento') || post.slug.includes('terreno')
+      ? '/blog/evidencia-gps-campo.jpg'
+      : '/blog/gestion-publica-territorial.jpg')
+
+const absoluteBlogCover = post => blogCover(post).startsWith('http') ? blogCover(post) : `${siteUrl}${blogCover(post)}`
 
 const structuredData = page => ({
   '@context': 'https://schema.org',
@@ -165,7 +201,7 @@ const blogPostStructuredData = post => {
         description: post.description,
         url: canonical,
         mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
-        image: [`${siteUrl}/og-image.png`],
+        image: [absoluteBlogCover(post)],
         datePublished: post.publishedAt,
         dateModified: post.updatedAt,
         inLanguage: 'es',
@@ -225,7 +261,7 @@ function blogHead({ title, description, canonical, keywords, structured, type = 
     <meta property="og:url" content="${canonical}" />
     <meta property="og:title" content="${escapeHtml(title)}" />
     <meta property="og:description" content="${escapeHtml(description)}" />
-    <meta property="og:image" content="${siteUrl}/og-image.png" />
+    <meta property="og:image" content="${type === 'article' && structured?.['@graph']?.[1]?.image?.[0] ? structured['@graph'][1].image[0] : `${siteUrl}/og-image.png`}" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="Control G" />
@@ -247,7 +283,7 @@ function renderBlogIndex() {
     <nav><a href="/">Control G</a> · <a href="/software-caracterizacion-social">Soluciones</a></nav>
     <h1>Blog profesional de caracterización y trabajo de campo</h1>
     <p>${escapeHtml(description)}</p>
-    <section><h2>Guías y comparaciones recientes</h2>${blogPosts.map(post => `<article><p>${escapeHtml(post.category)} · ${escapeHtml(post.country)}</p><h3><a href="/blog/${escapeHtml(post.slug)}">${escapeHtml(post.title)}</a></h3><p>${escapeHtml(post.excerpt)}</p></article>`).join('')}</section>
+    <section><h2>Guías y comparaciones recientes</h2>${blogPosts.map(post => `<article><img src="${escapeHtml(blogCover(post))}" alt="${escapeHtml(post.imageAlt || `Trabajo de campo en ${post.country}`)}" width="720" height="480" loading="lazy"><p>${escapeHtml(post.category)} · ${escapeHtml(post.country)}</p><h3><a href="/blog/${escapeHtml(post.slug)}">${escapeHtml(post.title)}</a></h3><p>${escapeHtml(post.excerpt)}</p></article>`).join('')}</section>
     <p><a href="https://wa.me/573009010300?text=${encodeURIComponent('Hola, llegué desde el blog de Control G. Quiero orientación para un proyecto de recolección de información en campo.')}">Solicitar demostración por WhatsApp</a></p>
   </main>`
   return cleanMarketingShell().replace('</head>', `${head}\n  </head>`).replace('<div id="root"></div>', `<div id="root">${content}</div>`)
@@ -260,7 +296,7 @@ function renderBlogPost(post) {
   const sources = post.sources.length ? `<section><h2>Fuentes consultadas</h2><ul>${post.sources.map(source => `<li><a href="${escapeHtml(source.url)}">${escapeHtml(source.publisher)}: ${escapeHtml(source.title)}</a></li>`).join('')}</ul></section>` : ''
   const content = `<main data-seo-static="true" style="font-family:Inter,system-ui,sans-serif;max-width:840px;margin:auto;padding:48px 24px;color:#102d3e">
     <nav><a href="/">Inicio</a> · <a href="/blog">Blog</a></nav>
-    <article><p>${escapeHtml(post.category)} · ${escapeHtml(post.country)}</p><h1>${escapeHtml(post.title)}</h1><p>Actualizado: <time datetime="${post.updatedAt}">${post.updatedAt}</time> · ${post.readingMinutes} min</p>
+    <article><p>${escapeHtml(post.category)} · ${escapeHtml(post.country)}</p><h1>${escapeHtml(post.title)}</h1><img src="${escapeHtml(blogCover(post))}" alt="${escapeHtml(post.imageAlt || `Trabajo de campo en ${post.country}`)}" width="1440" height="960"><p>Actualizado: <time datetime="${post.updatedAt}">${post.updatedAt}</time> · ${post.readingMinutes} min</p>
       ${post.intro.map(paragraph => `<p>${escapeHtml(paragraph)}</p>`).join('')}
       ${post.sections.map(section => `<section><h2>${escapeHtml(section.title)}</h2>${section.paragraphs.map(paragraph => `<p>${escapeHtml(paragraph)}</p>`).join('')}${section.bullets ? `<ul>${section.bullets.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>` : ''}</section>`).join('')}
       ${comparison}<section><h2>Conclusión</h2><p>${escapeHtml(post.verdict)}</p></section>

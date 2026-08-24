@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Building2, Users, MapPin, FileText,
   Settings, ChevronLeft, ChevronRight, LogOut, Bell,
   ClipboardList, BarChart2, MessageSquare, UserCheck,
-  AlertCircle, Menu, X,
+  AlertCircle, Menu, X, Newspaper,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { SyncIndicator } from '@/components/shared'
@@ -24,6 +24,7 @@ const navItems: Record<UserRole, NavItem[]> = {
     { path: '/admin/entities', label: 'Entidades',     icon: <Building2 size={18} /> },
     { path: '/admin/forms',    label: 'Formularios',   icon: <ClipboardList size={18} /> },
     { path: '/admin/responses', label: 'Respuestas',   icon: <ClipboardList size={18} /> },
+    { path: '/admin/blog',      label: 'Blog y SEO',   icon: <Newspaper size={18} /> },
     { path: '/admin/settings', label: 'Configuración', icon: <Settings size={18} /> },
   ],
   coordinator: [
@@ -206,7 +207,7 @@ interface TopBarProps {
 
 export function TopBar({ title, subtitle, actions }: TopBarProps) {
   return (
-    <header className="bg-white border-b border-border px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-2 sm:gap-4 sticky top-0 z-30">
+    <header className="min-h-[72px] bg-white border-b border-border px-4 sm:px-6 py-3 flex items-center justify-between gap-2 sm:gap-4 sticky top-0 z-30">
       <div className="ml-12 lg:ml-0 min-w-0 flex-1">
         <h1 className="text-lg sm:text-xl font-bold text-foreground truncate">{title}</h1>
         {subtitle && <p className="hidden sm:block text-sm text-muted-foreground mt-0.5 truncate">{subtitle}</p>}
