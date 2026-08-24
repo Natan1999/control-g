@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { buildStructuredData, getSeoPage, SITE_URL } from '@/lib/marketing'
-import { BLOG_META, buildBlogIndexStructuredData, buildBlogStructuredData, getBlogPost } from '@/lib/blog'
+import { BLOG_META, blogCover, buildBlogIndexStructuredData, buildBlogStructuredData, getBlogPost } from '@/lib/blog'
+import { usePublishedBlogPosts } from '@/hooks/useBlogContent'
 
 function setMeta(selector: string, attributes: Record<string, string>) {
   let element = document.head.querySelector<HTMLMetaElement>(selector)
@@ -28,11 +29,13 @@ function setCanonical(url: string | null) {
 
 export function MarketingSeo() {
   const { pathname } = useLocation()
+  const blogSlug = pathname.match(/^\/blog\/([^/]+)\/?$/)?.[1]
+  const { posts: availableBlogPosts } = usePublishedBlogPosts(Boolean(blogSlug))
+  const availableBlogPost = blogSlug ? availableBlogPosts.find(post => post.slug === blogSlug) : undefined
 
   useEffect(() => {
     const page = getSeoPage(pathname)
-    const blogSlug = pathname.match(/^\/blog\/([^/]+)\/?$/)?.[1]
-    const blogPost = blogSlug ? getBlogPost(blogSlug) : undefined
+    const blogPost = availableBlogPost ?? (blogSlug ? getBlogPost(blogSlug) : undefined)
     const isBlogIndex = pathname === '/blog' || pathname === '/blog/'
     const structuredDataId = 'control-g-structured-data'
     document.getElementById(structuredDataId)?.remove()
@@ -57,6 +60,9 @@ export function MarketingSeo() {
       : isBlogIndex
         ? buildBlogIndexStructuredData()
         : buildStructuredData(page!)
+    const socialImage = blogPost
+      ? (blogCover(blogPost).startsWith('http') ? blogCover(blogPost) : `${SITE_URL}${blogCover(blogPost)}`)
+      : `${SITE_URL}/og-image.png`
     document.documentElement.lang = 'es-CO'
     document.title = title
     setMeta('meta[name="description"]', { name: 'description', content: description })
@@ -66,13 +72,13 @@ export function MarketingSeo() {
     setMeta('meta[property="og:url"]', { property: 'og:url', content: canonical })
     setMeta('meta[property="og:title"]', { property: 'og:title', content: title })
     setMeta('meta[property="og:description"]', { property: 'og:description', content: description })
-    setMeta('meta[property="og:image"]', { property: 'og:image', content: `${SITE_URL}/og-image.png` })
+    setMeta('meta[property="og:image"]', { property: 'og:image', content: socialImage })
     setMeta('meta[property="og:image:alt"]', { property: 'og:image:alt', content: 'Control G, plataforma de caracterización y encuestas offline' })
     setMeta('meta[property="og:locale"]', { property: 'og:locale', content: 'es_CO' })
     setMeta('meta[name="twitter:card"]', { name: 'twitter:card', content: 'summary_large_image' })
     setMeta('meta[name="twitter:title"]', { name: 'twitter:title', content: title })
     setMeta('meta[name="twitter:description"]', { name: 'twitter:description', content: description })
-    setMeta('meta[name="twitter:image"]', { name: 'twitter:image', content: `${SITE_URL}/og-image.png` })
+    setMeta('meta[name="twitter:image"]', { name: 'twitter:image', content: socialImage })
     setCanonical(canonical)
 
     const script = document.createElement('script')
@@ -80,7 +86,7 @@ export function MarketingSeo() {
     script.type = 'application/ld+json'
     script.text = JSON.stringify(structuredData)
     document.head.appendChild(script)
-  }, [pathname])
+  }, [pathname, blogSlug, availableBlogPost])
 
   return null
 }

@@ -2,12 +2,13 @@ import { Link } from 'react-router-dom'
 import {
   Wifi, WifiOff, BarChart2, FileText, Users, MapPin,
   Camera, PenLine, ArrowRight, CheckCircle2, Shield,
-  Smartphone, Globe, ChevronRight, Menu, X,
+  Smartphone, Globe, ChevronRight,
 } from 'lucide-react'
-import { useState } from 'react'
 import { LeadFunnel } from '@/components/marketing/LeadFunnel'
 import { StickyWhatsApp, WhatsAppCta } from '@/components/marketing/WhatsAppCta'
-import { getSeoPage, SEO_PAGES, WHATSAPP_DISPLAY } from '@/lib/marketing'
+import { PublicHeader } from '@/components/marketing/PublicHeader'
+import { PublicFooter } from '@/components/marketing/PublicFooter'
+import { getSeoPage, SEO_PAGES } from '@/lib/marketing'
 
 const LANDING_SEO = getSeoPage('/')!
 
@@ -91,80 +92,9 @@ const USE_CASES = [
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function LandingPage() {
-  const [menuOpen, setMenuOpen] = useState(false)
-
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans">
-
-      {/* ── NAV ──────────────────────────────────────────────────────────── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#1B3A4B' }}>
-              <span className="text-white font-black text-base tracking-tighter">CG</span>
-            </div>
-            <div>
-              <span className="font-black text-lg" style={{ color: '#1B3A4B' }}>Control G</span>
-              <span className="hidden sm:inline text-xs text-gray-400 ml-2">by DRAN Digital</span>
-            </div>
-          </div>
-
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
-            <a href="#features" className="hover:text-[#1B3A4B] transition-colors">Funcionalidades</a>
-            <a href="#soluciones" className="hover:text-[#1B3A4B] transition-colors">Soluciones</a>
-            <Link to="/blog" className="hover:text-[#1B3A4B] transition-colors">Blog</Link>
-            <WhatsAppCta
-              message={LANDING_SEO.whatsappMessage}
-              placement="nav-inicio"
-              className="px-4 py-2 rounded-xl text-white text-sm font-semibold transition-opacity hover:opacity-90 bg-[#25D366]"
-            >
-              Solicitar demo
-            </WhatsAppCta>
-            <Link to="/blog" className="px-4 py-2 text-[#1B3A4B] text-sm font-semibold text-center" onClick={() => setMenuOpen(false)}>Blog profesional</Link>
-            <Link
-              to="/login"
-              className="text-sm font-semibold text-[#1B3A4B] transition-opacity hover:opacity-70"
-            >
-              Clientes
-            </Link>
-          </div>
-
-          {/* Mobile menu button */}
-          <button onClick={() => setMenuOpen(v => !v)} className="md:hidden p-2 text-gray-600">
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
-        </div>
-
-        {/* Mobile menu */}
-        {menuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-100 px-5 py-4 flex flex-col gap-3">
-            {['features', 'soluciones', 'casos'].map(id => (
-              <a
-                key={id}
-                href={`#${id}`}
-                className="text-sm font-medium text-gray-600 hover:text-[#1B3A4B] capitalize py-1"
-                onClick={() => setMenuOpen(false)}
-              >
-                {id === 'features' ? 'Funcionalidades' : id === 'soluciones' ? 'Soluciones' : 'Casos de Uso'}
-              </a>
-            ))}
-            <WhatsAppCta
-              message={LANDING_SEO.whatsappMessage}
-              placement="menu-movil-inicio"
-              className="mt-2 px-4 py-3 rounded-xl text-white text-sm font-semibold text-center bg-[#25D366]"
-            >
-              Solicitar demostración
-            </WhatsAppCta>
-            <Link
-              to="/login"
-              className="px-4 py-2 text-[#1B3A4B] text-sm font-semibold text-center"
-            >
-              Ingreso de clientes
-            </Link>
-          </div>
-        )}
-      </nav>
+      <PublicHeader message={LANDING_SEO.whatsappMessage} placement="cabecera-inicio" fixed />
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section
@@ -553,27 +483,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── FOOTER ───────────────────────────────────────────────────────── */}
-      <footer className="py-8 px-5 border-t border-gray-100">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: '#1B3A4B' }}>
-              <span className="text-white font-black text-xs">CG</span>
-            </div>
-            <span className="font-bold text-sm" style={{ color: '#1B3A4B' }}>Control G</span>
-            <span className="text-gray-400 text-xs">— controlg.co</span>
-          </div>
-          <div className="flex items-center gap-5 text-xs text-gray-400">
-            <span>DRAN Digital S.A.S.</span>
-            <span>·</span>
-            <span>Colombia</span>
-            <span>·</span>
-            <a href={`tel:${WHATSAPP_DISPLAY.replace(/\s/g, '')}`} className="hover:text-[#1B3A4B] font-medium transition-colors">{WHATSAPP_DISPLAY}</a>
-            <span>·</span>
-            <Link to="/login" className="hover:text-[#1B3A4B] font-medium transition-colors">Ingresar</Link>
-            <Link to="/blog" className="hover:text-[#1B3A4B] font-medium transition-colors">Blog</Link>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
 
       <StickyWhatsApp message={LANDING_SEO.whatsappMessage} />
 

@@ -14,6 +14,7 @@ export interface BlogComparisonRow {
 }
 
 export interface BlogPost {
+  id?: string
   slug: string
   title: string
   description: string
@@ -31,6 +32,9 @@ export interface BlogPost {
   verdict: string
   faqs: Array<{ question: string; answer: string }>
   sources: Array<{ title: string; publisher: string; url: string }>
+  image?: string
+  imageAlt?: string
+  status?: 'draft' | 'published' | 'archived'
 }
 
 export const BLOG_POSTS = blogPostsData as BlogPost[]
@@ -43,6 +47,44 @@ export const BLOG_META = {
 
 export function getBlogPost(slug: string) {
   return BLOG_POSTS.find(post => post.slug === slug)
+}
+
+export function blogCover(post: BlogPost) {
+  if (post.image) return post.image
+  if (post.category === 'Comparativas') return '/blog/comparativas-software-campo.jpg'
+  if (post.slug.includes('offline') || post.slug.includes('rural')) return '/blog/encuestas-offline-rural.jpg'
+  if (post.slug.includes('censo') || post.slug.includes('levantamiento') || post.slug.includes('terreno')) return '/blog/evidencia-gps-campo.jpg'
+  return '/blog/gestion-publica-territorial.jpg'
+}
+
+export function blogCoverAlt(post: BlogPost) {
+  return post.imageAlt || `Trabajo de campo y recolección de información para ${post.country}`
+}
+
+export function normalizeBlogRow(row: Record<string, any>): BlogPost {
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    description: row.description,
+    excerpt: row.excerpt,
+    category: row.category,
+    country: row.country,
+    publishedAt: row.published_at,
+    updatedAt: row.updated_at?.slice?.(0, 10) || row.published_at,
+    readingMinutes: row.reading_minutes,
+    keywords: row.keywords || [],
+    whatsappMessage: row.whatsapp_message || BLOG_META.whatsappMessage,
+    intro: row.intro || [],
+    sections: row.sections || [],
+    comparison: row.comparison || [],
+    verdict: row.verdict || '',
+    faqs: row.faqs || [],
+    sources: row.sources || [],
+    image: row.image_url,
+    imageAlt: row.image_alt,
+    status: row.status,
+  }
 }
 
 export function formatBlogDate(value: string) {
@@ -103,7 +145,7 @@ export function buildBlogStructuredData(post: BlogPost) {
         description: post.description,
         url: canonical,
         mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
-        image: [`${SITE_URL}/og-image.png`],
+        image: [blogCover(post).startsWith('http') ? blogCover(post) : `${SITE_URL}${blogCover(post)}`],
         datePublished: post.publishedAt,
         dateModified: post.updatedAt,
         inLanguage: 'es',

@@ -20,6 +20,8 @@ import { Sidebar } from '@/components/layout/Sidebar'
 const AdminDashboard = lazy(() => import('@/pages/admin/DashboardPage'))
 const AdminEntitiesPage = lazy(() => import('@/pages/admin/EntitiesPage'))
 const AdminSettingsPage = lazy(() => import('@/pages/admin/SettingsPage'))
+const AdminBlogPage = lazy(() => import('@/pages/admin/BlogManagerPage'))
+const AdminBlogEditorPage = lazy(() => import('@/pages/admin/BlogEditorPage'))
 const CoordDashboard = lazy(() => import('@/pages/coordinator/DashboardPage'))
 const CoordTeamPage = lazy(() => import('@/pages/coordinator/TeamPage'))
 const CoordMunicipalitiesPage = lazy(() => import('@/pages/coordinator/MunicipalitiesPage'))
@@ -128,6 +130,9 @@ export default function App() {
               <Route path="forms/new" element={<FormBuilderPage />} />
               <Route path="forms/edit/:id" element={<FormBuilderPage />} />
               <Route path="responses" element={<FormResponsesPage />} />
+              <Route path="blog" element={<AdminBlogPage />} />
+              <Route path="blog/new" element={<AdminBlogEditorPage />} />
+              <Route path="blog/edit/:id" element={<AdminBlogEditorPage />} />
               <Route path="settings" element={<AdminSettingsPage />} />
             </Routes>
           </DashboardLayout>
