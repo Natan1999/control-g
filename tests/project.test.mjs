@@ -109,6 +109,37 @@ test('la verificación integral crea y elimina una asignación temporal', async 
   assert.match(verify, /from\('form_assignments'\)\.delete/)
 })
 
+test('el sitio tiene páginas SEO indexables y embudos hacia WhatsApp', async () => {
+  const pages = JSON.parse(await read('src/config/seo-pages.json'))
+  const app = await read('src/App.tsx')
+  const marketing = await read('src/lib/marketing.ts')
+  const robots = await read('public/robots.txt')
+  const sitemap = await read('public/sitemap.xml')
+  const generator = await read('scripts/generate-seo-pages.mjs')
+
+  for (const path of [
+    '/',
+    '/software-caracterizacion-social',
+    '/encuestas-offline',
+    '/levantamiento-informacion-campo',
+    '/software-entidades-gobierno',
+  ]) {
+    assert.ok(pages.some(page => page.path === path), `Falta la página SEO ${path}`)
+    assert.ok(sitemap.includes(`https://www.controlg.co${path}`), `Falta ${path} en sitemap.xml`)
+  }
+
+  assert.match(app, /<MarketingSeo \/>/)
+  assert.match(marketing, /WHATSAPP_NUMBER = '573009010300'/)
+  assert.match(marketing, /FAQPage/)
+  assert.match(marketing, /WebApplication/)
+  assert.match(robots, /Disallow: \/admin/)
+  assert.match(generator, /data-seo-static/)
+  assert.match(generator, /VITE_NATIVE_BUILD === 'true'/)
+  assert.ok(pages.every(page => page.title.length <= 60), 'Los títulos SEO deben ser concisos')
+  assert.ok(pages.every(page => page.description.length <= 165), 'Las descripciones SEO deben ser concisas')
+  assert.ok(pages.every(page => page.faqs.length >= 4), 'Cada intención necesita preguntas frecuentes')
+})
+
 test('la creación de usuarios se protege dentro de Supabase', async () => {
   const sql = await read('supabase/migrations/202608070001_initial_control_g.sql')
   const backend = await read('src/lib/backend.ts')

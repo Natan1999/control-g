@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /admin
+Disallow: /coord
+Disallow: /apoyo
+Disallow: /field
+
+Sitemap: https://www.controlg.co/sitemap.xml

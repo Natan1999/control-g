@@ -1,0 +1,24 @@
+# Control G
+
+Control G es una plataforma de DRAN Digital para caracterizaciones, encuestas y levantamiento de información en campo. Está dirigida a alcaldías, gobernaciones, entidades públicas, operadores, ONG y organizaciones de Colombia y Latinoamérica.
+
+## Capacidades
+
+- Formularios configurables sin programación.
+- Aplicación Android y plataforma web.
+- Captura de respuestas, fotografías, firmas y geolocalización sin internet.
+- Sincronización de registros cuando vuelve la conexión.
+- Gestión multi-entidad y permisos por roles.
+- Seguimiento, revisión y consolidación de información territorial.
+
+## Páginas principales
+
+- https://www.controlg.co/
+- https://www.controlg.co/software-caracterizacion-social
+- https://www.controlg.co/encuestas-offline
+- https://www.controlg.co/levantamiento-informacion-campo
+- https://www.controlg.co/software-entidades-gobierno
+
+## Contacto comercial
+
+WhatsApp: +57 300 901 0300

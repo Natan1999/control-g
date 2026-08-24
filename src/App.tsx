@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Capacitor } from '@capacitor/core'
 import { useAuthStore } from '@/stores/authStore'
@@ -7,41 +7,37 @@ import type { UserRole } from '@/types'
 // Auth
 import LoginPage from '@/pages/auth/LoginPage'
 import LandingPage from '@/pages/landing/LandingPage'
+import SolutionPage from '@/pages/landing/SolutionPage'
+import { MarketingSeo } from '@/components/marketing/MarketingSeo'
 
 // Layout
 import { Sidebar } from '@/components/layout/Sidebar'
 
-// Admin
-import AdminDashboard from '@/pages/admin/DashboardPage'
-import AdminEntitiesPage from '@/pages/admin/EntitiesPage'
-import AdminSettingsPage from '@/pages/admin/SettingsPage'
-
-// Coordinator
-import CoordDashboard from '@/pages/coordinator/DashboardPage'
-import CoordTeamPage from '@/pages/coordinator/TeamPage'
-import CoordMunicipalitiesPage from '@/pages/coordinator/MunicipalitiesPage'
-import CoordFamiliesPage from '@/pages/coordinator/FamiliesPage'
-import CoordReportsPage from '@/pages/coordinator/ReportsPage'
-import CoordObservationsPage from '@/pages/coordinator/ObservationsPage'
-import CoordSettingsPage from '@/pages/coordinator/SettingsPage'
-import FormBuilderPage from '@/pages/coordinator/FormBuilderPage'
-import FormsListPage from '@/pages/shared/FormsListPage'
-import FormResponsesPage from '@/pages/shared/FormResponsesPage'
-
-// Apoyo Administrativo
-import ApoyoDashboard from '@/pages/apoyo/DashboardPage'
-import ApoyoProfessionalsPage from '@/pages/apoyo/ProfessionalsPage'
-import ApoyoReviewPage from '@/pages/apoyo/ReviewPage'
-import ApoyoObservationsPage from '@/pages/apoyo/ObservationsPage'
-
-// Profesional de Campo
-import FieldHome from '@/pages/professional/HomePage'
-import FieldFamiliesPage from '@/pages/professional/FamiliesPage'
-import FieldCapturePage from '@/pages/professional/CapturePage'
-import FieldReportsPage from '@/pages/professional/ReportsPage'
-import FieldProfilePage from '@/pages/professional/ProfilePage'
-import ActivityFormPage from '@/pages/professional/ActivityFormPage'
-import FormResponderPage from '@/pages/professional/FormResponderPage'
+// Private application screens are split from the public marketing bundle.
+const AdminDashboard = lazy(() => import('@/pages/admin/DashboardPage'))
+const AdminEntitiesPage = lazy(() => import('@/pages/admin/EntitiesPage'))
+const AdminSettingsPage = lazy(() => import('@/pages/admin/SettingsPage'))
+const CoordDashboard = lazy(() => import('@/pages/coordinator/DashboardPage'))
+const CoordTeamPage = lazy(() => import('@/pages/coordinator/TeamPage'))
+const CoordMunicipalitiesPage = lazy(() => import('@/pages/coordinator/MunicipalitiesPage'))
+const CoordFamiliesPage = lazy(() => import('@/pages/coordinator/FamiliesPage'))
+const CoordReportsPage = lazy(() => import('@/pages/coordinator/ReportsPage'))
+const CoordObservationsPage = lazy(() => import('@/pages/coordinator/ObservationsPage'))
+const CoordSettingsPage = lazy(() => import('@/pages/coordinator/SettingsPage'))
+const FormBuilderPage = lazy(() => import('@/pages/coordinator/FormBuilderPage'))
+const FormsListPage = lazy(() => import('@/pages/shared/FormsListPage'))
+const FormResponsesPage = lazy(() => import('@/pages/shared/FormResponsesPage'))
+const ApoyoDashboard = lazy(() => import('@/pages/apoyo/DashboardPage'))
+const ApoyoProfessionalsPage = lazy(() => import('@/pages/apoyo/ProfessionalsPage'))
+const ApoyoReviewPage = lazy(() => import('@/pages/apoyo/ReviewPage'))
+const ApoyoObservationsPage = lazy(() => import('@/pages/apoyo/ObservationsPage'))
+const FieldHome = lazy(() => import('@/pages/professional/HomePage'))
+const FieldFamiliesPage = lazy(() => import('@/pages/professional/FamiliesPage'))
+const FieldCapturePage = lazy(() => import('@/pages/professional/CapturePage'))
+const FieldReportsPage = lazy(() => import('@/pages/professional/ReportsPage'))
+const FieldProfilePage = lazy(() => import('@/pages/professional/ProfilePage'))
+const ActivityFormPage = lazy(() => import('@/pages/professional/ActivityFormPage'))
+const FormResponderPage = lazy(() => import('@/pages/professional/FormResponderPage'))
 
 import { useSync } from '@/hooks/useSync'
 
@@ -104,8 +100,17 @@ export default function App() {
   }
 
   return (
-    <Routes>
+    <>
+      <MarketingSeo />
+      <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background text-sm font-semibold text-muted-foreground">Cargando Control G…</div>}>
+      <Routes>
       <Route path="/login" element={user ? <Navigate to={defaultRoutes[user.role as UserRole]} replace /> : <LoginPage />} />
+
+      {/* Public search-intent pages. Each route has unique content and metadata. */}
+      <Route path="/software-caracterizacion-social" element={<SolutionPage path="/software-caracterizacion-social" />} />
+      <Route path="/encuestas-offline" element={<SolutionPage path="/encuestas-offline" />} />
+      <Route path="/levantamiento-informacion-campo" element={<SolutionPage path="/levantamiento-informacion-campo" />} />
+      <Route path="/software-entidades-gobierno" element={<SolutionPage path="/software-entidades-gobierno" />} />
 
       {/* Admin routes */}
       <Route path="/admin/*" element={
@@ -185,6 +190,8 @@ export default function App() {
             : <LandingPage />
       } />
       <Route path="*" element={<Navigate to={user ? defaultRoutes[user.role as UserRole] : unauthenticatedEntry} replace />} />
-    </Routes>
+      </Routes>
+      </Suspense>
+    </>
   )
 }
