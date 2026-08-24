@@ -4,6 +4,8 @@
     { "source": "/encuestas-offline", "destination": "/encuestas-offline/index.html" },
     { "source": "/levantamiento-informacion-campo", "destination": "/levantamiento-informacion-campo/index.html" },
     { "source": "/software-entidades-gobierno", "destination": "/software-entidades-gobierno/index.html" },
+    { "source": "/blog", "destination": "/blog/index.html" },
+    { "source": "/blog/:slug", "destination": "/blog/:slug/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [

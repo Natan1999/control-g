@@ -21,6 +21,7 @@ export default function SolutionPage({ path }: { path: string }) {
             <span className="font-black">Control G</span>
           </Link>
           <div className="flex items-center gap-2">
+            <Link to="/blog" className="hidden px-4 py-2 text-sm font-semibold text-white/75 transition hover:text-white sm:inline">Blog</Link>
             <Link to="/login" className="hidden px-4 py-2 text-sm font-semibold text-white/75 transition hover:text-white sm:inline">Clientes</Link>
             <WhatsAppCta
               message={page.whatsappMessage}
@@ -157,6 +158,7 @@ export default function SolutionPage({ path }: { path: string }) {
           <div className="flex flex-wrap items-center gap-5 text-sm text-white/65">
             <a href={`tel:${WHATSAPP_DISPLAY.replace(/\s/g, '')}`} className="hover:text-white">{WHATSAPP_DISPLAY}</a>
             <Link to="/login" className="hover:text-white">Ingreso de clientes</Link>
+            <Link to="/blog" className="hover:text-white">Blog</Link>
             <Link to="/" className="hover:text-white">Inicio</Link>
           </div>
         </div>

@@ -1,0 +1,542 @@
+[
+  {
+    "slug": "control-g-vs-kobotoolbox",
+    "title": "Control G vs KoboToolbox: comparación para trabajo de campo",
+    "description": "Compare Control G y KoboToolbox para encuestas offline, caracterización social, formularios, asignaciones y seguimiento de equipos de campo.",
+    "excerpt": "Dos enfoques sólidos para recolectar datos sin internet: una plataforma institucional configurable y un ecosistema abierto muy usado en investigación y acción humanitaria.",
+    "category": "Comparativas",
+    "country": "Latinoamérica",
+    "publishedAt": "2026-08-24",
+    "updatedAt": "2026-08-24",
+    "readingMinutes": 9,
+    "keywords": ["Control G vs KoboToolbox", "alternativa a KoboToolbox", "KoboCollect offline", "software caracterización social"],
+    "whatsappMessage": "Hola, leí la comparación entre Control G y KoboToolbox. Quiero evaluar cuál opción conviene para mi proyecto.",
+    "intro": [
+      "KoboToolbox y Control G permiten recolectar información en lugares con conectividad limitada, pero fueron concebidos con prioridades distintas. KoboToolbox es un ecosistema abierto reconocido en investigación, cooperación y respuesta humanitaria. Control G está orientado a operaciones institucionales que necesitan entidades separadas, perfiles de coordinación, asignaciones individuales y revisión de evidencias.",
+      "La decisión no debe basarse únicamente en la capacidad offline. Conviene evaluar quién diseña los instrumentos, cómo se distribuye el trabajo, qué acompañamiento requiere el equipo y cómo se revisarán los resultados después de la visita."
+    ],
+    "sections": [
+      {
+        "title": "Cómo funciona KoboToolbox en campo",
+        "paragraphs": [
+          "La documentación oficial describe KoboCollect como una aplicación Android gratuita y de código abierto. Los formularios se descargan al dispositivo cuando existe conexión y después pueden diligenciarse sin internet. Las respuestas finalizadas se envían al servidor al recuperar conectividad.",
+          "KoboToolbox resulta especialmente atractivo para equipos familiarizados con XLSForm, proyectos de investigación y organizaciones que valoran un ecosistema ampliamente adoptado. La preparación de dispositivos, versiones de formularios y permisos debe incluirse en el plan operativo."
+        ]
+      },
+      {
+        "title": "Dónde se diferencia Control G",
+        "paragraphs": [
+          "Control G integra en la misma experiencia la creación visual de formularios, la separación por entidad, la asignación de instrumentos a profesionales, roles de administrador, coordinación, apoyo y campo, y una bandeja de respuestas para revisión. El profesional no tiene que escoger entre todos los formularios publicados: recibe los que le corresponden.",
+          "Este enfoque puede reducir configuración y capacitación cuando el objetivo es ejecutar caracterizaciones por momentos, coordinar municipios y conservar un flujo institucional de observaciones."
+        ]
+      },
+      {
+        "title": "Criterios para elegir",
+        "paragraphs": [
+          "KoboToolbox suele encajar bien cuando el equipo ya domina XLSForm, necesita interoperabilidad con el ecosistema Kobo/ODK o prioriza herramientas abiertas. Control G encaja cuando se busca una solución configurada para la entidad, con flujo operativo en español y acompañamiento en la construcción de formularios y roles.",
+          "Antes de decidir, ejecute un piloto offline con el formulario más complejo, varias fotografías y al menos dos ciclos de sincronización. Esa prueba revela más que una lista de funciones."
+        ],
+        "bullets": [
+          "Compruebe qué formularios ve cada encuestador.",
+          "Pruebe borradores, cierre de la aplicación y recuperación del trabajo.",
+          "Mida el tiempo de preparación de nuevos dispositivos.",
+          "Revise cómo se corrigen datos después de sincronizar."
+        ]
+      }
+    ],
+    "comparison": [
+      {"label": "Enfoque", "controlG": "Operación institucional, caracterización y seguimiento", "alternative": "Investigación, acción humanitaria y captura flexible"},
+      {"label": "Captura offline", "controlG": "APK Android con cola de sincronización", "alternative": "KoboCollect Android después de descargar formularios"},
+      {"label": "Diseño", "controlG": "Constructor visual dentro de la plataforma", "alternative": "Constructor web y compatibilidad con XLSForm"},
+      {"label": "Asignación", "controlG": "Formularios por profesional y entidad", "alternative": "Proyectos, cuentas y configuración de formularios"},
+      {"label": "Acompañamiento", "controlG": "Implementación ajustada a la entidad", "alternative": "Documentación, comunidad y servicios del ecosistema Kobo"}
+    ],
+    "verdict": "Elija KoboToolbox si necesita un ecosistema abierto y su equipo puede administrar su configuración. Evalúe Control G si el reto principal es organizar roles, entidades, momentos y seguimiento operativo con una experiencia institucional en español.",
+    "faqs": [
+      {"question": "¿KoboToolbox funciona sin internet?", "answer": "Sí. KoboCollect permite diligenciar formularios descargados previamente sin conexión y enviarlos cuando vuelve internet."},
+      {"question": "¿Control G reemplaza XLSForm?", "answer": "Control G utiliza un constructor visual propio. La pertinencia de migrar un XLSForm existente debe revisarse durante la configuración del proyecto."},
+      {"question": "¿Cuál sirve mejor para gobierno?", "answer": "Depende del flujo. Control G prioriza entidades, roles, asignaciones y revisión; KoboToolbox ofrece gran flexibilidad para equipos que ya conocen su ecosistema."}
+    ],
+    "sources": [
+      {"title": "Collecting data using KoboCollect", "publisher": "KoboToolbox", "url": "https://support.kobotoolbox.org/data_collection_kobocollect.html"}
+    ]
+  },
+  {
+    "slug": "control-g-vs-odk",
+    "title": "Control G vs ODK: ¿qué plataforma offline elegir?",
+    "description": "Comparación profesional entre Control G y ODK para formularios offline, servidores, roles, evidencias y levantamientos institucionales.",
+    "excerpt": "ODK ofrece una arquitectura abierta y extensible; Control G reúne captura offline y gestión institucional lista para caracterizaciones y equipos territoriales.",
+    "category": "Comparativas",
+    "country": "Latinoamérica",
+    "publishedAt": "2026-08-24",
+    "updatedAt": "2026-08-24",
+    "readingMinutes": 10,
+    "keywords": ["Control G vs ODK", "alternativa ODK Collect", "ODK Central", "formularios offline gobierno"],
+    "whatsappMessage": "Hola, leí la comparación entre Control G y ODK. Quiero revisar la mejor arquitectura para nuestra recolección offline.",
+    "intro": [
+      "ODK es una referencia técnica en recolección móvil. Su combinación de ODK Collect, XLSForm y ODK Central permite construir instrumentos complejos, trabajar sin internet y conectar los datos con herramientas analíticas. Control G cubre el mismo problema offline desde una experiencia más orientada a la gestión de entidades, profesionales y momentos de intervención.",
+      "Ambas opciones pueden ser correctas. La diferencia suele estar en cuánto control técnico desea asumir la organización y cuánto del flujo institucional necesita resuelto desde el primer día."
+    ],
+    "sections": [
+      {
+        "title": "Fortalezas técnicas de ODK",
+        "paragraphs": [
+          "ODK Collect admite fotografías, ubicación, audio, video, códigos, firmas, restricciones, lógica y estructuras repetitivas. ODK Central administra proyectos, usuarios, formularios y envíos. La organización puede contratar ODK Cloud o instalar Central en su propia infraestructura.",
+          "La autogestión ofrece control, pero también implica actualizaciones, respaldo, seguridad y soporte. ODK advierte que el alojamiento propio requiere mantenimiento continuo y capacidades técnicas."
+        ]
+      },
+      {
+        "title": "El modelo operativo de Control G",
+        "paragraphs": [
+          "Control G evita separar la operación entre varias herramientas. La entidad crea formularios, asigna profesionales, descarga tareas, recolecta evidencias offline y revisa respuestas sincronizadas en la misma plataforma.",
+          "Para una gobernación, alcaldía u operador que necesita entregar una aplicación configurada y capacitar equipos no técnicos, ese flujo puede ser más sencillo que administrar servidor, proyectos, códigos QR y archivos XLSForm."
+        ]
+      },
+      {
+        "title": "Preguntas para la arquitectura",
+        "paragraphs": [
+          "Si el proyecto cuenta con un equipo de datos que ya utiliza ODK, Power BI, Python o R, conservar ese ecosistema puede ser eficiente. Si la prioridad es disponer de un producto multi-entidad, con experiencia de campo personalizada y soporte de implementación, Control G merece un piloto.",
+          "Documente también quién atenderá incidentes en campo, cómo se actualizarán formularios activos y qué ocurrirá si una evidencia multimedia no termina de cargar."
+        ],
+        "bullets": [
+          "Defina si alojará el servidor o contratará un servicio administrado.",
+          "Compare el esfuerzo de XLSForm con un constructor visual.",
+          "Pruebe roles de captura, coordinación y revisión.",
+          "Incluya respaldo y recuperación en el costo total."
+        ]
+      }
+    ],
+    "comparison": [
+      {"label": "Arquitectura", "controlG": "Servicio configurado sobre Supabase", "alternative": "ODK Central administrado o autohospedado"},
+      {"label": "App de campo", "controlG": "APK Android de Control G", "alternative": "ODK Collect para Android"},
+      {"label": "Formularios", "controlG": "Constructor visual", "alternative": "XLSForm y herramientas compatibles"},
+      {"label": "Integración", "controlG": "Flujo institucional incorporado", "alternative": "APIs, OData, CSV y amplio ecosistema técnico"},
+      {"label": "Operación", "controlG": "Entidades, roles y asignaciones", "alternative": "Proyectos, Web Users y App Users"}
+    ],
+    "verdict": "ODK es excelente para organizaciones con capacidad técnica que quieren flexibilidad y control de infraestructura. Control G es una alternativa cuando la entidad prefiere una implementación acompañada y un flujo de caracterización ya integrado.",
+    "faqs": [
+      {"question": "¿ODK es de código abierto?", "answer": "Sí. ODK ofrece software abierto y permite autohospedar Central; el alojamiento propio exige administrar infraestructura y seguridad."},
+      {"question": "¿ODK Collect trabaja offline?", "answer": "Sí. Está diseñado para formularios en Android sin conexión y sincroniza con un servidor cuando hay internet."},
+      {"question": "¿Cuál requiere menos configuración técnica?", "answer": "Control G se entrega como solución configurada. ODK Cloud simplifica ODK, mientras que autohospedar Central requiere más conocimiento técnico."}
+    ],
+    "sources": [
+      {"title": "Getting Started With ODK", "publisher": "ODK", "url": "https://docs.getodk.org/getting-started/"},
+      {"title": "ODK Collect", "publisher": "ODK", "url": "https://docs.getodk.org/collect-intro/"},
+      {"title": "ODK Central", "publisher": "ODK", "url": "https://docs.getodk.org/central-intro/"}
+    ]
+  },
+  {
+    "slug": "control-g-vs-arcgis-survey123",
+    "title": "Control G vs ArcGIS Survey123 para datos de campo",
+    "description": "Compare Control G y ArcGIS Survey123 en captura offline, mapas, formularios, roles y proyectos de caracterización territorial.",
+    "excerpt": "Survey123 destaca cuando ArcGIS es el centro del proyecto; Control G prioriza caracterización social, asignaciones y gestión institucional multi-entidad.",
+    "category": "Comparativas",
+    "country": "Latinoamérica",
+    "publishedAt": "2026-08-24",
+    "updatedAt": "2026-08-24",
+    "readingMinutes": 9,
+    "keywords": ["Control G vs Survey123", "alternativa ArcGIS Survey123", "encuestas GIS offline", "caracterización territorial"],
+    "whatsappMessage": "Hola, leí la comparación Control G vs ArcGIS Survey123. Quiero evaluar la solución para nuestro operativo territorial.",
+    "intro": [
+      "ArcGIS Survey123 convierte formularios en información geoespacial dentro del ecosistema Esri. Control G registra ubicación y evidencias, pero su propuesta central es coordinar caracterizaciones, usuarios, entidades y revisión de datos, no reemplazar una plataforma GIS corporativa.",
+      "La comparación adecuada empieza por una pregunta: ¿el mapa es el sistema principal o es una evidencia más dentro de un proceso social y administrativo?"
+    ],
+    "sections": [
+      {"title": "Cuándo Survey123 tiene ventaja", "paragraphs": ["Survey123 se integra con ArcGIS Online y ArcGIS Enterprise. Es una elección natural cuando la organización ya gestiona capas, servicios, mapas y licenciamiento Esri.", "La aplicación de campo continúa trabajando desconectada, aunque la documentación aclara que funciones dependientes de servicios alojados pueden no estar disponibles offline."]},
+      {"title": "Cuándo Control G simplifica el proyecto", "paragraphs": ["En Control G la unidad de gestión es la entidad y su operación: formularios, profesionales, municipios, familias o beneficiarios, respuestas y evidencias. La geolocalización acompaña el registro sin exigir que toda la solución se diseñe alrededor de un GIS.", "Esto puede resultar más directo para secretarías sociales, operadores de capacitación, equipos psicosociales o intervenciones por momentos."]},
+      {"title": "Prueba de decisión", "paragraphs": ["Prepare diez visitas reales en ambos sistemas. Incluya un punto sin señal, fotografías, una corrección del supervisor y una exportación final. Compare no solo el mapa: mida capacitación, licencias existentes, creación de usuarios y tiempo de revisión."], "bullets": ["Verifique mapas o capas que deben estar disponibles offline.", "Evalúe experiencia del encuestador no especializado en GIS.", "Compare la administración de equipos y permisos.", "Defina si la salida final será geográfica, tabular o ambas."]}
+    ],
+    "comparison": [
+      {"label": "Centro del producto", "controlG": "Operación institucional y formularios", "alternative": "Ecosistema geoespacial ArcGIS"},
+      {"label": "Offline", "controlG": "Formularios y evidencias en APK Android", "alternative": "Aplicación de campo Survey123"},
+      {"label": "Mapas", "controlG": "GPS y cobertura territorial", "alternative": "Capas, mapas y servicios ArcGIS"},
+      {"label": "Roles", "controlG": "Administrador, coordinador, apoyo y profesional", "alternative": "Usuarios y permisos de la organización ArcGIS"},
+      {"label": "Mejor ajuste", "controlG": "Caracterización y seguimiento social", "alternative": "Flujos GIS e inspecciones geoespaciales"}
+    ],
+    "verdict": "Survey123 suele ser la elección coherente para organizaciones profundamente integradas con ArcGIS. Control G puede reducir complejidad cuando el mapa es complementario y el objetivo principal es administrar personas, formularios y revisión institucional.",
+    "faqs": [
+      {"question": "¿Survey123 funciona offline?", "answer": "Sí. Su aplicación móvil y de campo permite continuar encuestas desconectadas, con limitaciones para funciones que dependen de servicios alojados."},
+      {"question": "¿Control G tiene geolocalización?", "answer": "Sí. Puede capturar GPS como parte del formulario y relacionarlo con la respuesta y sus evidencias."},
+      {"question": "¿Control G sustituye ArcGIS?", "answer": "No es su propósito. Control G resuelve gestión de caracterización y captura; ArcGIS es una plataforma geoespacial más amplia."}
+    ],
+    "sources": [
+      {"title": "Survey123 General FAQ", "publisher": "Esri", "url": "https://doc.arcgis.com/en/survey123/get-started/faqgeneral.htm"}
+    ]
+  },
+  {
+    "slug": "control-g-vs-surveymonkey-anywhere",
+    "title": "Control G vs SurveyMonkey Anywhere: encuestas offline",
+    "description": "Comparación entre Control G y SurveyMonkey Anywhere para encuestas sin internet, modo kiosco, equipos territoriales y seguimiento institucional.",
+    "excerpt": "SurveyMonkey Anywhere lleva encuestas empresariales al modo offline; Control G añade flujo de asignación, caracterización y revisión para entidades territoriales.",
+    "category": "Comparativas",
+    "country": "Latinoamérica",
+    "publishedAt": "2026-08-24",
+    "updatedAt": "2026-08-24",
+    "readingMinutes": 8,
+    "keywords": ["Control G vs SurveyMonkey", "SurveyMonkey Anywhere offline", "alternativa SurveyMonkey gobierno", "encuestas de campo"],
+    "whatsappMessage": "Hola, leí Control G vs SurveyMonkey Anywhere. Necesito una plataforma de encuestas offline para una entidad.",
+    "intro": ["SurveyMonkey es reconocido por encuestas y análisis de feedback. Su aplicación SurveyMonkey Anywhere permite descargar encuestas y recolectar respuestas sin conexión, incluyendo un modo kiosco. Control G se concentra en operativos asignados a profesionales y procesos institucionales de caracterización.", "La elección depende de si se busca principalmente medir opiniones o ejecutar visitas y actividades trazables por territorio, usuario y momento."],
+    "sections": [
+      {"title": "El enfoque de SurveyMonkey Anywhere", "paragraphs": ["Según su documentación, las encuestas se crean y validan en línea, se descargan a iOS o Android y las respuestas se cargan al volver la conexión. El modo kiosco facilita varias respuestas consecutivas en un mismo dispositivo.", "SurveyMonkey indica que el modo offline está disponible dentro de su oferta Enterprise. Es importante solicitar disponibilidad y validar las funciones compatibles antes de contratar."]},
+      {"title": "El enfoque de Control G", "paragraphs": ["Control G no se limita a un colector de respuestas. El coordinador asigna instrumentos, el profesional conserva borradores y respuestas offline, y los perfiles administrativos revisan la información centralizada.", "Es útil cuando cada encuestador debe ver tareas concretas, relacionar formularios con familias o momentos y adjuntar evidencia de campo."]},
+      {"title": "Qué debe contener el piloto", "paragraphs": ["Pruebe el flujo completo desde la asignación hasta la revisión, no solo el diligenciamiento. Si el proyecto es un punto fijo de satisfacción, el modo kiosco puede ser decisivo. Si hay brigadas, municipios y visitas vinculadas, el control operativo pesa más."], "bullets": ["Número de dispositivos y modalidad de licenciamiento.", "Compatibilidad offline del cuestionario real.", "Necesidad de kiosco o de cuentas individuales.", "Flujo de evidencias, observaciones y aprobación."]}
+    ],
+    "comparison": [
+      {"label": "Uso principal", "controlG": "Caracterizaciones y operaciones de campo", "alternative": "Feedback, investigación y encuestas"},
+      {"label": "Offline", "controlG": "APK Android y sincronización de evidencias", "alternative": "SurveyMonkey Anywhere en iOS y Android"},
+      {"label": "Kiosco", "controlG": "No es el flujo principal", "alternative": "Modo kiosco incorporado"},
+      {"label": "Asignaciones", "controlG": "Por profesional", "alternative": "Gestión de encuestas y dispositivos empresariales"},
+      {"label": "Análisis", "controlG": "Avance operativo y respuestas", "alternative": "Herramientas maduras de análisis de encuestas"}
+    ],
+    "verdict": "SurveyMonkey Anywhere es fuerte para investigación, feedback y kioscos. Control G es más específico para entidades que necesitan distribuir trabajo de campo, relacionarlo con procesos territoriales y revisar evidencias.",
+    "faqs": [
+      {"question": "¿SurveyMonkey funciona sin internet?", "answer": "SurveyMonkey Anywhere permite descargar encuestas, recolectar offline y cargar respuestas al recuperar conexión."},
+      {"question": "¿El modo offline está en cualquier plan?", "answer": "La página de funciones de SurveyMonkey lo presenta como una capacidad de Enterprise; debe confirmarse con su equipo comercial."},
+      {"question": "¿Cuál es mejor para una alcaldía?", "answer": "Depende del proceso. Para feedback o kiosco, SurveyMonkey puede encajar; para asignaciones, caracterización y control territorial, evalúe Control G."}
+    ],
+    "sources": [
+      {"title": "Conduct Offline Surveys Anywhere", "publisher": "SurveyMonkey", "url": "https://www.surveymonkey.com/product/features/offline-surveys/"},
+      {"title": "SurveyMonkey Features", "publisher": "SurveyMonkey", "url": "https://www.surveymonkey.com/product/features/"}
+    ]
+  },
+  {
+    "slug": "control-g-vs-questionpro",
+    "title": "Control G vs QuestionPro para encuestas de campo offline",
+    "description": "Compare Control G y QuestionPro en encuestas offline, análisis, auditoría, multimedia, asignaciones y caracterización institucional.",
+    "excerpt": "QuestionPro ofrece investigación avanzada y kioscos; Control G organiza caracterizaciones, entidades y equipos territoriales con roles definidos.",
+    "category": "Comparativas",
+    "country": "Latinoamérica",
+    "publishedAt": "2026-08-24",
+    "updatedAt": "2026-08-24",
+    "readingMinutes": 9,
+    "keywords": ["Control G vs QuestionPro", "QuestionPro offline", "alternativa QuestionPro", "encuestas offline Latinoamérica"],
+    "whatsappMessage": "Hola, leí la comparación Control G vs QuestionPro. Quiero evaluar encuestas offline para nuestro equipo.",
+    "intro": ["QuestionPro combina encuestas, análisis de investigación y una aplicación offline con funciones avanzadas. Control G tiene un alcance más enfocado: caracterización, asignación de trabajo, evidencia y seguimiento institucional.", "No existe una ganadora universal. Una investigación de mercado con análisis conjoint tiene necesidades muy distintas a una intervención social por municipios y momentos."],
+    "sections": [
+      {"title": "Capacidades declaradas por QuestionPro", "paragraphs": ["QuestionPro informa que su aplicación trabaja en iOS y Android, almacena respuestas en el dispositivo y sincroniza al recuperar conectividad. También ofrece lógica avanzada, multimedia, ubicación, auditoría del dispositivo, kiosco y herramientas de análisis.", "La documentación de su aplicación utiliza claves de dispositivo. Cuando el despliegue involucra muchas tabletas, conviene confirmar licenciamiento, preparación y sustitución de equipos."]},
+      {"title": "El flujo de Control G", "paragraphs": ["Control G prioriza que cada profesional encuentre solamente sus formularios asignados y que las respuestas lleguen a coordinadores y apoyos para revisión. Las organizaciones se administran como entidades separadas.", "Su analítica se centra en avance operativo, municipios, profesionales, actividades y respuestas, más que en técnicas especializadas de investigación de mercados."]},
+      {"title": "Decisión según el tipo de estudio", "paragraphs": ["Si se necesitan experimentos, segmentación sofisticada, kioscos o métodos avanzados de investigación, QuestionPro debe estar en la lista corta. Si la prioridad es el flujo institucional de caracterización y el acompañamiento local, Control G puede ser más directo."], "bullets": ["Liste los tipos de pregunta imprescindibles.", "Confirme el modelo por dispositivo y por usuario.", "Valide roles de revisión y devolución de observaciones.", "Compare reportes estadísticos con reportes operativos."]}
+    ],
+    "comparison": [
+      {"label": "Especialidad", "controlG": "Gestión territorial y caracterización", "alternative": "Investigación y encuestas avanzadas"},
+      {"label": "Dispositivos", "controlG": "APK Android por usuario", "alternative": "Aplicación iOS/Android vinculada con claves"},
+      {"label": "Multimedia", "controlG": "Fotos, firma, GPS y archivos", "alternative": "Audio, video, imágenes, códigos y ubicación"},
+      {"label": "Kiosco", "controlG": "No prioritario", "alternative": "Experiencia de kiosco especializada"},
+      {"label": "Organización", "controlG": "Entidades y cuatro roles operativos", "alternative": "Cuentas, encuestas, dispositivos y análisis"}
+    ],
+    "verdict": "QuestionPro es una opción robusta para investigación avanzada. Control G debe evaluarse cuando la necesidad es ejecutar un programa territorial con equipos, asignaciones y control institucional más que una investigación estadística especializada.",
+    "faqs": [
+      {"question": "¿QuestionPro recolecta offline?", "answer": "Sí. Su aplicación almacena respuestas en iOS o Android y las sincroniza cuando vuelve la conexión."},
+      {"question": "¿QuestionPro captura multimedia?", "answer": "Su documentación describe captura de audio, video, códigos, imágenes y ubicación en encuestas offline."},
+      {"question": "¿Control G ofrece análisis conjoint?", "answer": "No es su enfoque. Control G prioriza operación territorial, caracterización y revisión de datos."}
+    ],
+    "sources": [
+      {"title": "Using the QuestionPro mobile app", "publisher": "QuestionPro", "url": "https://www.questionpro.com/help/questionpro-mobile-app.html"},
+      {"title": "Offline Surveys", "publisher": "QuestionPro", "url": "https://www.questionpro.com/mobile/offline.html"}
+    ]
+  },
+  {
+    "slug": "control-g-vs-jotform-mobile-forms",
+    "title": "Control G vs Jotform Mobile Forms: guía comparativa",
+    "description": "Compare Control G y Jotform Mobile Forms para formularios offline, GPS, firmas, asignaciones, integraciones y equipos institucionales.",
+    "excerpt": "Jotform ofrece formularios versátiles e integraciones; Control G organiza el proceso completo de caracterización y revisión dentro de cada entidad.",
+    "category": "Comparativas",
+    "country": "Latinoamérica",
+    "publishedAt": "2026-08-24",
+    "updatedAt": "2026-08-24",
+    "readingMinutes": 8,
+    "keywords": ["Control G vs Jotform", "Jotform Mobile Forms offline", "alternativa Jotform", "formularios de campo"],
+    "whatsappMessage": "Hola, leí Control G vs Jotform Mobile Forms. Quiero comparar el flujo para nuestra entidad.",
+    "intro": ["Jotform Mobile Forms es una aplicación generalista con formularios offline en iOS y Android, múltiples campos e integraciones. Control G es una plataforma vertical para entidades y equipos que realizan caracterizaciones o visitas en territorio.", "La diferencia está entre adaptar una herramienta horizontal a su proceso o adoptar una solución que ya incluye roles, entidades, asignaciones y bandeja de revisión."],
+    "sections": [
+      {"title": "Versatilidad de Jotform", "paragraphs": ["Jotform permite seleccionar formularios para uso offline, diligenciarlos sin Wi-Fi y sincronizarlos automáticamente. Su documentación enumera cámara, GPS, firmas, cálculos, lógica condicional, códigos y modo kiosco.", "También tiene un ecosistema amplio de plantillas e integraciones, útil para organizaciones con procesos diversos además del trabajo de campo."]},
+      {"title": "Especialización de Control G", "paragraphs": ["Control G concentra la experiencia en operaciones territoriales: profesionales asignados, momentos de intervención, municipios, evidencias y revisión central. El administrador puede crear varias entidades clientes sin mezclar su información.", "Esa especialización reduce la cantidad de piezas que hay que diseñar para reproducir un flujo de gobernanza institucional."]},
+      {"title": "Cómo comparar sin sesgos", "paragraphs": ["Construya el mismo formulario en ambas opciones y mida el proceso completo. Incluya alta de usuarios, trabajo offline, carga de fotografías, cambio de formulario y revisión por un perfil diferente."], "bullets": ["Número y tamaño de archivos por visita.", "Asignación individual y visibilidad de respuestas.", "Integraciones imprescindibles fuera de la plataforma.", "Soporte y capacitación en español."]}
+    ],
+    "comparison": [
+      {"label": "Alcance", "controlG": "Plataforma institucional especializada", "alternative": "Constructor general de formularios"},
+      {"label": "Offline", "controlG": "Android con cola de sincronización", "alternative": "iOS y Android con formularios seleccionados"},
+      {"label": "Integraciones", "controlG": "Backend y flujo propios", "alternative": "Amplio catálogo de integraciones"},
+      {"label": "Roles", "controlG": "Cuatro perfiles y entidades separadas", "alternative": "Usuarios, equipos y formularios asignados"},
+      {"label": "Mejor ajuste", "controlG": "Programas territoriales", "alternative": "Procesos empresariales variados"}
+    ],
+    "verdict": "Jotform es atractivo cuando se necesitan muchos tipos de formularios e integraciones. Control G gana relevancia cuando el proyecto requiere una estructura institucional específica y seguimiento territorial integrado.",
+    "faqs": [
+      {"question": "¿Jotform trabaja sin internet?", "answer": "Sí. Jotform Mobile Forms permite seleccionar formularios offline y sincroniza las respuestas al reconectar."},
+      {"question": "¿Jotform captura GPS y firmas?", "answer": "Sí. Su documentación incluye GPS, cámara, firma electrónica y otros campos móviles."},
+      {"question": "¿Qué aporta Control G?", "answer": "Añade un modelo específico de entidades, roles, asignaciones, caracterización y revisión de respuestas."}
+    ],
+    "sources": [
+      {"title": "Jotform Mobile Forms FAQ", "publisher": "Jotform", "url": "https://www.jotform.com/products/mobile-forms/faq/"},
+      {"title": "Offline Forms", "publisher": "Jotform", "url": "https://www.jotform.com/features/offline-forms/"}
+    ]
+  },
+  {
+    "slug": "control-g-vs-fulcrum",
+    "title": "Control G vs Fulcrum: captura offline y GIS en campo",
+    "description": "Compare Control G y Fulcrum para datos offline, mapas, inspecciones, activos, caracterización social y gestión de equipos territoriales.",
+    "excerpt": "Fulcrum se especializa en GIS e inspecciones de activos; Control G en caracterización social y coordinación institucional de profesionales.",
+    "category": "Comparativas",
+    "country": "Latinoamérica",
+    "publishedAt": "2026-08-24",
+    "updatedAt": "2026-08-24",
+    "readingMinutes": 8,
+    "keywords": ["Control G vs Fulcrum", "alternativa Fulcrum", "GIS offline", "software inspecciones campo"],
+    "whatsappMessage": "Hola, leí Control G vs Fulcrum. Quiero comparar captura offline para nuestro trabajo territorial.",
+    "intro": ["Fulcrum y Control G recolectan datos offline, pero sus dominios son distintos. Fulcrum está diseñado alrededor de operaciones GIS, mapas, activos e inspecciones. Control G se concentra en personas, hogares, beneficiarios, formularios por momentos y gestión institucional.", "Definir correctamente el objeto principal —activo geográfico o sujeto de caracterización— evita comprar una plataforma sobredimensionada o insuficiente."],
+    "sections": [
+      {"title": "La propuesta GIS de Fulcrum", "paragraphs": ["Fulcrum declara soporte completo para captura offline y sincronización posterior. Sus materiales destacan formularios móviles, mapas y capas de referencia sin conexión, validación y conexión con sistemas GIS.", "Es una opción fuerte para infraestructura, telecomunicaciones, servicios públicos, inspecciones y equipos que deben dibujar o consultar geometrías."]},
+      {"title": "La propuesta social de Control G", "paragraphs": ["Control G utiliza GPS como evidencia dentro de un registro, pero organiza la operación alrededor de entidades, profesionales, familias, respuestas y actividades. La revisión administrativa y la asignación de formularios están incorporadas.", "Ese modelo puede adaptarse mejor a secretarías sociales, operadores de atención, jornadas comunitarias o caracterización de grupos de valor."]},
+      {"title": "La prueba del objeto principal", "paragraphs": ["Si la pregunta cotidiana es dónde está el activo, cuál es su geometría y qué capa debe consultar el técnico, Fulcrum merece prioridad. Si la pregunta es quién fue atendido, qué instrumento corresponde y qué evidencia debe revisar el coordinador, pruebe Control G."], "bullets": ["Complejidad de mapas offline.", "Necesidad de líneas y polígonos.", "Seguimiento de personas frente a activos.", "Roles de revisión social o técnica."]}
+    ],
+    "comparison": [
+      {"label": "Objeto principal", "controlG": "Personas, hogares y actividades", "alternative": "Activos, lugares e inspecciones"},
+      {"label": "Mapas offline", "controlG": "GPS asociado al formulario", "alternative": "Capas y mapas GIS especializados"},
+      {"label": "Offline", "controlG": "Respuestas y evidencias en Android", "alternative": "Datos, formularios y referencias geográficas"},
+      {"label": "Revisión", "controlG": "Coordinación y apoyo administrativo", "alternative": "Flujos de calidad de operaciones de campo"},
+      {"label": "Sector", "controlG": "Gobierno social y programas", "alternative": "Infraestructura, activos y servicios"}
+    ],
+    "verdict": "Fulcrum sobresale en proyectos GIS y activos. Control G es más adecuado cuando la geografía acompaña una caracterización humana o un programa social y la entidad necesita roles y momentos de intervención.",
+    "faqs": [
+      {"question": "¿Fulcrum funciona offline?", "answer": "Sí. Su ayuda oficial indica que permite recolectar sin señal y sincronizar cuando existe conexión."},
+      {"question": "¿Fulcrum ofrece mapas offline?", "answer": "Sí. Sus materiales describen mapas, capas y referencias disponibles para equipos desconectados."},
+      {"question": "¿Control G maneja activos GIS?", "answer": "No es su especialidad principal. Control G está orientado a formularios institucionales y caracterización social o territorial."}
+    ],
+    "sources": [
+      {"title": "Can I still collect data without Internet?", "publisher": "Fulcrum", "url": "https://help.fulcrumapp.com/en/articles/76979-can-i-still-collect-data-without-a-connection-to-the-internet"},
+      {"title": "Offline GIS built for the field", "publisher": "Fulcrum", "url": "https://www.fulcrumapp.com/wp-content/uploads/assets/Offline-GIS-built-for-the-field-data-sheet-compressed.pdf"}
+    ]
+  },
+  {
+    "slug": "control-g-vs-typeform",
+    "title": "Control G vs Typeform: formularios online u offline",
+    "description": "Compare Control G y Typeform para formularios, experiencia de respuesta, encuestas sin internet y operaciones de campo.",
+    "excerpt": "Typeform ofrece una experiencia online conversacional; Control G está diseñado para equipos que deben continuar trabajando cuando desaparece la señal.",
+    "category": "Comparativas",
+    "country": "Latinoamérica",
+    "publishedAt": "2026-08-24",
+    "updatedAt": "2026-08-24",
+    "readingMinutes": 7,
+    "keywords": ["Control G vs Typeform", "Typeform offline", "alternativa Typeform sin internet", "formularios offline"],
+    "whatsappMessage": "Hola, leí Control G vs Typeform. Necesito formularios que funcionen sin internet.",
+    "intro": ["Typeform y Control G resuelven contextos diferentes. Typeform se destaca por formularios online con una presentación conversacional. Control G prioriza continuidad offline, evidencias, asignaciones y control de equipos en campo.", "La documentación oficial de Typeform indica que no tiene modo offline: se requiere internet para cargar y enviar el formulario. Esa diferencia es decisiva en zonas rurales o conectividad inestable."],
+    "sections": [
+      {"title": "Cuándo elegir una experiencia online", "paragraphs": ["Para campañas digitales, registros, calificación de prospectos o encuestas autoadministradas con buena conectividad, Typeform puede ofrecer una experiencia atractiva y rápida de publicar.", "Si una persona pierde conexión después de comenzar, Typeform intenta enviar cuando vuelve la red mientras la pestaña permanece abierta; no equivale a una aplicación de campo con cola persistente."]},
+      {"title": "Cuándo el offline es un requisito", "paragraphs": ["Control G guarda borradores y respuestas en el dispositivo, permite capturar fotografía, firma y ubicación, y sincroniza después. El profesional trabaja con una cuenta y formularios asignados.", "Esto cambia el diseño del operativo: la entidad puede enviar brigadas a veredas sin depender de que cada entrevista tenga señal."]},
+      {"title": "Decidir por contexto", "paragraphs": ["No use la estética como único criterio. Pruebe el peor escenario de red. Si el proceso no puede tolerar perder o aplazar una visita, la capacidad offline debe considerarse un requisito de arquitectura, no una función opcional."], "bullets": ["Lugar donde responderá la persona.", "Necesidad de evidencias del dispositivo.", "Persistencia después de cerrar la aplicación.", "Asignación y control del encuestador."]}
+    ],
+    "comparison": [
+      {"label": "Conectividad", "controlG": "Captura offline persistente", "alternative": "Requiere conexión para cargar y enviar"},
+      {"label": "Experiencia", "controlG": "Aplicación de campo", "alternative": "Formulario online conversacional"},
+      {"label": "Evidencias", "controlG": "Foto, firma y GPS", "alternative": "Campos y cargas dentro del formulario online"},
+      {"label": "Usuarios", "controlG": "Roles y profesionales asignados", "alternative": "Creadores, equipos y participantes por enlace"},
+      {"label": "Mejor ajuste", "controlG": "Operativos territoriales", "alternative": "Marketing, registros y feedback online"}
+    ],
+    "verdict": "Typeform es apropiado cuando la audiencia está conectada y la experiencia online es prioritaria. Para visitas en terreno donde cerrar la aplicación o perder señal no puede poner en riesgo el registro, Control G es una alternativa offline-first.",
+    "faqs": [
+      {"question": "¿Typeform funciona sin internet?", "answer": "No. Su centro de ayuda indica que necesita conexión para cargar el formulario y enviar respuestas."},
+      {"question": "¿Qué ocurre si se cae internet en Typeform?", "answer": "Puede seguir intentando el envío mientras la pestaña permanece abierta, pero no ofrece un modo offline completo."},
+      {"question": "¿Control G sirve para formularios públicos por enlace?", "answer": "Su enfoque actual son usuarios institucionales y profesionales asignados, no campañas públicas anónimas."}
+    ],
+    "sources": [
+      {"title": "Can I use forms without an internet connection?", "publisher": "Typeform", "url": "https://help.typeform.com/hc/en-us/articles/360039114711-Can-I-use-forms-without-an-internet-connection"}
+    ]
+  },
+  {
+    "slug": "software-caracterizacion-social-colombia",
+    "title": "Software de caracterización social en Colombia: guía 2026",
+    "description": "Guía para elegir software de caracterización social en Colombia con formularios offline, enfoque territorial, evidencias y control de equipos.",
+    "excerpt": "Una metodología práctica para alcaldías, gobernaciones y operadores que deben caracterizar hogares o beneficiarios con conectividad desigual.",
+    "category": "Caracterización social",
+    "country": "Colombia",
+    "publishedAt": "2026-08-24",
+    "updatedAt": "2026-08-24",
+    "readingMinutes": 11,
+    "keywords": ["software caracterización social Colombia", "caracterización socioeconómica", "encuestas alcaldías", "app caracterización offline"],
+    "whatsappMessage": "Hola, leí la guía de software de caracterización social en Colombia. Quiero revisar un proyecto para nuestra entidad.",
+    "intro": ["Una caracterización social no es simplemente una encuesta digital. Es un proceso para reconocer hogares, grupos de valor o beneficiarios, aplicar instrumentos consistentes, conservar evidencia y convertir los hallazgos en decisiones de programa.", "En Colombia, la cobertura municipal incluye cabeceras, centros poblados, veredas y áreas rurales dispersas. Por eso la continuidad sin internet y la trazabilidad del profesional deben evaluarse desde el diseño, no cuando la brigada ya está en terreno."],
+    "sections": [
+      {"title": "Requisitos funcionales mínimos", "paragraphs": ["El sistema debe permitir preguntas condicionales, grupos familiares repetitivos, selección territorial, fotografías, firma, GPS y validaciones. También debe distinguir borrador, respuesta completa, pendiente y sincronizada.", "La configuración por entidad evita que formularios, usuarios y respuestas de proyectos diferentes se mezclen."], "bullets": ["Constructor de formularios comprensible para coordinación.", "Asignación por profesional o equipo.", "Captura offline verificable.", "Revisión y observaciones después de sincronizar.", "Exportación y trazabilidad por territorio."]},
+      {"title": "Diseñar el flujo de campo", "paragraphs": ["Antes de publicar, convierta el instrumento en un mapa de decisiones: qué preguntas son obligatorias, qué evidencia corresponde y qué situaciones detienen el formulario. Pruebe casos frecuentes y excepciones.", "Prepare los dispositivos con conexión, confirme usuarios y formularios asignados, y después active modo avión durante la prueba. Complete varias visitas, cierre la aplicación y verifique que los borradores sobrevivan."]},
+      {"title": "Gobernanza y calidad", "paragraphs": ["Separe funciones. El profesional captura, el apoyo revisa consistencia, el coordinador administra el operativo y el administrador controla entidades. Esta distribución reduce modificaciones accidentales y facilita auditoría.", "Defina un protocolo para registros rechazados, duplicados, fotografías incompletas y dispositivos perdidos. La tecnología ayuda, pero la calidad depende también de capacitación y supervisión."]},
+      {"title": "Cómo comparar proveedores", "paragraphs": ["Solicite una demostración con su formulario real. Una presentación genérica no revela cómo se comportan grupos familiares, fotografías grandes o reglas complejas. Exija una prueba offline y una sincronización ante su equipo.", "Compare costo total: configuración, soporte, capacitación, infraestructura, administración de dispositivos y exportación. El precio de una licencia aislada no representa todo el esfuerzo del proyecto."]}
+    ],
+    "comparison": [],
+    "verdict": "Para caracterización social en Colombia, la mejor plataforma es la que mantiene continuidad offline, asigna responsabilidades y entrega información revisable. Control G fue diseñado alrededor de ese flujo institucional.",
+    "faqs": [
+      {"question": "¿Qué debe incluir una caracterización social digital?", "answer": "Variables del instrumento, identificación territorial, validaciones, trazabilidad, evidencias autorizadas y un flujo de revisión y consolidación."},
+      {"question": "¿Se necesita internet durante cada visita?", "answer": "No si la plataforma es offline-first. Los usuarios y formularios deben prepararse antes; las respuestas se sincronizan después."},
+      {"question": "¿Sirve para diferentes entidades?", "answer": "Control G separa organizaciones, formularios, usuarios y datos para configurar proyectos de distintas entidades."}
+    ],
+    "sources": []
+  },
+  {
+    "slug": "encuestas-offline-zonas-rurales",
+    "title": "Encuestas offline en zonas rurales: guía operativa",
+    "description": "Aprenda a planear encuestas offline en zonas rurales, preparar dispositivos, proteger borradores y sincronizar evidencias sin perder datos.",
+    "excerpt": "Una guía de campo para trabajar en veredas, comunidades remotas y territorios donde la señal aparece de forma intermitente.",
+    "category": "Trabajo offline",
+    "country": "Latinoamérica",
+    "publishedAt": "2026-08-24",
+    "updatedAt": "2026-08-24",
+    "readingMinutes": 10,
+    "keywords": ["encuestas offline zonas rurales", "recolección datos sin internet", "formularios rurales", "sincronización encuestas"],
+    "whatsappMessage": "Hola, leí la guía de encuestas offline en zonas rurales. Quiero preparar un operativo con Control G.",
+    "intro": ["Offline no significa únicamente que el formulario abra sin señal. Una operación confiable debe conservar borradores, archivos y estado de sincronización aunque la aplicación se cierre, el teléfono cambie de red o una fotografía tarde en cargar.", "El objetivo es que el profesional sepa qué está guardado, qué falta por enviar y qué debe hacer antes de terminar la jornada."],
+    "sections": [
+      {"title": "Antes de salir al territorio", "paragraphs": ["Actualice la aplicación, inicie sesión, descargue asignaciones y abra cada formulario mientras hay conexión. Revise batería, almacenamiento, permisos de cámara y ubicación.", "Entregue una lista corta de comprobación. Un dispositivo preparado de forma inconsistente puede generar más incidentes que la ausencia de red."], "bullets": ["Usuario correcto y entidad correcta.", "Formularios y versiones actualizadas.", "Espacio para fotografías y video.", "Fecha, hora y ubicación activas.", "Cargador portátil y protección física."]},
+      {"title": "Durante la captura", "paragraphs": ["Guarde borradores en formularios extensos y no marque una visita como finalizada hasta superar las validaciones. Si se captura una familia o activo repetido, use identificadores definidos por el proyecto.", "La aplicación debe mostrar que trabaja offline y contar registros pendientes. Evite depender de mensajes verbales como 'creo que ya se guardó'."]},
+      {"title": "Sincronización por etapas", "paragraphs": ["Cuando vuelve la conexión, las evidencias pesadas deben enviarse antes de cerrar la respuesta central. Si falla una fotografía, el registro debe permanecer pendiente y mostrar el error.", "Sincronice en una red estable al final de la jornada. Verifique el conteo del dispositivo contra el panel del coordinador antes de borrar archivos o entregar el equipo."]},
+      {"title": "Plan de contingencia", "paragraphs": ["Documente qué hacer ante pérdida del teléfono, daño, credenciales bloqueadas o cola que no avanza. El protocolo debe incluir escalamiento, copia de evidencia diagnóstica y prohibición de reinstalar sin autorización cuando existan respuestas pendientes.", "Un piloto debe durar al menos una jornada completa y reproducir los peores escenarios de cobertura del territorio."]}
+    ],
+    "comparison": [],
+    "verdict": "La confianza offline se demuestra con pruebas de cierre, reinicio y sincronización incompleta. Control G conserva borradores y colas locales para que el equipo pueda continuar y revisar el estado de cada envío.",
+    "faqs": [
+      {"question": "¿Cuándo debe conectarse el profesional?", "answer": "Antes del operativo para preparar su cuenta y tareas, y después cuando necesite sincronizar respuestas y recibir actualizaciones."},
+      {"question": "¿Qué pasa con las fotos sin internet?", "answer": "Se guardan localmente junto con la respuesta y se cargan cuando vuelve una conexión adecuada."},
+      {"question": "¿Se debe reinstalar si no sincroniza?", "answer": "No como primera medida. Reinstalar puede poner en riesgo datos locales; primero se debe revisar la cola y el error reportado."}
+    ],
+    "sources": []
+  },
+  {
+    "slug": "levantamiento-informacion-campo-mexico",
+    "title": "Levantamiento de información en campo en México",
+    "description": "Guía para digitalizar censos, visitas y levantamientos de información en municipios y comunidades de México con captura offline.",
+    "excerpt": "Cómo organizar formularios, brigadas, evidencias y sincronización para operativos municipales y estatales con conectividad variable.",
+    "category": "Guías por país",
+    "country": "México",
+    "publishedAt": "2026-08-24",
+    "updatedAt": "2026-08-24",
+    "readingMinutes": 9,
+    "keywords": ["levantamiento información campo México", "encuestas offline México", "software censos municipales", "app brigadas campo"],
+    "whatsappMessage": "Hola, leí la guía para levantamiento de información en México. Quiero evaluar Control G para un operativo.",
+    "intro": ["Los operativos en municipios y comunidades mexicanas pueden combinar zonas urbanas, caminos rurales y localidades con cobertura irregular. Digitalizar el levantamiento requiere algo más que convertir papel en preguntas: hay que distribuir trabajo, verificar evidencia y consolidar información sin depender de señal permanente.", "Control G puede configurarse para organizaciones mexicanas ajustando territorios, instrumentos, perfiles y términos del proyecto."],
+    "sections": [
+      {"title": "Estructurar el territorio y las brigadas", "paragraphs": ["Defina estados, municipios, localidades o polígonos operativos según el alcance. Asigne responsables y evite que todos los formularios aparezcan a todos los profesionales.", "Un tablero útil debe responder cuántas visitas se asignaron, completaron, sincronizaron y requieren revisión por cada equipo o territorio."]},
+      {"title": "Adaptar el instrumento", "paragraphs": ["Utilice lenguaje local y opciones consistentes con el catálogo territorial del proyecto. Separe datos obligatorios de evidencias condicionales para no aumentar innecesariamente el tiempo de entrevista.", "Las pruebas deben incluir nombres, direcciones y estructuras familiares diversas, además de zonas horarias cuando el operativo cubra varias regiones."]},
+      {"title": "Operar sin señal", "paragraphs": ["Prepare cada tableta con la cuenta correcta y los formularios actualizados. Durante el piloto, active modo avión, capture fotografías, cierre la aplicación y vuelva a abrirla.", "Al recuperar internet, sincronice en red estable y compare totales locales con el panel central antes de reasignar el dispositivo."]},
+      {"title": "Escalar sin perder control", "paragraphs": ["Empiece con una brigada, corrija el formulario y documente la capacitación. Solo entonces incorpore más municipios. Los cambios de versión durante el operativo deben aprobarse y comunicarse.", "Para compras o contratos, defina niveles de soporte, respaldo, exportación y propiedad de la información desde los términos de referencia."]}
+    ],
+    "comparison": [],
+    "verdict": "En México, una plataforma de campo debe adaptarse a la estructura territorial del proyecto y mantener el control aun sin señal. Control G ofrece configuración multi-entidad, asignaciones y captura offline para ese escenario.",
+    "faqs": [
+      {"question": "¿Control G puede configurarse para México?", "answer": "Sí. Los territorios, formularios, roles y términos pueden ajustarse al proyecto y a la entidad contratante."},
+      {"question": "¿Funciona en localidades sin internet?", "answer": "Sí, después de preparar las tareas. Las respuestas se conservan en el dispositivo y se sincronizan posteriormente."},
+      {"question": "¿Se pueden separar varios municipios?", "answer": "Sí. La operación puede organizar usuarios, asignaciones y seguimiento según la estructura territorial definida."}
+    ],
+    "sources": []
+  },
+  {
+    "slug": "caracterizacion-social-rural-peru",
+    "title": "Caracterización social rural en Perú con formularios offline",
+    "description": "Cómo planear caracterizaciones rurales en Perú con formularios offline, evidencias, equipos territoriales y sincronización segura.",
+    "excerpt": "Criterios prácticos para intervenciones en distritos y comunidades donde la geografía y la conectividad condicionan el trabajo de campo.",
+    "category": "Guías por país",
+    "country": "Perú",
+    "publishedAt": "2026-08-24",
+    "updatedAt": "2026-08-24",
+    "readingMinutes": 9,
+    "keywords": ["caracterización social Perú", "encuestas offline Perú", "formularios comunidades rurales", "recolección datos campo Perú"],
+    "whatsappMessage": "Hola, leí la guía de caracterización rural en Perú. Quiero evaluar Control G para nuestro proyecto.",
+    "intro": ["En Perú, una intervención puede atravesar costa, sierra o selva, con distancias y conectividad muy diferentes. El sistema de captura debe acompañar esas condiciones sin imponer que cada entrevista termine conectada.", "La configuración del formulario debe respetar la metodología de la organización, los idiomas requeridos y la estructura territorial seleccionada para el análisis."],
+    "sections": [
+      {"title": "Planificar por rutas y ventanas de conexión", "paragraphs": ["Organice las asignaciones según distritos, centros poblados, comunidades o rutas del proyecto. Identifique puntos donde el equipo podrá sincronizar y cargar dispositivos.", "La cola offline debe soportar varios días si la brigada no regresa diariamente a una zona conectada."]},
+      {"title": "Formularios comprensibles", "paragraphs": ["Reduzca preguntas ambiguas, separe módulos y utilice lógica condicional. Cuando se requieran distintos idiomas, valide traducción y comprensión con personas del territorio.", "Las evidencias deben solicitarse solo cuando aportan al objetivo y existe autorización para capturarlas."]},
+      {"title": "Supervisión remota y local", "paragraphs": ["El coordinador necesita distinguir registros pendientes en dispositivo de registros recibidos. El apoyo administrativo revisa consistencia y comunica observaciones sin alterar el trabajo de otros perfiles.", "Durante la capacitación, simule un error de sincronización y una corrección. El equipo debe saber que el botón de sincronizar no reemplaza la verificación del estado final."]},
+      {"title": "Adaptación de Control G", "paragraphs": ["Control G permite crear una entidad para el proyecto, formularios por momentos, profesionales asignados y una bandeja de respuestas. La captura Android continúa offline y sincroniza cuando vuelve la conectividad.", "Antes de una implementación nacional o regional, conviene ejecutar un piloto con el territorio más exigente, no únicamente en la capital."]}
+    ],
+    "comparison": [],
+    "verdict": "Una caracterización rural peruana necesita autonomía del dispositivo y disciplina operativa. Control G puede configurarse para ese flujo sin depender de conexión continua.",
+    "faqs": [
+      {"question": "¿Se pueden trabajar varios días offline?", "answer": "Sí, condicionado al almacenamiento y preparación del dispositivo. Debe definirse una rutina periódica de sincronización y control."},
+      {"question": "¿Control G admite formularios por momentos?", "answer": "Sí. La entidad puede configurar instrumentos diferentes para etapas o intervenciones del programa."},
+      {"question": "¿Puede adaptarse a territorios peruanos?", "answer": "Sí. La estructura territorial se configura según las necesidades del proyecto."}
+    ],
+    "sources": []
+  },
+  {
+    "slug": "censos-territoriales-offline-ecuador",
+    "title": "Censos y diagnósticos territoriales offline en Ecuador",
+    "description": "Guía para censos, diagnósticos y visitas territoriales en Ecuador con formularios sin internet, GPS y evidencias.",
+    "excerpt": "Una arquitectura práctica para gobiernos locales, fundaciones y operadores que recolectan información en comunidades urbanas o rurales.",
+    "category": "Guías por país",
+    "country": "Ecuador",
+    "publishedAt": "2026-08-24",
+    "updatedAt": "2026-08-24",
+    "readingMinutes": 8,
+    "keywords": ["censos offline Ecuador", "diagnóstico territorial Ecuador", "formularios sin internet", "software GAD encuestas"],
+    "whatsappMessage": "Hola, leí la guía de censos territoriales en Ecuador. Quiero conocer Control G para nuestra organización.",
+    "intro": ["Los censos comunitarios, diagnósticos de servicios y visitas sociales necesitan registros consistentes aun cuando la brigada se desplaza por sectores con señal irregular. Una aplicación offline evita regresar al papel, pero debe integrarse con revisión y seguimiento.", "Control G puede organizar entidades, equipos y territorios de acuerdo con el proyecto de un gobierno local, operador o fundación."],
+    "sections": [
+      {"title": "Definir la unidad de observación", "paragraphs": ["Antes de construir el formulario, decida si cada respuesta representa una persona, hogar, predio, servicio, organización o visita. Esa definición determina identificadores, grupos repetitivos y reglas contra duplicados.", "La ubicación GPS es una evidencia complementaria y no debe sustituir los catálogos territoriales definidos por el proyecto."]},
+      {"title": "Separar captura y revisión", "paragraphs": ["El encuestador debe concentrarse en completar la visita. Un perfil de apoyo puede revisar fotografías, campos faltantes o inconsistencias cuando los datos llegan al servidor.", "Las observaciones deben conservar trazabilidad y evitar que varios usuarios modifiquen el mismo registro sin coordinación."]},
+      {"title": "Sincronizar de forma verificable", "paragraphs": ["Las fotografías y firmas pueden tardar más que el texto. El sistema debe mantener la respuesta pendiente hasta que sus evidencias se hayan cargado o mostrar claramente cualquier error.", "Compare conteos por profesional, fecha y sector después de cada jornada. No borre datos locales por rutina si todavía existen pendientes."]},
+      {"title": "Preparar un piloto útil", "paragraphs": ["Seleccione una zona con dificultades reales de cobertura, un formulario extenso y varios profesionales. Pruebe batería, almacenamiento, permisos y capacitación.", "Ajuste el instrumento antes de escalar. Cambios frecuentes durante la recolección pueden fragmentar versiones y afectar comparabilidad."]}
+    ],
+    "comparison": [],
+    "verdict": "Para censos y diagnósticos en Ecuador, combine un formulario bien definido con roles, control de evidencias y sincronización observable. Control G integra esos componentes.",
+    "faqs": [
+      {"question": "¿Control G sirve para gobiernos locales de Ecuador?", "answer": "Puede configurarse para gobiernos, operadores o fundaciones ajustando territorio, formularios y usuarios."},
+      {"question": "¿Admite GPS y fotografías offline?", "answer": "Sí. Se capturan en el dispositivo y se cargan junto con la respuesta cuando hay conexión."},
+      {"question": "¿Cómo evitar respuestas duplicadas?", "answer": "Defina identificadores y reglas del proyecto, capacite al equipo y revise los registros centralizados por profesional y territorio."}
+    ],
+    "sources": []
+  },
+  {
+    "slug": "encuestas-terreno-chile-argentina",
+    "title": "Encuestas en terreno en Chile y Argentina: modo offline",
+    "description": "Criterios para ejecutar encuestas de terreno en Chile y Argentina con formularios offline, equipos móviles y sincronización posterior.",
+    "excerpt": "Cómo preparar levantamientos extensos desde áreas metropolitanas hasta localidades con cobertura intermitente y largas distancias.",
+    "category": "Guías por país",
+    "country": "Chile y Argentina",
+    "publishedAt": "2026-08-24",
+    "updatedAt": "2026-08-24",
+    "readingMinutes": 9,
+    "keywords": ["encuestas offline Chile", "encuestas terreno Argentina", "software relevamiento campo", "formularios sin conexión"],
+    "whatsappMessage": "Hola, leí la guía de encuestas en terreno para Chile y Argentina. Quiero evaluar Control G.",
+    "intro": ["Chile y Argentina combinan grandes áreas urbanas con zonas australes, cordilleranas o rurales donde la conectividad puede cambiar durante una misma ruta. Un operativo móvil debe ser estable tanto con señal como sin ella.", "El lenguaje también importa: encuesta, relevamiento, catastro, visita o caracterización pueden describir procesos parecidos, pero el formulario y los reportes deben utilizar la terminología de la organización."],
+    "sections": [
+      {"title": "Diseñar para distancias largas", "paragraphs": ["Calcule cuántos días puede permanecer una brigada sin sincronizar y cuánto espacio ocuparán las evidencias. Las fotografías deben comprimirse sin perder utilidad y la batería debe cubrir la jornada.", "Defina puntos de conexión y responsables de verificar que el conteo recibido coincida con el trabajo reportado."]},
+      {"title": "Adaptar territorios y vocabulario", "paragraphs": ["Configure provincias, regiones, comunas, departamentos, municipios o localidades según el país y el proyecto. Evite mezclar catálogos genéricos si el análisis requiere códigos oficiales.", "Las etiquetas del formulario deben ser comprensibles para encuestadores y participantes. Una revisión local reduce errores de interpretación."]},
+      {"title": "Controlar versiones", "paragraphs": ["Pruebe el cuestionario antes de descargarlo en todos los equipos. Si se publica una nueva versión, documente desde qué fecha se usa y asegure que cada dispositivo la reciba antes de continuar.", "No cambie opciones que afecten comparabilidad sin un plan de migración y comunicación."]},
+      {"title": "Plataforma multi-país", "paragraphs": ["Control G puede crear entidades separadas para organizaciones o contratos y configurar sus formularios y territorios. La aplicación Android conserva las respuestas offline y el panel web centraliza seguimiento y revisión.", "Un piloto por país permite ajustar terminología, soporte y operación antes de una expansión regional."]}
+    ],
+    "comparison": [],
+    "verdict": "Para Chile y Argentina, la capacidad offline debe acompañarse de catálogos territoriales correctos, control de versiones y planificación de rutas. Control G ofrece una base configurable para hacerlo.",
+    "faqs": [
+      {"question": "¿Control G puede utilizar términos locales?", "answer": "Sí. Formularios, campos y estructuras territoriales se configuran según el proyecto."},
+      {"question": "¿Funciona con varios días sin conexión?", "answer": "Puede conservar respuestas mientras haya capacidad en el dispositivo; el operativo debe establecer ventanas de sincronización y respaldo."},
+      {"question": "¿Una misma plataforma puede separar países?", "answer": "Sí. Las entidades y sus datos se aíslan y pueden configurarse con instrumentos distintos."}
+    ],
+    "sources": []
+  },
+  {
+    "slug": "elegir-software-entidades-publicas-latinoamerica",
+    "title": "Cómo elegir software de campo para gobierno en Latinoamérica",
+    "description": "Lista de criterios para seleccionar software de campo para alcaldías, municipios, gobernaciones y entidades públicas de Latinoamérica.",
+    "excerpt": "Una matriz de evaluación para comparar plataformas offline sin depender de demostraciones comerciales o listas genéricas de funciones.",
+    "category": "Transformación pública",
+    "country": "Latinoamérica",
+    "publishedAt": "2026-08-24",
+    "updatedAt": "2026-08-24",
+    "readingMinutes": 12,
+    "keywords": ["software entidades públicas Latinoamérica", "software alcaldías", "app trabajo de campo gobierno", "plataforma caracterización"],
+    "whatsappMessage": "Hola, leí la guía para elegir software de campo para gobierno. Quiero una demostración con nuestro caso.",
+    "intro": ["La compra de software para trabajo territorial afecta la calidad de la información, el tiempo de los profesionales y la capacidad de supervisión. Comparar únicamente número de campos o precio por usuario deja fuera riesgos críticos.", "Una evaluación seria debe reproducir el proceso completo: diseño, publicación, asignación, captura sin internet, sincronización, revisión, exportación y soporte."],
+    "sections": [
+      {"title": "1. Ajuste al proceso institucional", "paragraphs": ["La plataforma debe reflejar quién administra, coordina, revisa y captura. Pregunte si los permisos están incorporados o deberán construirse con configuraciones adicionales.", "En operaciones multi-entidad, confirme aislamiento de datos, formularios y usuarios. Una vista global no debe permitir accesos indebidos entre clientes."]},
+      {"title": "2. Offline demostrado", "paragraphs": ["Solicite activar modo avión durante la demostración. Complete un borrador, cierre la aplicación, reinicie el teléfono y termine el formulario. Luego sincronice con una conexión inestable.", "El sistema debe distinguir entre guardado local, carga de evidencia y confirmación del servidor. Una pantalla que simplemente dice 'enviado' no basta."]},
+      {"title": "3. Datos, seguridad y salida", "paragraphs": ["Defina dónde se alojan los datos, cómo se respaldan, quién administra credenciales y cómo se exportará la información al finalizar el contrato.", "Revise tratamiento de fotografías, firmas, geolocalización y datos sensibles con el equipo jurídico y de seguridad de la entidad."]},
+      {"title": "4. Soporte y sostenibilidad", "paragraphs": ["Calcule capacitación, preparación de dispositivos, actualización de formularios y atención de incidentes. Una herramienta de bajo costo puede requerir un equipo técnico permanente.", "Incluya indicadores de servicio, documentación, reversibilidad y continuidad operativa en el contrato."]},
+      {"title": "5. Matriz de piloto", "paragraphs": ["Asigne puntajes ponderados a criterios verificables y use el mismo formulario para todos los proveedores. Involucre a profesionales de campo, coordinación, tecnología y protección de datos."], "bullets": ["Captura y recuperación offline: 25%.", "Ajuste funcional y roles: 20%.", "Seguridad y aislamiento: 15%.", "Experiencia de campo: 15%.", "Interoperabilidad y exportación: 10%.", "Soporte, costo total y sostenibilidad: 15%."]}
+    ],
+    "comparison": [],
+    "verdict": "La mejor plataforma no es la que promete más funciones, sino la que supera un piloto con el instrumento, el territorio y los usuarios reales de la entidad. Control G ofrece una demostración basada en ese enfoque.",
+    "faqs": [
+      {"question": "¿Qué es offline-first?", "answer": "Es un diseño que trata la ausencia de red como condición normal: guarda localmente y sincroniza de forma controlada después."},
+      {"question": "¿Qué debe incluir una prueba de concepto?", "answer": "El formulario más complejo, usuarios de distintos roles, evidencias, modo avión, cierre de la aplicación, sincronización y revisión."},
+      {"question": "¿Cómo comparar costo total?", "answer": "Sume licencias, infraestructura, configuración, soporte, capacitación, dispositivos, integraciones y mantenimiento."}
+    ],
+    "sources": []
+  }
+]
