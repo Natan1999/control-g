@@ -13,6 +13,7 @@ import {
 } from '@/lib/auth'
 import { Network } from '@capacitor/network'
 import { updateLocalCache } from '@/lib/sync-engine'
+import { loadMapDataset } from '@/lib/gis-service'
 
 function profileToUser(profile: UserProfile, email: string): User {
   return {
@@ -69,7 +70,10 @@ export const useAuthStore = create<AuthState>()(
           // Complete the first offline package while the authenticated
           // connection is still available. Previous cache remains on errors.
           if (user.entityId) {
-            await updateLocalCache(user.entityId, user.id, user.role)
+            await Promise.allSettled([
+              updateLocalCache(user.entityId, user.id, user.role),
+              loadMapDataset(user),
+            ])
           }
         } catch (err) {
           const msg = err instanceof Error ? err.message : 'Error al iniciar sesión'
@@ -107,6 +111,12 @@ export const useAuthStore = create<AuthState>()(
           if (authUser?.profile) {
             const user = profileToUser(authUser.profile, authUser.email)
             set({ user, profileId: authUser.profile.$id, isAuthenticated: true, isLoading: false })
+            if (user.entityId) {
+              void Promise.allSettled([
+                updateLocalCache(user.entityId, user.id, user.role),
+                loadMapDataset(user),
+              ])
+            }
           } else {
             set({ user: null, profileId: null, isAuthenticated: false, isLoading: false })
           }

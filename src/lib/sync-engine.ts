@@ -2,6 +2,9 @@ import { Network } from '@capacitor/network'
 import { useSyncStore } from '@/stores/syncStore'
 import { databases, storage, DATABASE_ID, COLLECTION_IDS, BUCKET_IDS, ID, Query, BackendError } from './backend'
 import { localDB, type LocalMedia } from './dexie-db'
+import { isOnline } from './network'
+
+export { isOnline } from './network'
 
 let syncInterval: ReturnType<typeof setInterval> | null = null
 let networkListener: Awaited<ReturnType<typeof Network.addListener>> | null = null
@@ -13,15 +16,6 @@ export interface SyncResult {
   pendingCount: number
   synced: boolean
   errors: string[]
-}
-
-export async function isOnline(): Promise<boolean> {
-  try {
-    const status = await Network.getStatus()
-    return status.connected
-  } catch {
-    return typeof navigator === 'undefined' ? false : navigator.onLine
-  }
 }
 
 async function pendingCount() {

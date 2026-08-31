@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Building2, Users, MapPin, FileText,
   Settings, ChevronLeft, ChevronRight, LogOut, Bell,
   ClipboardList, BarChart2, MessageSquare, UserCheck,
-  AlertCircle, Menu, X, Newspaper,
+  AlertCircle, Menu, X, Newspaper, Map,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { SyncIndicator } from '@/components/shared'
@@ -24,6 +24,7 @@ const navItems: Record<UserRole, NavItem[]> = {
     { path: '/admin/entities', label: 'Entidades',     icon: <Building2 size={18} /> },
     { path: '/admin/forms',    label: 'Formularios',   icon: <ClipboardList size={18} /> },
     { path: '/admin/responses', label: 'Respuestas',   icon: <ClipboardList size={18} /> },
+    { path: '/admin/map',       label: 'Mapa territorial', icon: <Map size={18} /> },
     { path: '/admin/blog',      label: 'Blog y SEO',   icon: <Newspaper size={18} /> },
     { path: '/admin/settings', label: 'Configuración', icon: <Settings size={18} /> },
   ],
@@ -36,6 +37,7 @@ const navItems: Record<UserRole, NavItem[]> = {
     { path: '/coord/observations',   label: 'Observaciones',  icon: <MessageSquare size={18} /> },
     { path: '/coord/forms',          label: 'Formularios',    icon: <ClipboardList size={18} /> },
     { path: '/coord/responses',      label: 'Respuestas',     icon: <FileText size={18} /> },
+    { path: '/coord/map',            label: 'Mapa territorial', icon: <Map size={18} /> },
     { path: '/coord/settings',       label: 'Configuración',  icon: <Settings size={18} /> },
   ],
   support: [
@@ -43,6 +45,7 @@ const navItems: Record<UserRole, NavItem[]> = {
     { path: '/apoyo/professionals',  label: 'Profesionales',   icon: <Users size={18} /> },
     { path: '/apoyo/review',         label: 'Revisión',        icon: <ClipboardList size={18} /> },
     { path: '/apoyo/responses',      label: 'Respuestas',      icon: <FileText size={18} /> },
+    { path: '/apoyo/map',            label: 'Mapa territorial', icon: <Map size={18} /> },
     { path: '/apoyo/observations',   label: 'Observaciones',   icon: <AlertCircle size={18} /> },
   ],
   professional: [],

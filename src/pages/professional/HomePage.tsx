@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Users, CheckCircle, TrendingUp, AlertTriangle, Clock } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Users, CheckCircle, TrendingUp, AlertTriangle, Clock, MapPinned, ChevronRight } from 'lucide-react'
 import { MobileTopBar, BottomNav } from '@/components/layout/BottomNav'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
 import { Query } from '@/lib/backend'
@@ -161,6 +162,17 @@ export default function FieldHome() {
               ))}
             </div>
           </div>
+        </div>
+
+        <div className="mx-4 mt-5">
+          <Link to="/field/map" className="flex min-h-20 items-center gap-4 bg-[#173B4C] px-4 py-3 text-white shadow-sm">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center bg-white/12"><MapPinned size={23} /></span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-black">Mapa de mis capturas</span>
+              <span className="mt-1 block text-xs leading-5 text-white/65">Consulta puntos GPS guardados y pendientes, incluso sin internet.</span>
+            </span>
+            <ChevronRight size={20} className="shrink-0 text-white/55" />
+          </Link>
         </div>
 
         {/* Observations warnings */}

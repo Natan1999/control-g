@@ -137,7 +137,8 @@ const FormResponderPage: React.FC = () => {
 
     try {
       // Automatic GPS capture for every form submission
-      let lat = 0, lng = 0
+      let lat: number | null = null
+      let lng: number | null = null
       try {
         const pos = await Geolocation.getCurrentPosition({
           enableHighAccuracy: true,

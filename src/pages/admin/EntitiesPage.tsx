@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Plus, Building2, X, ChevronDown, Search, MapPin, Calendar, Users, Mail, Hash } from 'lucide-react'
+import { Plus, Building2, X, Search, MapPin, Calendar, Users, Mail, Hash, Globe2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TopBar } from '@/components/layout/Sidebar'
 import { account, databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
 import { ID, Query } from '@/lib/backend'
 import { getDepartments, getMunicipalities, Department, Municipality } from '@/services/geographyService'
+import { countryConfig, countryName, LATAM_COUNTRIES } from '@/config/countries'
 
 interface EntityForm {
   name: string;
@@ -12,6 +13,11 @@ interface EntityForm {
   contract_number: string;
   contract_object: string;
   operator_name: string;
+  country_code: string;
+  locale: string;
+  timezone: string;
+  currency_code: string;
+  map_privacy_mode: 'exact' | 'approximate' | 'aggregate';
   department_id: string;
   department_name: string;
   period_start: string;
@@ -21,13 +27,15 @@ interface EntityForm {
   coordinator_email: string;
   coordinator_password: string;
   municipalities: { id: string; name: string }[];
+  manual_municipalities: string;
 }
 
 const EMPTY_FORM: EntityForm = {
   name: '', nit: '', contract_number: '', contract_object: '', operator_name: '',
+  country_code: 'CO', locale: 'es-CO', timezone: 'America/Bogota', currency_code: 'COP', map_privacy_mode: 'exact',
   department_id: '', department_name: '', period_start: '', period_end: '',
   families_per_municipality: 35, coordinator_name: '', coordinator_email: '',
-  coordinator_password: '', municipalities: [],
+  coordinator_password: '', municipalities: [], manual_municipalities: '',
 }
 
 const COLORS = {
@@ -89,12 +97,28 @@ export default function AdminEntitiesPage() {
   }
 
   useEffect(() => {
-    if (form.department_id) {
+    if (form.country_code === 'CO' && form.department_id) {
       loadMunicipalities(form.department_id)
       const name = departments.find(d => d.id === form.department_id)?.name || ''
       setForm(f => ({ ...f, department_name: name, municipalities: [] }))
     }
-  }, [form.department_id, departments])
+  }, [form.country_code, form.department_id, departments])
+
+  function selectCountry(countryCode: string) {
+    const country = countryConfig(countryCode)
+    setForm(current => ({
+      ...current,
+      country_code: country.code,
+      locale: country.locale,
+      timezone: country.timezone,
+      currency_code: country.currency,
+      department_id: '',
+      department_name: '',
+      municipalities: [],
+      manual_municipalities: '',
+    }))
+    setAvailableMunicipalities([])
+  }
 
   async function loadEntities() {
     try {
@@ -119,13 +143,13 @@ export default function AdminEntitiesPage() {
     }))
 
   async function handleSave() {
-    if (!form.name || !form.contract_number || !form.period_start || !form.period_end ||
+    if (!form.name || !form.contract_number || !form.department_name || !form.period_start || !form.period_end ||
         !form.coordinator_email || !form.coordinator_name || !form.coordinator_password) {
       showToast('Completa todos los campos obligatorios (*)', 'error')
       return
     }
-    if (form.coordinator_password.length < 10) {
-      showToast('La contraseña del coordinador debe tener al menos 10 caracteres', 'error')
+    if (form.coordinator_password.length < 12) {
+      showToast('La contraseña del coordinador debe tener al menos 12 caracteres', 'error')
       return
     }
 
@@ -139,6 +163,16 @@ export default function AdminEntitiesPage() {
         contract_object: form.contract_object,
         operator_name: form.operator_name,
         department: form.department_name,
+        country_code: form.country_code,
+        locale: form.locale,
+        timezone: form.timezone,
+        currency_code: form.currency_code,
+        default_map_center: countryConfig(form.country_code).mapCenter,
+        map_privacy_mode: form.map_privacy_mode,
+        regional_settings: {
+          administrative_division_label: countryConfig(form.country_code).adminLevel2Label,
+          administrative_level_1_label: countryConfig(form.country_code).adminLevel1Label,
+        },
         period_start: form.period_start,
         period_end: form.period_end,
         families_per_municipality: form.families_per_municipality,
@@ -148,13 +182,21 @@ export default function AdminEntitiesPage() {
 
       try {
         // 2. Configure its municipalities.
-        for (const mun of form.municipalities) {
+        const manualMunicipalities = form.manual_municipalities
+          .split(/[\n,;]/)
+          .map(name => name.trim())
+          .filter(Boolean)
+          .map(name => ({ id: '', name }))
+        const municipalities = form.country_code === 'CO' ? form.municipalities : manualMunicipalities
+        for (const mun of municipalities) {
           await databases.createDocument(DATABASE_ID, COLLECTION_IDS.ENTITY_MUNICIPALITIES, ID.unique(), {
             entity_id: entity.$id,
             municipality_name: mun.name,
             department: form.department_name,
+            country_code: form.country_code,
             families_target: form.families_per_municipality,
-            dane_code: mun.id,
+            dane_code: mun.id || null,
+            admin_level_2_code: mun.id || null,
           })
         }
 
@@ -255,7 +297,7 @@ export default function AdminEntitiesPage() {
                         }`}>
                           {e.status === 'active' ? 'Activo' : 'Suspendido'}
                         </span>
-                        <span className="text-xs text-slate-400">· {e.department}</span>
+                        <span className="text-xs text-slate-400">· {countryName(e.country_code)} · {e.department}</span>
                       </div>
                     </div>
                   </div>
@@ -361,18 +403,43 @@ export default function AdminEntitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Departamento (DANE)</label>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">País *</label>
                     <div className="relative">
-                      <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                      <select 
-                        value={form.department_id} 
-                        onChange={e => setForm(f => ({ ...f, department_id: e.target.value }))}
+                      <Globe2 className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                      <select
+                        value={form.country_code}
+                        onChange={event => selectCountry(event.target.value)}
                         className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner appearance-none cursor-pointer"
                       >
-                        <option value="">Seleccionar departamento...</option>
-                        {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                        {LATAM_COUNTRIES.map(country => <option key={country.code} value={country.code}>{country.name}</option>)}
                       </select>
                     </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">
+                      {countryConfig(form.country_code).adminLevel1Label} *
+                    </label>
+                    {form.country_code === 'CO' ? (
+                      <div className="relative">
+                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                        <select
+                          value={form.department_id}
+                          onChange={event => setForm(current => ({ ...current, department_id: event.target.value }))}
+                          className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner appearance-none cursor-pointer"
+                        >
+                          <option value="">Seleccionar departamento...</option>
+                          {departments.map(department => <option key={department.id} value={department.id}>{department.name}</option>)}
+                        </select>
+                      </div>
+                    ) : (
+                      <input
+                        value={form.department_name}
+                        onChange={event => setForm(current => ({ ...current, department_name: event.target.value }))}
+                        placeholder={`Nombre de ${countryConfig(form.country_code).adminLevel1Label.toLowerCase()}`}
+                        className="w-full px-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner"
+                      />
+                    )}
                   </div>
 
                   <div>
@@ -381,48 +448,45 @@ export default function AdminEntitiesPage() {
                       className="w-full px-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner" />
                   </div>
 
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Privacidad del mapa</label>
+                    <select
+                      value={form.map_privacy_mode}
+                      onChange={event => setForm(current => ({ ...current, map_privacy_mode: event.target.value as EntityForm['map_privacy_mode'] }))}
+                      className="w-full px-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner"
+                    >
+                      <option value="exact">Exacta — operación predio a predio</option>
+                      <option value="approximate">Aproximada — cuadrícula de ~100 m</option>
+                      <option value="aggregate">Agregada — cuadrícula de ~1 km</option>
+                    </select>
+                    <p className="mt-2 text-xs leading-5 text-slate-500">Controla la precisión mostrada y exportada; la captura GPS original permanece protegida en Supabase.</p>
+                  </div>
+
                   <div className="md:col-span-2">
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">
-                        Municipios de Operación
+                        {countryConfig(form.country_code).adminLevel2Label} de operación
                       </label>
-                      <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
-                        {form.municipalities.length} Seleccionados
-                      </span>
+                      {form.country_code === 'CO' && <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">{form.municipalities.length} Seleccionados</span>}
                     </div>
-                    <div className="relative mb-3">
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                      <input 
-                        value={munSearch} 
-                        onChange={e => setMunSearch(e.target.value)}
-                        placeholder="Filtrar municipios..."
-                        className="w-full pl-11 pr-4 py-3 bg-slate-50 border-none rounded-2xl text-xs font-medium focus:ring-2 focus:ring-blue-500/10 focus:bg-white transition-all" />
-                    </div>
-                    
-                    <div className="bg-slate-50/50 rounded-2xl p-4 max-h-48 overflow-y-auto">
-                      {loadingGeography ? (
-                        <p className="text-center text-xs text-slate-400 py-4 italic animate-pulse">Consultando DIVIPOLA...</p>
-                      ) : availableMunicipalities.length === 0 ? (
-                        <p className="text-center text-xs text-slate-400 py-4">Selecciona un departamento primero</p>
-                      ) : (
-                        <div className="flex flex-wrap gap-2">
-                          {filteredMuns.map(m => (
-                            <button
-                              key={m.id}
-                              type="button"
-                              onClick={() => toggleMun(m.id, m.name)}
-                              className={`text-[11px] px-3 py-1.5 rounded-xl font-bold transition-all ${
-                                form.municipalities.some(x => x.id === m.id)
-                                  ? 'bg-blue-600 text-white shadow-md'
-                                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-100 shadow-sm'
-                              }`}
-                            >
-                              {m.name}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                    {form.country_code === 'CO' ? <>
+                      <div className="relative mb-3">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                        <input value={munSearch} onChange={event => setMunSearch(event.target.value)} placeholder="Filtrar municipios..." className="w-full pl-11 pr-4 py-3 bg-slate-50 border-none rounded-2xl text-xs font-medium focus:ring-2 focus:ring-blue-500/10 focus:bg-white transition-all" />
+                      </div>
+                      <div className="bg-slate-50/50 rounded-2xl p-4 max-h-48 overflow-y-auto">
+                        {loadingGeography ? <p className="text-center text-xs text-slate-400 py-4 italic animate-pulse">Consultando DIVIPOLA...</p> : availableMunicipalities.length === 0 ? <p className="text-center text-xs text-slate-400 py-4">Selecciona un departamento primero</p> : (
+                          <div className="flex flex-wrap gap-2">{filteredMuns.map(municipality => <button key={municipality.id} type="button" onClick={() => toggleMun(municipality.id, municipality.name)} className={`text-[11px] px-3 py-1.5 rounded-xl font-bold transition-all ${form.municipalities.some(item => item.id === municipality.id) ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-100 shadow-sm'}`}>{municipality.name}</button>)}</div>
+                        )}
+                      </div>
+                    </> : (
+                      <textarea
+                        value={form.manual_municipalities}
+                        onChange={event => setForm(current => ({ ...current, manual_municipalities: event.target.value }))}
+                        placeholder={`Escribe ${countryConfig(form.country_code).adminLevel2Label.toLowerCase()} separados por coma o una línea por cada uno`}
+                        className="min-h-32 w-full bg-slate-50 px-4 py-3 text-sm font-medium shadow-inner outline-none focus:ring-2 focus:ring-blue-500/20"
+                      />
+                    )}
                   </div>
 
                   <div className="md:col-span-2 mb-2 mt-4 flex items-center gap-2">
@@ -451,7 +515,7 @@ export default function AdminEntitiesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Contraseña Temporal * (mín. 8 caracteres)</label>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Contraseña Temporal * (mín. 12 caracteres)</label>
                     <input type="password" value={form.coordinator_password} onChange={e => setForm(f => ({ ...f, coordinator_password: e.target.value }))}
                       placeholder="Contraseña temporal segura"
                       className="w-full px-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner" />

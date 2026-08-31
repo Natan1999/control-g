@@ -16,6 +16,7 @@ export const COLLECTION_IDS = {
   SYNC_LOG:                 'sync_log',
   FORMS:                    'forms',
   FORM_RESPONSES:           'form_responses',
+  MAP_LAYERS:               'map_layers',
   BLOG_POSTS:               'blog_posts',
 } as const
 

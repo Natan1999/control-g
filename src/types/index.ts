@@ -39,6 +39,14 @@ export interface Entity {
   contractObject: string
   operatorName: string
   department: string
+  countryCode?: string
+  locale?: string
+  timezone?: string
+  currencyCode?: string
+  defaultMapCenter?: { latitude: number; longitude: number }
+  defaultMapZoom?: number
+  mapPrivacyMode?: 'exact' | 'approximate' | 'aggregate'
+  regionalSettings?: Record<string, unknown>
   periodStart: string
   periodEnd: string
   familiesPerMunicipality: number
@@ -55,6 +63,11 @@ export interface EntityMunicipality {
   entityId: string
   municipalityName: string
   department: string
+  countryCode?: string
+  adminLevel1Code?: string
+  adminLevel2Code?: string
+  centerLatitude?: number
+  centerLongitude?: number
   familiesTarget: number
   createdAt: string
 }

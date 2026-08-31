@@ -76,7 +76,9 @@ test('la captura offline usa caché, conserva borradores y encola respuestas', a
   assert.match(responder, /await processSyncQueue\(\)/)
   assert.match(responder, /savedResponse\?\.status === 'synced'/)
   assert.match(auth, /if \(!status\.connected\)/)
-  assert.match(auth, /await updateLocalCache\(user\.entityId, user\.id, user\.role\)/)
+  assert.match(auth, /updateLocalCache\(user\.entityId, user\.id, user\.role\)/)
+  assert.match(auth, /loadMapDataset\(user\)/)
+  assert.match(auth, /Promise\.allSettled/)
 })
 
 test('solo se descargan formularios asignados al profesional', async () => {
@@ -208,6 +210,89 @@ test('la creación de usuarios se protege dentro de Supabase', async () => {
   assert.match(sql, /grant execute on function public\.admin_create_user/)
   assert.match(backend, /supabase\.rpc\('admin_create_user'/)
   assert.doesNotMatch(backend, /functions\.invoke\('admin-create-user'/)
+})
+
+test('el módulo GIS interno usa PostGIS, RLS y capas territoriales por entidad', async () => {
+  const sql = await read('supabase/migrations/202608310001_latam_gis.sql')
+  const backend = await read('src/lib/backend.ts')
+  assert.match(sql, /create extension if not exists postgis/)
+  assert.match(sql, /generated always as/)
+  assert.match(sql, /using gist\(location\)/)
+  assert.match(sql, /create table if not exists public\.map_layers/)
+  assert.match(sql, /alter table public\.map_layers enable row level security/)
+  assert.match(sql, /entity_id = public\.current_entity_id\(\)/)
+  assert.match(sql, /country_code text not null default 'CO'/)
+  assert.match(backend, /MAP_LAYERS:\s+'map_layers'/)
+})
+
+test('el mapa operativo está integrado para todos los roles y funciona desde caché', async () => {
+  const routes = await read('src/App.tsx')
+  const sidebar = await read('src/components/layout/Sidebar.tsx')
+  const home = await read('src/pages/professional/HomePage.tsx')
+  const page = await read('src/pages/shared/OperationalMapPage.tsx')
+  const map = await read('src/components/gis/InternalMap.tsx')
+  const service = await read('src/lib/gis-service.ts')
+  const database = await read('src/lib/dexie-db.ts')
+
+  for (const route of ['admin/map', 'coord/map', 'apoyo/map', 'field/map']) {
+    const path = route.split('/')[1]
+    assert.match(routes, new RegExp(`path="${path}" element=\\{<OperationalMapPage \\/>\\}`))
+  }
+  assert.match(sidebar, /Mapa territorial/)
+  assert.match(home, /Mapa de mis capturas/)
+  assert.match(map, /Mapa vectorial offline/)
+  assert.match(page, /createMapLayer/)
+  assert.match(map, /<svg/)
+  assert.doesNotMatch(map, /google\.com\/maps|maps\.googleapis/)
+  assert.match(page, /Colorear por variable/)
+  assert.match(page, /GisInteroperabilityDialog/)
+  assert.match(service, /cachedDataset/)
+  assert.match(service, /localResponses/)
+  assert.match(service, /mergeRecords/)
+  assert.match(database, /this\.version\(5\)/)
+  assert.match(database, /geoRecords/)
+  assert.match(database, /mapLayers/)
+})
+
+test('GIS LATAM incluye mapa base offline e interoperabilidad ArcGIS', async () => {
+  const baseMap = JSON.parse(await read('src/assets/latam-countries.json'))
+  const service = await read('src/lib/gis-service.ts')
+  const interop = await read('src/lib/gis-interop.ts')
+  const vercel = await read('vercel.json')
+
+  assert.equal(baseMap.type, 'FeatureCollection')
+  assert.equal(baseMap.features.length, 20)
+  assert.ok(baseMap.features.some(feature => feature.properties.country_code === 'CO'))
+  assert.ok(baseMap.features.some(feature => feature.properties.country_code === 'GT'))
+  assert.match(service, /Natural Earth 1:110m/)
+  assert.match(service, /reportableDimensions/)
+  assert.match(interop, /recordsToGeoJson/)
+  assert.match(interop, /downloadWgs84Csv/)
+  assert.match(interop, /buildPointShapefileArchive/)
+  assert.match(interop, /fetchArcGisLayer/)
+  assert.match(interop, /publishRecordsToArcGis/)
+  assert.match(vercel, /https:\/\/\*\.arcgis\.com/)
+  assert.match(vercel, /Content-Security-Policy/)
+})
+
+test('el constructor ofrece plantillas LATAM reutilizables sin reemplazar los formularios de Bolívar', async () => {
+  const templates = await read('src/config/form-templates.ts')
+  const builder = await read('src/pages/coordinator/FormBuilderPage.tsx')
+
+  for (const id of [
+    'demografica-socioeconomica',
+    'discapacidad-cuidados',
+    'etnica-comunitaria',
+    'productiva-emprendimientos',
+    'territorial-riesgo-servicios',
+    'rural-agropecuaria',
+    'cultura-deporte-turismo',
+  ]) assert.match(templates, new RegExp(`id: '${id}'`))
+
+  assert.match(templates, /Coordenada GPS de la visita/)
+  assert.match(templates, /Firma o constancia de consentimiento/)
+  assert.match(builder, /Biblioteca de caracterizaciones/)
+  assert.match(builder, /cloneTemplatePages/)
 })
 
 async function filesUnder(path) {

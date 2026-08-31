@@ -32,6 +32,7 @@ const CoordSettingsPage = lazy(() => import('@/pages/coordinator/SettingsPage'))
 const FormBuilderPage = lazy(() => import('@/pages/coordinator/FormBuilderPage'))
 const FormsListPage = lazy(() => import('@/pages/shared/FormsListPage'))
 const FormResponsesPage = lazy(() => import('@/pages/shared/FormResponsesPage'))
+const OperationalMapPage = lazy(() => import('@/pages/shared/OperationalMapPage'))
 const ApoyoDashboard = lazy(() => import('@/pages/apoyo/DashboardPage'))
 const ApoyoProfessionalsPage = lazy(() => import('@/pages/apoyo/ProfessionalsPage'))
 const ApoyoReviewPage = lazy(() => import('@/pages/apoyo/ReviewPage'))
@@ -130,6 +131,7 @@ export default function App() {
               <Route path="forms/new" element={<FormBuilderPage />} />
               <Route path="forms/edit/:id" element={<FormBuilderPage />} />
               <Route path="responses" element={<FormResponsesPage />} />
+              <Route path="map" element={<OperationalMapPage />} />
               <Route path="blog" element={<AdminBlogPage />} />
               <Route path="blog/new" element={<AdminBlogEditorPage />} />
               <Route path="blog/edit/:id" element={<AdminBlogEditorPage />} />
@@ -154,6 +156,7 @@ export default function App() {
               <Route path="forms/new" element={<FormBuilderPage />} />
               <Route path="forms/edit/:id" element={<FormBuilderPage />} />
               <Route path="responses" element={<FormResponsesPage />} />
+              <Route path="map" element={<OperationalMapPage />} />
               <Route path="settings" element={<CoordSettingsPage />} />
             </Routes>
           </DashboardLayout>
@@ -169,6 +172,7 @@ export default function App() {
               <Route path="professionals" element={<ApoyoProfessionalsPage />} />
               <Route path="review" element={<ApoyoReviewPage />} />
               <Route path="responses" element={<FormResponsesPage />} />
+              <Route path="map" element={<OperationalMapPage />} />
               <Route path="observations" element={<ApoyoObservationsPage />} />
             </Routes>
           </DashboardLayout>
@@ -183,6 +187,7 @@ export default function App() {
             <Route path="families" element={<FieldFamiliesPage />} />
             <Route path="capture" element={<FieldCapturePage />} />
             <Route path="reports" element={<FieldReportsPage />} />
+            <Route path="map" element={<OperationalMapPage />} />
             <Route path="profile" element={<FieldProfilePage />} />
             <Route path="activity/:familyId/:activityType" element={<ActivityFormPage />} />
             <Route path="forms/:formId" element={<FormResponderPage />} />

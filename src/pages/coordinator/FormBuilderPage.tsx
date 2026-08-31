@@ -3,8 +3,8 @@ import {
   Plus, Save, Eye, Hash, Type, AlignLeft, Calendar, Clock, 
   ChevronDown, CheckSquare, List, Radio as RadioIcon, 
   Camera, PenTool, MapPin, Layers, Calculator, Info, 
-  FileText, Phone, Mail, Trash2, Settings2, GripVertical, 
-  ChevronRight, ChevronLeft, Layout, Globe, X
+  FileText, Phone, Mail, Trash2, Settings2, GripVertical,
+  ChevronRight, ChevronLeft, Layout, Globe, X, BookOpen, MapPinned
 } from 'lucide-react'
 import { motion, Reorder, AnimatePresence } from 'framer-motion'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -13,6 +13,7 @@ import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
 import { ID, Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import { FormField, FormDefinition, FormPage, FormFieldType, ActivityType, Entity } from '@/types'
+import { cloneTemplatePages, FORM_TEMPLATES, type ControlGFormTemplate } from '@/config/form-templates'
 
 const COLORS = {
   primary: '#0038A8',   // Royal Blue
@@ -117,6 +118,7 @@ export default function FormBuilderPage() {
   const [saving, setSaving] = useState(false)
   const [preview, setPreview] = useState(false)
   const [toast, setToast] = useState('')
+  const [showTemplates, setShowTemplates] = useState(false)
   
   // Super Admin specific state
   const [entities, setEntities] = useState<Entity[]>([])
@@ -217,6 +219,23 @@ export default function FormBuilderPage() {
     setActivePageIdx(form.pages!.length)
   }
 
+  const applyTemplate = (template: ControlGFormTemplate) => {
+    const hasContent = form.pages?.some(page => page.fields.length > 0)
+    if (hasContent && !window.confirm('La plantilla reemplazará las páginas y preguntas actuales. ¿Deseas continuar?')) return
+    setForm({
+      ...form,
+      title: template.title,
+      description: template.description,
+      type: template.type,
+      pages: cloneTemplatePages(template),
+    })
+    setActivePageIdx(0)
+    setSelectedFieldId(null)
+    setShowTemplates(false)
+    setToast('Plantilla aplicada. Puedes adaptar cada pregunta antes de publicar.')
+    window.setTimeout(() => setToast(''), 3500)
+  }
+
   const handleSave = useCallback(async () => {
     if (!selectedEntityId) {
       setToast('Debes seleccionar una entidad')
@@ -276,6 +295,15 @@ export default function FormBuilderPage() {
                 ))}
               </select>
             )}
+            <button
+              type="button"
+              onClick={() => setShowTemplates(true)}
+              aria-label="Abrir biblioteca de plantillas"
+              className="w-10 h-10 sm:w-auto sm:h-auto flex items-center justify-center gap-2 sm:px-4 sm:py-2 text-[#1B3A4B] font-bold hover:bg-[#E9F1F3] rounded-xl transition-all"
+            >
+              <BookOpen size={18} />
+              <span className="hidden xl:inline">Plantillas</span>
+            </button>
             <button 
               onClick={() => { setPreview(!preview); setSelectedFieldId(null) }}
               aria-label={preview ? 'Volver a editar' : 'Vista previa'}
@@ -620,6 +648,42 @@ export default function FormBuilderPage() {
           )}
         </AnimatePresence>
       </div>
+
+      {showTemplates && (
+        <div className="fixed inset-0 z-[90] flex items-end justify-center bg-slate-950/60 p-0 sm:items-center sm:p-6" role="presentation">
+          <section role="dialog" aria-modal="true" aria-labelledby="form-template-title" className="max-h-[92vh] w-full max-w-5xl overflow-y-auto bg-slate-50 shadow-2xl">
+            <header className="sticky top-0 z-10 flex items-start justify-between gap-5 border-b border-slate-200 bg-white px-5 py-5 sm:px-7">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-[#3D7B9E]">Control G LATAM</p>
+                <h2 id="form-template-title" className="mt-1 text-xl font-black text-slate-950">Biblioteca de caracterizaciones</h2>
+                <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-500">Instrumentos iniciales editables. Adapta lenguaje, marco jurídico y variables a la entidad y al país antes de publicar.</p>
+              </div>
+              <button type="button" onClick={() => setShowTemplates(false)} aria-label="Cerrar biblioteca de plantillas" className="flex h-12 w-12 shrink-0 items-center justify-center text-slate-500"><X size={21} /></button>
+            </header>
+            <div className="grid gap-4 p-5 sm:grid-cols-2 sm:p-7 lg:grid-cols-3">
+              {FORM_TEMPLATES.map(template => {
+                const questionCount = template.pages.reduce((total, page) => total + page.fields.length, 0)
+                return (
+                  <article key={template.id} className="flex flex-col border border-slate-200 bg-white p-5 shadow-sm">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex h-11 w-11 items-center justify-center bg-[#E9F1F3] text-[#1B3A4B]"><MapPinned size={20} /></div>
+                      <span className="bg-slate-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-wide text-slate-600">{template.category}</span>
+                    </div>
+                    <h3 className="mt-5 text-lg font-black leading-tight text-slate-950">{template.title}</h3>
+                    <p className="mt-2 flex-1 text-sm leading-6 text-slate-600">{template.description}</p>
+                    <dl className="mt-4 grid grid-cols-2 gap-2 border-y border-slate-100 py-3 text-xs">
+                      <div><dt className="font-bold text-slate-400">Páginas</dt><dd className="mt-1 font-black text-slate-800">{template.pages.length}</dd></div>
+                      <div><dt className="font-bold text-slate-400">Preguntas</dt><dd className="mt-1 font-black text-slate-800">{questionCount}</dd></div>
+                    </dl>
+                    <p className="mt-3 text-xs leading-5 text-slate-500"><strong className="text-slate-700">Recomendada para:</strong> {template.recommendedFor}</p>
+                    <button type="button" onClick={() => applyTemplate(template)} className="mt-5 min-h-12 w-full bg-[#1B3A4B] px-4 text-sm font-black text-white">Usar esta plantilla</button>
+                  </article>
+                )
+              })}
+            </div>
+          </section>
+        </div>
+      )}
 
       {toast && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-3 bg-slate-900 border border-slate-700 text-white rounded-2xl shadow-2xl z-[100] font-bold text-sm animate-bounce flex items-center gap-3">

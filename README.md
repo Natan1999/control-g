@@ -1,4 +1,4 @@
-# Control G 2.1
+# Control G 2.3 · LATAM + GIS
 
 Aplicación multi-entidad para caracterización y acompañamiento psicosocial en campo. La interfaz web y el APK de Capacitor funcionan sin conexión: familias, formularios, respuestas, fotografías y actividades se guardan localmente y se sincronizan de forma idempotente cuando regresa la señal.
 
@@ -10,13 +10,16 @@ Aplicación multi-entidad para caracterización y acompañamiento psicosocial en
 - Supabase Auth, Postgres, Storage y funciones SQL protegidas.
 - Aislamiento por entidad mediante Row Level Security (RLS).
 - Identificadores locales únicos para evitar duplicados en reintentos de sincronización.
+- PostGIS, índices GiST, capas GeoJSON por entidad y mapa vectorial offline.
+- Configuración regional para 20 países latinoamericanos.
 
 ## Configuración
 
 1. Copia `.env.example` a `.env.local` y configura únicamente `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` para la aplicación.
-2. Ejecuta, en orden, las migraciones de `supabase/migrations/` en la instancia de Supabase. La migración `202608100001_form_assignments.sql` incorpora la asignación explícita de formularios por profesional.
+2. Ejecuta, en orden, las migraciones de `supabase/migrations/` en la instancia de Supabase. La migración `202608100001_form_assignments.sql` incorpora la asignación explícita de formularios por profesional y `202608310001_latam_gis.sql` activa PostGIS, configuración regional y capas protegidas por RLS.
 3. La migración instala `admin_create_user`, una RPC `SECURITY DEFINER` que valida el JWT, el rol y la entidad antes de crear Auth + perfil en una sola transacción.
 4. Para crear o verificar las cuentas iniciales, define `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` y `CONTROL_G_INITIAL_PASSWORD`, y ejecuta `npm run backend:seed`.
+5. Para volver a cargar la capa oficial de municipios de Bolívar, ejecuta `npm run backend:seed:gis`. El proceso usa el archivo versionado en `supabase/seed/` y requiere la clave administrativa solo en el entorno local.
 
 Las claves `service_role`, JWT, Postgres y Dashboard son exclusivamente administrativas: nunca deben usar el prefijo `VITE_`, guardarse en Git ni incluirse en el APK.
 
@@ -31,6 +34,18 @@ npm run backend:check
 La comprobación integral opcional (`npm run backend:verify`) inicia sesión, crea y elimina un usuario temporal, valida RLS, formularios, Storage e idempotencia. Requiere `SUPABASE_SERVICE_ROLE_KEY`, `CONTROL_G_TEST_EMAIL` y `CONTROL_G_TEST_PASSWORD` solo en el entorno de ejecución.
 
 El primer inicio de sesión del dispositivo requiere conexión. Después, la sesión, los formularios y las familias quedan precargados localmente; fotos, firmas y respuestas permanecen en cola hasta que el dispositivo recupere señal.
+
+## Mapa territorial e interoperabilidad GIS
+
+- Las rutas privadas `/admin/map`, `/coord/map`, `/apoyo/map` y `/field/map` respetan rol y entidad.
+- El mapa base de 20 países está embebido y funciona sin proveedor de teselas ni conexión.
+- Las capturas GPS, actividades, hogares y capas institucionales quedan disponibles en IndexedDB.
+- Las respuestas se pueden clasificar por variables temáticas no sensibles; nombres, documentos, teléfonos, direcciones, firmas y fotos se excluyen del índice cartográfico.
+- Administración y coordinación pueden cargar GeoJSON, importar una capa ArcGIS REST y publicar puntos a un Feature Service editable usando un token temporal que no se persiste.
+- La descarga soporta GeoJSON, CSV WGS84, Shapefile ZIP e informe territorial PDF.
+- La precisión visible y exportable se configura por entidad como exacta, aproximada (~100 m) o agregada (~1 km); el GPS original permanece protegido en Supabase.
+
+La capa inicial de los 46 municipios de Bolívar proviene del servicio DIVIPOLA/MGN 2025 del DANE y se cachea para uso offline después del inicio de sesión.
 
 ## APK Android
 

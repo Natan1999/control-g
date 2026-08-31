@@ -3,6 +3,7 @@
  * Stores activities, characterizations, and media for offline-first operation.
  */
 import Dexie, { type Table } from 'dexie';
+import type { GeoRecord, MapLayer } from '@/types/gis';
 
 // ─── Family Member (per characterization) ────────────────────────────────────
 
@@ -116,6 +117,16 @@ export interface LocalFormResponse {
   lastError?: string;
 }
 
+export interface LocalGeoRecord extends GeoRecord {
+  cacheId: string;
+  cacheScope: string;
+}
+
+export interface LocalMapLayer extends MapLayer {
+  cacheId: string;
+  cacheScope: string;
+}
+
 // ─── Database class ───────────────────────────────────────────────────────────
 
 export class ControlGDatabase extends Dexie {
@@ -123,6 +134,8 @@ export class ControlGDatabase extends Dexie {
   activities!: Table<LocalActivity, string>;
   mediaQueue!: Table<LocalMedia, string>;
   formResponses!: Table<LocalFormResponse, string>;
+  geoRecords!: Table<LocalGeoRecord, string>;
+  mapLayers!: Table<LocalMapLayer, string>;
 
   constructor() {
     super('ControlG_v2');
@@ -143,6 +156,14 @@ export class ControlGDatabase extends Dexie {
       activities: 'localId, familyId, activityType, status, createdAt',
       mediaQueue: 'id, activityLocalId, status, answerFieldId',
       formResponses: 'localId, formId, familyId, professionalId, status, createdAt',
+    });
+    this.version(5).stores({
+      characterizations: 'localId, familyId, entityId, professionalId, status',
+      activities: 'localId, familyId, activityType, status, createdAt',
+      mediaQueue: 'id, activityLocalId, status, answerFieldId',
+      formResponses: 'localId, formId, familyId, professionalId, status, createdAt',
+      geoRecords: 'cacheId, cacheScope, id, entityId, professionalId, source, status, capturedAt',
+      mapLayers: 'cacheId, cacheScope, id, entityId, status, updatedAt',
     });
   }
 }

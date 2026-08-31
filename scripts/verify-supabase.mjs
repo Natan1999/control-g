@@ -9,10 +9,11 @@ config()
 const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL
 const anonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-const testEmail = process.env.CONTROL_G_TEST_EMAIL
-const testPassword = process.env.CONTROL_G_TEST_PASSWORD
+let testEmail = process.env.CONTROL_G_TEST_EMAIL
+let testPassword = process.env.CONTROL_G_TEST_PASSWORD
+const bootstrapTestAdmin = process.env.CONTROL_G_BOOTSTRAP_TEST_ADMIN === 'true'
 
-if (!url || !anonKey || !serviceRoleKey || !testEmail || !testPassword) {
+if (!url || !anonKey || !serviceRoleKey || (!bootstrapTestAdmin && (!testEmail || !testPassword))) {
   console.error('Faltan URL, claves de Supabase o credenciales de prueba.')
   process.exit(1)
 }
@@ -26,12 +27,36 @@ const localId = `verification-${randomUUID()}`
 let temporaryUserId = null
 let uploadedPath = null
 let temporaryFormAssignmentId = null
+let bootstrapAdminId = null
 
 function ensure(condition, message) {
   if (!condition) throw new Error(message)
 }
 
 try {
+  if (bootstrapTestAdmin) {
+    testEmail = `admin.verificacion.${Date.now()}@controlg.test`
+    testPassword = `Cg!${randomUUID()}Aa1`
+    const { data: bootstrapUser, error: bootstrapError } = await serviceClient.auth.admin.createUser({
+      email: testEmail,
+      password: testPassword,
+      email_confirm: true,
+      user_metadata: { full_name: 'Administrador temporal de verificación' },
+    })
+    if (bootstrapError) throw bootstrapError
+    bootstrapAdminId = bootstrapUser.user?.id
+    ensure(bootstrapAdminId, 'No se creó el administrador temporal de verificación.')
+    const { error: bootstrapProfileError } = await serviceClient.from('user_profiles').upsert({
+      user_id: bootstrapAdminId,
+      email: testEmail,
+      full_name: 'Administrador temporal de verificación',
+      role: 'admin',
+      entity_id: null,
+      status: 'active',
+    }, { onConflict: 'user_id' })
+    if (bootstrapProfileError) throw bootstrapProfileError
+  }
+
   const { data: session, error: loginError } = await adminClient.auth.signInWithPassword({
     email: testEmail,
     password: testPassword,
@@ -141,6 +166,26 @@ try {
     'El profesional no recibió exclusivamente el formulario asignado.',
   )
 
+  const { data: visibleLayers, error: visibleLayersError } = await professionalClient
+    .from('map_layers')
+    .select('id,entity_id')
+    .eq('status', 'active')
+  if (visibleLayersError) throw visibleLayersError
+  ensure(
+    visibleLayers.some(layer => layer.id === 'layer-bolivar-municipios-dane-2025')
+      && visibleLayers.every(layer => layer.entity_id === 'gov-bolivar-2026'),
+    'El profesional no recibió exclusivamente las capas GIS de su entidad.',
+  )
+
+  const { error: forbiddenLayerError } = await professionalClient.from('map_layers').insert({
+    id: `forbidden-layer-${randomUUID()}`,
+    entity_id: 'gov-bolivar-2026',
+    name: 'Intento GIS no autorizado',
+    layer_type: 'points',
+    geojson: { type: 'Point', coordinates: [-75.48, 10.39] },
+  })
+  ensure(forbiddenLayerError, 'Un profesional pudo crear capas GIS institucionales.')
+
   const response = {
     form_id: assignedForm.id,
     entity_id: 'gov-bolivar-2026',
@@ -150,6 +195,9 @@ try {
     local_id: localId,
     answers: { verification: true, photo: uploadedPath },
     answers_json: JSON.stringify({ verification: true, photo: uploadedPath }),
+    latitude: 10.391,
+    longitude: -75.479,
+    captured_at: new Date().toISOString(),
     status: 'synced',
   }
   const { data: firstSync, error: firstSyncError } = await professionalClient
@@ -167,7 +215,18 @@ try {
   if (repeatedSyncError) throw repeatedSyncError
   ensure(firstSync.id === repeatedSync.id, 'La sincronización repetida creó un duplicado.')
 
-  console.log('Supabase verificado: Auth, RPC segura, RLS, formularios, archivos e idempotencia funcionan.')
+  const { data: spatialResponse, error: spatialResponseError } = await serviceClient
+    .from('form_responses')
+    .select('id,latitude,longitude,location')
+    .eq('local_id', localId)
+    .single()
+  if (spatialResponseError) throw spatialResponseError
+  ensure(
+    spatialResponse.latitude === 10.391 && spatialResponse.longitude === -75.479 && spatialResponse.location,
+    'PostGIS no generó la geografía WGS84 de la respuesta sincronizada.',
+  )
+
+  console.log('Supabase verificado: Auth, RPC, RLS, formularios asignados, Storage, PostGIS, capas GIS e idempotencia funcionan.')
 } finally {
   await serviceClient.from('form_responses').delete().eq('local_id', localId)
   if (uploadedPath) await serviceClient.storage.from('field-photos').remove([uploadedPath])
@@ -176,5 +235,10 @@ try {
     await serviceClient.from('audit_log').delete().eq('record_id', temporaryUserId)
     await serviceClient.from('user_profiles').delete().eq('user_id', temporaryUserId)
     await serviceClient.auth.admin.deleteUser(temporaryUserId)
+  }
+  if (bootstrapAdminId) {
+    await serviceClient.from('audit_log').delete().eq('record_id', bootstrapAdminId)
+    await serviceClient.from('user_profiles').delete().eq('user_id', bootstrapAdminId)
+    await serviceClient.auth.admin.deleteUser(bootstrapAdminId)
   }
 }
