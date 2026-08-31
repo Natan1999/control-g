@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { AlertCircle, CheckCircle2, Download, ExternalLink, FileArchive, FileJson, FileSpreadsheet, FileText, Loader2, UploadCloud, X } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Database, Download, ExternalLink, FileArchive, FileJson, FileSpreadsheet, FileText, Loader2, UploadCloud, X } from 'lucide-react'
 import { createMapLayer } from '@/lib/gis-service'
 import {
   downloadGeoJson,
+  downloadGeoPackage,
   downloadPointShapefile,
   downloadTerritorialPdf,
   downloadWgs84Csv,
@@ -27,6 +28,7 @@ export function GisInteroperabilityDialog({ user, records, layers, onClose, onLa
   const [confirmed, setConfirmed] = useState(false)
   const [busy, setBusy] = useState<'import' | 'publish' | null>(null)
   const [exportingPdf, setExportingPdf] = useState(false)
+  const [exportingGeoPackage, setExportingGeoPackage] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const closeButtonRef = useRef<HTMLButtonElement | null>(null)
@@ -67,6 +69,19 @@ export function GisInteroperabilityDialog({ user, records, layers, onClose, onLa
       setError(exportError instanceof Error ? exportError.message : 'No fue posible generar el informe territorial.')
     } finally {
       setExportingPdf(false)
+    }
+  }
+
+  async function exportGeoPackage() {
+    clearMessages()
+    setExportingGeoPackage(true)
+    try {
+      await downloadGeoPackage(records)
+      setSuccess(`GeoPackage OGC generado con ${records.length} puntos visibles.`)
+    } catch (exportError) {
+      setError(exportError instanceof Error ? exportError.message : 'No fue posible generar el GeoPackage.')
+    } finally {
+      setExportingGeoPackage(false)
     }
   }
 
@@ -132,7 +147,7 @@ export function GisInteroperabilityDialog({ user, records, layers, onClose, onLa
               <div><h3 id="gis-export-title" className="font-black text-slate-900">Descarga institucional</h3><p className="mt-1 text-sm text-slate-500">Se exportarán los {records.length} puntos que resultan de los filtros actuales.</p></div>
               <Download size={20} className="text-[#3D7B9E]" />
             </div>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               <button type="button" onClick={() => runExport(() => downloadGeoJson(records))} className="flex min-h-20 items-center gap-3 border border-slate-200 px-4 text-left text-sm font-black text-slate-800 hover:border-[#3D7B9E]">
                 <FileJson size={24} className="shrink-0 text-[#3D7B9E]" /><span>GeoJSON<br /><small className="font-medium text-slate-500">QGIS y ArcGIS</small></span>
               </button>
@@ -144,6 +159,9 @@ export function GisInteroperabilityDialog({ user, records, layers, onClose, onLa
               </button>
               <button type="button" disabled={exportingPdf} onClick={() => void exportPdf()} className="flex min-h-20 items-center gap-3 border border-slate-200 px-4 text-left text-sm font-black text-slate-800 hover:border-[#3D7B9E] disabled:opacity-50">
                 {exportingPdf ? <Loader2 size={24} className="shrink-0 animate-spin text-[#3D7B9E]" /> : <FileText size={24} className="shrink-0 text-[#3D7B9E]" />}<span>Informe PDF<br /><small className="font-medium text-slate-500">Mapa y resumen</small></span>
+              </button>
+              <button type="button" disabled={exportingGeoPackage} onClick={() => void exportGeoPackage()} className="flex min-h-20 items-center gap-3 border border-slate-200 px-4 text-left text-sm font-black text-slate-800 hover:border-[#3D7B9E] disabled:opacity-50">
+                {exportingGeoPackage ? <Loader2 size={24} className="shrink-0 animate-spin text-[#3D7B9E]" /> : <Database size={24} className="shrink-0 text-[#3D7B9E]" />}<span>GeoPackage<br /><small className="font-medium text-slate-500">QGIS y ArcGIS Pro</small></span>
               </button>
             </div>
           </section>

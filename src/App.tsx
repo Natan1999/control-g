@@ -36,6 +36,7 @@ const FormResponsesPage = lazy(() => import('@/pages/shared/FormResponsesPage'))
 const OperationalMapPage = lazy(() => import('@/pages/shared/OperationalMapPage'))
 const AnalyticsPage = lazy(() => import('@/pages/shared/AnalyticsPage'))
 const GovernancePage = lazy(() => import('@/pages/shared/GovernancePage'))
+const ArcGisIntegrationsPage = lazy(() => import('@/pages/shared/ArcGisIntegrationsPage'))
 const ApoyoDashboard = lazy(() => import('@/pages/apoyo/DashboardPage'))
 const ApoyoProfessionalsPage = lazy(() => import('@/pages/apoyo/ProfessionalsPage'))
 const ApoyoReviewPage = lazy(() => import('@/pages/apoyo/ReviewPage'))
@@ -137,6 +138,7 @@ export default function App() {
               <Route path="map" element={<OperationalMapPage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="governance" element={<GovernancePage />} />
+              <Route path="integrations/arcgis" element={<ArcGisIntegrationsPage />} />
               <Route path="blog" element={<AdminBlogPage />} />
               <Route path="blog/new" element={<AdminBlogEditorPage />} />
               <Route path="blog/edit/:id" element={<AdminBlogEditorPage />} />
@@ -164,6 +166,7 @@ export default function App() {
               <Route path="map" element={<OperationalMapPage />} />
               <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="governance" element={<GovernancePage />} />
+              <Route path="integrations/arcgis" element={<ArcGisIntegrationsPage />} />
               <Route path="settings" element={<CoordSettingsPage />} />
             </Routes>
           </DashboardLayout>

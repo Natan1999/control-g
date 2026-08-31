@@ -33,6 +33,9 @@ let evidenceId = null
 let foreignEvidenceId = null
 let reportRunId = null
 let sensitiveAccessId = null
+let arcGisConnectionId = null
+let arcGisMappingId = null
+let arcGisJobId = null
 
 function ensure(condition, message) {
   if (!condition) throw new Error(message)
@@ -319,6 +322,79 @@ try {
   })
   ensure(forbiddenLayerError, 'Un profesional pudo crear capas GIS institucionales.')
 
+  arcGisConnectionId = randomUUID()
+  arcGisMappingId = randomUUID()
+  const { error: arcGisConnectionError } = await adminClient.from('arcgis_connections').insert({
+    id: arcGisConnectionId,
+    entity_id: 'gov-bolivar-2026',
+    name: `Verificación ArcGIS ${Date.now()} ${arcGisConnectionId.slice(0, 8)}`,
+    portal_url: 'https://www.arcgis.com',
+    auth_mode: 'public',
+    direction: 'import',
+    status: 'active',
+    created_by: session.user.id,
+  })
+  if (arcGisConnectionError) throw arcGisConnectionError
+  const { error: arcGisMappingError } = await adminClient.from('arcgis_field_mappings').insert({
+    id: arcGisMappingId,
+    connection_id: arcGisConnectionId,
+    service_url: 'https://services.arcgis.com/control-g-verification/ArcGIS/rest/services/Verification/FeatureServer/0',
+    layer_id: 0,
+    direction: 'import',
+    field_mapping: {},
+    attachment_policy: 'none',
+    filter_expression: '1=1',
+    batch_size: 100,
+    enabled: true,
+  })
+  if (arcGisMappingError) throw arcGisMappingError
+
+  const idempotencyKey = `verification:${randomUUID()}`
+  const { data: firstArcGisJob, error: firstArcGisJobError } = await adminClient.rpc('enqueue_arcgis_job', {
+    p_mapping_id: arcGisMappingId,
+    p_direction: 'import',
+    p_idempotency_key: idempotencyKey,
+  })
+  if (firstArcGisJobError) throw firstArcGisJobError
+  arcGisJobId = firstArcGisJob
+  const { data: repeatedArcGisJob, error: repeatedArcGisJobError } = await adminClient.rpc('enqueue_arcgis_job', {
+    p_mapping_id: arcGisMappingId,
+    p_direction: 'import',
+    p_idempotency_key: idempotencyKey,
+  })
+  if (repeatedArcGisJobError) throw repeatedArcGisJobError
+  ensure(arcGisJobId && repeatedArcGisJob === arcGisJobId, 'La cola ArcGIS no respetó la clave de idempotencia.')
+
+  const { error: forbiddenArcGisJobError } = await professionalClient.rpc('enqueue_arcgis_job', {
+    p_mapping_id: arcGisMappingId,
+    p_direction: 'import',
+    p_idempotency_key: `forbidden:${randomUUID()}`,
+  })
+  ensure(forbiddenArcGisJobError, 'Un profesional pudo crear trabajos ArcGIS.')
+  const { data: hiddenArcGisJobs, error: hiddenArcGisJobsError } = await professionalClient
+    .from('arcgis_jobs').select('id').eq('id', arcGisJobId)
+  if (hiddenArcGisJobsError) throw hiddenArcGisJobsError
+  ensure(hiddenArcGisJobs.length === 0, 'Un profesional pudo consultar la cola ArcGIS administrativa.')
+
+  const arcGisItemPayload = JSON.stringify({ type: 'Feature', verification: true })
+  const { error: arcGisItemError } = await adminClient.from('arcgis_job_items').upsert({
+    id: `${arcGisJobId}:verification:import`,
+    job_id: arcGisJobId,
+    entity_id: 'gov-bolivar-2026',
+    source_record_id: 'verification',
+    operation: 'import',
+    status: 'completed',
+    attempt_count: 1,
+    payload_sha256: createHash('sha256').update(arcGisItemPayload).digest('hex'),
+  }, { onConflict: 'job_id,source_record_id,operation' })
+  if (arcGisItemError) throw arcGisItemError
+  const { error: cancelArcGisJobError } = await adminClient.rpc('cancel_arcgis_job', { p_job_id: arcGisJobId })
+  if (cancelArcGisJobError) throw cancelArcGisJobError
+  const { data: cancelledArcGisJob, error: cancelledArcGisJobError } = await adminClient
+    .from('arcgis_jobs').select('status').eq('id', arcGisJobId).single()
+  if (cancelledArcGisJobError) throw cancelledArcGisJobError
+  ensure(cancelledArcGisJob.status === 'cancelled', 'La RPC ArcGIS no canceló el trabajo pendiente.')
+
   const response = {
     form_id: assignedForm.id,
     entity_id: 'gov-bolivar-2026',
@@ -401,8 +477,12 @@ try {
   sensitiveAccessId = loggedAccess
   ensure(sensitiveAccessId, 'No se registró la finalidad del acceso sensible.')
 
-  console.log('Supabase verificado: Auth/MFA, RPC, RLS, asignaciones, Storage, PostGIS/GPS, evidencias, países, indicadores, versiones inmutables, reportes, auditoría GIS e idempotencia funcionan.')
+  console.log('Supabase verificado: Auth/MFA, RPC, RLS, asignaciones, Storage, PostGIS/GPS, evidencias, países, indicadores, versiones inmutables, reportes, cola ArcGIS auditable e idempotencia funcionan.')
 } finally {
+  if (arcGisConnectionId) {
+    await serviceClient.from('arcgis_connections').delete().eq('id', arcGisConnectionId)
+    await serviceClient.from('audit_log').delete().in('record_id', [arcGisConnectionId, arcGisMappingId, arcGisJobId].filter(Boolean))
+  }
   if (sensitiveAccessId) await serviceClient.from('sensitive_access_log').delete().eq('id', sensitiveAccessId)
   if (reportRunId) await serviceClient.from('report_runs').delete().eq('id', reportRunId)
   if (foreignEvidenceId) await serviceClient.from('evidence_files').delete().eq('id', foreignEvidenceId)

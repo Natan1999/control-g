@@ -1,7 +1,7 @@
 {
   "name": "control-g",
   "private": true,
-  "version": "2.4.0",
+  "version": "2.5.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "backend:check": "node scripts/check-supabase.mjs",
     "backend:verify": "node scripts/verify-supabase.mjs",
+    "backend:verify:arcgis": "node scripts/verify-arcgis-api.mjs",
     "backend:migrate:file": "node scripts/apply-supabase-migration.mjs",
     "backend:seed": "node scripts/seed-supabase.mjs",
     "backend:seed:gis": "node scripts/seed-gis-layer.mjs",
@@ -64,6 +65,7 @@
     "react-router-dom": "^6.21.3",
     "react-signature-canvas": "^1.1.0-alpha.2",
     "recharts": "^2.10.3",
+    "sql.js": "^1.14.1",
     "tailwind-merge": "^2.6.1",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.25.76",
@@ -77,6 +79,7 @@
     "@types/node": "^20.11.0",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
+    "@types/sql.js": "^1.4.10",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
     "@typescript-eslint/parser": "^6.14.0",
     "@vitejs/plugin-react": "^4.2.1",

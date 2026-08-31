@@ -44,6 +44,13 @@ export function downloadGeoJson(records: GeoRecord[], name = 'control-g-capturas
   download(blob, `${safeFilename(name)}.geojson`)
 }
 
+export async function downloadGeoPackage(records: GeoRecord[], name = 'control-g-capturas') {
+  const { buildPointGeoPackage } = await import('@/lib/geopackage')
+  const bytes = await buildPointGeoPackage(records)
+  const buffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer
+  download(new Blob([buffer], { type: 'application/geopackage+sqlite3' }), `${safeFilename(name)}-wgs84.gpkg`)
+}
+
 function csvCell(value: unknown) {
   const text = String(value ?? '')
   return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text
