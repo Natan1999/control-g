@@ -25,6 +25,8 @@ export interface ArcGisMappingRecord {
   direction: 'import' | 'export'
   field_mapping: Record<string, string>
   attachment_policy: 'none' | 'authorized'
+  attachment_authorized_at?: string | null
+  attachment_authorized_by?: string | null
   filter_expression?: string | null
   batch_size: number
   enabled: boolean
@@ -91,6 +93,10 @@ export async function createArcGisIntegration(input: ArcGisIntegrationInput) {
   if (input.authMode === 'public' && input.direction === 'export') {
     throw new Error('Una conexión pública es solo de lectura. Configura OAuth para exportar.')
   }
+  const attachmentPolicy = input.direction === 'export' ? input.attachmentPolicy : 'none'
+  if (attachmentPolicy === 'authorized' && input.authMode === 'public') {
+    throw new Error('La publicación de fotografías requiere una conexión OAuth privada.')
+  }
   const connectionResult = await supabase.from('arcgis_connections').insert({
     entity_id: input.entityId,
     name: input.name.trim(),
@@ -112,7 +118,9 @@ export async function createArcGisIntegration(input: ArcGisIntegrationInput) {
     field_mapping: input.direction === 'export'
       ? { control_g_id: 'id', source: 'source', status: 'status', captured_at: 'captured_at', pending_sync: 'pending_sync' }
       : {},
-    attachment_policy: input.attachmentPolicy,
+    attachment_policy: attachmentPolicy,
+    attachment_authorized_at: attachmentPolicy === 'authorized' ? new Date().toISOString() : null,
+    attachment_authorized_by: attachmentPolicy === 'authorized' ? input.createdBy : null,
     filter_expression: input.direction === 'import' ? input.filterExpression?.trim() || '1=1' : null,
     batch_size: Number(input.batchSize),
     enabled: true,
@@ -153,6 +161,8 @@ async function invokeArcGisApi(body: Record<string, unknown>) {
       SERVICE_HOST_NOT_ALLOWED: 'El servicio debe pertenecer al portal configurado o a un dominio oficial de ArcGIS.',
       INTEGRATION_NOT_ACTIVE: 'Verifica y activa la conexión antes de ejecutar el trabajo.',
       JOB_RETRY_LIMIT: 'El trabajo alcanzó el límite de reintentos y requiere revisión.',
+      ATTACHMENT_AUTHORIZATION_REQUIRED: 'La exportación de fotos requiere una autorización explícita registrada en el mapeo.',
+      ARCGIS_ATTACHMENTS_NOT_SUPPORTED: 'La capa ArcGIS no tiene habilitado el soporte de adjuntos.',
       SUPABASE_ANON_KEY_NOT_CONFIGURED: 'El servicio ArcGIS no tiene configurada la clave pública de Supabase.',
     }
     throw new Error(messages[payload?.code] || `ArcGIS no pudo completar la operación (${payload?.code || response.status}).`)

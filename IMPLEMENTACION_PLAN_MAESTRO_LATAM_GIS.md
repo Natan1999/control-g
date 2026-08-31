@@ -10,7 +10,7 @@ Este archivo es el registro técnico vivo de la implementación. El avance globa
 | 1. Núcleo multiempresa y multipaís | 10 % | Importador/versionador operativo y primer catálogo oficial; segundo piloto LATAM pendiente | 82 % | 8,20 % |
 | 2. Offline, GPS y sincronización | 15 % | Funcional; piloto físico multidía pendiente | 80 % | 12 % |
 | 3. PostGIS, mapa interno y capas | 15 % | Operativa con catálogos oficiales, alcance por entidad, puntos, recorridos, polígonos, cobertura y privacidad | 92 % | 13,80 % |
-| 4. ArcGIS e interoperabilidad | 10 % | Operación administrada y E2E pública; credencial institucional/adjuntos pendientes | 70 % | 7,00 % |
+| 4. ArcGIS e interoperabilidad | 10 % | Operación administrada, E2E pública y adjuntos fotográficos gobernados; validación OAuth institucional pendiente | 78 % | 7,80 % |
 | 5. Analítica y reportes | 12 % | Cortes reproducibles en servidor; datasets patrón/programación operativa pendientes | 85 % | 10,20 % |
 | 6. Formularios y plantillas | 8 % | Diez plantillas, calidad y versiones inmutables | 85 % | 6,80 % |
 | 7. Seguridad y privacidad | 10 % | Retención auditable y gobierno funcional; AAL2 RLS/restore pendientes | 80 % | 8,00 % |
@@ -18,7 +18,7 @@ Este archivo es el registro técnico vivo de la implementación. El avance globa
 | 9. QA y piloto | 6 % | QA automatizado, seguridad, carga, accesibilidad y prueba transaccional territorial; pilotos físicos pendientes | 74 % | 4,44 % |
 | 10. Lanzamiento, operación y documentación | 3 % | Health, sonda externa e incidentes automáticos activos; segunda región/secretos/firma pendientes | 80 % | 2,40 % |
 
-**Avance global actual: 82,69 % ponderado.**
+**Avance global actual: 83,49 % ponderado.**
 
 El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases que todavía no satisfacían todos los criterios del documento fuente. La auditoría detallada está en `docs/PLAN_MAESTRO_COMPLETION_AUDIT.md`; la reducción es metodológica, no una pérdida de funciones.
 
@@ -39,6 +39,8 @@ El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases qu
 - Centro de integraciones ArcGIS para administración/coordinación con OAuth de aplicación ejecutado en servidor, referencia de secreto, validación de host, lotes, reintentos, cancelación, idempotencia y auditoría por registro.
 - Importación ArcGIS pública probada de extremo a extremo desde Vercel hacia una capa del mapa interno; se eliminan nombres de campos sensibles y atributos complejos.
 - Publicación saliente restringida a metadatos operativos no sensibles mediante lista explícita.
+- Adjuntos ArcGIS gobernados y opt-in: autorización auditable, máximo tres fotos JPEG/PNG/WebP por registro, exclusión de firmas, validación de entidad/ruta/tamaño/MIME/firma binaria/SHA-256, nombres técnicos, idempotencia local/remota y reintentos parciales.
+- Migración 009 aplicada al Supabase remoto y comprobada por PostgREST: columnas de autorización/trazabilidad, restricción validada e índices de idempotencia y estado.
 - Exportación GIS en GeoJSON, CSV WGS84, Shapefile ZIP (`SHP`, `SHX`, `DBF`, `PRJ`, `CPG`) y GeoPackage OGC 1.3.
 - Informe territorial PDF con mapa, cobertura, fuentes, estados y métricas operativas.
 - Configuración regional para 20 países de América Latina.
@@ -50,9 +52,9 @@ El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases qu
 - Retención con vista previa obligatoria, registro auditable y ejecución confirmada por superadmin; anonimización de respuestas y purga limitada a clases sin archivos externos.
 - Migraciones PostGIS/RLS aplicadas al Supabase remoto y verificadas: PostGIS 3.3.7, geometrías de punto/línea/polígono, índices GiST, configuración regional y aislamiento por entidad.
 - Capa oficial DANE 2025 de los 46 municipios de Bolívar precargada en la entidad inicial.
-- APK Android 2.9.0 compilada con catálogo territorial versionado, GIS de campo, observabilidad, snapshots, retención, ArcGIS administrado, GeoPackage y entrada nativa directa al login. Binario de pruebas: `entregables/Control-G-2.9.0-LATAM-GIS-offline-debug.apk`.
-- Huella SHA-256 del APK: `23d1b229420f6040f297261aab371159be35dc822f180de440ac6e8cfe6f8eb4`.
-- QA técnico aprobado: 36/36 pruebas automatizadas, lint, build web/PWA, prueba transaccional PostGIS con rollback, pruebas unitarias Android y 269 tareas Gradle con `assembleDebug`.
+- APK Android 2.10.0 compilada con catálogo territorial versionado, GIS de campo, observabilidad, snapshots, retención, ArcGIS administrado, adjuntos fotográficos gobernados, GeoPackage y entrada nativa directa al login. Binario: `entregables/Control-G-2.10.0-LATAM-GIS-offline-debug.apk`.
+- Huella SHA-256 del APK: `afac0d54c77bd453190cff2edb556353769920b08eddddb37ed7ebcb5d1610ca`.
+- QA técnico aprobado: 39/39 pruebas automatizadas, lint, validación sintáctica ArcGIS, TypeScript/Vite/PWA, 269 tareas Gradle con pruebas unitarias y `assembleDebug`; auditoría de producción con 0 vulnerabilidades conocidas.
 - Auditoría del árbol de producción aprobada con 0 vulnerabilidades conocidas; React Router actualizado a 7.18.3 y dependencias transitivas corregidas sin regresiones de compilación.
 - Encabezados de seguridad publicados verificados y rutas privadas marcadas `noindex`; el endpoint de snapshots rechaza acceso anónimo con `401`.
 - Prueba de carga local: 1.500 solicitudes, concurrencia máxima 40, 0 fallos y hasta 1.604 solicitudes/s en `/login`.

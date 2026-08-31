@@ -1,6 +1,13 @@
 import { createHash } from 'node:crypto'
 import { isIP } from 'node:net'
 import { createClient } from '@supabase/supabase-js'
+import {
+  ALLOWED_ATTACHMENT_MIME_TYPES,
+  ATTACHMENT_BATCH_SIZE,
+  attachmentFilename,
+  groupAuthorizedEvidence,
+  verifyEvidenceBlob,
+} from './attachments.mjs'
 
 const ALLOWED_ORIGINS = new Set([
   'https://www.controlg.co',
@@ -22,6 +29,8 @@ const SAFE_SOURCE_FIELDS = new Set(['id', 'local_id', 'source', 'status', 'captu
 const SENSITIVE_IMPORT_FIELD = /(name|nombre|apellido|document|identif|cedula|dni|email|correo|phone|telefono|celular|address|direccion|birth|nacimiento|password|secret|token)/i
 const FATAL_CONNECTION_ERRORS = new Set([
   'ARCGIS_SERVER_CREDENTIAL_NOT_CONFIGURED',
+  'ARCGIS_ATTACHMENTS_NOT_SUPPORTED',
+  'ATTACHMENT_AUTHORIZATION_REQUIRED',
   'CREDENTIAL_REFERENCE_INVALID',
   'OAUTH_400',
   'OAUTH_401',
@@ -192,6 +201,47 @@ async function postArcGis(url, token, params) {
   return payload
 }
 
+async function remoteAttachmentByName(baseUrl, objectId, token, filename) {
+  const body = new URLSearchParams({ f: 'json' })
+  if (token) body.set('token', token)
+  const response = await fetchWithRetry(`${baseUrl}/${encodeURIComponent(objectId)}/attachments`, {
+    method: 'POST',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+    body,
+  })
+  const payload = await response.json().catch(() => null)
+  if (!response.ok || payload?.error) {
+    throw new Error(`ARCGIS_${payload?.error?.code || response.status}:${safeMessage(payload?.error?.message)}`)
+  }
+  return (Array.isArray(payload?.attachmentInfos) ? payload.attachmentInfos : [])
+    .find(item => String(item?.name || '') === filename) || null
+}
+
+async function postArcGisAttachment(baseUrl, objectId, token, blob, filename, retries = 3) {
+  let response
+  let payload
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    const body = new FormData()
+    body.set('f', 'json')
+    if (token) body.set('token', token)
+    body.set('attachment', blob, filename)
+    response = await fetch(`${baseUrl}/${encodeURIComponent(objectId)}/addAttachment`, { method: 'POST', body })
+    payload = await response.json().catch(() => null)
+    const code = Number(payload?.error?.code || response.status)
+    if ((!RETRYABLE_STATUS.has(code) && !RETRYABLE_STATUS.has(response.status)) || attempt === retries) break
+    const retryAfter = Number(response.headers.get('retry-after'))
+    await wait(Number.isFinite(retryAfter) && retryAfter > 0
+      ? Math.min(retryAfter * 1_000, 10_000)
+      : Math.min(800 * (2 ** attempt), 6_000))
+  }
+  const result = payload?.addAttachmentResult || payload
+  if (!response?.ok || payload?.error || !result?.success) {
+    const code = payload?.error?.code || result?.error?.code || response?.status || 'ATTACHMENT_FAILED'
+    throw new Error(`ARCGIS_${code}:${safeMessage(payload?.error?.message || result?.error?.description)}`)
+  }
+  return result
+}
+
 async function loadIntegration(client, { jobId, connectionId, mappingId }) {
   let job = null
   if (jobId) {
@@ -209,7 +259,8 @@ async function loadIntegration(client, { jobId, connectionId, mappingId }) {
     if (mappingResult.error) throw Object.assign(new Error('MAPPING_NOT_FOUND'), { status: 404 })
     mapping = mappingResult.data
   }
-  if (job && (job.entity_id !== connectionResult.data.entity_id || mapping?.connection_id !== connectionResult.data.id)) {
+  if ((job && job.entity_id !== connectionResult.data.entity_id)
+      || (mapping && mapping.connection_id !== connectionResult.data.id)) {
     throw Object.assign(new Error('INTEGRATION_SCOPE_MISMATCH'), { status: 403 })
   }
   return { job, connection: connectionResult.data, mapping }
@@ -220,6 +271,12 @@ async function verifyConnection(client, connection, mapping) {
   const token = await arcGisToken(connection)
   const url = layerUrl(mapping, connection)
   const metadata = await postArcGis(url, token, {})
+  if (mapping.attachment_policy === 'authorized') {
+    if (mapping.direction !== 'export' || !mapping.attachment_authorized_at || !mapping.attachment_authorized_by) {
+      throw new Error('ATTACHMENT_AUTHORIZATION_REQUIRED')
+    }
+    if (!metadata.hasAttachments) throw new Error('ARCGIS_ATTACHMENTS_NOT_SUPPORTED')
+  }
   const summary = {
     name: String(metadata.name || connection.name),
     geometryType: metadata.geometryType || null,
@@ -270,8 +327,124 @@ function featurePayload(record, mapping) {
   }
 }
 
+async function loadEvidenceRows(client, job, records) {
+  const parentIds = Array.from(new Set(records.flatMap(record => [String(record.id), String(record.local_id || record.id)])))
+  const rows = []
+  for (let index = 0; index < parentIds.length; index += 50) {
+    const result = await client.from('evidence_files')
+      .select('id,entity_id,parent_type,parent_local_id,field_id,bucket_id,storage_path,media_type,mime_type,size_bytes,sha256,captured_at,created_at')
+      .eq('entity_id', job.entity_id)
+      .eq('parent_type', 'form_response')
+      .in('parent_local_id', parentIds.slice(index, index + 50))
+      .order('captured_at', { ascending: true })
+      .limit(1_000)
+    if (result.error) throw new Error(`EVIDENCE_QUERY:${result.error.code}`)
+    rows.push(...(result.data || []))
+  }
+  return rows
+}
+
+function attachmentItem(job, evidence, updates = {}) {
+  const { parentSourceRecordId = null, ...values } = updates
+  return {
+    id: `${job.id}:${evidence.id}:attachment`,
+    job_id: job.id,
+    entity_id: job.entity_id,
+    source_record_id: evidence.id,
+    parent_source_record_id: parentSourceRecordId,
+    evidence_file_id: evidence.id,
+    operation: 'attachment',
+    attachment_name: attachmentFilename(evidence),
+    content_type: ALLOWED_ATTACHMENT_MIME_TYPES.has(String(evidence.mime_type).toLowerCase()) ? evidence.mime_type : null,
+    size_bytes: Number(evidence.size_bytes) >= 1 && Number(evidence.size_bytes) <= 10 * 1024 * 1024
+      ? Number(evidence.size_bytes)
+      : null,
+    payload_sha256: /^[a-f0-9]{64}$/.test(String(evidence.sha256 || '')) ? evidence.sha256 : null,
+    ...values,
+  }
+}
+
+async function processAuthorizedAttachments(client, job, records, remoteByRecord, baseUrl, token) {
+  const evidenceRows = await loadEvidenceRows(client, job, records)
+  const grouped = groupAuthorizedEvidence(evidenceRows, records, job.entity_id)
+  if (grouped.rejected.length) {
+    const skipped = grouped.rejected.map(({ evidence, code }) => attachmentItem(job, evidence, {
+      parentSourceRecordId: records.find(record => (
+        String(record.id) === String(evidence.parent_local_id)
+        || String(record.local_id || record.id) === String(evidence.parent_local_id)
+      ))?.id || null,
+      status: 'skipped', attempt_count: 0, error_code: code, error_message: null,
+    }))
+    const skippedResult = await client.from('arcgis_job_items').upsert(skipped, { onConflict: 'job_id,source_record_id,operation' })
+    if (skippedResult.error) throw new Error(`ATTACHMENT_ITEMS_SKIPPED:${skippedResult.error.code}`)
+  }
+
+  const candidates = records.flatMap(record => (
+    grouped.byRecord.get(String(record.id)) || []
+  ).map(evidence => ({ record, evidence, remoteObjectId: remoteByRecord.get(String(record.id)) })))
+    .filter(candidate => candidate.remoteObjectId)
+  if (!candidates.length) return { attempted: 0, succeeded: 0, failed: 0, skipped: grouped.rejected.length }
+
+  const evidenceIds = candidates.map(candidate => candidate.evidence.id)
+  const existingResult = await client.from('arcgis_job_items')
+    .select('source_record_id,status,attempt_count,remote_attachment_id')
+    .eq('job_id', job.id).eq('operation', 'attachment').in('source_record_id', evidenceIds)
+  if (existingResult.error) throw new Error(`ATTACHMENT_ITEMS_QUERY:${existingResult.error.code}`)
+  const existingById = new Map((existingResult.data || []).map(item => [item.source_record_id, item]))
+  let succeeded = 0
+  let failed = 0
+
+  for (const { record, evidence, remoteObjectId } of candidates) {
+    const existing = existingById.get(evidence.id)
+    if (existing?.status === 'completed' && existing.remote_attachment_id) {
+      succeeded += 1
+      continue
+    }
+    const running = attachmentItem(job, evidence, {
+      parentSourceRecordId: record.id,
+      status: 'running', attempt_count: Number(existing?.attempt_count || 0) + 1,
+      remote_object_id: String(remoteObjectId), error_code: null, error_message: null,
+    })
+    const runningResult = await client.from('arcgis_job_items').upsert(running, { onConflict: 'job_id,source_record_id,operation' })
+    if (runningResult.error) throw new Error(`ATTACHMENT_ITEM_UPSERT:${runningResult.error.code}`)
+
+    try {
+      const filename = attachmentFilename(evidence)
+      const alreadyRemote = await remoteAttachmentByName(baseUrl, remoteObjectId, token, filename)
+      let remoteAttachmentId = alreadyRemote?.id
+      if (!alreadyRemote) {
+        const download = await client.storage.from(evidence.bucket_id).download(evidence.storage_path)
+        if (download.error || !download.data) throw new Error(`ATTACHMENT_DOWNLOAD:${download.error?.message || 'NOT_FOUND'}`)
+        const integrity = await verifyEvidenceBlob(download.data, evidence)
+        if (!integrity.ok) throw new Error(integrity.code)
+        const uploaded = await postArcGisAttachment(baseUrl, remoteObjectId, token, download.data, filename)
+        remoteAttachmentId = uploaded.objectId ?? uploaded.id
+      }
+      if (remoteAttachmentId === null || remoteAttachmentId === undefined) throw new Error('ARCGIS_ATTACHMENT_ID_MISSING')
+      const completedResult = await client.from('arcgis_job_items').update({
+        status: 'completed', remote_attachment_id: String(remoteAttachmentId), error_code: null, error_message: null,
+      }).eq('job_id', job.id).eq('source_record_id', evidence.id).eq('operation', 'attachment')
+      if (completedResult.error) throw new Error(`ATTACHMENT_ITEM_COMPLETE:${completedResult.error.code}`)
+      succeeded += 1
+    } catch (error) {
+      const code = safeMessage(error?.message || 'ATTACHMENT_FAILED').split(':')[0]
+      const failedResult = await client.from('arcgis_job_items').update({
+        status: 'failed', error_code: code, error_message: safeMessage(error?.message),
+      }).eq('job_id', job.id).eq('source_record_id', evidence.id).eq('operation', 'attachment')
+      if (failedResult.error) throw new Error(`ATTACHMENT_ITEM_FAIL:${failedResult.error.code}`)
+      failed += 1
+    }
+  }
+  return { attempted: candidates.length, succeeded, failed, skipped: grouped.rejected.length }
+}
+
 async function exportBatch(client, job, connection, mapping) {
-  const batchSize = Math.min(Math.max(Number(mapping.batch_size || 500), 1), 2_000)
+  const attachmentsAuthorized = mapping.attachment_policy === 'authorized'
+  if (attachmentsAuthorized && (!mapping.attachment_authorized_at || !mapping.attachment_authorized_by)) {
+    throw new Error('ATTACHMENT_AUTHORIZATION_REQUIRED')
+  }
+  const configuredBatchSize = Math.min(Math.max(Number(mapping.batch_size || 500), 1), 2_000)
+  const batchSize = attachmentsAuthorized ? Math.min(configuredBatchSize, ATTACHMENT_BATCH_SIZE) : configuredBatchSize
   const offset = Math.max(Number.parseInt(job.cursor_value || '0', 10) || 0, 0)
   let query = client
     .from('form_responses')
@@ -306,10 +479,13 @@ async function exportBatch(client, job, connection, mapping) {
 
   const ids = records.map(record => record.id)
   const existingResult = await client.from('arcgis_job_items')
-    .select('source_record_id,status,attempt_count').eq('job_id', job.id).in('source_record_id', ids)
+    .select('source_record_id,status,attempt_count,remote_object_id')
+    .eq('job_id', job.id).eq('operation', 'add').in('source_record_id', ids)
   if (existingResult.error) throw new Error(`JOB_ITEMS_QUERY:${existingResult.error.code}`)
   const existingById = new Map((existingResult.data || []).map(item => [item.source_record_id, item]))
-  const completed = new Set((existingResult.data || []).filter(item => item.status === 'completed').map(item => item.source_record_id))
+  const completed = new Set((existingResult.data || [])
+    .filter(item => item.status === 'completed' && item.remote_object_id)
+    .map(item => item.source_record_id))
   const pending = records.filter(record => !completed.has(record.id))
   const features = pending.map(record => featurePayload(record, mapping))
   const itemRows = pending.map((record, index) => ({
@@ -327,12 +503,16 @@ async function exportBatch(client, job, connection, mapping) {
     if (itemUpsert.error) throw new Error(`JOB_ITEMS_UPSERT:${itemUpsert.error.code}`)
   }
 
-  let succeeded = 0
-  let failed = 0
+  const token = await arcGisToken(connection)
+  if (!token && connection.auth_mode === 'public') throw new Error('PUBLIC_CONNECTION_IS_READ_ONLY')
+  const baseUrl = layerUrl(mapping, connection)
+  if (attachmentsAuthorized) {
+    const metadata = await postArcGis(baseUrl, token, {})
+    if (!metadata.hasAttachments) throw new Error('ARCGIS_ATTACHMENTS_NOT_SUPPORTED')
+  }
+
   if (features.length) {
-    const token = await arcGisToken(connection)
-    if (!token && connection.auth_mode === 'public') throw new Error('PUBLIC_CONNECTION_IS_READ_ONLY')
-    const payload = await postArcGis(`${layerUrl(mapping, connection)}/addFeatures`, token, {
+    const payload = await postArcGis(`${baseUrl}/addFeatures`, token, {
       rollbackOnFailure: 'false',
       features: JSON.stringify(features),
     })
@@ -340,19 +520,32 @@ async function exportBatch(client, job, connection, mapping) {
     for (let index = 0; index < pending.length; index += 1) {
       const result = results[index]
       const success = Boolean(result?.success)
-      if (success) succeeded += 1
-      else failed += 1
-      await client.from('arcgis_job_items').update({
+      const updateResult = await client.from('arcgis_job_items').update({
         status: success ? 'completed' : 'failed',
         remote_object_id: result?.objectId === undefined ? null : String(result.objectId),
         error_code: success ? null : String(result?.error?.code || 'ARCGIS_ADD_FAILED'),
         error_message: success ? null : safeMessage(result?.error?.description),
       }).eq('job_id', job.id).eq('source_record_id', pending[index].id).eq('operation', 'add')
+      if (updateResult.error) throw new Error(`JOB_ITEM_UPDATE:${updateResult.error.code}`)
     }
   }
 
+  const addItemsResult = await client.from('arcgis_job_items')
+    .select('source_record_id,status,remote_object_id').eq('job_id', job.id)
+    .eq('operation', 'add').in('source_record_id', ids)
+  if (addItemsResult.error) throw new Error(`JOB_ITEMS_REMOTE_QUERY:${addItemsResult.error.code}`)
+  const remoteByRecord = new Map((addItemsResult.data || [])
+    .filter(item => item.status === 'completed' && item.remote_object_id)
+    .map(item => [String(item.source_record_id), String(item.remote_object_id)]))
+  const featureSucceeded = remoteByRecord.size
+  const featureFailed = records.length - featureSucceeded
+  const attachments = attachmentsAuthorized
+    ? await processAuthorizedAttachments(client, job, records, remoteByRecord, baseUrl, token)
+    : { attempted: 0, succeeded: 0, failed: 0, skipped: 0 }
+
   const hasMore = rawRecords.length === batchSize
-  const nextStatus = failed ? 'partial' : hasMore ? 'pending' : 'completed'
+  const batchFailed = featureFailed + attachments.failed
+  const nextStatus = batchFailed ? 'partial' : hasMore ? 'pending' : 'completed'
   const itemCountsResult = await client.from('arcgis_job_items').select('status').eq('job_id', job.id)
   if (itemCountsResult.error) throw new Error(`JOB_ITEMS_COUNT:${itemCountsResult.error.code}`)
   const itemStatuses = itemCountsResult.data || []
@@ -361,15 +554,22 @@ async function exportBatch(client, job, connection, mapping) {
   const accumulatedFailed = itemStatuses.filter(item => item.status === 'failed').length
   await client.from('arcgis_jobs').update({
     status: nextStatus,
-    cursor_value: failed ? String(offset) : hasMore ? String(offset + batchSize) : String(offset + rawRecords.length),
+    cursor_value: batchFailed ? String(offset) : hasMore ? String(offset + batchSize) : String(offset + rawRecords.length),
     attempted_count: accumulatedAttempted,
     succeeded_count: accumulatedSucceeded,
     failed_count: accumulatedFailed,
     last_heartbeat_at: new Date().toISOString(),
     completed_at: nextStatus === 'completed' || nextStatus === 'partial' ? new Date().toISOString() : null,
-    result_summary: { batchSize, offset, attempted: records.length, succeeded, failed, hasMore },
+    result_summary: {
+      batchSize, configuredBatchSize, offset, hasMore,
+      features: { attempted: records.length, succeeded: featureSucceeded, failed: featureFailed },
+      attachments,
+    },
   }).eq('id', job.id)
-  return { status: nextStatus, attempted: records.length, succeeded, failed, hasMore }
+  return {
+    status: nextStatus, attempted: records.length, succeeded: featureSucceeded,
+    failed: featureFailed, attachments, hasMore,
+  }
 }
 
 function sanitizeImportedProperties(properties) {
@@ -498,10 +698,10 @@ export default async function handler(req, res) {
         last_heartbeat_at: new Date().toISOString(),
         error_summary: { code },
       }).eq('id', job.id)
-      if (integration.connection?.id && FATAL_CONNECTION_ERRORS.has(code)) {
-        await context.client.from('arcgis_connections').update({ status: 'error', last_error_code: code })
-          .eq('id', integration.connection.id)
-      }
+    }
+    if (context?.client && integration?.connection?.id && FATAL_CONNECTION_ERRORS.has(code)) {
+      await context.client.from('arcgis_connections').update({ status: 'error', last_error_code: code })
+        .eq('id', integration.connection.id)
     }
     return json(res, status >= 400 && status < 600 ? status : 500, { ok: false, code })
   }

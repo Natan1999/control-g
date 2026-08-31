@@ -1,4 +1,4 @@
-# Control G 2.9 · LATAM + GIS
+# Control G 2.10 · LATAM + GIS
 
 Aplicación multi-entidad para caracterización y acompañamiento psicosocial en campo. La interfaz web y el APK de Capacitor funcionan sin conexión: familias, formularios, respuestas, fotografías y actividades se guardan localmente y se sincronizan de forma idempotente cuando regresa la señal.
 
@@ -19,7 +19,7 @@ Aplicación multi-entidad para caracterización y acompañamiento psicosocial en
 ## Configuración
 
 1. Copia `.env.example` a `.env.local` y configura únicamente `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` para la aplicación.
-2. Ejecuta, en orden, las migraciones de `supabase/migrations/` en la instancia de Supabase. Las migraciones `202608310001` a `202608310008` agregan PostGIS/GIS LATAM, gobierno de datos, evidencias con mínimo privilegio, versiones inmutables de formularios, la cola ArcGIS, geometrías de campo, snapshots reproducibles, retención auditable y catálogos territoriales versionados.
+2. Ejecuta, en orden, las migraciones de `supabase/migrations/` en la instancia de Supabase. Las migraciones `202608310001` a `202608310009` agregan PostGIS/GIS LATAM, gobierno de datos, evidencias con mínimo privilegio, versiones inmutables de formularios, la cola ArcGIS, geometrías de campo, snapshots reproducibles, retención auditable, catálogos territoriales versionados y adjuntos ArcGIS gobernados.
 3. La migración instala `admin_create_user`, una RPC `SECURITY DEFINER` que valida el JWT, el rol y la entidad antes de crear Auth + perfil en una sola transacción.
 4. Para crear o verificar las cuentas iniciales, define `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` y `CONTROL_G_INITIAL_PASSWORD`, y ejecuta `npm run backend:seed`.
 5. Para volver a cargar la capa visual oficial de municipios de Bolívar, ejecuta `npm run backend:seed:gis`. Para publicar su catálogo PostGIS versionado y fijarlo a la entidad inicial, ejecuta `npm run backend:publish:bolivar-jurisdictions`. Ambos usan el archivo de `supabase/seed/` y requieren la clave administrativa solo en el entorno local.
@@ -61,6 +61,7 @@ El primer inicio de sesión del dispositivo requiere conexión. Después, la ses
 - El constructor incorpora campos de recorrido y área: capturan vértices GPS sin internet, conservan precisión/altitud/tiempo y, al sincronizar, generan geometrías PostGIS con longitud, perímetro y área.
 - Las respuestas se pueden clasificar por variables temáticas no sensibles; nombres, documentos, teléfonos, direcciones, firmas y fotos se excluyen del índice cartográfico.
 - Administración y coordinación disponen de `/admin/integrations/arcgis` y `/coord/integrations/arcgis`: verificación de servicios, importación pública, OAuth 2.0 de aplicación en servidor, lotes, reintentos, idempotencia, cancelación y trazabilidad por registro. Supabase conserva solo una referencia al secreto; el Client Secret real vive en las variables cifradas del servidor y nunca llega al navegador o al APK.
+- La exportación opcional de evidencias exige autorización explícita por mapeo y una capa con adjuntos habilitados. Solo transmite hasta tres fotos JPEG/PNG/WebP por registro, nunca firmas; valida entidad, ruta, tamaño, MIME, firma binaria y SHA-256, usa nombres técnicos y evita duplicados por evidencia y nombre remoto.
 - La importación elimina campos con nombres sensibles y conserva únicamente atributos escalares acotados. La publicación saliente usa una lista explícita de metadatos operativos no sensibles.
 - La descarga soporta GeoJSON, CSV WGS84, Shapefile ZIP, GeoPackage OGC 1.3 e informe territorial PDF.
 - La precisión visible y exportable, el umbral de supresión de grupos pequeños y la meta de capturas por zona se configuran por entidad; el GPS original permanece protegido en Supabase.
@@ -85,7 +86,7 @@ Requiere JDK 17 o superior y Android SDK 35:
 npm run android:apk
 ```
 
-El APK instalable de pruebas queda en `android/app/build/outputs/apk/debug/app-debug.apk`; la copia entregable 2.9.0 se genera en `entregables/Control-G-2.9.0-LATAM-GIS-offline-debug.apk`. Para Play Store o distribución firmada se debe aportar el keystore institucional y configurar la firma de `release` fuera del repositorio.
+El APK instalable de pruebas queda en `android/app/build/outputs/apk/debug/app-debug.apk`; la copia entregable 2.10.0 se genera en `entregables/Control-G-2.10.0-LATAM-GIS-offline-debug.apk`. Para Play Store o distribución firmada se debe aportar el keystore institucional y configurar la firma de `release` fuera del repositorio.
 
 ## Cliente inicial: Gobernación de Bolívar
 
