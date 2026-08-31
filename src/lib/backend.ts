@@ -40,6 +40,7 @@ export const COLLECTION_IDS = {
 
 export const BUCKET_IDS = {
   FIELD_PHOTOS: 'field-photos',
+  FIELD_AUDIO:  'field-audio',
   SIGNATURES:   'signatures',
   AVATARS:      'avatars',
   EXPORTS:      'exports',

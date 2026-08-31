@@ -56,6 +56,16 @@ export function isFieldVisible(field: FormField, answers: Record<string, unknown
 }
 
 export function validateFieldValue(field: FormField, value: unknown): string | null {
+  if (field.type === 'matrix') {
+    const matrixValue = value && typeof value === 'object' && !Array.isArray(value)
+      ? value as Record<string, unknown>
+      : {}
+    const answeredRows = field.matrixRows?.filter(row => !isEmptyFormValue(matrixValue[row.value])).length || 0
+    const totalRows = field.matrixRows?.length || 0
+    if (field.required && answeredRows === 0) return 'Esta matriz es obligatoria'
+    if (answeredRows > 0 && answeredRows < totalRows) return `Responde todas las filas de la matriz (${answeredRows}/${totalRows})`
+    return null
+  }
   if (field.required && isEmptyFormValue(value)) return 'Este campo es obligatorio'
   if (isEmptyFormValue(value)) return null
 
@@ -222,6 +232,9 @@ export function estimateFormOfflineFootprint(pages: FormPage[]): FormOfflineEsti
       mediaFields += 1
     } else if (field.type === 'file') {
       estimatedSubmissionBytes += Math.max(1, field.maxFileSizeMb ?? 5) * 1_000_000
+      mediaFields += 1
+    } else if (field.type === 'audio') {
+      estimatedSubmissionBytes += Math.max(1, field.maxFileSizeMb ?? 8) * 1_000_000
       mediaFields += 1
     } else if (field.type === 'geotrace' || field.type === 'geoshape') {
       estimatedSubmissionBytes += 80_000

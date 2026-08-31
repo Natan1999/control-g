@@ -5,7 +5,8 @@ import {
   Camera, PenTool, MapPin, Layers, Calculator, Info, 
   FileText, Phone, Mail, Trash2, Settings2, GripVertical,
   ChevronRight, ChevronLeft, Layout, Globe, X, BookOpen, MapPinned, ShieldCheck, AlertTriangle, Share2,
-  Send, CheckCircle2, RotateCcw, Rocket, LockKeyhole
+  Send, CheckCircle2, RotateCcw, Rocket, LockKeyhole,
+  DollarSign, Table2, Mic
 } from 'lucide-react'
 import { motion, Reorder, AnimatePresence } from 'framer-motion'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -64,13 +65,16 @@ const FIELD_TYPES: { type: FormFieldType; label: string; icon: any; category: st
   { type: 'text',          label: 'Texto Corto',     icon: Type,          category: 'Básico' },
   { type: 'longtext',      label: 'Texto Largo',     icon: AlignLeft,     category: 'Básico' },
   { type: 'number',        label: 'Cifra Numérica',  icon: Hash,          category: 'Básico' },
+  { type: 'currency',      label: 'Moneda',          icon: DollarSign,    category: 'Básico' },
   { type: 'date',          label: 'Fecha',           icon: Calendar,      category: 'Básico' },
   { type: 'time',          label: 'Hora',            icon: Clock,         category: 'Básico' },
   { type: 'select',        label: 'Lista Desplegable', icon: ChevronDown,    category: 'Selección' },
   { type: 'multi_select',  label: 'Multiselección',  icon: List,          category: 'Selección' },
   { type: 'radio',         label: 'Botón Radial',    icon: RadioIcon,     category: 'Selección' },
   { type: 'checkbox',      label: 'Casilla Verif.',  icon: CheckSquare,   category: 'Selección' },
+  { type: 'matrix',        label: 'Matriz',           icon: Table2,        category: 'Selección' },
   { type: 'photo',         label: 'Captura Foto',    icon: Camera,        category: 'Media' },
+  { type: 'audio',         label: 'Grabación Audio', icon: Mic,           category: 'Media' },
   { type: 'signature',     label: 'Firma Digital',   icon: PenTool,       category: 'Media' },
   { type: 'gps',           label: 'Ubicación GPS',   icon: MapPin,        category: 'Geografía' },
   { type: 'geotrace',      label: 'Recorrido GPS',   icon: Share2,        category: 'Geografía' },
@@ -206,14 +210,21 @@ export default function FormBuilderPage() {
   const workflow = EDITORIAL_STATUS[workflowStatus]
 
   const addField = (type: FormFieldType) => {
+    const entityCurrency = entities.find(entity => entity.id === selectedEntityId)?.currencyCode || 'COP'
     const newField: FormField = {
       id: `f_${Date.now()}`,
       type,
       label: `Nueva pregunta (${type})`,
       required: false,
-      options: ['select', 'multi_select', 'radio', 'checkbox'].includes(type) 
-        ? [{ label: 'Opción 1', value: 'op1' }] 
-        : undefined
+      options: type === 'matrix'
+        ? [{ label: 'Sí', value: 'si' }, { label: 'No', value: 'no' }]
+        : ['select', 'multi_select', 'radio', 'checkbox'].includes(type)
+          ? [{ label: 'Opción 1', value: 'op1' }]
+          : undefined,
+      matrixRows: type === 'matrix' ? [{ label: 'Ítem 1', value: 'item_1' }] : undefined,
+      currencyCode: type === 'currency' ? entityCurrency : undefined,
+      maxDurationSeconds: type === 'audio' ? 300 : undefined,
+      maxFileSizeMb: type === 'audio' ? 8 : undefined,
     }
     const newPages = [...form.pages!]
     newPages[activePageIdx].fields.push(newField)
@@ -810,7 +821,7 @@ export default function FormBuilderPage() {
                         />
                       </div>
 
-                      {['text', 'longtext', 'number', 'email', 'phone'].includes(f.type) && (
+                      {['text', 'longtext', 'number', 'currency', 'email', 'phone'].includes(f.type) && (
                         <div>
                           <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Texto de ejemplo</label>
                           <input value={f.placeholder || ''} onChange={event => updateField(f.id, { placeholder: event.target.value })} placeholder="Ejemplo de respuesta" className="w-full rounded-2xl border-none bg-slate-50 px-4 py-3 text-sm shadow-inner focus:ring-2 focus:ring-blue-500/20" />
@@ -838,9 +849,9 @@ export default function FormBuilderPage() {
                         </div>
                       )}
 
-                      {['select', 'multi_select', 'radio', 'checkbox'].includes(f.type) && (
+                      {['select', 'multi_select', 'radio', 'checkbox', 'matrix'].includes(f.type) && (
                         <div className="space-y-3">
-                          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Opciones</label>
+                          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{f.type === 'matrix' ? 'Columnas de respuesta' : 'Opciones'}</label>
                           <div className="space-y-2">
                             {f.options?.map((opt, oIdx) => (
                               <div key={oIdx} className="flex gap-2">
@@ -878,13 +889,37 @@ export default function FormBuilderPage() {
                         </div>
                       )}
 
-                      {['text', 'longtext', 'number', 'email', 'phone'].includes(f.type) && (
+                      {f.type === 'matrix' && (
+                        <div className="space-y-3">
+                          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400">Filas de la matriz</label>
+                          <div className="space-y-2">
+                            {f.matrixRows?.map((row, rowIndex) => (
+                              <div key={`${row.value}-${rowIndex}`} className="flex gap-2">
+                                <input
+                                  value={row.label}
+                                  onChange={event => {
+                                    const rows = [...(f.matrixRows || [])]
+                                    rows[rowIndex] = { label: event.target.value, value: event.target.value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_') }
+                                    updateField(f.id, { matrixRows: rows })
+                                  }}
+                                  placeholder={`Ítem ${rowIndex + 1}`}
+                                  className="flex-1 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500/20"
+                                />
+                                <button type="button" onClick={() => updateField(f.id, { matrixRows: f.matrixRows?.filter((_, index) => index !== rowIndex) })} className="p-2 text-rose-400 hover:text-rose-600" aria-label="Eliminar fila"><Trash2 size={14} /></button>
+                              </div>
+                            ))}
+                            <button type="button" onClick={() => updateField(f.id, { matrixRows: [...(f.matrixRows || []), { label: '', value: '' }] })} className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 py-2 text-[10px] font-bold text-slate-400 hover:bg-slate-50"><Plus size={14} /> Añadir fila</button>
+                          </div>
+                        </div>
+                      )}
+
+                      {['text', 'longtext', 'number', 'currency', 'email', 'phone'].includes(f.type) && (
                         <div className="space-y-3 rounded-2xl border border-slate-200 p-4">
                           <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Validación</p>
                             <p className="mt-1 text-[10px] leading-4 text-slate-400">Los límites se comprueban sin conexión antes de avanzar.</p>
                           </div>
-                          {f.type === 'number' ? (
+                          {f.type === 'number' || f.type === 'currency' ? (
                             <div className="grid grid-cols-2 gap-2">
                               <label className="text-[10px] font-bold text-slate-500">Mínimo<input type="number" value={f.validationRules?.min ?? ''} onChange={event => updateField(f.id, { validationRules: { ...f.validationRules, min: event.target.value === '' ? undefined : Number(event.target.value) } })} className="mt-1 w-full rounded-xl bg-slate-50 px-3 py-2 text-xs" /></label>
                               <label className="text-[10px] font-bold text-slate-500">Máximo<input type="number" value={f.validationRules?.max ?? ''} onChange={event => updateField(f.id, { validationRules: { ...f.validationRules, max: event.target.value === '' ? undefined : Number(event.target.value) } })} className="mt-1 w-full rounded-xl bg-slate-50 px-3 py-2 text-xs" /></label>
@@ -900,11 +935,28 @@ export default function FormBuilderPage() {
                         </div>
                       )}
 
+                      {f.type === 'currency' && (
+                        <div className="space-y-2 rounded-2xl border border-slate-200 p-4">
+                          <label className="block text-[10px] font-black uppercase tracking-widest text-slate-500">Código de moneda ISO</label>
+                          <input maxLength={3} value={f.currencyCode || 'COP'} onChange={event => updateField(f.id, { currencyCode: event.target.value.toUpperCase().replace(/[^A-Z]/g, '') })} placeholder="COP" className="w-full rounded-xl bg-slate-50 px-3 py-2 text-xs font-black uppercase" />
+                          <p className="text-[10px] leading-4 text-slate-500">Ejemplos: COP, MXN, PEN, USD. El valor se almacena como número para cálculos y exportaciones.</p>
+                        </div>
+                      )}
+
                       {f.type === 'file' && (
                         <div className="space-y-3 rounded-2xl border border-slate-200 p-4">
                           <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Archivo offline</p>
                           <label className="block text-[10px] font-bold text-slate-500">Tamaño máximo (MB)<input type="number" min="1" max="25" value={f.maxFileSizeMb ?? 5} onChange={event => updateField(f.id, { maxFileSizeMb: Math.min(25, Math.max(1, Number(event.target.value) || 1)) })} className="mt-1 w-full rounded-xl bg-slate-50 px-3 py-2 text-xs" /></label>
                           <p className="rounded-xl bg-slate-50 px-3 py-2 text-[10px] leading-4 text-slate-600"><strong>Formato:</strong> PDF. Se conserva cifrado en tránsito y protegido por las políticas de Storage de la entidad.</p>
+                        </div>
+                      )}
+
+                      {f.type === 'audio' && (
+                        <div className="space-y-3 rounded-2xl border border-slate-200 p-4">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Audio offline</p>
+                          <label className="block text-[10px] font-bold text-slate-500">Duración máxima (segundos)<input type="number" min="10" max="1800" value={f.maxDurationSeconds ?? 300} onChange={event => updateField(f.id, { maxDurationSeconds: Math.min(1800, Math.max(10, Number(event.target.value) || 10)) })} className="mt-1 w-full rounded-xl bg-slate-50 px-3 py-2 text-xs" /></label>
+                          <label className="block text-[10px] font-bold text-slate-500">Tamaño preventivo (MB)<input type="number" min="1" max="25" value={f.maxFileSizeMb ?? 8} onChange={event => updateField(f.id, { maxFileSizeMb: Math.min(25, Math.max(1, Number(event.target.value) || 1)) })} className="mt-1 w-full rounded-xl bg-slate-50 px-3 py-2 text-xs" /></label>
+                          <p className="rounded-xl bg-slate-50 px-3 py-2 text-[10px] leading-4 text-slate-600">El audio se graba en el dispositivo, permanece en la cola offline y usa almacenamiento privado de la entidad al sincronizar.</p>
                         </div>
                       )}
 

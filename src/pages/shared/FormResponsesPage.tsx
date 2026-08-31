@@ -10,6 +10,7 @@ import {
   Image as ImageIcon,
   Loader2,
   Search,
+  Volume2,
   XCircle,
 } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
@@ -80,6 +81,25 @@ function displayValue(value: any): string {
   if (Array.isArray(value)) return value.map(displayValue).join(', ')
   if (typeof value === 'object') return JSON.stringify(value, null, 2)
   return String(value)
+}
+
+function displayFieldValue(field: FormField, value: any): string {
+  if (field.type === 'currency' && value !== null && value !== undefined && value !== '') {
+    const numericValue = Number(value)
+    if (Number.isFinite(numericValue)) {
+      const configuredCurrency = (field.currencyCode || 'COP').toUpperCase()
+      return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: /^[A-Z]{3}$/.test(configuredCurrency) ? configuredCurrency : 'COP',
+        maximumFractionDigits: 2,
+      }).format(numericValue)
+    }
+  }
+  if (field.type === 'matrix' && value && typeof value === 'object' && !Array.isArray(value)) {
+    const columnNames = new Map(field.options?.map(option => [option.value, option.label]) || [])
+    return (field.matrixRows || []).map(row => `${row.label}: ${columnNames.get(value[row.value]) || value[row.value] || 'Sin respuesta'}`).join('\n')
+  }
+  return displayValue(value)
 }
 
 export default function FormResponsesPage() {
@@ -190,7 +210,7 @@ export default function FormResponsesPage() {
     }
     setMediaLoading(key)
     try {
-      const bucket = field.type === 'signature' ? BUCKET_IDS.SIGNATURES : field.type === 'file' ? BUCKET_IDS.EXPORTS : BUCKET_IDS.FIELD_PHOTOS
+      const bucket = field.type === 'signature' ? BUCKET_IDS.SIGNATURES : field.type === 'file' ? BUCKET_IDS.EXPORTS : field.type === 'audio' ? BUCKET_IDS.FIELD_AUDIO : BUCKET_IDS.FIELD_PHOTOS
       const url = await storage.createSignedUrl(bucket, path)
       setMediaUrls(current => ({ ...current, [key]: url }))
       window.open(url, '_blank', 'noopener,noreferrer')
@@ -282,8 +302,9 @@ export default function FormResponsesPage() {
                         <dl className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {fields.filter(field => field.type !== 'note').map(field => {
                             const value = answers[field.id]
-                            const isMedia = (field.type === 'photo' || field.type === 'signature' || field.type === 'file') && typeof value === 'string'
+                            const isMedia = (field.type === 'photo' || field.type === 'signature' || field.type === 'file' || field.type === 'audio') && typeof value === 'string'
                             const isImageMedia = field.type === 'photo' || field.type === 'signature'
+                            const isAudioMedia = field.type === 'audio'
                             const key = `${response.$id}:${field.id}`
                             return (
                               <div key={field.id} className="bg-white border border-slate-100 rounded-2xl p-4 min-w-0">
@@ -292,17 +313,18 @@ export default function FormResponsesPage() {
                                   {isMedia ? (
                                     <div className="space-y-3">
                                       {mediaUrls[key] && isImageMedia && <img src={mediaUrls[key]} alt={field.label} className="w-full max-h-56 object-contain rounded-xl bg-slate-100" />}
+                                      {mediaUrls[key] && isAudioMedia && <audio controls preload="metadata" src={mediaUrls[key]} className="w-full" />}
                                       <button
                                         type="button"
                                         onClick={() => openEvidence(response.$id, field, value)}
                                         disabled={mediaLoading === key}
                                         className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-blue-50 text-blue-700 font-bold text-xs disabled:opacity-50"
                                       >
-                                        {mediaLoading === key ? <Loader2 size={15} className="animate-spin" /> : mediaUrls[key] ? <ExternalLink size={15} /> : field.type === 'file' ? <FileText size={15} /> : <ImageIcon size={15} />}
-                                        {mediaUrls[key] ? (field.type === 'file' ? 'Abrir documento' : 'Abrir evidencia') : (field.type === 'file' ? 'Cargar documento' : 'Cargar evidencia')}
+                                        {mediaLoading === key ? <Loader2 size={15} className="animate-spin" /> : mediaUrls[key] ? <ExternalLink size={15} /> : field.type === 'file' ? <FileText size={15} /> : isAudioMedia ? <Volume2 size={15} /> : <ImageIcon size={15} />}
+                                        {mediaUrls[key] ? (field.type === 'file' ? 'Abrir documento' : isAudioMedia ? 'Abrir audio' : 'Abrir evidencia') : (field.type === 'file' ? 'Cargar documento' : isAudioMedia ? 'Cargar audio' : 'Cargar evidencia')}
                                       </button>
                                     </div>
-                                  ) : displayValue(value)}
+                                  ) : displayFieldValue(field, value)}
                                 </dd>
                               </div>
                             )

@@ -35,7 +35,7 @@ const FormResponderPage: React.FC = () => {
 
       try {
         const cachedAssignments = getCachedFormAssignments(user?.entityId, user?.id)
-        let assigned = cachedAssignments.some((assignment: any) => assignment.form_id === formId)
+        let selectedAssignment = cachedAssignments.find((assignment: any) => assignment.form_id === formId)
         const connected = await isOnline()
 
         if (connected && user?.id) {
@@ -50,14 +50,39 @@ const FormResponderPage: React.FC = () => {
                 Query.limit(1),
               ],
             )
-            assigned = assignmentResult.documents.length > 0
+            const now = Date.now()
+            selectedAssignment = assignmentResult.documents.find((assignment: any) =>
+              (!assignment.starts_at || new Date(assignment.starts_at).getTime() <= now)
+              && (!assignment.ends_at || new Date(assignment.ends_at).getTime() >= now),
+            )
           } catch (assignmentError) {
-            if (!assigned) throw assignmentError
+            if (!selectedAssignment) throw assignmentError
           }
         }
 
-        if (!assigned) {
+        if (!selectedAssignment) {
           throw new Error('Este formulario no está asignado a tu perfil. Solicita la asignación a coordinación.')
+        }
+
+        if (user?.id) {
+          const responses = await localDB.formResponses
+            .where('formId')
+            .equals(formId)
+            .filter(response => response.professionalId === user.id)
+            .toArray()
+          const drafts = responses
+            .filter(response => response.status === 'draft' && response.familyId === (familyId || null))
+            .sort((a, b) => b.updatedAt - a.updatedAt)
+          const draft = drafts[0]
+          const localCompleted = responses.filter(response => response.status === 'completed').length
+          const completed = Number(selectedAssignment.completed_count || 0) + localCompleted
+          if (selectedAssignment.quota && completed >= Number(selectedAssignment.quota) && !draft) {
+            throw new Error(`La cuota asignada para este formulario ya fue completada (${completed}/${selectedAssignment.quota}).`)
+          }
+          if (draft) {
+            draftLocalId.current = draft.localId
+            setInitialAnswers(draft.answers)
+          }
         }
 
         let doc: any = getCachedForms(user?.entityId).find((form: any) => form.$id === formId)
@@ -76,21 +101,6 @@ const FormResponderPage: React.FC = () => {
         }
 
         if (!doc) throw new Error('El formulario no está disponible en la copia local.')
-
-        if (user?.id) {
-          const drafts = await localDB.formResponses
-            .where('formId')
-            .equals(formId)
-            .filter(response => response.status === 'draft'
-              && response.professionalId === user.id
-              && response.familyId === (familyId || null))
-            .toArray()
-          const draft = drafts.sort((a, b) => b.updatedAt - a.updatedAt)[0]
-          if (draft) {
-            draftLocalId.current = draft.localId
-            setInitialAnswers(draft.answers)
-          }
-        }
 
         setFormDef({
           id: doc.$id,
@@ -148,6 +158,7 @@ const FormResponderPage: React.FC = () => {
         const fieldType = fieldTypes.get(fieldId)
         const isSignature = fieldType === 'signature' && typeof value === 'string' && value.startsWith('data:image/')
         const isDocument = fieldType === 'file' && value instanceof Blob
+        const isAudio = fieldType === 'audio' && value instanceof Blob
         if (value instanceof Blob || isSignature) {
           const mediaBlob = value instanceof Blob ? value : await (await fetch(value)).blob()
           const mediaId = crypto.randomUUID()
@@ -157,10 +168,10 @@ const FormResponderPage: React.FC = () => {
             activityLocalId: localId,
             answerFieldId: fieldId,
             file: mediaBlob,
-            name: value instanceof File ? value.name : `${fieldId}.${isSignature ? 'png' : 'jpg'}`,
-            mimeType: mediaBlob.type || (isSignature ? 'image/png' : 'image/jpeg'),
-            bucketId: isSignature ? BUCKET_IDS.SIGNATURES : isDocument ? BUCKET_IDS.EXPORTS : BUCKET_IDS.FIELD_PHOTOS,
-            mediaType: isSignature ? 'signature' : isDocument ? 'document' : 'photo',
+            name: value instanceof File ? value.name : `${fieldId}.${isSignature ? 'png' : isAudio ? (mediaBlob.type.includes('mp4') ? 'm4a' : mediaBlob.type.includes('ogg') ? 'ogg' : 'webm') : 'jpg'}`,
+            mimeType: mediaBlob.type || (isSignature ? 'image/png' : isAudio ? 'audio/webm' : 'image/jpeg'),
+            bucketId: isSignature ? BUCKET_IDS.SIGNATURES : isDocument ? BUCKET_IDS.EXPORTS : isAudio ? BUCKET_IDS.FIELD_AUDIO : BUCKET_IDS.FIELD_PHOTOS,
+            mediaType: isSignature ? 'signature' : isDocument ? 'document' : isAudio ? 'audio' : 'photo',
             status: 'pending',
             entityId: user.entityId || formDef.entityId,
             professionalId: user.id,

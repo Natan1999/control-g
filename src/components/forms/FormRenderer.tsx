@@ -75,6 +75,10 @@ export default function FormRenderer({
         next[field.id] = 'Adjunta un documento PDF válido'
         return
       }
+      if (field.type === 'audio' && value instanceof Blob && field.maxFileSizeMb && value.size > field.maxFileSizeMb * 1_000_000) {
+        next[field.id] = `El audio supera el límite preventivo de ${field.maxFileSizeMb} MB`
+        return
+      }
       const validationError = validateFieldValue(field, value)
       if (validationError) next[field.id] = validationError
     })

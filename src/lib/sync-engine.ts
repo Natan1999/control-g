@@ -122,9 +122,11 @@ async function syncMediaQueue(): Promise<string[]> {
     try {
       const bucket = media.bucketId === BUCKET_IDS.SIGNATURES
         ? BUCKET_IDS.SIGNATURES
-        : media.bucketId === BUCKET_IDS.EXPORTS
-          ? BUCKET_IDS.EXPORTS
-          : BUCKET_IDS.FIELD_PHOTOS
+        : media.bucketId === BUCKET_IDS.FIELD_AUDIO
+          ? BUCKET_IDS.FIELD_AUDIO
+          : media.bucketId === BUCKET_IDS.EXPORTS
+            ? BUCKET_IDS.EXPORTS
+            : BUCKET_IDS.FIELD_PHOTOS
       const upload = await storage.createFile(bucket, media.id, media.file)
       if (media.entityId && media.professionalId) {
         const checksum = media.sha256 || await sha256Blob(media.file)
@@ -137,7 +139,7 @@ async function syncMediaQueue(): Promise<string[]> {
             field_id: media.answerFieldId || null,
             bucket_id: bucket,
             storage_path: upload.$id,
-            media_type: media.mediaType || (bucket === BUCKET_IDS.SIGNATURES ? 'signature' : bucket === BUCKET_IDS.EXPORTS ? 'document' : 'photo'),
+            media_type: media.mediaType || (bucket === BUCKET_IDS.SIGNATURES ? 'signature' : bucket === BUCKET_IDS.FIELD_AUDIO ? 'audio' : bucket === BUCKET_IDS.EXPORTS ? 'document' : 'photo'),
             mime_type: media.mimeType || media.file.type || 'application/octet-stream',
             size_bytes: media.file.size,
             sha256: checksum,
@@ -321,7 +323,10 @@ export function getCachedForms(entityId?: string): any[] {
 
 export function getCachedFormAssignments(entityId?: string, professionalId?: string): any[] {
   if (!entityId || !professionalId) return []
-  try { return JSON.parse(localStorage.getItem(`cg_form_assignments_${entityId}_${professionalId}`) || '[]') }
+  try {
+    const assignments = JSON.parse(localStorage.getItem(`cg_form_assignments_${entityId}_${professionalId}`) || '[]')
+    return Array.isArray(assignments) ? assignments.filter(assignmentIsCurrent) : []
+  }
   catch { return [] }
 }
 

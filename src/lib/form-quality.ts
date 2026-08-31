@@ -35,8 +35,17 @@ export function analyzeFormQuality(pages: FormPage[]): FormQualityIssue[] {
   if (duplicateIds.length) {
     issues.push({ code: 'duplicate-id', severity: 'error', message: `Corrige identificadores repetidos: ${duplicateIds.join(', ')}.` })
   }
-  if (fields.some(field => ['select', 'multi_select', 'radio'].includes(field.type) && !field.options?.some(option => option.label.trim() && option.value.trim()))) {
+  if (fields.some(field => ['select', 'multi_select', 'radio', 'checkbox', 'matrix'].includes(field.type) && !field.options?.some(option => option.label.trim() && option.value.trim()))) {
     issues.push({ code: 'empty-options', severity: 'error', message: 'Las preguntas de selección necesitan opciones de respuesta válidas.' })
+  }
+  if (fields.some(field => field.type === 'matrix' && !field.matrixRows?.some(row => row.label.trim() && row.value.trim()))) {
+    issues.push({ code: 'empty-matrix-rows', severity: 'error', message: 'Cada matriz necesita al menos una fila válida.' })
+  }
+  if (fields.some(field => {
+    const values = field.matrixRows?.map(row => row.value.trim()).filter(Boolean) || []
+    return values.length !== new Set(values).size
+  })) {
+    issues.push({ code: 'duplicate-matrix-rows', severity: 'error', message: 'Hay matrices con filas repetidas; cada valor de fila debe ser único.' })
   }
   if (fields.some(field => {
     const values = field.options?.map(option => option.value.trim()).filter(Boolean) || []
@@ -59,6 +68,12 @@ export function analyzeFormQuality(pages: FormPage[]): FormQualityIssue[] {
     }
     if (field.sensitive && !field.sensitiveJustification?.trim()) {
       issues.push({ code: `sensitive-justification-${field.id}`, severity: 'error', message: `Justifica por qué “${field.label}” necesita recolectar información sensible.` })
+    }
+    if (field.type === 'currency' && !/^[A-Z]{3}$/.test(field.currencyCode || 'COP')) {
+      issues.push({ code: `currency-code-${field.id}`, severity: 'error', message: `La moneda de “${field.label}” debe usar un código ISO de tres letras, por ejemplo COP o USD.` })
+    }
+    if (field.type === 'audio' && ((field.maxDurationSeconds ?? 300) < 10 || (field.maxDurationSeconds ?? 300) > 1_800)) {
+      issues.push({ code: `audio-duration-${field.id}`, severity: 'error', message: `La duración de “${field.label}” debe estar entre 10 y 1.800 segundos.` })
     }
     if (PERSONAL_DATA_PATTERN.test(`${field.id} ${field.label}`) && !field.sensitive) {
       issues.push({ code: `unclassified-sensitive-${field.id}`, severity: 'warning', message: `Clasifica “${field.label}” como dato sensible/personal o confirma que no lo es.` })
@@ -94,7 +109,7 @@ export function analyzeFormQuality(pages: FormPage[]): FormQualityIssue[] {
   if (fields.some(field => field.type === 'geotrace' || field.type === 'geoshape') && !fields.some(field => field.type === 'gps')) {
     issues.push({ code: 'geometry-anchor', severity: 'recommendation', message: 'Combina líneas o polígonos con un punto GPS principal para facilitar control de calidad y búsqueda territorial.' })
   }
-  if (!fields.some(field => field.type === 'photo' || field.type === 'file')) {
+  if (!fields.some(field => field.type === 'photo' || field.type === 'file' || field.type === 'audio')) {
     issues.push({ code: 'evidence', severity: 'recommendation', message: 'Evalúa añadir evidencia cuando el protocolo de campo la requiera.' })
   }
   const hasPersonalData = fields.some(field => PERSONAL_DATA_PATTERN.test(`${field.id} ${field.label}`))

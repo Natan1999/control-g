@@ -88,6 +88,24 @@ test('la estimación offline aumenta con evidencia y clasifica el riesgo', () =>
   assert.equal(media.risk, 'high')
 })
 
+test('las matrices exigen todas sus filas y la moneda conserva cero', () => {
+  const matrix = field('condiciones', 'matrix', {
+    required: true,
+    matrixRows: [{ label: 'Agua', value: 'agua' }, { label: 'Energía', value: 'energia' }],
+    options: [{ label: 'Sí', value: 'si' }, { label: 'No', value: 'no' }],
+  })
+  assert.equal(runtime.validateFieldValue(matrix, {}), 'Esta matriz es obligatoria')
+  assert.equal(runtime.validateFieldValue(matrix, { agua: 'si' }), 'Responde todas las filas de la matriz (1/2)')
+  assert.equal(runtime.validateFieldValue(matrix, { agua: 'si', energia: 'no' }), null)
+  assert.equal(runtime.validateFieldValue(field('ingreso', 'currency', { required: true }), 0), null)
+})
+
+test('el audio se contabiliza como evidencia offline', () => {
+  const estimate = runtime.estimateFormOfflineFootprint([{ id: 'p1', title: 'P1', fields: [field('voz', 'audio', { maxFileSizeMb: 8 })] }])
+  assert.equal(estimate.mediaFields, 1)
+  assert.ok(estimate.estimatedSubmissionBytes >= 8_000_000)
+})
+
 test('el constructor y el capturador comparten el mismo renderizador real', async () => {
   const [builder, renderer, responder, sync, inbox] = await Promise.all([
     readFile('src/pages/coordinator/FormBuilderPage.tsx', 'utf8'),
@@ -103,7 +121,10 @@ test('el constructor y el capturador comparten el mismo renderizador real', asyn
   assert.match(renderer, /sanitizeVisibleAnswers/)
   assert.match(renderer, /mode === 'simulation'/)
   assert.match(responder, /isDocument \? BUCKET_IDS\.EXPORTS/)
+  assert.match(responder, /isAudio \? BUCKET_IDS\.FIELD_AUDIO/)
   assert.match(sync, /media\.bucketId === BUCKET_IDS\.EXPORTS/)
+  assert.match(sync, /media\.bucketId === BUCKET_IDS\.FIELD_AUDIO/)
   assert.match(sync, /'document'/)
   assert.match(inbox, /field\.type === 'file' \? BUCKET_IDS\.EXPORTS/)
+  assert.match(inbox, /field\.type === 'audio' \? BUCKET_IDS\.FIELD_AUDIO/)
 })

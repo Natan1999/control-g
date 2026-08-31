@@ -12,6 +12,7 @@ import GPSField from './GPSField'
 import RepeatGroup from './RepeatGroup'
 import PhotoField from './PhotoField'
 import GeometryCaptureField from './GeometryCaptureField'
+import AudioField from './AudioField'
 
 interface DynamicFieldProps {
   field: FormField;
@@ -87,6 +88,34 @@ export default function DynamicField({ field, value, onChange, error, disabled }
             className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
           />
         )
+
+      case 'currency': {
+        const numericValue = value === '' || value === null || value === undefined ? null : Number(value)
+        const configuredCurrency = (field.currencyCode || 'COP').toUpperCase()
+        const currencyCode = /^[A-Z]{3}$/.test(configuredCurrency) ? configuredCurrency : 'COP'
+        const formatted = numericValue !== null && Number.isFinite(numericValue)
+          ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: currencyCode, maximumFractionDigits: 2 }).format(numericValue)
+          : ''
+        return (
+          <div className="space-y-2">
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black text-slate-400">{currencyCode}</span>
+              <input
+                type="number"
+                inputMode="decimal"
+                value={value ?? ''}
+                disabled={disabled}
+                onChange={event => onChange(event.target.value === '' ? '' : Number(event.target.value))}
+                min={field.validationRules?.min}
+                max={field.validationRules?.max}
+                step="any"
+                className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-16 pr-4 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+              />
+            </div>
+            {formatted && <p className="px-1 text-[11px] font-bold text-slate-500">{formatted}</p>}
+          </div>
+        )
+      }
 
       case 'date':
       case 'time':
@@ -178,11 +207,51 @@ export default function DynamicField({ field, value, onChange, error, disabled }
           </div>
         )
 
+      case 'matrix': {
+        const matrixValue = value && typeof value === 'object' && !Array.isArray(value) ? value : {}
+        return (
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
+            <table className="min-w-[560px] w-full border-collapse text-xs">
+              <thead>
+                <tr className="bg-slate-50">
+                  <th className="sticky left-0 z-10 min-w-44 border-b border-r border-slate-200 bg-slate-50 p-3 text-left font-black text-slate-600">Ítem</th>
+                  {field.options?.map(column => <th key={column.value} className="min-w-24 border-b border-slate-200 p-3 text-center font-black text-slate-600">{column.label}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {field.matrixRows?.map(row => (
+                  <tr key={row.value} className="border-b border-slate-100 last:border-0">
+                    <th className="sticky left-0 z-10 border-r border-slate-100 bg-white p-3 text-left font-bold text-slate-700">{row.label}</th>
+                    {field.options?.map(column => (
+                      <td key={column.value} className="p-3 text-center">
+                        <input
+                          type="radio"
+                          name={`${field.id}-${row.value}`}
+                          value={column.value}
+                          checked={matrixValue[row.value] === column.value}
+                          disabled={disabled}
+                          onChange={() => onChange({ ...matrixValue, [row.value]: column.value })}
+                          aria-label={`${row.label}: ${column.label}`}
+                          className="h-5 w-5 accent-blue-700"
+                        />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )
+      }
+
       case 'signature':
         return <SignatureField value={value} onChange={onChange} disabled={disabled} />
 
       case 'photo':
         return <PhotoField value={value || null} onChange={onChange} disabled={disabled} />
+
+      case 'audio':
+        return <AudioField value={value || null} onChange={onChange} disabled={disabled} maxDurationSeconds={field.maxDurationSeconds} />
 
       case 'file': {
         const selectedFile = value instanceof File ? value : null

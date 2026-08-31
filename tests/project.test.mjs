@@ -89,7 +89,8 @@ test('solo se descargan formularios asignados al profesional', async () => {
   assert.match(sql, /create table if not exists public\.form_assignments/)
   assert.match(sql, /assignment\.professional_id = auth\.uid\(\)/)
   assert.match(sql, /validate_form_assignment/)
-  assert.match(capture, /assignedFormIds\.has\(form\.\$id\)/)
+  assert.match(capture, /byId\.get\(assignment\.form_id\)/)
+  assert.match(capture, /getCachedFormAssignments/)
   assert.match(responder, /Este formulario no está asignado a tu perfil/)
 })
 

@@ -254,9 +254,9 @@ export interface MunicipalityProgress {
 // ─── Forms & Universal Builder ───────────────────────────────────────────────
 
 export type FormFieldType = 
-  | 'text' | 'longtext' | 'number' | 'date' | 'time'
+  | 'text' | 'longtext' | 'number' | 'currency' | 'date' | 'time'
   | 'select' | 'multi_select' | 'radio' | 'checkbox'
-  | 'photo' | 'signature' | 'gps' | 'repeat_group'
+  | 'matrix' | 'photo' | 'audio' | 'signature' | 'gps' | 'repeat_group'
   | 'geotrace' | 'geoshape'
   | 'calculation' | 'note' | 'file' | 'phone' | 'email' | 'municipality'
 
@@ -282,6 +282,7 @@ export interface FormField {
   placeholder?: string
   required: boolean
   options?: { label: string; value: string }[] // For select, radio, etc.
+  matrixRows?: { label: string; value: string }[]
   subFields?: FormField[] // For repeat_group recursive logic
   validation?: string // Regex heredada; se conserva para formularios publicados previamente.
   validationRules?: FormValidationRules
@@ -289,7 +290,9 @@ export interface FormField {
   sensitive?: boolean
   sensitiveJustification?: string
   maxFileSizeMb?: number
+  maxDurationSeconds?: number
   acceptedFileTypes?: string
+  currencyCode?: string
   visibilityLogic?: {
     fieldId: string
     operator: FormVisibilityOperator
@@ -374,6 +377,12 @@ export interface FormAssignment {
   status: 'active' | 'inactive'
   startsAt?: string
   endsAt?: string
+  priority?: 1 | 2 | 3 | 4 | 5
+  quota?: number
+  completedCount?: number
+  territoryId?: string
+  groupCode?: string
+  instructions?: string
   createdAt: string
   updatedAt: string
 }
