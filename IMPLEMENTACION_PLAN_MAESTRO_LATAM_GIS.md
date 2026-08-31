@@ -62,7 +62,7 @@ El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases qu
 - APK Android 2.14.0 con catálogo territorial versionado, GIS de campo, matriz/moneda/audio offline, asignación operativa, flujo editorial gobernado, observabilidad, snapshots, retención, ArcGIS administrado, GeoPackage y entrada nativa directa al login. Binario: `entregables/Control-G-2.14.0-LATAM-GIS-offline-debug.apk`.
 - Huella SHA-256 del APK 2.14.0: `84df1c91b469ce34d14d79c8074c5c453cdd94950a25b944442226986fdcf96a`.
 - QA técnico aprobado: 60/60 pruebas automatizadas, lint, validación sintáctica ArcGIS, TypeScript/Vite/PWA, 269 tareas Gradle con pruebas unitarias y `assembleDebug`; auditoría de producción con 0 vulnerabilidades conocidas.
-- Producción 2.13.0 verificada después del despliegue: frontend HTTP 200 con HSTS y health Supabase `operational/ok`.
+- Producción 2.14.0 verificada después del despliegue: frontend HTTP 200 con HSTS y health Supabase `operational/ok`.
 - Auditoría del árbol de producción aprobada con 0 vulnerabilidades conocidas; React Router actualizado a 7.18.3 y dependencias transitivas corregidas sin regresiones de compilación.
 - Encabezados de seguridad publicados verificados y rutas privadas marcadas `noindex`; los endpoints de snapshots y trabajador ArcGIS rechazan acceso anónimo con `401`.
 - Prueba de carga local: 1.500 solicitudes, concurrencia máxima 40, 0 fallos y hasta 1.604 solicitudes/s en `/login`.

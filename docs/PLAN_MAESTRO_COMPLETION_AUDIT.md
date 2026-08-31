@@ -47,7 +47,7 @@ El 83,35 % anterior trataba como completas varias fases con implementación parc
 - Propiedades de campo para ayuda visible, datos sensibles y justificación, límites, patrón/mensaje, archivo y condición; checklist de privacidad y estimación preventiva de almacenamiento por respuesta.
 - Los documentos PDF se conservan offline, se cargan antes que la respuesta al bucket privado de documentos, se registran como `document` en el manifiesto y el coordinador los abre mediante URL firmada.
 - Simulación móvil funcional aprobada a 390 × 844 px: errores obligatorios, aparición condicional, cálculo 5 × 4 = 20, navegación de dos páginas, envío local, cero desbordamiento horizontal y cero errores de consola.
-- Release candidata 2.14.0 compilada para web/PWA y Android; el despliegue productivo se verifica después de publicar `main`.
+- Release 2.14.0 compilada para web/PWA y Android, publicada desde `main` y aceptada en producción: frontend HTTP 200 con HSTS, health `operational`, base de datos `ok` y 204 ms de latencia Supabase en la sonda de aceptación.
 
 - Migraciones remotas 001–012 aplicadas: fundamentos del Plan Maestro, mínimo privilegio, versiones inmutables, ArcGIS, geometrías de campo, snapshots, retención, catálogos territoriales versionados, gobierno de adjuntos, leases recuperables, flujo editorial, asignaciones avanzadas y audio privado.
 - La migración 011 separa el candidato de la versión publicada, impone un único cambio activo, revisión independiente, aprobación previa, control optimista, publicación atómica, eventos inmutables, RLS y archivado no destructivo. En producción se verificaron dos tablas, tres RPC, dos triggers, RLS activa, acceso autenticado a RPC y bloqueo de escritura directa/anónima.
