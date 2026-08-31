@@ -6,23 +6,25 @@ Este archivo es el registro técnico vivo de la implementación. El avance globa
 
 | Fase | Peso | Estado | Avance de fase | Aporte global |
 |---|---:|---|---:|---:|
-| 0. Auditoría y línea base | 5 % | Completada | 100 % | 5 % |
-| 1. Núcleo multiempresa y multipaís | 10 % | Implementación avanzada | 80 % | 8 % |
-| 2. Offline, GPS y sincronización | 15 % | Validación integral aprobada | 95 % | 14,25 % |
-| 3. PostGIS, mapa interno y capas | 15 % | Completada | 100 % | 15 % |
-| 4. ArcGIS e interoperabilidad | 10 % | Implementación avanzada | 80 % | 8 % |
-| 5. Analítica y reportes | 12 % | Implementación parcial funcional | 55 % | 6,60 % |
-| 6. Formularios y plantillas | 8 % | Implementación avanzada | 75 % | 6 % |
-| 7. Seguridad y privacidad | 10 % | Validación avanzada | 85 % | 8,50 % |
+| 0. Auditoría y línea base | 5 % | Auditoría completa; ADR/restore pendientes | 90 % | 4,50 % |
+| 1. Núcleo multiempresa y multipaís | 10 % | Base funcional; importadores/pilotos pendientes | 70 % | 7 % |
+| 2. Offline, GPS y sincronización | 15 % | Funcional; piloto físico multidía pendiente | 80 % | 12 % |
+| 3. PostGIS, mapa interno y capas | 15 % | Avanzada con grupos y coropleta | 78 % | 11,70 % |
+| 4. ArcGIS e interoperabilidad | 10 % | Base funcional; OAuth/jobs/GPKG pendientes | 45 % | 4,50 % |
+| 5. Analítica y reportes | 12 % | Funcional y reproducible; snapshots servidor pendientes | 75 % | 9 % |
+| 6. Formularios y plantillas | 8 % | Diez plantillas, calidad y versiones inmutables | 85 % | 6,80 % |
+| 7. Seguridad y privacidad | 10 % | Gobierno funcional; AAL2 RLS/restore pendientes | 72 % | 7,20 % |
 | 8. SEO LATAM | 6 % | Implementación avanzada | 85 % | 5,10 % |
-| 9. QA y piloto | 6 % | QA automatizado aprobado; piloto físico pendiente | 80 % | 4,80 % |
-| 10. Lanzamiento, operación y documentación | 3 % | Entrega técnica avanzada | 70 % | 2,10 % |
+| 9. QA y piloto | 6 % | QA automatizado/visual; pilotos físicos pendientes | 55 % | 3,30 % |
+| 10. Lanzamiento, operación y documentación | 3 % | Entrega técnica; firma/monitoreo pendientes | 60 % | 1,80 % |
 
-**Avance global actual: 83 %** (83,35 % ponderado, redondeado al entero más cercano).
+**Avance global actual: 72,90 % ponderado.**
+
+El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases que todavía no satisfacían todos los criterios del documento fuente. La auditoría detallada está en `docs/PLAN_MAESTRO_COMPLETION_AUDIT.md`; la reducción es metodológica, no una pérdida de funciones.
 
 ## Entregables verificados al 31 de agosto de 2026
 
-- Mapa vectorial interno con zoom, desplazamiento, selección, capas, puntos y modo de calor.
+- Mapa vectorial interno con zoom, desplazamiento, selección, capas, puntos, grupos adaptativos, modo de calor y coropleta de cobertura.
 - Mapa base de 20 países latinoamericanos embebido en la aplicación y disponible sin internet.
 - Caché IndexedDB de puntos y capas; precarga automática posterior al inicio de sesión.
 - Filtros por fuente, estado y variable temática no sensible de los formularios.
@@ -31,13 +33,16 @@ Este archivo es el registro técnico vivo de la implementación. El avance globa
 - Exportación GIS en GeoJSON, CSV WGS84 y Shapefile ZIP (`SHP`, `SHX`, `DBF`, `PRJ`, `CPG`).
 - Informe territorial PDF con mapa, cobertura, fuentes, estados y métricas operativas.
 - Configuración regional para 20 países de América Latina.
-- Siete plantillas reutilizables de caracterización con GPS, evidencia y consentimiento.
+- Diez plantillas reutilizables de caracterización con GPS, evidencia y consentimiento.
+- Asistente de calidad para formularios y versiones publicadas inmutables con SHA-256.
+- Analítica institucional con filtros, supresión de grupos pequeños e informes PDF, DOCX, XLSX y CSV.
+- Centro de gobierno para consentimiento, integridad de evidencias, accesos sensibles, retención y MFA.
 - Migración PostGIS/RLS aplicada al Supabase remoto y verificada: PostGIS 3.3.7, tres índices GiST, seis columnas regionales, RLS activo y dos políticas sobre `map_layers`.
 - Capa oficial DANE 2025 de los 46 municipios de Bolívar precargada en la entidad inicial.
-- APK Android 2.3.0 compilado con el módulo GIS y entrada nativa directa al login.
-- APK de entrega validado (`SHA-256: fcc0f6f0f58516f7bae6a2f365883226cb39fdcdd82e52b49ee31292b0b169c0`).
-- 18 pruebas automatizadas aprobadas, lint sin advertencias, build web y Gradle Android aprobados.
-- Prueba integral contra Supabase aprobada: creación y limpieza de usuarios temporales, autenticación, RPC, RLS, formularios asignados, Storage, PostGIS, capas GIS e idempotencia de sincronización.
+- APK Android 2.4.0 compilada con GIS, analítica, gobierno de datos y entrada nativa directa al login. Binario de pruebas: `entregables/Control-G-2.4.0-LATAM-GIS-offline-debug.apk`.
+- Huella SHA-256 del APK: `c23317e94bbb8d0721451ec709623dae550bbfed93e0827082f18c65a104307a`.
+- QA técnico aprobado: 25/25 pruebas automatizadas, lint, build web/PWA, pruebas unitarias Android y compilación Gradle `assembleDebug`.
+- Prueba integral contra Supabase aprobada: Auth/MFA, creación y limpieza de usuarios temporales, RPC, RLS, formularios asignados, Storage, PostGIS/GPS, evidencias, versiones inmutables e idempotencia.
 - Shapefile ZIP validado estructuralmente y mapa revisado visualmente con la silueta de Colombia y puntos operativos.
 
 ## Línea base confirmada

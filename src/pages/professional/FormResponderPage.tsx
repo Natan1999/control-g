@@ -15,7 +15,7 @@ import {
   processSyncQueue,
   refreshPendingCount,
 } from '@/lib/sync-engine'
-import { Geolocation } from '@capacitor/geolocation'
+import { captureGeoMetadata, sha256Blob } from '@/lib/capture-integrity'
 
 const FormResponderPage: React.FC = () => {
   const { formId, familyId } = useParams<{ formId: string; familyId?: string }>()
@@ -136,19 +136,9 @@ const FormResponderPage: React.FC = () => {
     if (!formDef || !user) return
 
     try {
-      // Automatic GPS capture for every form submission
-      let lat: number | null = null
-      let lng: number | null = null
-      try {
-        const pos = await Geolocation.getCurrentPosition({
-          enableHighAccuracy: true,
-          timeout: 10000
-        })
-        lat = pos.coords.latitude
-        lng = pos.coords.longitude
-      } catch (gpsError) {
-        console.warn('Could not capture GPS for form:', gpsError)
-      }
+      // GNSS works without data service. Preserve the original coordinate,
+      // precision and quality instead of silently replacing low-quality values.
+      const geo = await captureGeoMetadata(50)
 
       const localId = draftLocalId.current
       const storedAnswers: Record<string, any> = { ...answers }
@@ -159,6 +149,7 @@ const FormResponderPage: React.FC = () => {
         if (value instanceof Blob || isSignature) {
           const mediaBlob = value instanceof Blob ? value : await (await fetch(value)).blob()
           const mediaId = crypto.randomUUID()
+          const sha256 = await sha256Blob(mediaBlob)
           await localDB.mediaQueue.add({
             id: mediaId,
             activityLocalId: localId,
@@ -168,6 +159,11 @@ const FormResponderPage: React.FC = () => {
             mimeType: mediaBlob.type || (isSignature ? 'image/png' : 'image/jpeg'),
             bucketId: isSignature ? BUCKET_IDS.SIGNATURES : BUCKET_IDS.FIELD_PHOTOS,
             status: 'pending',
+            entityId: user.entityId || formDef.entityId,
+            professionalId: user.id,
+            parentType: 'form_response',
+            capturedAt: new Date().toISOString(),
+            sha256,
           })
           storedAnswers[fieldId] = { pendingMediaId: mediaId }
         }
@@ -180,12 +176,21 @@ const FormResponderPage: React.FC = () => {
         entityId: user.entityId || formDef.entityId,
         professionalId: user.id,
         familyId: familyId || null,
+        formVersion: formDef.version,
+        geo,
         answers: {
           ...storedAnswers,
           _metadata: {
-            lat,
-            lng,
-            capturedAt: Date.now()
+            lat: geo.latitude,
+            lng: geo.longitude,
+            accuracyM: geo.accuracyM,
+            altitudeM: geo.altitudeM,
+            provider: geo.provider,
+            mockedSignal: geo.mockedSignal,
+            geoQualityStatus: geo.qualityStatus,
+            geoQualityNotes: geo.qualityNotes,
+            deviceTimestamp: geo.deviceTimestamp,
+            capturedAt: Date.now(),
           }
         },
         status: 'completed', // Ready to be synced

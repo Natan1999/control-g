@@ -9,6 +9,7 @@ import LoginPage from '@/pages/auth/LoginPage'
 import LandingPage from '@/pages/landing/LandingPage'
 import SolutionPage from '@/pages/landing/SolutionPage'
 import { MarketingSeo } from '@/components/marketing/MarketingSeo'
+import { MfaGate } from '@/components/auth/MfaGate'
 
 const BlogIndexPage = lazy(() => import('@/pages/blog/BlogIndexPage'))
 const BlogPostPage = lazy(() => import('@/pages/blog/BlogPostPage'))
@@ -33,6 +34,8 @@ const FormBuilderPage = lazy(() => import('@/pages/coordinator/FormBuilderPage')
 const FormsListPage = lazy(() => import('@/pages/shared/FormsListPage'))
 const FormResponsesPage = lazy(() => import('@/pages/shared/FormResponsesPage'))
 const OperationalMapPage = lazy(() => import('@/pages/shared/OperationalMapPage'))
+const AnalyticsPage = lazy(() => import('@/pages/shared/AnalyticsPage'))
+const GovernancePage = lazy(() => import('@/pages/shared/GovernancePage'))
 const ApoyoDashboard = lazy(() => import('@/pages/apoyo/DashboardPage'))
 const ApoyoProfessionalsPage = lazy(() => import('@/pages/apoyo/ProfessionalsPage'))
 const ApoyoReviewPage = lazy(() => import('@/pages/apoyo/ReviewPage'))
@@ -58,7 +61,7 @@ function ProtectedLayout({ roles, children }: { roles: UserRole[]; children: Rea
   const { user } = useAuthStore()
   if (!user) return <Navigate to="/login" replace />
   if (!roles.includes(user.role as UserRole)) return <Navigate to={defaultRoutes[user.role as UserRole]} replace />
-  return <>{children}</>
+  return <MfaGate>{children}</MfaGate>
 }
 
 function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -132,6 +135,8 @@ export default function App() {
               <Route path="forms/edit/:id" element={<FormBuilderPage />} />
               <Route path="responses" element={<FormResponsesPage />} />
               <Route path="map" element={<OperationalMapPage />} />
+              <Route path="analytics" element={<AnalyticsPage />} />
+              <Route path="governance" element={<GovernancePage />} />
               <Route path="blog" element={<AdminBlogPage />} />
               <Route path="blog/new" element={<AdminBlogEditorPage />} />
               <Route path="blog/edit/:id" element={<AdminBlogEditorPage />} />
@@ -157,6 +162,8 @@ export default function App() {
               <Route path="forms/edit/:id" element={<FormBuilderPage />} />
               <Route path="responses" element={<FormResponsesPage />} />
               <Route path="map" element={<OperationalMapPage />} />
+              <Route path="analytics" element={<AnalyticsPage />} />
+              <Route path="governance" element={<GovernancePage />} />
               <Route path="settings" element={<CoordSettingsPage />} />
             </Routes>
           </DashboardLayout>
@@ -173,6 +180,7 @@ export default function App() {
               <Route path="review" element={<ApoyoReviewPage />} />
               <Route path="responses" element={<FormResponsesPage />} />
               <Route path="map" element={<OperationalMapPage />} />
+              <Route path="analytics" element={<AnalyticsPage />} />
               <Route path="observations" element={<ApoyoObservationsPage />} />
             </Routes>
           </DashboardLayout>

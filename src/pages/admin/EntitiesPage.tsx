@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Plus, Building2, X, Search, MapPin, Calendar, Users, Mail, Hash, Globe2 } from 'lucide-react'
+import { Plus, Building2, X, Search, MapPin, Calendar, Users, Mail, Hash, Globe2, ShieldCheck } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TopBar } from '@/components/layout/Sidebar'
 import { account, databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
@@ -18,6 +18,7 @@ interface EntityForm {
   timezone: string;
   currency_code: string;
   map_privacy_mode: 'exact' | 'approximate' | 'aggregate';
+  require_mfa_for_privileged: boolean;
   department_id: string;
   department_name: string;
   period_start: string;
@@ -32,7 +33,7 @@ interface EntityForm {
 
 const EMPTY_FORM: EntityForm = {
   name: '', nit: '', contract_number: '', contract_object: '', operator_name: '',
-  country_code: 'CO', locale: 'es-CO', timezone: 'America/Bogota', currency_code: 'COP', map_privacy_mode: 'exact',
+  country_code: 'CO', locale: 'es-CO', timezone: 'America/Bogota', currency_code: 'COP', map_privacy_mode: 'exact', require_mfa_for_privileged: true,
   department_id: '', department_name: '', period_start: '', period_end: '',
   families_per_municipality: 35, coordinator_name: '', coordinator_email: '',
   coordinator_password: '', municipalities: [], manual_municipalities: '',
@@ -58,6 +59,7 @@ export default function AdminEntitiesPage() {
   const [availableMunicipalities, setAvailableMunicipalities] = useState<Municipality[]>([])
   const [munSearch, setMunSearch] = useState('')
   const [loadingGeography, setLoadingGeography] = useState(false)
+  const [countryProfiles, setCountryProfiles] = useState<any[]>([])
 
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => { 
     setToast({ msg, type }); 
@@ -66,8 +68,21 @@ export default function AdminEntitiesPage() {
 
   useEffect(() => { 
     loadEntities()
+    loadCountryProfiles()
     loadDepartments()
   }, [])
+
+  async function loadCountryProfiles() {
+    try {
+      const result = await databases.listDocuments(DATABASE_ID, COLLECTION_IDS.COUNTRY_PROFILES, [
+        Query.equal('status', 'active'), Query.orderAsc('name'), Query.limit(100),
+      ])
+      setCountryProfiles(result.documents)
+    } catch {
+      // The embedded catalog remains an offline/bootstrap fallback only.
+      setCountryProfiles([])
+    }
+  }
 
   async function loadDepartments() {
     try {
@@ -105,13 +120,14 @@ export default function AdminEntitiesPage() {
   }, [form.country_code, form.department_id, departments])
 
   function selectCountry(countryCode: string) {
-    const country = countryConfig(countryCode)
+    const fallback = countryConfig(countryCode)
+    const profile = countryProfiles.find(item => item.country_code === countryCode)
     setForm(current => ({
       ...current,
-      country_code: country.code,
-      locale: country.locale,
-      timezone: country.timezone,
-      currency_code: country.currency,
+      country_code: profile?.country_code || fallback.code,
+      locale: profile?.locale || fallback.locale,
+      timezone: profile?.timezone || fallback.timezone,
+      currency_code: profile?.currency_code || fallback.currency,
       department_id: '',
       department_name: '',
       municipalities: [],
@@ -164,14 +180,16 @@ export default function AdminEntitiesPage() {
         operator_name: form.operator_name,
         department: form.department_name,
         country_code: form.country_code,
+        country_profile_id: countryProfiles.find(item => item.country_code === form.country_code)?.$id || null,
         locale: form.locale,
         timezone: form.timezone,
         currency_code: form.currency_code,
         default_map_center: countryConfig(form.country_code).mapCenter,
         map_privacy_mode: form.map_privacy_mode,
+        require_mfa_for_privileged: form.require_mfa_for_privileged,
         regional_settings: {
-          administrative_division_label: countryConfig(form.country_code).adminLevel2Label,
-          administrative_level_1_label: countryConfig(form.country_code).adminLevel1Label,
+          administrative_division_label: countryProfiles.find(item => item.country_code === form.country_code)?.administrative_levels?.[1] || countryConfig(form.country_code).adminLevel2Label,
+          administrative_level_1_label: countryProfiles.find(item => item.country_code === form.country_code)?.administrative_levels?.[0] || countryConfig(form.country_code).adminLevel1Label,
         },
         period_start: form.period_start,
         period_end: form.period_end,
@@ -232,6 +250,17 @@ export default function AdminEntitiesPage() {
       showToast(`Entidad ${newStatus === 'active' ? 'activada' : 'suspendida'}`)
     } catch { 
       showToast('Error al actualizar estado', 'error') 
+    }
+  }
+
+  async function toggleMfa(entity: any) {
+    const enabled = !entity.require_mfa_for_privileged
+    try {
+      await databases.updateDocument(DATABASE_ID, COLLECTION_IDS.ENTITIES, entity.$id, { require_mfa_for_privileged: enabled })
+      setEntities(previous => previous.map(item => item.$id === entity.$id ? { ...item, require_mfa_for_privileged: enabled } : item))
+      showToast(enabled ? 'MFA obligatorio activado para perfiles privilegiados' : 'MFA obligatorio desactivado')
+    } catch {
+      showToast('No fue posible actualizar la política MFA', 'error')
     }
   }
 
@@ -298,6 +327,7 @@ export default function AdminEntitiesPage() {
                           {e.status === 'active' ? 'Activo' : 'Suspendido'}
                         </span>
                         <span className="text-xs text-slate-400">· {countryName(e.country_code)} · {e.department}</span>
+                        {e.require_mfa_for_privileged && <span className="text-[10px] font-bold text-emerald-700">· MFA</span>}
                       </div>
                     </div>
                   </div>
@@ -319,6 +349,7 @@ export default function AdminEntitiesPage() {
                 </div>
                 
                 <div className="flex flex-col gap-2">
+                  <button onClick={() => void toggleMfa(e)} className={`p-2.5 rounded-2xl border transition-all ${e.require_mfa_for_privileged ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-slate-200 text-slate-400 hover:bg-slate-50'}`} title={e.require_mfa_for_privileged ? 'Desactivar MFA obligatorio' : 'Activar MFA obligatorio'}><ShieldCheck size={18} /></button>
                   <button
                     onClick={() => toggleStatus(e)}
                     className={`p-2.5 rounded-2xl border transition-all ${
@@ -411,7 +442,10 @@ export default function AdminEntitiesPage() {
                         onChange={event => selectCountry(event.target.value)}
                         className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner appearance-none cursor-pointer"
                       >
-                        {LATAM_COUNTRIES.map(country => <option key={country.code} value={country.code}>{country.name}</option>)}
+                        {(countryProfiles.length
+                          ? countryProfiles.map(profile => ({ code: profile.country_code, name: profile.name }))
+                          : LATAM_COUNTRIES
+                        ).map(country => <option key={country.code} value={country.code}>{country.name}</option>)}
                       </select>
                     </div>
                   </div>
@@ -461,6 +495,11 @@ export default function AdminEntitiesPage() {
                     </select>
                     <p className="mt-2 text-xs leading-5 text-slate-500">Controla la precisión mostrada y exportada; la captura GPS original permanece protegida en Supabase.</p>
                   </div>
+
+                  <label className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+                    <input type="checkbox" checked={form.require_mfa_for_privileged} onChange={event => setForm(current => ({ ...current, require_mfa_for_privileged: event.target.checked }))} className="mt-1 h-5 w-5 accent-emerald-700" />
+                    <span><span className="block text-sm font-black text-emerald-950">Exigir MFA a perfiles privilegiados</span><span className="mt-1 block text-xs leading-5 text-emerald-800">Coordinación y apoyo deberán verificar un código TOTP antes de consultar información institucional sensible.</span></span>
+                  </label>
 
                   <div className="md:col-span-2">
                     <div className="flex items-center justify-between mb-2">

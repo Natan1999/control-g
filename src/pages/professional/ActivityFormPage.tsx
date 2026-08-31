@@ -9,6 +9,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { cn } from '@/lib/utils'
 import { localDB, type FamilyMember, type LocalCharacterization } from '@/lib/dexie-db'
 import { getCachedFamilies, isOnline, processSyncQueue, refreshPendingCount } from '@/lib/sync-engine'
+import { captureGeoMetadata, sha256Blob } from '@/lib/capture-integrity'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -1079,31 +1080,44 @@ export default function ActivityFormPage() {
       const online = await isOnline()
 
       const activityLocalId = ID.unique()
+      const geo = await captureGeoMetadata(50)
 
       // Media is always queued first. This makes online and offline submissions
       // follow exactly the same idempotent path.
       const photoFile = formData._photoFile as File | undefined
       if (photoFile) {
+        const mediaId = ID.unique()
         await localDB.mediaQueue.add({
-          id: ID.unique(),
+          id: mediaId,
           activityLocalId,
           file: photoFile,
           name: photoFile.name,
           mimeType: photoFile.type,
           bucketId: BUCKET_IDS.FIELD_PHOTOS,
           status: 'pending',
+          entityId: family.entity_id,
+          professionalId: user.id,
+          parentType: 'activity',
+          capturedAt: new Date().toISOString(),
+          sha256: await sha256Blob(photoFile),
         })
       }
       if (signatureDataUrl) {
         const signatureBlob = await (await fetch(signatureDataUrl)).blob()
+        const mediaId = ID.unique()
         await localDB.mediaQueue.add({
-          id: ID.unique(),
+          id: mediaId,
           activityLocalId,
           file: signatureBlob,
           name: 'firma-beneficiario.png',
           mimeType: 'image/png',
           bucketId: BUCKET_IDS.SIGNATURES,
           status: 'pending',
+          entityId: family.entity_id,
+          professionalId: user.id,
+          parentType: 'activity',
+          capturedAt: new Date().toISOString(),
+          sha256: await sha256Blob(signatureBlob),
         })
       }
 
@@ -1116,6 +1130,17 @@ export default function ActivityFormPage() {
         activity_date: actType === 'ex_ante' ? exAnteData.activityDate : formData.activity_date,
         local_id: activityLocalId,
         status: 'synced',
+        latitude: geo.latitude,
+        longitude: geo.longitude,
+        original_latitude: geo.originalLatitude,
+        original_longitude: geo.originalLongitude,
+        accuracy_m: geo.accuracyM,
+        altitude_m: geo.altitudeM,
+        location_provider: geo.provider,
+        device_timestamp: geo.deviceTimestamp,
+        mocked_signal: geo.mockedSignal,
+        geo_quality_status: geo.qualityStatus,
+        geo_quality_notes: geo.qualityNotes,
       }
 
       if (actType === 'ex_ante') {

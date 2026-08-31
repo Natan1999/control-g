@@ -107,6 +107,37 @@ export function geoJsonGeometries(geojson: SupportedGeoJson): GeoJsonGeometry[] 
   return [geojson]
 }
 
+export function geoJsonFeatures(geojson: SupportedGeoJson): GeoJsonFeature[] {
+  if (geojson.type === 'FeatureCollection') return geojson.features.filter(feature => feature.geometry)
+  if (geojson.type === 'Feature') return geojson.geometry ? [geojson] : []
+  return [{ type: 'Feature', geometry: geojson, properties: {} }]
+}
+
+function pointInRing([longitude, latitude]: GeoJsonPosition, ring: GeoJsonPosition[]) {
+  let inside = false
+  for (let current = 0, previous = ring.length - 1; current < ring.length; previous = current, current += 1) {
+    const [currentLongitude, currentLatitude] = ring[current]
+    const [previousLongitude, previousLatitude] = ring[previous]
+    const crosses = (currentLatitude > latitude) !== (previousLatitude > latitude)
+      && longitude < ((previousLongitude - currentLongitude) * (latitude - currentLatitude))
+        / ((previousLatitude - currentLatitude) || Number.EPSILON) + currentLongitude
+    if (crosses) inside = !inside
+  }
+  return inside
+}
+
+function pointInPolygon(point: GeoJsonPosition, rings: GeoJsonPosition[][]) {
+  return Boolean(rings.length && pointInRing(point, rings[0]) && !rings.slice(1).some(ring => pointInRing(point, ring)))
+}
+
+export function pointInGeoJsonGeometry(point: GeoJsonPosition, geometry: GeoJsonGeometry) {
+  if (geometry.type === 'Polygon') return pointInPolygon(point, geometry.coordinates as GeoJsonPosition[][])
+  if (geometry.type === 'MultiPolygon') {
+    return (geometry.coordinates as GeoJsonPosition[][][]).some(polygon => pointInPolygon(point, polygon))
+  }
+  return false
+}
+
 export function geoJsonCoordinates(geojson: SupportedGeoJson): GeoJsonPosition[] {
   const coordinates: GeoJsonPosition[] = []
   for (const geometry of geoJsonGeometries(geojson)) {

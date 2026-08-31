@@ -241,7 +241,13 @@ test('el mapa operativo está integrado para todos los roles y funciona desde ca
   assert.match(sidebar, /Mapa territorial/)
   assert.match(home, /Mapa de mis capturas/)
   assert.match(map, /Mapa vectorial offline/)
+  assert.match(map, /mode === 'clusters'/)
+  assert.match(map, /Grupo de \$\{cluster\.records\.length\} puntos/)
+  assert.match(map, /mode === 'choropleth'/)
+  assert.match(map, /pointInGeoJsonGeometry/)
   assert.match(page, /createMapLayer/)
+  assert.match(page, /Grupos/)
+  assert.match(page, /Cobertura/)
   assert.match(map, /<svg/)
   assert.doesNotMatch(map, /google\.com\/maps|maps\.googleapis/)
   assert.match(page, /Colorear por variable/)
@@ -287,12 +293,125 @@ test('el constructor ofrece plantillas LATAM reutilizables sin reemplazar los fo
     'territorial-riesgo-servicios',
     'rural-agropecuaria',
     'cultura-deporte-turismo',
+    'ninez-adolescencia-proteccion',
+    'salud-publica-comunitaria',
+    'censo-beneficiarios-programas',
   ]) assert.match(templates, new RegExp(`id: '${id}'`))
 
   assert.match(templates, /Coordenada GPS de la visita/)
   assert.match(templates, /Firma o constancia de consentimiento/)
   assert.match(builder, /Biblioteca de caracterizaciones/)
   assert.match(builder, /cloneTemplatePages/)
+})
+
+test('el constructor incorpora control de calidad y versiones publicadas inmutables', async () => {
+  const quality = await read('src/lib/form-quality.ts')
+  const builder = await read('src/pages/coordinator/FormBuilderPage.tsx')
+  const backend = await read('src/lib/backend.ts')
+  const migration = await read('supabase/migrations/202608310004_immutable_form_versions.sql')
+  assert.match(quality, /analyzeFormQuality/)
+  assert.match(quality, /duplicate-id/)
+  assert.match(quality, /consent/)
+  assert.match(builder, /Asistente de calidad/)
+  assert.match(builder, /blockingIssue/)
+  assert.match(backend, /FORM_VERSIONS:\s+'form_versions'/)
+  assert.match(migration, /create table if not exists public\.form_versions/)
+  assert.match(migration, /old\.version \+ 1/)
+  assert.match(migration, /definition_sha256/)
+  assert.match(migration, /revoke all on public\.form_versions from authenticated/)
+})
+
+test('MFA privilegiado se guía en la interfaz y deja lista la imposición RLS controlada', async () => {
+  const app = await read('src/App.tsx')
+  const gate = await read('src/components/auth/MfaGate.tsx')
+  const entities = await read('src/pages/admin/EntitiesPage.tsx')
+  const migration = await read('supabase/manual/enable_privileged_mfa_enforcement.sql')
+  assert.match(app, /<MfaGate>/)
+  assert.match(gate, /getAuthenticatorAssuranceLevel/)
+  assert.match(gate, /mfa\.enroll/)
+  assert.match(gate, /challengeAndVerify/)
+  assert.match(entities, /require_mfa_for_privileged/)
+  assert.match(migration, /auth\.jwt\(\)->>'aal'/)
+  assert.match(migration, /as restrictive for all to authenticated/)
+  assert.match(migration, /requires_aal2_for_entity/)
+})
+
+test('el centro de gobierno administra retención, consentimientos e integridad', async () => {
+  const app = await read('src/App.tsx')
+  const sidebar = await read('src/components/layout/Sidebar.tsx')
+  const page = await read('src/pages/shared/GovernancePage.tsx')
+  assert.match(app, /path="governance" element=\{<GovernancePage \/>\}/)
+  assert.match(sidebar, /Gobierno de datos/)
+  assert.match(page, /COLLECTION_IDS\.RETENTION_POLICIES/)
+  assert.match(page, /COLLECTION_IDS\.CONSENT_RECORDS/)
+  assert.match(page, /COLLECTION_IDS\.EVIDENCE_FILES/)
+  assert.match(page, /COLLECTION_IDS\.SENSITIVE_ACCESS_LOG/)
+  assert.match(page, /Evidencias con SHA-256/)
+  assert.match(page, /recordSensitiveAccess/)
+})
+
+test('la fundación del Plan Maestro gobierna países, indicadores, ArcGIS y privacidad', async () => {
+  const sql = await read('supabase/migrations/202608310002_plan_master_foundations.sql')
+  for (const table of [
+    'country_profiles', 'jurisdictions', 'evidence_files', 'indicator_definitions',
+    'indicator_snapshots', 'report_runs', 'arcgis_connections', 'arcgis_field_mappings',
+    'arcgis_jobs', 'consent_records', 'retention_policies', 'sensitive_access_log',
+  ]) assert.match(sql, new RegExp(`create table if not exists public\\.${table}`))
+  assert.match(sql, /geometry extensions\.geometry\(MultiPolygon, 4326\)/)
+  assert.match(sql, /credential_ref text/)
+  assert.doesNotMatch(sql, /access_token text|refresh_token text|client_secret text/)
+  assert.match(sql, /record_sensitive_access/)
+  assert.match(sql, /country-gt-v1/)
+  assert.match(sql, /country-br-v1/)
+})
+
+test('la captura conserva calidad GPS y manifiesto de evidencias verificable', async () => {
+  const capture = await read('src/lib/capture-integrity.ts')
+  const responder = await read('src/pages/professional/FormResponderPage.tsx')
+  const activities = await read('src/pages/professional/ActivityFormPage.tsx')
+  const sync = await read('src/lib/sync-engine.ts')
+  const migration = await read('supabase/migrations/202608310002_plan_master_foundations.sql')
+  assert.match(capture, /captureGeoMetadata/)
+  assert.match(capture, /accuracyM/)
+  assert.match(capture, /low_accuracy/)
+  assert.match(capture, /latitude === 0 && longitude === 0/)
+  assert.match(capture, /SHA-256/)
+  assert.match(responder, /formVersion: formDef\.version/)
+  assert.match(activities, /original_latitude/)
+  assert.match(sync, /COLLECTION_IDS\.EVIDENCE_FILES/)
+  assert.match(sync, /sha256: checksum/)
+  assert.match(migration, /original_latitude/)
+  assert.match(migration, /unique\(entity_id, local_id\)/)
+  const leastPrivilege = await read('supabase/migrations/202608310003_evidence_least_privilege.sql')
+  assert.match(leastPrivilege, /created_by = auth\.uid\(\)/)
+  assert.match(leastPrivilege, /current_profile_role\(\) in \('coordinator', 'support'\)/)
+})
+
+test('la analítica institucional es reproducible y exporta PDF DOCX XLSX y CSV', async () => {
+  const app = await read('src/App.tsx')
+  const sidebar = await read('src/components/layout/Sidebar.tsx')
+  const page = await read('src/pages/shared/AnalyticsPage.tsx')
+  const analytics = await read('src/lib/analytics.ts')
+  const exporter = await read('src/lib/report-export.ts')
+  for (const path of ['admin/analytics', 'coord/analytics', 'apoyo/analytics']) assert.match(sidebar, new RegExp(path))
+  assert.match(app, /path="analytics" element=\{<AnalyticsPage \/>\}/)
+  assert.match(page, /Variable temática no sensible/)
+  assert.match(page, /methodologyVersion/)
+  assert.match(page, /recordSensitiveAccess/)
+  assert.match(analytics, /required_completeness/)
+  assert.match(analytics, /Categorías pequeñas agrupadas/)
+  assert.match(exporter, /application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document/)
+  assert.match(exporter, /application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet/)
+  for (const format of ['pdf', 'docx', 'xlsx', 'csv']) assert.match(page, new RegExp(`'${format}'`))
+})
+
+test('las entidades usan perfiles de país administrados con fallback offline', async () => {
+  const entities = await read('src/pages/admin/EntitiesPage.tsx')
+  const backend = await read('src/lib/backend.ts')
+  assert.match(entities, /COLLECTION_IDS\.COUNTRY_PROFILES/)
+  assert.match(entities, /country_profile_id/)
+  assert.match(entities, /embedded catalog remains an offline\/bootstrap fallback/)
+  assert.match(backend, /COUNTRY_PROFILES:\s+'country_profiles'/)
 })
 
 async function filesUnder(path) {

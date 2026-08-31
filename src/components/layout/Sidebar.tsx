@@ -6,6 +6,7 @@ import {
   Settings, ChevronLeft, ChevronRight, LogOut, Bell,
   ClipboardList, BarChart2, MessageSquare, UserCheck,
   AlertCircle, Menu, X, Newspaper, Map,
+  ShieldCheck,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { SyncIndicator } from '@/components/shared'
@@ -25,6 +26,8 @@ const navItems: Record<UserRole, NavItem[]> = {
     { path: '/admin/forms',    label: 'Formularios',   icon: <ClipboardList size={18} /> },
     { path: '/admin/responses', label: 'Respuestas',   icon: <ClipboardList size={18} /> },
     { path: '/admin/map',       label: 'Mapa territorial', icon: <Map size={18} /> },
+    { path: '/admin/analytics', label: 'Analítica',      icon: <BarChart2 size={18} /> },
+    { path: '/admin/governance', label: 'Gobierno de datos', icon: <ShieldCheck size={18} /> },
     { path: '/admin/blog',      label: 'Blog y SEO',   icon: <Newspaper size={18} /> },
     { path: '/admin/settings', label: 'Configuración', icon: <Settings size={18} /> },
   ],
@@ -38,6 +41,8 @@ const navItems: Record<UserRole, NavItem[]> = {
     { path: '/coord/forms',          label: 'Formularios',    icon: <ClipboardList size={18} /> },
     { path: '/coord/responses',      label: 'Respuestas',     icon: <FileText size={18} /> },
     { path: '/coord/map',            label: 'Mapa territorial', icon: <Map size={18} /> },
+    { path: '/coord/analytics',      label: 'Analítica',      icon: <BarChart2 size={18} /> },
+    { path: '/coord/governance',     label: 'Gobierno de datos', icon: <ShieldCheck size={18} /> },
     { path: '/coord/settings',       label: 'Configuración',  icon: <Settings size={18} /> },
   ],
   support: [
@@ -46,6 +51,7 @@ const navItems: Record<UserRole, NavItem[]> = {
     { path: '/apoyo/review',         label: 'Revisión',        icon: <ClipboardList size={18} /> },
     { path: '/apoyo/responses',      label: 'Respuestas',      icon: <FileText size={18} /> },
     { path: '/apoyo/map',            label: 'Mapa territorial', icon: <Map size={18} /> },
+    { path: '/apoyo/analytics',      label: 'Analítica',       icon: <BarChart2 size={18} /> },
     { path: '/apoyo/observations',   label: 'Observaciones',   icon: <AlertCircle size={18} /> },
   ],
   professional: [],

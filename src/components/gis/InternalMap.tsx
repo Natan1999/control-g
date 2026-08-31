@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Crosshair, LocateFixed, Minus, Plus, RotateCcw } from 'lucide-react'
-import { geoJsonCoordinates, geoJsonGeometries } from '@/lib/geo'
+import { geoJsonCoordinates, geoJsonFeatures, pointInGeoJsonGeometry } from '@/lib/geo'
 import type { GeoJsonGeometry, GeoJsonPosition, GeoRecord, MapLayer } from '@/types/gis'
 
 interface InternalMapProps {
   records: GeoRecord[]
   layers: MapLayer[]
-  mode: 'points' | 'heat'
+  mode: 'points' | 'clusters' | 'heat' | 'choropleth'
   selectedId: string | null
   onSelect: (record: GeoRecord | null) => void
   recordColors?: Record<string, string>
@@ -88,6 +88,37 @@ export function InternalMap({ records, layers, mode, selectedId, onSelect, recor
     return createProjection(coordinates)
   }, [layers, records])
 
+  const clusters = useMemo(() => {
+    if (!projection) return []
+    const gridSize = 62 / zoom
+    const grouped = new Map<string, { records: GeoRecord[]; x: number; y: number }>()
+    for (const record of records) {
+      const [x, y] = projection.point([record.longitude, record.latitude])
+      const key = `${Math.floor(x / gridSize)}:${Math.floor(y / gridSize)}`
+      const cluster = grouped.get(key) || { records: [], x: 0, y: 0 }
+      cluster.records.push(record)
+      cluster.x += x
+      cluster.y += y
+      grouped.set(key, cluster)
+    }
+    return Array.from(grouped.values(), cluster => ({
+      records: cluster.records,
+      x: cluster.x / cluster.records.length,
+      y: cluster.y / cluster.records.length,
+    }))
+  }, [projection, records, zoom])
+
+  const choropleth = useMemo(() => {
+    if (mode !== 'choropleth') return new Map<string, { counts: number[]; maximum: number }>()
+    return new Map(layers.map(layer => {
+      const counts = geoJsonFeatures(layer.geojson).map(feature => {
+        if (!feature.geometry || !feature.geometry.type.includes('Polygon')) return 0
+        return records.filter(record => pointInGeoJsonGeometry([record.longitude, record.latitude], feature.geometry!)).length
+      })
+      return [layer.id, { counts, maximum: Math.max(0, ...counts) }]
+    }))
+  }, [layers, mode, records])
+
   useEffect(() => {
     setZoom(1)
     setPan({ x: 0, y: 0 })
@@ -165,24 +196,34 @@ export function InternalMap({ records, layers, mode, selectedId, onSelect, recor
         >
           {layers.map(layer => (
             <g key={layer.id} aria-label={`Capa ${layer.name}`}>
-              {geoJsonGeometries(layer.geojson).flatMap((geometry, geometryIndex) => [
+              {geoJsonFeatures(layer.geojson).flatMap((feature, geometryIndex) => {
+                if (!feature.geometry) return []
+                const geometry = feature.geometry
+                const polygonCount = choropleth.get(layer.id)?.counts[geometryIndex] || 0
+                const maximum = choropleth.get(layer.id)?.maximum || 0
+                const featureName = String(feature.properties?.MPIO_CNMBRE || feature.properties?.name || feature.properties?.NAME || `Zona ${geometryIndex + 1}`)
+                const polygonOpacity = mode === 'choropleth'
+                  ? polygonCount > 0 ? 0.2 + (polygonCount / Math.max(1, maximum)) * 0.65 : 0.05
+                  : layer.opacity
+                return [
                 ...geometryPaths(geometry, projection).map((path, pathIndex) => (
                   <path
                     key={`${layer.id}:path:${geometryIndex}:${pathIndex}`}
                     d={path}
                     fill={geometry.type.includes('Polygon') ? layer.color : 'none'}
-                    fillOpacity={geometry.type.includes('Polygon') ? layer.opacity : 0}
+                    fillOpacity={geometry.type.includes('Polygon') ? polygonOpacity : 0}
                     stroke={layer.color}
                     strokeWidth={Math.max(1.5, 2.4 / zoom)}
                     vectorEffect="non-scaling-stroke"
                     fillRule="evenodd"
-                  />
+                  ><title>{mode === 'choropleth' ? `${featureName}: ${polygonCount} capturas` : featureName}</title></path>
                 )),
                 ...geometryPoints(geometry).map((coordinate, pointIndex) => {
                   const [x, y] = projection.point(coordinate)
                   return <circle key={`${layer.id}:point:${geometryIndex}:${pointIndex}`} cx={x} cy={y} r={6 / zoom} fill={layer.color} opacity={0.78} />
                 }),
-              ])}
+                ]
+              })}
             </g>
           ))}
 
@@ -219,6 +260,25 @@ export function InternalMap({ records, layers, mode, selectedId, onSelect, recor
                   stroke="white"
                   strokeWidth={3 / zoom}
                 />
+              </g>
+            )
+          })}
+
+          {mode === 'clusters' && clusters.map((cluster, index) => {
+            const singleRecord = cluster.records.length === 1 ? cluster.records[0] : null
+            const selected = singleRecord?.id === selectedId
+            const activate = () => {
+              if (singleRecord || zoom >= 4) onSelect(singleRecord || cluster.records[0])
+              else {
+                onSelect(null)
+                setZoom(value => Math.min(4, value + 0.75))
+              }
+            }
+            return (
+              <g key={`cluster:${index}:${cluster.records.map(record => record.id).join(':')}`} data-map-point role="button" tabIndex={0} aria-label={singleRecord ? singleRecord.label : `Grupo de ${cluster.records.length} puntos; activar para acercar`} onClick={activate} onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); activate() } }} className="cursor-pointer outline-none">
+                {selected && <circle cx={cluster.x} cy={cluster.y} r={18 / zoom} fill="#1B3A4B" opacity="0.16" />}
+                <circle cx={cluster.x} cy={cluster.y} r={(singleRecord ? 8 : Math.min(18, 10 + Math.log2(cluster.records.length) * 2)) / zoom} fill={singleRecord ? (recordColors[singleRecord.id] || '#1B3A4B') : '#3D7B9E'} stroke="white" strokeWidth={3 / zoom} />
+                {!singleRecord && <text x={cluster.x} y={cluster.y} dy="0.35em" textAnchor="middle" fill="white" fontSize={Math.max(9, 12 / zoom)} fontWeight="900">{cluster.records.length}</text>}
               </g>
             )
           })}

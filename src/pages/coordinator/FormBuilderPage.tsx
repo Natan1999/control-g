@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { 
   Plus, Save, Eye, Hash, Type, AlignLeft, Calendar, Clock, 
   ChevronDown, CheckSquare, List, Radio as RadioIcon, 
   Camera, PenTool, MapPin, Layers, Calculator, Info, 
   FileText, Phone, Mail, Trash2, Settings2, GripVertical,
-  ChevronRight, ChevronLeft, Layout, Globe, X, BookOpen, MapPinned
+  ChevronRight, ChevronLeft, Layout, Globe, X, BookOpen, MapPinned, ShieldCheck, AlertTriangle
 } from 'lucide-react'
 import { motion, Reorder, AnimatePresence } from 'framer-motion'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -14,6 +14,7 @@ import { ID, Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import { FormField, FormDefinition, FormPage, FormFieldType, ActivityType, Entity } from '@/types'
 import { cloneTemplatePages, FORM_TEMPLATES, type ControlGFormTemplate } from '@/config/form-templates'
+import { analyzeFormQuality, formQualityScore } from '@/lib/form-quality'
 
 const COLORS = {
   primary: '#0038A8',   // Royal Blue
@@ -179,6 +180,8 @@ export default function FormBuilderPage() {
   }, [user?.entityId, selectedEntityId, id])
 
   const activePage = form.pages![activePageIdx]
+  const qualityIssues = useMemo(() => analyzeFormQuality(form.pages || []), [form.pages])
+  const qualityScore = useMemo(() => formQualityScore(form.pages || []), [form.pages])
 
   const addField = (type: FormFieldType) => {
     const newField: FormField = {
@@ -237,6 +240,11 @@ export default function FormBuilderPage() {
   }
 
   const handleSave = useCallback(async () => {
+    const blockingIssue = qualityIssues.find(issue => issue.severity === 'error')
+    if (blockingIssue) {
+      setToast(blockingIssue.message)
+      return
+    }
     if (!selectedEntityId) {
       setToast('Debes seleccionar una entidad')
       return
@@ -273,7 +281,7 @@ export default function FormBuilderPage() {
     } finally {
       setSaving(false)
     }
-  }, [selectedEntityId, form, id, navigate, user?.role])
+  }, [selectedEntityId, form, id, navigate, qualityIssues, user?.role])
 
   return (
     <div className="flex flex-col h-full min-h-0 bg-slate-50 overflow-hidden">
@@ -423,6 +431,27 @@ export default function FormBuilderPage() {
                  )}
                </div>
             </div>
+
+            {!preview && (
+              <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5" aria-labelledby="quality-assistant-title">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h2 id="quality-assistant-title" className="flex items-center gap-2 text-sm font-black text-[#1B3A4B]"><ShieldCheck size={18} /> Asistente de calidad</h2>
+                    <p className="mt-1 text-xs text-slate-500">Revisa estructura, trazabilidad territorial, consentimiento y carga operativa antes de publicar.</p>
+                  </div>
+                  <span className={`rounded-full px-3 py-1.5 text-xs font-black ${qualityScore >= 80 ? 'bg-emerald-50 text-emerald-800' : qualityScore >= 60 ? 'bg-amber-50 text-amber-800' : 'bg-red-50 text-red-800'}`}>{qualityScore}/100</span>
+                </div>
+                {qualityIssues.length ? (
+                  <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+                    {qualityIssues.map(issue => (
+                      <li key={issue.code} className={`flex gap-2 rounded-xl p-3 text-xs leading-5 ${issue.severity === 'error' ? 'bg-red-50 text-red-800' : issue.severity === 'warning' ? 'bg-amber-50 text-amber-900' : 'bg-slate-50 text-slate-700'}`}>
+                        <AlertTriangle size={15} className="mt-0.5 shrink-0" />{issue.message}
+                      </li>
+                    ))}
+                  </ul>
+                ) : <p className="mt-3 rounded-xl bg-emerald-50 p-3 text-xs font-bold text-emerald-800">El formulario cumple las comprobaciones automáticas básicas.</p>}
+              </section>
+            )}
 
             {/* Pagination Tabs */}
             <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">

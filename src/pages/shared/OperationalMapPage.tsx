@@ -4,12 +4,14 @@ import {
   AlertCircle,
   CheckCircle2,
   Database,
+  CircleDotDashed,
   FileUp,
   Flame,
   Layers3,
   Loader2,
   LocateFixed,
   MapPinned,
+  Map as MapIcon,
   RefreshCw,
   Share2,
   ShieldCheck,
@@ -60,7 +62,7 @@ function MapContent() {
   const [error, setError] = useState('')
   const [sourceFilter, setSourceFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [mode, setMode] = useState<'points' | 'heat'>('points')
+  const [mode, setMode] = useState<'points' | 'clusters' | 'heat' | 'choropleth'>('clusters')
   const [selected, setSelected] = useState<GeoRecord | null>(null)
   const [visibleLayers, setVisibleLayers] = useState<Set<string>>(new Set())
   const [showLayerForm, setShowLayerForm] = useState(false)
@@ -242,10 +244,17 @@ function MapContent() {
               <button type="button" aria-pressed={mode === 'points'} onClick={() => setMode('points')} className={`min-h-12 border px-3 text-xs font-black ${mode === 'points' ? 'border-[#1B3A4B] bg-[#1B3A4B] text-white' : 'border-slate-200 text-slate-700'}`}>
                 Puntos
               </button>
+              <button type="button" aria-pressed={mode === 'clusters'} onClick={() => setMode('clusters')} className={`flex min-h-12 items-center justify-center gap-1 border px-2 text-xs font-black ${mode === 'clusters' ? 'border-[#1B3A4B] bg-[#1B3A4B] text-white' : 'border-slate-200 text-slate-700'}`}>
+                <CircleDotDashed size={15} /> Grupos
+              </button>
               <button type="button" aria-pressed={mode === 'heat'} onClick={() => setMode('heat')} className={`flex min-h-12 items-center justify-center gap-2 border px-3 text-xs font-black ${mode === 'heat' ? 'border-[#1B3A4B] bg-[#1B3A4B] text-white' : 'border-slate-200 text-slate-700'}`}>
                 <Flame size={15} /> Calor
               </button>
+              <button type="button" aria-pressed={mode === 'choropleth'} onClick={() => setMode('choropleth')} className={`flex min-h-12 items-center justify-center gap-2 border px-3 text-xs font-black ${mode === 'choropleth' ? 'border-[#1B3A4B] bg-[#1B3A4B] text-white' : 'border-slate-200 text-slate-700'}`}>
+                <MapIcon size={15} /> Cobertura
+              </button>
             </div>
+            {mode === 'choropleth' && <p className="mt-2 text-xs leading-5 text-slate-500">Las zonas más oscuras concentran más capturas visibles. Los grupos pequeños siguen protegidos en los reportes.</p>}
           </div>
 
           <label className="block text-xs font-black uppercase tracking-[0.12em] text-slate-500">

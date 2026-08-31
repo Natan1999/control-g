@@ -15,8 +15,21 @@ export const COLLECTION_IDS = {
   AUDIT_LOG:                'audit_log',
   SYNC_LOG:                 'sync_log',
   FORMS:                    'forms',
+  FORM_VERSIONS:            'form_versions',
   FORM_RESPONSES:           'form_responses',
   MAP_LAYERS:               'map_layers',
+  COUNTRY_PROFILES:         'country_profiles',
+  JURISDICTIONS:            'jurisdictions',
+  EVIDENCE_FILES:           'evidence_files',
+  INDICATOR_DEFINITIONS:    'indicator_definitions',
+  INDICATOR_SNAPSHOTS:      'indicator_snapshots',
+  REPORT_RUNS:              'report_runs',
+  ARCGIS_CONNECTIONS:       'arcgis_connections',
+  ARCGIS_FIELD_MAPPINGS:    'arcgis_field_mappings',
+  ARCGIS_JOBS:              'arcgis_jobs',
+  CONSENT_RECORDS:          'consent_records',
+  RETENTION_POLICIES:       'retention_policies',
+  SENSITIVE_ACCESS_LOG:     'sensitive_access_log',
   BLOG_POSTS:               'blog_posts',
 } as const
 
@@ -213,6 +226,26 @@ export const account = {
     if (error) throw new BackendError(error.message, 500)
     if (data?.error) throw new BackendError(data.error, data.status || 400)
     return { $id: data.user.id, email: data.user.email, name: data.user.user_metadata?.full_name || name }
+  },
+}
+
+export const governance = {
+  async recordSensitiveAccess(input: {
+    action: string
+    resourceType: string
+    resourceId?: string
+    purpose: string
+    metadata?: Record<string, unknown>
+  }) {
+    const { data, error } = await supabase.rpc('record_sensitive_access', {
+      p_action: input.action,
+      p_resource_type: input.resourceType,
+      p_resource_id: input.resourceId || null,
+      p_purpose: input.purpose,
+      p_metadata: input.metadata || {},
+    })
+    if (error) throw new BackendError(error.message, 500)
+    return data as string
   },
 }
 

@@ -278,6 +278,103 @@ export const FORM_TEMPLATES: ControlGFormTemplate[] = [
       consentPage('sector'),
     ],
   },
+  {
+    id: 'ninez-adolescencia-proteccion',
+    title: 'Niñez, adolescencia y entornos protectores',
+    description: 'Caracterización de acceso a educación, cuidado, participación, riesgos y rutas de protección sin recopilar datos innecesarios.',
+    category: 'Protección especial',
+    countries: ['LATAM'],
+    recommendedFor: 'Institutos de bienestar, educación, inclusión social y programas de prevención',
+    type: 'ex_ante',
+    pages: [
+      locationPage('nna'),
+      {
+        id: 'nna_entorno', title: 'Entorno protector y acceso a derechos', fields: [
+          field('nna_age_group', 'select', 'Grupo de edad de la población caracterizada', true, [
+            { label: 'Primera infancia (0 a 5)', value: '0_5' }, { label: 'Niñez (6 a 11)', value: '6_11' }, { label: 'Adolescencia (12 a 17)', value: '12_17' },
+          ]),
+          field('nna_school', 'select', 'Situación educativa actual', true, [
+            { label: 'Asiste regularmente', value: 'regular' }, { label: 'Asiste con interrupciones', value: 'intermitente' }, { label: 'No asiste', value: 'no_asiste' }, { label: 'No aplica por edad', value: 'no_aplica' },
+          ]),
+          field('nna_care_network', 'radio', '¿Cuenta con una red adulta de cuidado y apoyo?', true, yesNo),
+          field('nna_safe_spaces', 'multi_select', 'Espacios protectores disponibles', true, [
+            { label: 'Hogar', value: 'hogar' }, { label: 'Institución educativa', value: 'escuela' }, { label: 'Organización comunitaria', value: 'comunidad' }, { label: 'Deporte o cultura', value: 'deporte_cultura' }, { label: 'Ninguno identificado', value: 'ninguno' },
+          ]),
+          field('nna_risk_alert', 'select', 'Nivel de alerta observado según el protocolo institucional', true, [
+            { label: 'Sin alerta', value: 'sin_alerta' }, { label: 'Requiere orientación', value: 'orientacion' }, { label: 'Requiere verificación prioritaria', value: 'prioritaria' }, { label: 'Activar ruta inmediata', value: 'inmediata' },
+          ]),
+          field('nna_referral', 'longtext', 'Remisión o actuación realizada, sin incluir diagnósticos no autorizados'),
+        ],
+      },
+      consentPage('nna'),
+    ],
+  },
+  {
+    id: 'salud-publica-comunitaria',
+    title: 'Salud pública y condiciones comunitarias',
+    description: 'Diagnóstico agregado de acceso, prevención, agua, saneamiento y barreras de atención con enfoque territorial.',
+    category: 'Salud pública',
+    countries: ['LATAM'],
+    recommendedFor: 'Secretarías de salud, equipos extramurales y proyectos de salud comunitaria',
+    type: 'ex_ante',
+    pages: [
+      locationPage('salud'),
+      {
+        id: 'salud_acceso', title: 'Acceso y determinantes comunitarios', fields: [
+          field('salud_coverage', 'select', 'Cobertura o afiliación declarada', true, [
+            { label: 'Con cobertura activa', value: 'activa' }, { label: 'Cobertura no confirmada', value: 'no_confirmada' }, { label: 'Sin cobertura', value: 'sin_cobertura' }, { label: 'Prefiere no responder', value: 'no_responde' },
+          ]),
+          field('salud_access', 'select', 'Tiempo aproximado para acceder al servicio más cercano', true, [
+            { label: 'Menos de 30 minutos', value: 'menos_30' }, { label: '30 a 60 minutos', value: '30_60' }, { label: 'Más de 60 minutos', value: 'mas_60' }, { label: 'Sin acceso regular', value: 'sin_acceso' },
+          ]),
+          field('salud_barriers', 'multi_select', 'Barreras principales de acceso', true, [
+            { label: 'Distancia o transporte', value: 'transporte' }, { label: 'Costo', value: 'costo' }, { label: 'Disponibilidad de citas', value: 'citas' }, { label: 'Barreras culturales o lingüísticas', value: 'cultural' }, { label: 'Ninguna', value: 'ninguna' },
+          ]),
+          field('salud_water', 'select', 'Fuente principal de agua para consumo', true, [
+            { label: 'Red segura', value: 'red' }, { label: 'Pozo o fuente protegida', value: 'protegida' }, { label: 'Fuente no protegida', value: 'no_protegida' }, { label: 'Abastecimiento móvil', value: 'movil' },
+          ]),
+          field('salud_prevention', 'multi_select', 'Acciones preventivas recibidas durante el último año', true, [
+            { label: 'Vacunación', value: 'vacunacion' }, { label: 'Salud sexual y reproductiva', value: 'ssr' }, { label: 'Nutrición', value: 'nutricion' }, { label: 'Salud mental comunitaria', value: 'mental' }, { label: 'Ninguna', value: 'ninguna' },
+          ]),
+          field('salud_priority', 'select', 'Prioridad de seguimiento territorial', true, [
+            { label: 'Rutinaria', value: 'rutinaria' }, { label: 'Preferente', value: 'preferente' }, { label: 'Urgente según protocolo', value: 'urgente' },
+          ]),
+        ],
+      },
+      consentPage('salud'),
+    ],
+  },
+  {
+    id: 'censo-beneficiarios-programas',
+    title: 'Censo de beneficiarios y cobertura de programas',
+    description: 'Registro operativo para elegibilidad, cobertura, atención recibida, brechas y seguimiento de metas institucionales.',
+    category: 'Gestión institucional',
+    countries: ['LATAM'],
+    recommendedFor: 'Entidades territoriales, fondos, operadores y programas de inversión social',
+    type: 'ex_ante',
+    pages: [
+      locationPage('censo'),
+      {
+        id: 'censo_programa', title: 'Cobertura y atención', fields: [
+          field('censo_population_group', 'select', 'Grupo poblacional principal', true, [
+            { label: 'Hogares', value: 'hogares' }, { label: 'Niñez y adolescencia', value: 'nna' }, { label: 'Juventud', value: 'juventud' }, { label: 'Personas mayores', value: 'mayores' }, { label: 'Población rural', value: 'rural' }, { label: 'Otro', value: 'otro' },
+          ]),
+          field('censo_program', 'text', 'Programa, proyecto o convocatoria', true),
+          field('censo_entry', 'select', 'Canal de ingreso', true, [
+            { label: 'Convocatoria abierta', value: 'convocatoria' }, { label: 'Remisión institucional', value: 'remision' }, { label: 'Búsqueda activa', value: 'busqueda' }, { label: 'Demanda espontánea', value: 'demanda' },
+          ]),
+          field('censo_eligibility', 'select', 'Resultado preliminar de criterios', true, [
+            { label: 'Cumple', value: 'cumple' }, { label: 'Pendiente de soporte', value: 'pendiente' }, { label: 'No cumple', value: 'no_cumple' }, { label: 'Requiere validación', value: 'validacion' },
+          ]),
+          field('censo_services', 'multi_select', 'Componentes o servicios recibidos', true, [
+            { label: 'Orientación', value: 'orientacion' }, { label: 'Formación', value: 'formacion' }, { label: 'Transferencia o incentivo', value: 'incentivo' }, { label: 'Asistencia técnica', value: 'asistencia' }, { label: 'Remisión', value: 'remision' }, { label: 'Aún no recibe', value: 'no_recibe' },
+          ]),
+          field('censo_followup', 'date', 'Fecha prevista de seguimiento'),
+        ],
+      },
+      consentPage('censo'),
+    ],
+  },
 ]
 
 export function cloneTemplatePages(template: ControlGFormTemplate) {

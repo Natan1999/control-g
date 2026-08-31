@@ -3,6 +3,7 @@ import { useSyncStore } from '@/stores/syncStore'
 import { databases, storage, DATABASE_ID, COLLECTION_IDS, BUCKET_IDS, ID, Query, BackendError } from './backend'
 import { localDB, type LocalMedia } from './dexie-db'
 import { isOnline } from './network'
+import { sha256Blob } from './capture-integrity'
 
 export { isOnline } from './network'
 
@@ -121,6 +122,28 @@ async function syncMediaQueue(): Promise<string[]> {
     try {
       const bucket = media.bucketId === BUCKET_IDS.SIGNATURES ? BUCKET_IDS.SIGNATURES : BUCKET_IDS.FIELD_PHOTOS
       const upload = await storage.createFile(bucket, media.id, media.file)
+      if (media.entityId && media.professionalId) {
+        const checksum = media.sha256 || await sha256Blob(media.file)
+        try {
+          await databases.createDocument(DATABASE_ID, COLLECTION_IDS.EVIDENCE_FILES, media.id, {
+            entity_id: media.entityId,
+            local_id: media.id,
+            parent_type: media.parentType || 'other',
+            parent_local_id: media.activityLocalId,
+            field_id: media.answerFieldId || null,
+            bucket_id: bucket,
+            storage_path: upload.$id,
+            media_type: bucket === BUCKET_IDS.SIGNATURES ? 'signature' : 'photo',
+            mime_type: media.mimeType || media.file.type || 'application/octet-stream',
+            size_bytes: media.file.size,
+            sha256: checksum,
+            captured_at: media.capturedAt || new Date().toISOString(),
+            created_by: media.professionalId,
+          })
+        } catch (manifestError) {
+          if (!isDuplicate(manifestError)) throw manifestError
+        }
+      }
       await localDB.mediaQueue.update(media.id, { status: 'uploaded', remotePath: upload.$id })
     } catch (error) {
       const attempts = (media.retryCount || 0) + 1
@@ -212,6 +235,16 @@ async function syncFormResponses(): Promise<string[]> {
         longitude: metadata.lng ?? metadata.longitude ?? null,
         status: 'synced',
         captured_at: metadata.capturedAt ? new Date(metadata.capturedAt).toISOString() : new Date(response.createdAt).toISOString(),
+        form_version: response.formVersion || 1,
+        accuracy_m: response.geo?.accuracyM ?? metadata.accuracyM ?? null,
+        altitude_m: response.geo?.altitudeM ?? metadata.altitudeM ?? null,
+        location_provider: response.geo?.provider ?? metadata.provider ?? null,
+        device_timestamp: response.geo?.deviceTimestamp ?? metadata.deviceTimestamp ?? null,
+        mocked_signal: response.geo?.mockedSignal ?? metadata.mockedSignal ?? null,
+        geo_quality_status: response.geo?.qualityStatus ?? metadata.geoQualityStatus ?? 'unknown',
+        geo_quality_notes: response.geo?.qualityNotes ?? metadata.geoQualityNotes ?? null,
+        original_latitude: response.geo?.originalLatitude ?? metadata.lat ?? metadata.latitude ?? null,
+        original_longitude: response.geo?.originalLongitude ?? metadata.lng ?? metadata.longitude ?? null,
       }
       try {
         await databases.createDocument(DATABASE_ID, COLLECTION_IDS.FORM_RESPONSES, ID.unique(), payload)

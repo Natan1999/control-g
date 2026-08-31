@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { randomUUID } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 import { createClient } from '@supabase/supabase-js'
 import { config } from 'dotenv'
 
@@ -27,7 +27,12 @@ const localId = `verification-${randomUUID()}`
 let temporaryUserId = null
 let uploadedPath = null
 let temporaryFormAssignmentId = null
+let temporaryVersionedFormId = null
 let bootstrapAdminId = null
+let evidenceId = null
+let foreignEvidenceId = null
+let reportRunId = null
+let sensitiveAccessId = null
 
 function ensure(condition, message) {
   if (!condition) throw new Error(message)
@@ -94,6 +99,61 @@ try {
   if (assignmentError) throw assignmentError
   ensure(assignmentCount >= 5, `Se esperaban al menos 5 asignaciones y se encontraron ${assignmentCount}.`)
 
+  const { data: countryProfiles, error: countryProfilesError } = await adminClient
+    .from('country_profiles')
+    .select('id,country_code,status')
+    .eq('status', 'active')
+  if (countryProfilesError) throw countryProfilesError
+  ensure(countryProfiles.length === 20, `Se esperaban 20 perfiles de país y se encontraron ${countryProfiles.length}.`)
+  ensure(countryProfiles.some(profile => profile.country_code === 'GT'), 'Falta el perfil piloto de Guatemala.')
+  ensure(countryProfiles.some(profile => profile.country_code === 'BR'), 'Falta el perfil de Brasil.')
+
+  const { data: indicators, error: indicatorsError } = await adminClient
+    .from('indicator_definitions')
+    .select('id,code,version,status')
+    .eq('status', 'published')
+  if (indicatorsError) throw indicatorsError
+  ensure(indicators.length >= 5, 'No se cargó el diccionario global de indicadores.')
+
+  temporaryVersionedFormId = `verification-form-${randomUUID()}`
+  const initialDefinition = JSON.stringify([{ id: 'page-1', title: 'Versión 1', fields: [{ id: 'question-1', type: 'text', label: 'Pregunta inicial', required: true }] }])
+  const updatedDefinition = JSON.stringify([{ id: 'page-1', title: 'Versión 2', fields: [{ id: 'question-1', type: 'text', label: 'Pregunta actualizada', required: true }] }])
+  const { data: versionedForm, error: versionedFormError } = await adminClient.from('forms').insert({
+    id: temporaryVersionedFormId,
+    entity_id: 'gov-bolivar-2026',
+    name: 'Formulario temporal versionado',
+    title: 'Formulario temporal versionado',
+    type: 'ex_ante',
+    definition: initialDefinition,
+    pages_json: initialDefinition,
+    status: 'published',
+    version: 1,
+    v: 1,
+  }).select('id,version').single()
+  if (versionedFormError) throw versionedFormError
+  ensure(versionedForm.version === 1, 'La versión inicial del formulario no fue 1.')
+
+  const { data: updatedForm, error: updatedFormError } = await adminClient.from('forms')
+    .update({ definition: updatedDefinition, pages_json: updatedDefinition })
+    .eq('id', temporaryVersionedFormId)
+    .select('id,version')
+    .single()
+  if (updatedFormError) throw updatedFormError
+  ensure(updatedForm.version === 2, 'Editar la definición no generó una nueva versión.')
+
+  const { data: formVersions, error: formVersionsError } = await adminClient.from('form_versions')
+    .select('version,definition_sha256')
+    .eq('form_id', temporaryVersionedFormId)
+    .order('version')
+  if (formVersionsError) throw formVersionsError
+  ensure(
+    formVersions.length === 2
+      && formVersions[0].version === 1
+      && formVersions[1].version === 2
+      && formVersions[0].definition_sha256 !== formVersions[1].definition_sha256,
+    'El historial inmutable de formularios no conservó ambas definiciones.',
+  )
+
   const { data: assignedForm, error: formLookupError } = await adminClient
     .from('forms')
     .select('id')
@@ -133,6 +193,20 @@ try {
   if (professionalLoginError) throw professionalLoginError
   ensure(professionalSession.user?.id === temporaryUserId, 'La cuenta creada no pudo autenticarse.')
 
+  const { data: assuranceLevel, error: assuranceLevelError } = await professionalClient.auth.mfa.getAuthenticatorAssuranceLevel()
+  if (assuranceLevelError) throw assuranceLevelError
+  ensure(assuranceLevel.currentLevel === 'aal1', 'La instancia Auth no informó el nivel AAL1 esperado.')
+  const { data: availableFactors, error: availableFactorsError } = await professionalClient.auth.mfa.listFactors()
+  if (availableFactorsError) throw availableFactorsError
+  ensure(availableFactors.totp.length === 0, 'La cuenta temporal no debía tener factores TOTP previos.')
+
+  const { data: hiddenFormVersions, error: hiddenFormVersionsError } = await professionalClient
+    .from('form_versions')
+    .select('id')
+    .eq('form_id', temporaryVersionedFormId)
+  if (hiddenFormVersionsError) throw hiddenFormVersionsError
+  ensure(hiddenFormVersions.length === 0, 'Un profesional pudo consultar el historial interno de versiones.')
+
   const { data: visibleEntities, error: entitiesError } = await professionalClient
     .from('entities')
     .select('id')
@@ -154,6 +228,65 @@ try {
     .from('field-photos')
     .upload(uploadedPath, pixel, { contentType: 'image/png', upsert: true })
   if (uploadError) throw uploadError
+
+  evidenceId = randomUUID()
+  const pixelSha256 = createHash('sha256').update(pixel).digest('hex')
+  const { error: evidenceError } = await professionalClient.from('evidence_files').insert({
+    id: evidenceId,
+    entity_id: 'gov-bolivar-2026',
+    local_id: evidenceId,
+    parent_type: 'form_response',
+    parent_local_id: localId,
+    field_id: 'photo',
+    bucket_id: 'field-photos',
+    storage_path: uploadedPath,
+    media_type: 'photo',
+    mime_type: 'image/png',
+    size_bytes: pixel.length,
+    sha256: pixelSha256,
+    captured_at: new Date().toISOString(),
+    created_by: temporaryUserId,
+  })
+  if (evidenceError) throw evidenceError
+
+  foreignEvidenceId = randomUUID()
+  const { error: foreignEvidenceError } = await serviceClient.from('evidence_files').insert({
+    id: foreignEvidenceId,
+    entity_id: 'gov-bolivar-2026',
+    local_id: foreignEvidenceId,
+    parent_type: 'other',
+    parent_local_id: `foreign-${localId}`,
+    bucket_id: 'field-photos',
+    storage_path: `gov-bolivar-2026/admin-verification/${foreignEvidenceId}.txt`,
+    media_type: 'document',
+    mime_type: 'text/plain',
+    size_bytes: 1,
+    sha256: '0'.repeat(64),
+    captured_at: new Date().toISOString(),
+    created_by: session.user.id,
+  })
+  if (foreignEvidenceError) throw foreignEvidenceError
+
+  const { data: professionalEvidence, error: professionalEvidenceError } = await professionalClient
+    .from('evidence_files')
+    .select('id')
+    .in('id', [evidenceId, foreignEvidenceId])
+  if (professionalEvidenceError) throw professionalEvidenceError
+  ensure(
+    professionalEvidence.length === 1 && professionalEvidence[0].id === evidenceId,
+    'El profesional pudo leer el manifiesto de evidencia de otro usuario.',
+  )
+
+  const { error: forbiddenIndicatorError } = await professionalClient.from('indicator_definitions').insert({
+    entity_id: 'gov-bolivar-2026',
+    code: `forbidden_${Date.now()}`,
+    name: 'Intento no autorizado',
+    question: 'No debe crearse',
+    source_table: 'form_responses',
+    calculation_type: 'count',
+    methodology: 'Prueba',
+  })
+  ensure(forbiddenIndicatorError, 'Un profesional pudo crear indicadores institucionales.')
 
   const { data: visibleForms, error: visibleFormsError } = await professionalClient
     .from('forms')
@@ -198,6 +331,16 @@ try {
     latitude: 10.391,
     longitude: -75.479,
     captured_at: new Date().toISOString(),
+    form_version: 1,
+    accuracy_m: 7.5,
+    altitude_m: 12,
+    location_provider: 'verification_gnss',
+    device_timestamp: new Date().toISOString(),
+    mocked_signal: false,
+    geo_quality_status: 'good',
+    geo_quality_notes: 'Verificación automatizada',
+    original_latitude: 10.391,
+    original_longitude: -75.479,
     status: 'synced',
   }
   const { data: firstSync, error: firstSyncError } = await professionalClient
@@ -217,20 +360,57 @@ try {
 
   const { data: spatialResponse, error: spatialResponseError } = await serviceClient
     .from('form_responses')
-    .select('id,latitude,longitude,location')
+    .select('id,latitude,longitude,location,accuracy_m,location_provider,geo_quality_status,original_latitude,original_longitude')
     .eq('local_id', localId)
     .single()
   if (spatialResponseError) throw spatialResponseError
   ensure(
-    spatialResponse.latitude === 10.391 && spatialResponse.longitude === -75.479 && spatialResponse.location,
-    'PostGIS no generó la geografía WGS84 de la respuesta sincronizada.',
+    spatialResponse.latitude === 10.391
+      && spatialResponse.longitude === -75.479
+      && spatialResponse.location
+      && spatialResponse.accuracy_m === 7.5
+      && spatialResponse.location_provider === 'verification_gnss'
+      && spatialResponse.geo_quality_status === 'good'
+      && spatialResponse.original_latitude === 10.391,
+    'PostGIS o la trazabilidad de calidad GPS no se conservaron.',
   )
 
-  console.log('Supabase verificado: Auth, RPC, RLS, formularios asignados, Storage, PostGIS, capas GIS e idempotencia funcionan.')
+  reportRunId = randomUUID()
+  const { error: reportRunError } = await adminClient.from('report_runs').insert({
+    id: reportRunId,
+    entity_id: 'gov-bolivar-2026',
+    report_type: 'verification',
+    output_format: 'pdf',
+    cutoff_at: new Date().toISOString(),
+    methodology_version: 'control-g-analytics-v1',
+    status: 'completed',
+    row_count: 1,
+    created_by: session.user.id,
+    completed_at: new Date().toISOString(),
+  })
+  if (reportRunError) throw reportRunError
+
+  const { data: loggedAccess, error: sensitiveAccessError } = await adminClient.rpc('record_sensitive_access', {
+    p_action: 'verification_export',
+    p_resource_type: 'analytics_report',
+    p_resource_id: reportRunId,
+    p_purpose: 'Verificación integral automatizada',
+    p_metadata: { non_sensitive: true },
+  })
+  if (sensitiveAccessError) throw sensitiveAccessError
+  sensitiveAccessId = loggedAccess
+  ensure(sensitiveAccessId, 'No se registró la finalidad del acceso sensible.')
+
+  console.log('Supabase verificado: Auth/MFA, RPC, RLS, asignaciones, Storage, PostGIS/GPS, evidencias, países, indicadores, versiones inmutables, reportes, auditoría GIS e idempotencia funcionan.')
 } finally {
+  if (sensitiveAccessId) await serviceClient.from('sensitive_access_log').delete().eq('id', sensitiveAccessId)
+  if (reportRunId) await serviceClient.from('report_runs').delete().eq('id', reportRunId)
+  if (foreignEvidenceId) await serviceClient.from('evidence_files').delete().eq('id', foreignEvidenceId)
+  if (evidenceId) await serviceClient.from('evidence_files').delete().eq('id', evidenceId)
   await serviceClient.from('form_responses').delete().eq('local_id', localId)
   if (uploadedPath) await serviceClient.storage.from('field-photos').remove([uploadedPath])
   if (temporaryFormAssignmentId) await serviceClient.from('form_assignments').delete().eq('id', temporaryFormAssignmentId)
+  if (temporaryVersionedFormId) await serviceClient.from('forms').delete().eq('id', temporaryVersionedFormId)
   if (temporaryUserId) {
     await serviceClient.from('audit_log').delete().eq('record_id', temporaryUserId)
     await serviceClient.from('user_profiles').delete().eq('user_id', temporaryUserId)

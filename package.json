@@ -1,7 +1,7 @@
 {
   "name": "control-g",
   "private": true,
-  "version": "2.3.0",
+  "version": "2.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "backend:check": "node scripts/check-supabase.mjs",
     "backend:verify": "node scripts/verify-supabase.mjs",
+    "backend:migrate:file": "node scripts/apply-supabase-migration.mjs",
     "backend:seed": "node scripts/seed-supabase.mjs",
     "backend:seed:gis": "node scripts/seed-gis-layer.mjs",
     "android:sync": "npm run build && cap sync android",

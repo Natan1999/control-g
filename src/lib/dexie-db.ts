@@ -4,6 +4,7 @@
  */
 import Dexie, { type Table } from 'dexie';
 import type { GeoRecord, MapLayer } from '@/types/gis';
+import type { GeoCaptureMetadata } from '@/lib/capture-integrity';
 
 // ─── Family Member (per characterization) ────────────────────────────────────
 
@@ -101,6 +102,11 @@ export interface LocalMedia {
   remotePath?: string;
   retryCount?: number;
   lastError?: string;
+  entityId?: string;
+  professionalId?: string;
+  parentType?: 'form_response' | 'activity' | 'family' | 'other';
+  capturedAt?: string;
+  sha256?: string;
 }
 
 export interface LocalFormResponse {
@@ -115,6 +121,8 @@ export interface LocalFormResponse {
   updatedAt: number;
   retryCount?: number;
   lastError?: string;
+  formVersion?: number;
+  geo?: GeoCaptureMetadata;
 }
 
 export interface LocalGeoRecord extends GeoRecord {
