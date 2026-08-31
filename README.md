@@ -1,4 +1,4 @@
-# Control G 2.11 · LATAM + GIS
+# Control G 2.12 · LATAM + GIS
 
 Aplicación multi-entidad para caracterización y acompañamiento psicosocial en campo. La interfaz web y el APK de Capacitor funcionan sin conexión: familias, formularios, respuestas, fotografías y actividades se guardan localmente y se sincronizan de forma idempotente cuando regresa la señal.
 
@@ -14,12 +14,13 @@ Aplicación multi-entidad para caracterización y acompañamiento psicosocial en
 - Configuración regional para 20 países latinoamericanos y catálogos administrativos oficiales versionados.
 - Analítica reproducible con diccionario de indicadores y exportación PDF, DOCX, XLSX y CSV.
 - Gobierno de datos: consentimientos, manifiestos SHA-256, retención, accesos sensibles y MFA TOTP configurable.
+- Flujo editorial gobernado para formularios: borrador, revisión por una segunda persona, aprobación, publicación inmutable y archivado recuperable.
 - Observabilidad con health check Supabase, sonda externa cada cinco minutos, incidentes deduplicados, sanitización de errores, ADR y runbooks de recuperación.
 
 ## Configuración
 
 1. Copia `.env.example` a `.env.local` y configura únicamente `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` para la aplicación.
-2. Ejecuta, en orden, las migraciones de `supabase/migrations/` en la instancia de Supabase. Las migraciones `202608310001` a `202608310010` agregan PostGIS/GIS LATAM, gobierno de datos, evidencias con mínimo privilegio, versiones inmutables de formularios, la cola ArcGIS, geometrías de campo, snapshots reproducibles, retención auditable, catálogos territoriales versionados, adjuntos ArcGIS gobernados y leases recuperables para su trabajador programado.
+2. Ejecuta, en orden, las migraciones de `supabase/migrations/` en la instancia de Supabase. Las migraciones `202608310001` a `202608310011` agregan PostGIS/GIS LATAM, gobierno de datos, evidencias con mínimo privilegio, versiones inmutables, flujo editorial de formularios, la cola ArcGIS, geometrías de campo, snapshots reproducibles, retención auditable, catálogos territoriales versionados, adjuntos ArcGIS gobernados y leases recuperables para su trabajador programado.
 3. La migración instala `admin_create_user`, una RPC `SECURITY DEFINER` que valida el JWT, el rol y la entidad antes de crear Auth + perfil en una sola transacción.
 4. Para crear o verificar las cuentas iniciales, define `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` y `CONTROL_G_INITIAL_PASSWORD`, y ejecuta `npm run backend:seed`.
 5. Para volver a cargar la capa visual oficial de municipios de Bolívar, ejecuta `npm run backend:seed:gis`. Para publicar su catálogo PostGIS versionado y fijarlo a la entidad inicial, ejecuta `npm run backend:publish:bolivar-jurisdictions`. Ambos usan el archivo de `supabase/seed/` y requieren la clave administrativa solo en el entorno local.
@@ -76,7 +77,7 @@ La capa inicial y el catálogo PostGIS de los 46 municipios de Bolívar proviene
 - Los cortes de indicadores se calculan en Supabase, quedan fijados con versión metodológica y pueden ejecutarse diariamente mediante el endpoint protegido de Vercel Cron.
 - `/admin/governance` y `/coord/governance` administran políticas de retención y muestran consentimiento, integridad de evidencias y accesos sensibles.
 - La retención opera primero en vista previa; una ejecución exige superadministración y confirmación explícita, registra elegibles/afectados y evita purgas parciales de archivos o evidencia legal.
-- El constructor incluye diez plantillas LATAM, asistente de calidad y versiones publicadas inmutables.
+- El constructor incluye diez plantillas LATAM, asistente de calidad y un flujo borrador → revisión independiente → aprobación → publicación. La versión vigente no cambia mientras se prepara una nueva y el archivado conserva respuestas, auditoría y versiones.
 - MFA TOTP se puede exigir por entidad. La imposición RLS AAL2 está en `supabase/manual/enable_privileged_mfa_enforcement.sql` y solo debe ejecutarse en ventana de mantenimiento después de enrolar dos administradores y completar un piloto.
 
 ## APK Android
@@ -87,7 +88,7 @@ Requiere JDK 17 o superior y Android SDK 35:
 npm run android:apk
 ```
 
-El APK instalable de pruebas queda en `android/app/build/outputs/apk/debug/app-debug.apk`; la copia entregable 2.11.0 se genera en `entregables/Control-G-2.11.0-LATAM-GIS-offline-debug.apk`. Para Play Store o distribución firmada se debe aportar el keystore institucional y configurar la firma de `release` fuera del repositorio.
+El APK instalable de pruebas queda en `android/app/build/outputs/apk/debug/app-debug.apk`; la copia entregable 2.12.0 se genera en `entregables/Control-G-2.12.0-LATAM-GIS-offline-debug.apk`. Para Play Store o distribución firmada se debe aportar el keystore institucional y configurar la firma de `release` fuera del repositorio.
 
 ## Cliente inicial: Gobernación de Bolívar
 

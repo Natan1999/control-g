@@ -16,6 +16,8 @@ export const COLLECTION_IDS = {
   SYNC_LOG:                 'sync_log',
   FORMS:                    'forms',
   FORM_VERSIONS:            'form_versions',
+  FORM_CHANGE_REQUESTS:     'form_change_requests',
+  FORM_EDITORIAL_EVENTS:    'form_editorial_events',
   FORM_RESPONSES:           'form_responses',
   MAP_LAYERS:               'map_layers',
   SPATIAL_FEATURES:         'spatial_features',
@@ -279,6 +281,69 @@ export const analyticsOperations = {
     })
     if (error) throw new BackendError(error.message, 500)
     return data as { entity_id: string; cutoff_at: string; snapshot_count: number; engine: string }
+  },
+}
+
+export type FormEditorialStatus =
+  | 'draft'
+  | 'in_review'
+  | 'changes_requested'
+  | 'approved'
+  | 'published'
+  | 'withdrawn'
+
+export interface FormChangeResult {
+  form_id: string
+  change_id: string
+  status: FormEditorialStatus
+  revision: number
+  base_version?: number
+  published_version?: number | null
+  definition_sha256?: string
+}
+
+export const formEditorialOperations = {
+  async saveDraft(input: {
+    formId?: string | null
+    entityId: string
+    title: string
+    description?: string
+    type: string
+    definition: string
+    changeId?: string | null
+    expectedRevision?: number | null
+  }) {
+    const { data, error } = await supabase.rpc('save_form_change', {
+      p_form_id: input.formId || null,
+      p_entity_id: input.entityId,
+      p_title: input.title,
+      p_description: input.description || null,
+      p_type: input.type,
+      p_definition: input.definition,
+      p_change_id: input.changeId || null,
+      p_expected_revision: input.expectedRevision ?? null,
+    })
+    if (error) throwBackendError(error)
+    return data as FormChangeResult
+  },
+
+  async transition(changeId: string, status: Exclude<FormEditorialStatus, 'draft'>, comment?: string) {
+    const { data, error } = await supabase.rpc('transition_form_change', {
+      p_change_id: changeId,
+      p_target_status: status,
+      p_comment: comment || null,
+    })
+    if (error) throwBackendError(error)
+    return data as FormChangeResult
+  },
+
+  async retire(formId: string, comment: string) {
+    const { data, error } = await supabase.rpc('retire_form', {
+      p_form_id: formId,
+      p_comment: comment,
+    })
+    if (error) throwBackendError(error)
+    return data as { form_id: string; status: 'retired'; version: number; assignments_retired: number }
   },
 }
 

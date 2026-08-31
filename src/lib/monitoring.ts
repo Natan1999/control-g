@@ -1,4 +1,4 @@
-const RELEASE = import.meta.env.VITE_APP_VERSION || '2.11.0'
+const RELEASE = import.meta.env.VITE_APP_VERSION || '2.12.0'
 const ENABLED = import.meta.env.VITE_ERROR_REPORTING_ENABLED === 'true'
 
 type ErrorKind = 'react-boundary' | 'window-error' | 'unhandled-rejection'

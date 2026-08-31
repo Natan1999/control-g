@@ -1,16 +1,16 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { 
-  Plus, Search, Edit2, Trash2, Eye, FileText, 
-  ChevronRight, Calendar, Layers, Building2,
-  AlertCircle, MoreVertical, Layout, UserCheck
+  Plus, Search, Edit2, Archive, FileText,
+  ChevronRight, Layers, Building2,
+  Layout, UserCheck, ShieldCheck
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TopBar } from '@/components/layout/Sidebar'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { databases, DATABASE_ID, COLLECTION_IDS, formEditorialOperations } from '@/lib/backend'
 import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
-import { FormDefinition } from '@/types'
+import { FormDefinition, FormEditorialStatus } from '@/types'
 import { cn } from '@/lib/utils'
 import FormAssignmentDialog from '@/components/forms/FormAssignmentDialog'
 
@@ -22,6 +22,23 @@ const COLORS = {
   border: '#E2E8F0',
 }
 
+const WORKFLOW_STATUS: Record<FormEditorialStatus | 'retired', { label: string; tone: string }> = {
+  draft: { label: 'Borrador', tone: 'bg-slate-100 text-slate-700' },
+  in_review: { label: 'En revisión', tone: 'bg-blue-50 text-blue-800' },
+  changes_requested: { label: 'Cambios solicitados', tone: 'bg-amber-50 text-amber-900' },
+  approved: { label: 'Aprobado', tone: 'bg-violet-50 text-violet-800' },
+  published: { label: 'Publicado', tone: 'bg-emerald-50 text-emerald-700' },
+  withdrawn: { label: 'Retirado', tone: 'bg-slate-100 text-slate-500' },
+  retired: { label: 'Archivado', tone: 'bg-rose-50 text-rose-700' },
+}
+
+type EditorialSummary = {
+  id: string
+  status: FormEditorialStatus
+  revision: number
+  reviewNotes?: string
+}
+
 export default function FormsListPage() {
   const { user } = useAuthStore()
   const navigate = useNavigate()
@@ -30,6 +47,7 @@ export default function FormsListPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [toast, setToast] = useState('')
   const [assignmentCounts, setAssignmentCounts] = useState<Record<string, number>>({})
+  const [editorialByForm, setEditorialByForm] = useState<Record<string, EditorialSummary>>({})
   const [assigningForm, setAssigningForm] = useState<(FormDefinition & { entity_id?: string; $id?: string }) | null>(null)
 
   const isAdmin = user?.role === 'admin'
@@ -55,6 +73,26 @@ export default function FormsListPage() {
         version: document.version ?? document.v ?? 1,
       })) as FormDefinition[]
       setForms(normalizedForms)
+
+      const editorialDocs = await databases
+        .listDocuments(DATABASE_ID, COLLECTION_IDS.FORM_CHANGE_REQUESTS, [
+          Query.equal('status', ['draft', 'in_review', 'changes_requested', 'approved']),
+          Query.orderDesc('$updatedAt'),
+          Query.limit(2000),
+        ])
+        .then(result => result.documents)
+        .catch(() => [])
+      const editorialMap: Record<string, EditorialSummary> = {}
+      editorialDocs.forEach((change: any) => {
+        if (editorialMap[change.form_id]) return
+        editorialMap[change.form_id] = {
+          id: change.$id,
+          status: change.status,
+          revision: change.revision,
+          reviewNotes: change.review_notes,
+        }
+      })
+      setEditorialByForm(editorialMap)
 
       const assignmentQueries = [Query.limit(2000)]
       if (!isAdmin && user?.entityId) assignmentQueries.push(Query.equal('entity_id', user.entityId))
@@ -91,15 +129,21 @@ export default function FormsListPage() {
     fetchForms()
   }, [fetchForms])
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('¿Estás seguro de eliminar este formulario? Esta acción no se puede deshacer.')) return
+  const handleRetire = async (form: FormDefinition) => {
+    const comment = window.prompt('Motivo para archivar el formulario (mínimo 5 caracteres). Sus respuestas y versiones se conservarán:')
+    if (comment === null) return
+    if (comment.trim().length < 5) {
+      setToast('Escribe un motivo de al menos cinco caracteres.')
+      return
+    }
     try {
-      await databases.deleteDocument(DATABASE_ID, COLLECTION_IDS.FORMS, id)
-      setForms(forms.filter(f => f.id !== id))
-      setToast('Formulario eliminado')
+      const result = await formEditorialOperations.retire(form.id, comment.trim())
+      setForms(current => current.map(item => item.id === form.id ? { ...item, status: 'retired' } : item))
+      setAssignmentCounts(current => ({ ...current, [form.id]: 0 }))
+      setToast(`Formulario archivado. ${result.assignments_retired} asignaciones quedaron inactivas; los datos se conservaron.`)
     } catch (err) {
       console.error(err)
-      setToast('Error al eliminar')
+      setToast('No fue posible archivar el formulario.')
     }
   }
 
@@ -132,11 +176,12 @@ export default function FormsListPage() {
             <div className="flex items-center gap-2 text-blue-800 font-black text-xs uppercase tracking-widest">
               <UserCheck size={17} /> Flujo recomendado
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mt-4 text-xs text-slate-600">
-              <div><strong className="text-slate-900">1. Diseña</strong><br />Crea o ajusta las preguntas.</div>
-              <div><strong className="text-slate-900">2. Publica</strong><br />Deja el formulario listo para campo.</div>
-              <div><strong className="text-slate-900">3. Asigna</strong><br />Elige exactamente quién puede diligenciarlo.</div>
-              <div><strong className="text-slate-900">4. Revisa</strong><br />Consulta las respuestas recibidas.</div>
+            <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 mt-4 text-xs text-slate-600">
+              <div><strong className="text-slate-900">1. Diseña</strong><br />Guarda un borrador privado.</div>
+              <div><strong className="text-slate-900">2. Revisa</strong><br />Otra persona valida el instrumento.</div>
+              <div><strong className="text-slate-900">3. Aprueba</strong><br />Registra el concepto editorial.</div>
+              <div><strong className="text-slate-900">4. Publica</strong><br />Crea una versión inmutable.</div>
+              <div><strong className="text-slate-900">5. Asigna</strong><br />Habilita profesionales de campo.</div>
             </div>
           </div>
           
@@ -192,12 +237,16 @@ export default function FormsListPage() {
                   className="group bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm hover:shadow-xl hover:border-blue-100 transition-all relative overflow-hidden"
                 >
                   {/* Status Tag */}
-                  <div className={cn(
-                    "absolute top-6 right-6 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest",
-                    form.status === 'published' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
-                  )}>
-                    {form.status === 'published' ? 'Publicado' : 'Borrador'}
-                  </div>
+                  {(() => {
+                    const editorial = editorialByForm[form.id]
+                    const state = form.status === 'retired' ? 'retired' : editorial?.status || form.status
+                    const meta = WORKFLOW_STATUS[state]
+                    return (
+                      <div className={cn("absolute top-6 right-6 max-w-[55%] px-3 py-1 rounded-full text-right text-[10px] font-black uppercase tracking-widest", meta.tone)}>
+                        {form.status === 'published' && editorial ? `Vigente · ${meta.label}` : meta.label}
+                      </div>
+                    )
+                  })()}
 
                   <div className="space-y-4">
                     <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -212,6 +261,11 @@ export default function FormsListPage() {
                         <span className="w-1 h-1 bg-slate-200 rounded-full" />
                         v{form.version}
                       </div>
+                      {editorialByForm[form.id] && (
+                        <p className="mt-2 flex items-center gap-1.5 text-[10px] font-bold leading-4 text-slate-500">
+                          <ShieldCheck size={13} className="shrink-0 text-blue-600" /> Revisión editorial #{editorialByForm[form.id].revision}
+                        </p>
+                      )}
                     </div>
 
                     {isAdmin && (
@@ -233,9 +287,10 @@ export default function FormsListPage() {
                     <div className="pt-4 border-t border-slate-50 flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => setAssigningForm(form)}
-                          className="px-3 py-2 text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-all relative flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider"
-                          title="Asignar a profesionales"
+                          onClick={() => { if (form.status === 'published') setAssigningForm(form) }}
+                          disabled={form.status !== 'published'}
+                          className="px-3 py-2 text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-all relative flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent disabled:hover:text-slate-500"
+                          title={form.status === 'published' ? 'Asignar a profesionales' : 'Solo se pueden asignar formularios publicados'}
                         >
                           <UserCheck size={18} />
                           <span>Asignar</span>
@@ -245,27 +300,33 @@ export default function FormsListPage() {
                             </span>
                           )}
                         </button>
-                        <button 
-                          onClick={() => navigate(`${basePath}/edit/${form.id}`)}
-                          className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
-                          title="Editar Formulario"
-                        >
-                          <Edit2 size={18} />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(form.id)}
-                          className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
-                          title="Eliminar"
-                        >
-                          <Trash2 size={18} />
-                        </button>
+                        {form.status !== 'retired' && (
+                          <button
+                            onClick={() => navigate(`${basePath}/edit/${form.id}`)}
+                            className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                            title="Editar formulario o crear una nueva versión"
+                          >
+                            <Edit2 size={18} />
+                          </button>
+                        )}
+                        {form.status === 'published' && (
+                          <button
+                            onClick={() => void handleRetire(form)}
+                            className="p-2 text-slate-400 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-all"
+                            title="Archivar conservando versiones y respuestas"
+                          >
+                            <Archive size={18} />
+                          </button>
+                        )}
                       </div>
-                      <button 
-                        onClick={() => navigate(`${basePath}/edit/${form.id}`)}
-                        className="flex items-center gap-1 text-[10px] font-black text-slate-900 uppercase tracking-widest hover:gap-2 transition-all p-2"
-                      >
-                        Abrir <ChevronRight size={14} />
-                      </button>
+                      {form.status !== 'retired' && (
+                        <button
+                          onClick={() => navigate(`${basePath}/edit/${form.id}`)}
+                          className="flex items-center gap-1 text-[10px] font-black text-slate-900 uppercase tracking-widest hover:gap-2 transition-all p-2"
+                        >
+                          Abrir <ChevronRight size={14} />
+                        </button>
+                      )}
                     </div>
                   </div>
                 </motion.div>

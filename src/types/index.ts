@@ -292,8 +292,41 @@ export interface FormDefinition {
   description?: string
   type: ActivityType
   pages: FormPage[]
-  status: 'draft' | 'published'
+  status: 'draft' | 'published' | 'retired'
   version: number
+  createdAt: string
+  updatedAt: string
+}
+
+export type FormEditorialStatus =
+  | 'draft'
+  | 'in_review'
+  | 'changes_requested'
+  | 'approved'
+  | 'published'
+  | 'withdrawn'
+
+export interface FormChangeRequest {
+  id: string
+  formId: string
+  entityId: string
+  baseVersion: number
+  publishedVersion?: number
+  title: string
+  description?: string
+  type: ActivityType
+  definition: string
+  definitionSha256: string
+  status: FormEditorialStatus
+  revision: number
+  createdBy: string
+  submittedBy?: string
+  submittedAt?: string
+  reviewedBy?: string
+  reviewedAt?: string
+  reviewNotes?: string
+  publishedBy?: string
+  publishedAt?: string
   createdAt: string
   updatedAt: string
 }

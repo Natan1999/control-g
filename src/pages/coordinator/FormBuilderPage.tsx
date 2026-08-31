@@ -4,13 +4,14 @@ import {
   ChevronDown, CheckSquare, List, Radio as RadioIcon, 
   Camera, PenTool, MapPin, Layers, Calculator, Info, 
   FileText, Phone, Mail, Trash2, Settings2, GripVertical,
-  ChevronRight, ChevronLeft, Layout, Globe, X, BookOpen, MapPinned, ShieldCheck, AlertTriangle, Share2
+  ChevronRight, ChevronLeft, Layout, Globe, X, BookOpen, MapPinned, ShieldCheck, AlertTriangle, Share2,
+  Send, CheckCircle2, RotateCcw, Rocket, LockKeyhole
 } from 'lucide-react'
 import { motion, Reorder, AnimatePresence } from 'framer-motion'
 import { useParams, useNavigate } from 'react-router-dom'
 import { TopBar } from '@/components/layout/Sidebar'
-import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
-import { ID, Query } from '@/lib/backend'
+import { databases, DATABASE_ID, COLLECTION_IDS, formEditorialOperations, type FormEditorialStatus } from '@/lib/backend'
+import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import { FormField, FormDefinition, FormPage, FormFieldType, ActivityType, Entity } from '@/types'
 import { cloneTemplatePages, FORM_TEMPLATES, type ControlGFormTemplate } from '@/config/form-templates'
@@ -22,6 +23,39 @@ const COLORS = {
   accent: '#1B3A4B',    // Slate
   surface: '#F8FAFC',
   border: '#E2E8F0',
+}
+
+const EDITORIAL_STATUS: Record<FormEditorialStatus, { label: string; description: string; tone: string }> = {
+  draft: {
+    label: 'Borrador',
+    description: 'Editable y privado. Guárdalo y envíalo a revisión cuando esté listo.',
+    tone: 'bg-slate-100 text-slate-700',
+  },
+  in_review: {
+    label: 'En revisión',
+    description: 'La edición está bloqueada. Una persona diferente debe revisar el instrumento.',
+    tone: 'bg-blue-50 text-blue-800',
+  },
+  changes_requested: {
+    label: 'Cambios solicitados',
+    description: 'Corrige las observaciones, guarda una nueva revisión y vuelve a enviarla.',
+    tone: 'bg-amber-50 text-amber-900',
+  },
+  approved: {
+    label: 'Aprobado',
+    description: 'Superó la revisión. Aún no está disponible en campo hasta publicarlo.',
+    tone: 'bg-violet-50 text-violet-800',
+  },
+  published: {
+    label: 'Publicado',
+    description: 'La versión vigente es inmutable y ya puede asignarse. Al guardar cambios se crea una nueva versión borrador.',
+    tone: 'bg-emerald-50 text-emerald-800',
+  },
+  withdrawn: {
+    label: 'Retirado',
+    description: 'La solicitud editorial fue retirada.',
+    tone: 'bg-slate-100 text-slate-500',
+  },
 }
 
 const FIELD_TYPES: { type: FormFieldType; label: string; icon: any; category: string }[] = [
@@ -134,6 +168,11 @@ export default function FormBuilderPage() {
   const [preview, setPreview] = useState(false)
   const [toast, setToast] = useState('')
   const [showTemplates, setShowTemplates] = useState(false)
+  const [workingFormId, setWorkingFormId] = useState<string | null>(id || null)
+  const [changeId, setChangeId] = useState<string | null>(null)
+  const [changeRevision, setChangeRevision] = useState<number | null>(null)
+  const [workflowStatus, setWorkflowStatus] = useState<FormEditorialStatus>(id ? 'published' : 'draft')
+  const [reviewNotes, setReviewNotes] = useState('')
   
   // Super Admin specific state
   const [entities, setEntities] = useState<Entity[]>([])
@@ -163,19 +202,38 @@ export default function FormBuilderPage() {
         try {
           const doc = await databases.getDocument(DATABASE_ID, COLLECTION_IDS.FORMS, id)
           const data = doc as unknown as any
+          const changeResult = await databases.listDocuments(
+            DATABASE_ID,
+            COLLECTION_IDS.FORM_CHANGE_REQUESTS,
+            [
+              Query.equal('form_id', id),
+              Query.equal('status', ['draft', 'in_review', 'changes_requested', 'approved']),
+              Query.orderDesc('$updatedAt'),
+              Query.limit(1),
+            ],
+          )
+          const candidate = changeResult.documents[0] as any
           
           let pages = []
           try {
-            pages = data.definition ? JSON.parse(data.definition) : []
+            pages = (candidate?.definition || data.definition) ? JSON.parse(candidate?.definition || data.definition) : []
           } catch (pErr) {
             console.warn('Malformed form definition, resetting to empty:', pErr)
           }
 
           setForm({
             ...data,
+            title: candidate?.title || data.title,
+            description: candidate?.description ?? data.description,
+            type: candidate?.type || data.type,
             pages
           })
           setSelectedEntityId(data.entity_id)
+          setWorkingFormId(data.$id)
+          setChangeId(candidate?.$id || null)
+          setChangeRevision(candidate?.revision ?? null)
+          setWorkflowStatus(candidate?.status || (data.status === 'published' ? 'published' : 'draft'))
+          setReviewNotes(candidate?.review_notes || '')
         } catch (err) {
           console.error('Error fetching form:', err)
           setToast('Error al cargar el formulario')
@@ -196,6 +254,8 @@ export default function FormBuilderPage() {
   const activePage = form.pages![activePageIdx]
   const qualityIssues = useMemo(() => analyzeFormQuality(form.pages || []), [form.pages])
   const qualityScore = useMemo(() => formQualityScore(form.pages || []), [form.pages])
+  const editorReadOnly = workflowStatus === 'in_review' || workflowStatus === 'approved'
+  const workflow = EDITORIAL_STATUS[workflowStatus]
 
   const addField = (type: FormFieldType) => {
     const newField: FormField = {
@@ -253,49 +313,102 @@ export default function FormBuilderPage() {
     window.setTimeout(() => setToast(''), 3500)
   }
 
-  const handleSave = useCallback(async () => {
-    const blockingIssue = qualityIssues.find(issue => issue.severity === 'error')
-    if (blockingIssue) {
-      setToast(blockingIssue.message)
-      return
+  const editorialErrorMessage = (error: unknown) => {
+    const message = error instanceof Error ? error.message : String(error || '')
+    const messages: Record<string, string> = {
+      FORM_CHANGE_LOCKED: 'El borrador está en revisión o aprobado y no admite cambios.',
+      FORM_DRAFT_CONFLICT: 'Otra persona actualizó el borrador. Recarga antes de guardar de nuevo.',
+      FORM_REVIEWER_MUST_DIFFER: 'La revisión debe realizarla otra persona coordinadora o el superadministrador.',
+      FORM_REVIEW_COMMENT_REQUIRED: 'Explica los cambios solicitados con al menos cinco caracteres.',
+      FORM_BASE_VERSION_CHANGED: 'La versión publicada cambió. Crea un nuevo borrador sobre la versión vigente.',
+      FORM_RETIRED: 'Este formulario está archivado y no admite nuevas versiones.',
+      FORM_TRANSITION_INVALID: 'La transición editorial ya no es válida. Recarga el formulario.',
+      FORM_EDITOR_FORBIDDEN: 'No tienes permiso para administrar formularios de esta entidad.',
+    }
+    return Object.entries(messages).find(([code]) => message.includes(code))?.[1]
+      || 'No fue posible completar la acción editorial.'
+  }
+
+  const saveDraft = useCallback(async () => {
+    if (workflowStatus === 'in_review' || workflowStatus === 'approved') {
+      setToast('El borrador está bloqueado mientras se revisa o espera publicación.')
+      return null
     }
     if (!selectedEntityId) {
       setToast('Debes seleccionar una entidad')
-      return
+      return null
     }
     setSaving(true)
     try {
-      const payload = {
-        entity_id: selectedEntityId,
-        name: form.title,
-        title: form.title,
+      const result = await formEditorialOperations.saveDraft({
+        formId: workingFormId,
+        entityId: selectedEntityId,
+        title: String(form.title || '').trim(),
         description: form.description,
-        type: form.type,
-        definition: JSON.stringify(form.pages),
-        status: 'published',
-        version: form.version || 1,
-        v: form.version || 1,
+        type: String(form.type || 'ex_ante'),
+        definition: JSON.stringify(form.pages || []),
+        changeId,
+        expectedRevision: changeRevision,
+      })
+      setWorkingFormId(result.form_id)
+      setChangeId(result.change_id)
+      setChangeRevision(result.revision)
+      setWorkflowStatus(result.status)
+      setToast('Borrador guardado y protegido. Todavía no está visible en campo.')
+      if (!workingFormId) {
+        const base = user?.role === 'admin' ? '/admin/forms' : '/coord/forms'
+        navigate(`${base}/edit/${result.form_id}`, { replace: true })
       }
-      
-      if (id) {
-        await databases.updateDocument(DATABASE_ID, COLLECTION_IDS.FORMS, id, payload)
-        setToast('Cambios guardados con éxito')
-      } else {
-        await databases.createDocument(DATABASE_ID, COLLECTION_IDS.FORMS, ID.unique(), payload)
-        setToast('Formulario creado con éxito')
-      }
-      
-      setTimeout(() => {
-        setToast('')
-        navigate(user?.role === 'admin' ? '/admin/forms' : '/coord/forms')
-      }, 2000)
+      return result
     } catch (err) {
       console.error(err)
-      setToast('Error al guardar')
+      setToast(editorialErrorMessage(err))
+      return null
     } finally {
       setSaving(false)
     }
-  }, [selectedEntityId, form, id, navigate, qualityIssues, user?.role])
+  }, [changeId, changeRevision, form, navigate, selectedEntityId, user?.role, workflowStatus, workingFormId])
+
+  const handleSubmitReview = async () => {
+    const blockingIssue = qualityIssues.find(issue => issue.severity === 'error')
+    if (blockingIssue) {
+      setToast(`Antes de enviar a revisión: ${blockingIssue.message}`)
+      return
+    }
+    const draft = await saveDraft()
+    if (!draft) return
+    setSaving(true)
+    try {
+      const result = await formEditorialOperations.transition(draft.change_id, 'in_review')
+      setWorkflowStatus(result.status)
+      setToast('Formulario enviado a revisión. La edición quedó bloqueada.')
+    } catch (error) {
+      setToast(editorialErrorMessage(error))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleEditorialTransition = async (status: 'approved' | 'changes_requested' | 'published') => {
+    if (!changeId) return
+    setSaving(true)
+    try {
+      const result = await formEditorialOperations.transition(changeId, status, reviewNotes)
+      setWorkflowStatus(result.status)
+      if (status === 'approved') setToast('Revisión aprobada. El formulario aún no está publicado.')
+      if (status === 'changes_requested') setToast('El borrador volvió a edición con las observaciones registradas.')
+      if (status === 'published') {
+        setChangeId(null)
+        setChangeRevision(null)
+        setReviewNotes('')
+        setToast(`Versión ${result.published_version} publicada de forma inmutable.`)
+      }
+    } catch (error) {
+      setToast(editorialErrorMessage(error))
+    } finally {
+      setSaving(false)
+    }
+  }
 
   return (
     <div className="flex flex-col h-full min-h-0 bg-slate-50 overflow-hidden">
@@ -308,6 +421,7 @@ export default function FormBuilderPage() {
               <select
                 value={selectedEntityId}
                 onChange={(e) => setSelectedEntityId(e.target.value)}
+                disabled={Boolean(workingFormId) || editorReadOnly}
                 aria-label="Entidad del formulario"
                 className="hidden md:block max-w-52 px-4 py-2 bg-slate-100 border-none rounded-xl text-xs font-bold text-slate-700 focus:ring-2 focus:ring-blue-500/20"
               >
@@ -320,6 +434,7 @@ export default function FormBuilderPage() {
             <button
               type="button"
               onClick={() => setShowTemplates(true)}
+              disabled={editorReadOnly}
               aria-label="Abrir biblioteca de plantillas"
               className="w-10 h-10 sm:w-auto sm:h-auto flex items-center justify-center gap-2 sm:px-4 sm:py-2 text-[#1B3A4B] font-bold hover:bg-[#E9F1F3] rounded-xl transition-all"
             >
@@ -334,23 +449,49 @@ export default function FormBuilderPage() {
               {preview ? <Layout size={18} /> : <Eye size={18} />}
               <span className="hidden sm:inline">{preview ? 'Editar' : 'Vista Previa'}</span>
             </button>
-            <button 
-              onClick={handleSave}
-              disabled={saving}
-              aria-label={saving ? 'Guardando formulario' : 'Publicar formulario'}
-              className="w-10 h-10 sm:w-auto sm:h-auto flex items-center justify-center gap-2 sm:px-6 sm:py-2.5 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 active:scale-95 transition-all disabled:opacity-50"
-              style={{ background: COLORS.primary }}
-            >
-              <Save size={18} />
-              <span className="hidden sm:inline">{saving ? 'Guardando...' : 'Publicar'}</span>
-            </button>
+            {!editorReadOnly && workflowStatus !== 'published' && (
+              <button
+                type="button"
+                onClick={handleSubmitReview}
+                disabled={saving}
+                aria-label="Guardar y enviar formulario a revisión"
+                className="w-10 h-10 sm:w-auto sm:h-auto flex items-center justify-center gap-2 sm:px-4 sm:py-2.5 text-[#1B3A4B] bg-[#E9F1F3] font-bold rounded-xl active:scale-95 transition-all disabled:opacity-50"
+              >
+                <Send size={18} />
+                <span className="hidden xl:inline">Enviar a revisión</span>
+              </button>
+            )}
+            {workflowStatus === 'approved' ? (
+              <button
+                type="button"
+                onClick={() => handleEditorialTransition('published')}
+                disabled={saving}
+                aria-label="Publicar versión aprobada"
+                className="w-10 h-10 sm:w-auto sm:h-auto flex items-center justify-center gap-2 sm:px-6 sm:py-2.5 text-white bg-emerald-700 font-bold rounded-xl shadow-lg shadow-emerald-500/20 active:scale-95 transition-all disabled:opacity-50"
+              >
+                <Rocket size={18} />
+                <span className="hidden sm:inline">Publicar</span>
+              </button>
+            ) : !editorReadOnly && (
+              <button
+                type="button"
+                onClick={() => void saveDraft()}
+                disabled={saving}
+                aria-label={saving ? 'Guardando borrador' : 'Guardar borrador'}
+                className="w-10 h-10 sm:w-auto sm:h-auto flex items-center justify-center gap-2 sm:px-6 sm:py-2.5 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 active:scale-95 transition-all disabled:opacity-50"
+                style={{ background: COLORS.primary }}
+              >
+                <Save size={18} />
+                <span className="hidden sm:inline">{saving ? 'Guardando...' : workflowStatus === 'published' ? 'Nueva versión' : 'Guardar'}</span>
+              </button>
+            )}
           </div>
         }
       />
 
       <div className="flex-1 flex overflow-hidden">
         {/* Left Toolbox */}
-        {!preview && <aside className="hidden lg:flex w-72 bg-white border-r border-slate-200 flex-col shadow-sm z-10">
+        {!preview && !editorReadOnly && <aside className="hidden lg:flex w-72 bg-white border-r border-slate-200 flex-col shadow-sm z-10">
           <div className="p-4 border-b border-slate-100 bg-slate-50/50">
             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest px-2">Herramientas</h3>
           </div>
@@ -382,7 +523,7 @@ export default function FormBuilderPage() {
         {/* Center Canvas */}
         <div className="flex-1 min-w-0 overflow-y-auto p-4 sm:p-6 lg:p-12 bg-slate-50/30">
           <div className="max-w-3xl mx-auto space-y-8">
-            {!preview && (
+            {!preview && !editorReadOnly && (
               <div className="lg:hidden sticky top-0 z-20 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-slate-50/95 backdrop-blur border-b border-slate-200 shadow-sm">
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Agregar campo</p>
                 <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
@@ -405,12 +546,14 @@ export default function FormBuilderPage() {
                <input 
                 value={form.title} 
                 onChange={e => setForm({...form, title: e.target.value})}
+                disabled={editorReadOnly}
                 placeholder="Título del Formulario"
                 className="text-xl sm:text-2xl font-black text-slate-900 w-full focus:outline-none mb-2"
                />
                <textarea
                 value={form.description}
                 onChange={e => setForm({...form, description: e.target.value})}
+                disabled={editorReadOnly}
                 placeholder="Descripción o instrucciones para el profesional..."
                 className="text-sm text-slate-400 w-full resize-none focus:outline-none bg-transparent"
                 rows={2}
@@ -421,6 +564,7 @@ export default function FormBuilderPage() {
                    <select
                      value={form.type}
                      onChange={e => setForm({ ...form, type: e.target.value as ActivityType })}
+                     disabled={editorReadOnly}
                      className="mt-2 w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 normal-case tracking-normal"
                    >
                      <option value="ex_ante">Ex-Antes</option>
@@ -436,6 +580,7 @@ export default function FormBuilderPage() {
                      <select
                        value={selectedEntityId}
                        onChange={e => setSelectedEntityId(e.target.value)}
+                       disabled={Boolean(workingFormId) || editorReadOnly}
                        className="mt-2 w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 normal-case tracking-normal"
                      >
                        <option value="">Seleccionar entidad...</option>
@@ -445,6 +590,56 @@ export default function FormBuilderPage() {
                  )}
                </div>
             </div>
+
+            {!preview && (
+              <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5" aria-labelledby="editorial-workflow-title">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="max-w-2xl">
+                    <h2 id="editorial-workflow-title" className="flex items-center gap-2 text-sm font-black text-[#1B3A4B]">
+                      {editorReadOnly ? <LockKeyhole size={18} /> : <CheckCircle2 size={18} />} Control editorial
+                    </h2>
+                    <p className="mt-1 text-xs leading-5 text-slate-500">{workflow.description}</p>
+                  </div>
+                  <span className={`rounded-full px-3 py-1.5 text-xs font-black ${workflow.tone}`}>{workflow.label}</span>
+                </div>
+
+                {reviewNotes && (
+                  <div className="mt-4 rounded-xl border border-amber-100 bg-amber-50 p-3 text-xs leading-5 text-amber-950">
+                    <strong>Observaciones de revisión:</strong> {reviewNotes}
+                  </div>
+                )}
+
+                {workflowStatus === 'in_review' && (
+                  <div className="mt-4 grid gap-3">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                      Concepto de revisión
+                      <textarea
+                        value={reviewNotes}
+                        onChange={event => setReviewNotes(event.target.value)}
+                        rows={3}
+                        placeholder="Registra hallazgos, riesgos o ajustes requeridos."
+                        className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm font-medium normal-case tracking-normal text-slate-800 focus:border-blue-400 focus:outline-none"
+                      />
+                    </label>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+                      <button type="button" onClick={() => handleEditorialTransition('changes_requested')} disabled={saving} className="min-h-11 rounded-xl border border-amber-200 bg-amber-50 px-4 text-xs font-black text-amber-900 disabled:opacity-50">
+                        <RotateCcw size={16} className="mr-2 inline" /> Solicitar cambios
+                      </button>
+                      <button type="button" onClick={() => handleEditorialTransition('approved')} disabled={saving} className="min-h-11 rounded-xl bg-[#1B3A4B] px-4 text-xs font-black text-white disabled:opacity-50">
+                        <CheckCircle2 size={16} className="mr-2 inline" /> Aprobar revisión
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {workflowStatus === 'approved' && (
+                  <div className="mt-4 flex flex-col gap-3 rounded-xl bg-violet-50 p-4 text-xs leading-5 text-violet-950 sm:flex-row sm:items-center sm:justify-between">
+                    <span>Publicar copiará esta versión aprobada al formulario de campo y conservará las versiones anteriores.</span>
+                    <button type="button" onClick={() => handleEditorialTransition('published')} disabled={saving} className="min-h-11 shrink-0 rounded-xl bg-emerald-700 px-4 font-black text-white disabled:opacity-50"><Rocket size={16} className="mr-2 inline" /> Publicar versión</button>
+                  </div>
+                )}
+              </section>
+            )}
 
             {!preview && (
               <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5" aria-labelledby="quality-assistant-title">
@@ -482,7 +677,7 @@ export default function FormBuilderPage() {
                   {p.title}
                 </button>
               ))}
-              {!preview && (
+              {!preview && !editorReadOnly && (
                 <button
                   onClick={addPage}
                   aria-label="Añadir página"
@@ -493,7 +688,7 @@ export default function FormBuilderPage() {
               )}
             </div>
 
-            {!preview && (
+            {!preview && !editorReadOnly && (
               <label className="block bg-white border border-slate-100 rounded-2xl p-4 shadow-sm text-[10px] font-black text-slate-400 uppercase tracking-widest">
                 Nombre de esta página o momento
                 <input
@@ -533,6 +728,7 @@ export default function FormBuilderPage() {
                 </div>
               ) : (
                 <Reorder.Group axis="y" values={activePage.fields} onReorder={(newFields) => {
+                  if (editorReadOnly) return
                   const newPages = [...form.pages!]
                   newPages[activePageIdx].fields = newFields
                   setForm({ ...form, pages: newPages })
@@ -541,7 +737,8 @@ export default function FormBuilderPage() {
                     <Reorder.Item 
                       key={f.id} 
                       value={f}
-                      onClick={() => setSelectedFieldId(f.id)}
+                      dragListener={!editorReadOnly}
+                      onClick={() => { if (!editorReadOnly) setSelectedFieldId(f.id) }}
                       className={`group relative bg-white p-4 sm:p-6 rounded-3xl border transition-all cursor-pointer ${
                         selectedFieldId === f.id ? 'border-blue-500 shadow-xl shadow-blue-500/5 ring-4 ring-blue-50' : 'border-slate-100 hover:border-slate-200 shadow-sm'
                       }`}
@@ -561,11 +758,11 @@ export default function FormBuilderPage() {
                             <h4 className="font-bold text-slate-800 break-words">{f.label}</h4>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                        {!editorReadOnly && <div className="flex items-center gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                           <button onClick={(e) => { e.stopPropagation(); deleteField(f.id); }} className="p-2 hover:bg-rose-50 text-rose-500 rounded-xl transition-colors">
                             <Trash2 size={18} />
                           </button>
-                        </div>
+                        </div>}
                       </div>
                     </Reorder.Item>
                   ))}
@@ -577,7 +774,7 @@ export default function FormBuilderPage() {
 
         {/* Right Settings Sidebar */}
         <AnimatePresence>
-          {selectedFieldId && (
+          {selectedFieldId && !editorReadOnly && (
             <>
               <motion.button
                 type="button"

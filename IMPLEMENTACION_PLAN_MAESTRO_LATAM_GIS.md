@@ -12,13 +12,13 @@ Este archivo es el registro técnico vivo de la implementación. El avance globa
 | 3. PostGIS, mapa interno y capas | 15 % | Operativa con catálogos oficiales, alcance por entidad, puntos, recorridos, polígonos, cobertura y privacidad | 92 % | 13,80 % |
 | 4. ArcGIS e interoperabilidad | 10 % | Operación administrada, trabajador desacoplado recuperable, E2E pública y adjuntos fotográficos gobernados; validación OAuth institucional pendiente | 84 % | 8,40 % |
 | 5. Analítica y reportes | 12 % | Cortes reproducibles en servidor; datasets patrón/programación operativa pendientes | 85 % | 10,20 % |
-| 6. Formularios y plantillas | 8 % | Diez plantillas, calidad y versiones inmutables | 85 % | 6,80 % |
+| 6. Formularios y plantillas | 8 % | Diez plantillas, calidad, revisión independiente, aprobación, publicación inmutable y archivado recuperable | 92 % | 7,36 % |
 | 7. Seguridad y privacidad | 10 % | Retención auditable y gobierno funcional; AAL2 RLS/restore pendientes | 80 % | 8,00 % |
 | 8. SEO LATAM | 6 % | Implementación avanzada | 85 % | 5,10 % |
 | 9. QA y piloto | 6 % | QA automatizado, seguridad, carga, accesibilidad y prueba transaccional territorial; pilotos físicos pendientes | 74 % | 4,44 % |
 | 10. Lanzamiento, operación y documentación | 3 % | Health, sonda externa e incidentes automáticos activos; segunda región/secretos/firma pendientes | 80 % | 2,40 % |
 
-**Avance global actual: 84,09 % ponderado.**
+**Avance global actual: 84,65 % ponderado.**
 
 El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases que todavía no satisfacían todos los criterios del documento fuente. La auditoría detallada está en `docs/PLAN_MAESTRO_COMPLETION_AUDIT.md`; la reducción es metodológica, no una pérdida de funciones.
 
@@ -41,21 +41,23 @@ El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases qu
 - Publicación saliente restringida a metadatos operativos no sensibles mediante lista explícita.
 - Adjuntos ArcGIS gobernados y opt-in: autorización auditable, máximo tres fotos JPEG/PNG/WebP por registro, exclusión de firmas, validación de entidad/ruta/tamaño/MIME/firma binaria/SHA-256, nombres técnicos, idempotencia local/remota y reintentos parciales.
 - Trabajador ArcGIS desacoplado con autenticación cron, reclamo atómico `SKIP LOCKED`, leases de tres minutos, backoff, liberación en cada resultado y recuperación automática de ejecuciones abandonadas.
-- Migraciones 009 y 010 aplicadas al Supabase remoto: gobierno de adjuntos, columnas de lease, restricciones validadas, índices parciales y RPC de reclamo exclusiva de `service_role`; el acceso anónimo fue rechazado con `401`.
+- Migraciones 009, 010 y 011 aplicadas al Supabase remoto: gobierno de adjuntos, leases recuperables y flujo editorial; se verificaron restricciones, índices, RLS, triggers y privilegios de mínimo acceso.
 - Exportación GIS en GeoJSON, CSV WGS84, Shapefile ZIP (`SHP`, `SHX`, `DBF`, `PRJ`, `CPG`) y GeoPackage OGC 1.3.
 - Informe territorial PDF con mapa, cobertura, fuentes, estados y métricas operativas.
 - Configuración regional para 20 países de América Latina.
 - Diez plantillas reutilizables de caracterización con GPS, evidencia y consentimiento.
 - Asistente de calidad para formularios y versiones publicadas inmutables con SHA-256.
+- Flujo editorial gobernado: borrador separado de la versión vigente, revisión por una segunda persona, solicitud de cambios con concepto, aprobación, publicación atómica y detección de concurrencia por versión/revisión.
+- Asignación restringida a formularios publicados y archivado no destructivo que desactiva asignaciones pero conserva respuestas, auditoría y versiones históricas.
 - Analítica institucional con filtros, supresión de grupos pequeños e informes PDF, DOCX, XLSX y CSV.
 - Snapshots de indicadores calculados en Supabase con corte, filtros, versión metodológica, territorio, muestra y supresión reproducible; ejecución manual verificada y endpoint diario protegido listo para Vercel Cron.
 - Centro de gobierno para consentimiento, integridad de evidencias, accesos sensibles, retención y MFA.
 - Retención con vista previa obligatoria, registro auditable y ejecución confirmada por superadmin; anonimización de respuestas y purga limitada a clases sin archivos externos.
 - Migraciones PostGIS/RLS aplicadas al Supabase remoto y verificadas: PostGIS 3.3.7, geometrías de punto/línea/polígono, índices GiST, configuración regional y aislamiento por entidad.
 - Capa oficial DANE 2025 de los 46 municipios de Bolívar precargada en la entidad inicial.
-- APK Android 2.11.0 compilada con catálogo territorial versionado, GIS de campo, observabilidad, snapshots, retención, ArcGIS administrado, adjuntos fotográficos gobernados, GeoPackage y entrada nativa directa al login. Binario: `entregables/Control-G-2.11.0-LATAM-GIS-offline-debug.apk`.
-- Huella SHA-256 del APK: `fd0abf4f1f7c377f77f513dbacfbf6cec66d3eb901c2a2270adb426db711c457`.
-- QA técnico aprobado: 43/43 pruebas automatizadas, lint, validación sintáctica ArcGIS, TypeScript/Vite/PWA, 269 tareas Gradle con pruebas unitarias y `assembleDebug`; auditoría de producción con 0 vulnerabilidades conocidas.
+- APK Android 2.12.0 con catálogo territorial versionado, GIS de campo, flujo editorial gobernado, observabilidad, snapshots, retención, ArcGIS administrado, adjuntos fotográficos gobernados, GeoPackage y entrada nativa directa al login. Binario: `entregables/Control-G-2.12.0-LATAM-GIS-offline-debug.apk`.
+- Huella SHA-256 del APK 2.12.0: `fe429e563acb045ba4bcd348a94cca77e0ed443e1ac9e5eb318fdfc12f014587`.
+- QA técnico aprobado: 48/48 pruebas automatizadas, lint, validación sintáctica ArcGIS, TypeScript/Vite/PWA, 269 tareas Gradle con pruebas unitarias y `assembleDebug`; auditoría de producción con 0 vulnerabilidades conocidas.
 - Auditoría del árbol de producción aprobada con 0 vulnerabilidades conocidas; React Router actualizado a 7.18.3 y dependencias transitivas corregidas sin regresiones de compilación.
 - Encabezados de seguridad publicados verificados y rutas privadas marcadas `noindex`; los endpoints de snapshots y trabajador ArcGIS rechazan acceso anónimo con `401`.
 - Prueba de carga local: 1.500 solicitudes, concurrencia máxima 40, 0 fallos y hasta 1.604 solicitudes/s en `/login`.
