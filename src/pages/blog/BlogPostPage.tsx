@@ -18,7 +18,7 @@ export default function BlogPostPage() {
     <div className="min-h-screen bg-white text-slate-900">
       <PublicHeader message={post.whatsappMessage} placement={`cabecera-articulo-${post.slug}`} />
 
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <article>
           <header className="bg-gradient-to-br from-[#102d3e] via-[#1B3A4B] to-[#2C6E8A] px-5 py-12 text-white sm:py-16">
             <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,.95fr)] lg:items-center">

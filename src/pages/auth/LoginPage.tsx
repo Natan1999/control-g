@@ -83,7 +83,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-white">
       {!Capacitor.isNativePlatform() && <PublicHeader message={LOGIN_WHATSAPP_MESSAGE} placement="cabecera-login" />}
-      <div className={`${Capacitor.isNativePlatform() ? 'min-h-screen' : 'min-h-[calc(100vh-72px)]'} flex bg-brand-dark overflow-hidden`}>
+      <main id="main-content" tabIndex={-1} className={`${Capacitor.isNativePlatform() ? 'min-h-screen' : 'min-h-[calc(100vh-72px)]'} flex bg-brand-dark overflow-hidden`}>
       {/* Panel izquierdo */}
       <motion.div
         initial={{ opacity: 0, x: -40 }}
@@ -175,7 +175,7 @@ export default function LoginPage() {
           {/* Formulario real */}
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-foreground mb-1.5">
+              <label htmlFor="login-email" className="block text-sm font-semibold text-foreground mb-1.5">
                 Correo electrónico
               </label>
               <input
@@ -186,12 +186,14 @@ export default function LoginPage() {
                 placeholder="tu@organización.gov.co"
                 className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-all"
                 autoComplete="email"
+                aria-invalid={Boolean(error)}
+                aria-describedby={error ? 'login-error' : undefined}
                 disabled={isBlocked}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-foreground mb-1.5">
+              <label htmlFor="login-password" className="block text-sm font-semibold text-foreground mb-1.5">
                 Contraseña
               </label>
               <div className="relative">
@@ -201,14 +203,18 @@ export default function LoginPage() {
                   value={password}
                   onChange={e => { setPassword(e.target.value); clearError() }}
                   placeholder="••••••••"
-                  className="w-full px-4 py-3 pr-12 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-all"
+                  className="w-full px-4 py-3 pr-14 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30 focus:border-brand-primary transition-all"
                   autoComplete="current-password"
+                  aria-invalid={Boolean(error)}
+                  aria-describedby={error ? 'login-error' : undefined}
                   disabled={isBlocked}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                  aria-pressed={showPassword}
+                  className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground focus:outline-none focus:ring-2 focus:ring-brand-primary/40"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -221,6 +227,7 @@ export default function LoginPage() {
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="flex items-start gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-xl text-yellow-800 text-sm"
+                role="status"
               >
                 <AlertCircle size={16} className="mt-0.5 shrink-0 text-yellow-600" />
                 <span>Si continúas fallando, tu acceso será bloqueado temporalmente.</span>
@@ -230,9 +237,11 @@ export default function LoginPage() {
             {/* Error Supabase */}
             {error && !isBlocked && (
               <motion.div
+                id="login-error"
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm"
+                role="alert"
               >
                 <AlertCircle size={16} className="mt-0.5 shrink-0" />
                 <span>{error}</span>
@@ -258,7 +267,7 @@ export default function LoginPage() {
           </p>
         </div>
       </motion.div>
-      </div>
+      </main>
     </div>
   )
 }

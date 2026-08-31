@@ -62,7 +62,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.72.1",
-    "react-router-dom": "^6.21.3",
+    "react-router-dom": "^7.18.3",
     "react-signature-canvas": "^1.1.0-alpha.2",
     "recharts": "^2.10.3",
     "sql.js": "^1.14.1",

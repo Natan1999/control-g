@@ -19,7 +19,7 @@ export default function BlogIndexPage() {
     <div className="min-h-screen bg-white text-slate-900">
       <PublicHeader message={BLOG_META.whatsappMessage} placement="cabecera-blog" />
 
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <section className="bg-gradient-to-br from-[#102d3e] via-[#1B3A4B] to-[#2C6E8A] px-5 py-20 text-white sm:py-24">
           <div className="mx-auto max-w-6xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[.15em] text-teal-200"><BookOpen size={15} /> Centro de conocimiento</span>
@@ -43,7 +43,7 @@ export default function BlogIndexPage() {
             </Link>}
 
             <div className="mt-12 flex gap-2 overflow-x-auto pb-2" aria-label="Filtrar artículos por categoría">
-              {categories.map(option => <button key={option} type="button" onClick={() => setCategory(option)} className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold transition ${category === option ? 'bg-[#1B3A4B] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>{option}</button>)}
+              {categories.map(option => <button key={option} type="button" aria-pressed={category === option} onClick={() => setCategory(option)} className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-bold transition ${category === option ? 'bg-[#1B3A4B] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>{option}</button>)}
             </div>
 
             <div className="mt-7 grid gap-5 md:grid-cols-2 lg:grid-cols-3">

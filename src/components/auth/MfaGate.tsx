@@ -70,7 +70,7 @@ function MfaChallenge({ onVerified }: { onVerified: () => void }) {
   }
 
   return (
-    <main className="min-h-screen bg-slate-100 p-4 sm:p-8">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-slate-100 p-4 sm:p-8">
       <section className="mx-auto mt-8 max-w-lg rounded-3xl border border-slate-200 bg-white p-6 shadow-xl sm:mt-16 sm:p-8" aria-labelledby="mfa-title">
         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#E9F1F3] text-[#1B3A4B]"><ShieldCheck size={28} /></div>
         <p className="mt-5 text-xs font-black uppercase tracking-[0.15em] text-[#3D7B9E]">Acceso institucional protegido</p>

@@ -144,6 +144,7 @@ export function Sidebar({ role }: SidebarProps) {
         </div>
         <button
           onClick={handleLogout}
+          aria-label="Cerrar sesión"
           className={cn('w-full flex items-center gap-2 px-3 py-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 text-sm transition-colors duration-200', collapsed && 'justify-center')}
         >
           <LogOut size={16} />
@@ -160,6 +161,8 @@ export function Sidebar({ role }: SidebarProps) {
         <SidebarContent />
         <button
           onClick={() => setCollapsed(!collapsed)}
+          aria-label={collapsed ? 'Expandir menú lateral' : 'Contraer menú lateral'}
+          aria-expanded={!collapsed}
           className="absolute -right-3 top-20 w-6 h-6 text-white rounded-full flex items-center justify-center shadow-md z-10"
           style={{ background: '#1B3A4B' }}
         >
@@ -170,6 +173,9 @@ export function Sidebar({ role }: SidebarProps) {
       {/* Mobile Hamburger */}
       <button
         onClick={() => setMobileOpen(true)}
+        aria-label="Abrir menú de navegación"
+        aria-expanded={mobileOpen}
+        aria-controls="mobile-sidebar"
         className="lg:hidden fixed top-4 left-4 z-40 w-10 h-10 text-white rounded-xl flex items-center justify-center shadow-lg"
         style={{ background: '#1B3A4B' }}
       >
@@ -181,6 +187,7 @@ export function Sidebar({ role }: SidebarProps) {
         {mobileOpen && (
           <>
             <motion.div
+              id="mobile-sidebar"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -197,6 +204,7 @@ export function Sidebar({ role }: SidebarProps) {
               <div className="h-full relative">
                 <button
                   onClick={() => setMobileOpen(false)}
+                  aria-label="Cerrar menú de navegación"
                   className="absolute top-4 right-4 z-10 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white"
                 >
                   <X size={16} />

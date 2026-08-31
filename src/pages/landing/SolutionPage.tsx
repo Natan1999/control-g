@@ -18,7 +18,7 @@ export default function SolutionPage({ path }: { path: string }) {
     <div className="min-h-screen bg-white text-slate-900">
       <PublicHeader message={page.whatsappMessage} placement={`cabecera-${page.path.slice(1)}`} />
 
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <section className="relative overflow-hidden bg-gradient-to-br from-[#102d3e] via-[#1B3A4B] to-[#2C6E8A] px-5 py-20 text-white sm:py-28">
           <div className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-teal-300/10 blur-3xl" />
           <div className="relative mx-auto max-w-5xl">

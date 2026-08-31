@@ -96,6 +96,8 @@ export default function LandingPage() {
     <div className="min-h-screen bg-white text-gray-900 font-sans">
       <PublicHeader message={LANDING_SEO.whatsappMessage} placement="cabecera-inicio" fixed />
 
+      <main id="main-content" tabIndex={-1}>
+
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section
         className="pt-28 pb-24 px-5 text-center relative overflow-hidden"
@@ -481,6 +483,8 @@ export default function LandingPage() {
           </p>
         </div>
       </section>
+
+      </main>
 
       {/* ── FOOTER ───────────────────────────────────────────────────────── */}
       <PublicFooter />

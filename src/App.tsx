@@ -10,6 +10,7 @@ import LandingPage from '@/pages/landing/LandingPage'
 import SolutionPage from '@/pages/landing/SolutionPage'
 import { MarketingSeo } from '@/components/marketing/MarketingSeo'
 import { MfaGate } from '@/components/auth/MfaGate'
+import { SkipLink } from '@/components/a11y/SkipLink'
 
 const BlogIndexPage = lazy(() => import('@/pages/blog/BlogIndexPage'))
 const BlogPostPage = lazy(() => import('@/pages/blog/BlogPostPage'))
@@ -70,9 +71,13 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar role={user?.role as UserRole ?? 'coordinator'} />
-      <main className="flex-1 overflow-y-auto bg-background">{children}</main>
+      <main id="main-content" tabIndex={-1} className="flex-1 overflow-y-auto bg-background">{children}</main>
     </div>
   )
+}
+
+function FieldLayout({ children }: { children: React.ReactNode }) {
+  return <main id="main-content" tabIndex={-1}>{children}</main>
 }
 
 export default function App() {
@@ -112,6 +117,7 @@ export default function App() {
   return (
     <>
       <MarketingSeo />
+      <SkipLink />
       <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background text-sm font-semibold text-muted-foreground">Cargando Control G…</div>}>
       <Routes>
       <Route path="/login" element={user ? <Navigate to={defaultRoutes[user.role as UserRole]} replace /> : <LoginPage />} />
@@ -193,6 +199,7 @@ export default function App() {
       {/* Profesional de Campo routes (mobile) */}
       <Route path="/field/*" element={
         <ProtectedLayout roles={['professional']}>
+          <FieldLayout>
           <Routes>
             <Route index element={<FieldHome />} />
             <Route path="families" element={<FieldFamiliesPage />} />
@@ -204,6 +211,7 @@ export default function App() {
             <Route path="forms/:formId" element={<FormResponderPage />} />
             <Route path="forms/:formId/:familyId" element={<FormResponderPage />} />
           </Routes>
+          </FieldLayout>
         </ProtectedLayout>
       } />
 

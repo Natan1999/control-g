@@ -380,7 +380,7 @@ export default function FormBuilderPage() {
         </aside>}
 
         {/* Center Canvas */}
-        <main className="flex-1 min-w-0 overflow-y-auto p-4 sm:p-6 lg:p-12 bg-slate-50/30">
+        <div className="flex-1 min-w-0 overflow-y-auto p-4 sm:p-6 lg:p-12 bg-slate-50/30">
           <div className="max-w-3xl mx-auto space-y-8">
             {!preview && (
               <div className="lg:hidden sticky top-0 z-20 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-slate-50/95 backdrop-blur border-b border-slate-200 shadow-sm">
@@ -573,7 +573,7 @@ export default function FormBuilderPage() {
               )}
             </div>
           </div>
-        </main>
+        </div>
 
         {/* Right Settings Sidebar */}
         <AnimatePresence>
