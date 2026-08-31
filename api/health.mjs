@@ -1,4 +1,6 @@
-const RELEASE = process.env.CONTROL_G_VERSION || '2.10.0'
+// The release belongs to the deployed artifact. Do not let a stale platform
+// variable override it and make monitoring report the wrong version.
+const RELEASE = '2.10.0'
 const TIMEOUT_MS = 7_000
 
 function setHeaders(res) {
