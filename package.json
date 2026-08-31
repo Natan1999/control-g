@@ -1,7 +1,7 @@
 {
   "name": "control-g",
   "private": true,
-  "version": "2.7.0",
+  "version": "2.8.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,6 +15,10 @@
     "backend:migrate:file": "node scripts/apply-supabase-migration.mjs",
     "backend:seed": "node scripts/seed-supabase.mjs",
     "backend:seed:gis": "node scripts/seed-gis-layer.mjs",
+    "health:check": "node scripts/check-health.mjs",
+    "db:backup": "node scripts/db-backup-restore.mjs backup",
+    "db:backup:verify": "node scripts/db-backup-restore.mjs verify",
+    "db:restore:drill": "node scripts/db-backup-restore.mjs restore-drill",
     "android:sync": "npm run build && cap sync android",
     "android:apk": "bash scripts/build-apk.sh"
   },

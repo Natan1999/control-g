@@ -19,4 +19,10 @@ java -version
   ./gradlew testDebugUnitTest assembleDebug
 )
 
-echo "APK listo: android/app/build/outputs/apk/debug/app-debug.apk"
+control_g_apk_source="android/app/build/outputs/apk/debug/app-debug.apk"
+control_g_apk_delivery="entregables/Control-G-${CONTROL_G_VERSION}-LATAM-GIS-offline-debug.apk"
+mkdir -p entregables
+cp "$control_g_apk_source" "$control_g_apk_delivery"
+
+echo "APK listo: ${control_g_apk_source}"
+echo "Copia entregable: ${control_g_apk_delivery}"

@@ -5,12 +5,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Capacitor } from '@capacitor/core'
 import App from './App'
 import './index.css'
+import { AppErrorBoundary } from '@/components/monitoring/AppErrorBoundary'
+import { initializeClientMonitoring } from '@/lib/monitoring'
 
 // Resolve the native entry before React renders. This prevents even a single
 // landing-page frame if the Android WebView starts at the bundled root URL.
 if (Capacitor.isNativePlatform() && ['/', '/index.html'].includes(window.location.pathname)) {
   window.history.replaceState(null, '', '/login')
 }
+
+initializeClientMonitoring()
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,7 +31,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <App />
+        <AppErrorBoundary>
+          <App />
+        </AppErrorBoundary>
       </BrowserRouter>
     </QueryClientProvider>
   </React.StrictMode>,

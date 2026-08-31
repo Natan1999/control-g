@@ -10,6 +10,7 @@ node_modules/
 dist/
 dist-ssr/
 tmp/
+backups/
 
 # Environment — NUNCA en git
 .env

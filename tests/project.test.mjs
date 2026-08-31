@@ -61,6 +61,7 @@ test('el APK abre en login y la web conserva la landing', async () => {
   assert.match(activity, /bridge\.getLocalUrl\(\) \+ LOGIN_PATH/)
   assert.match(activity, /navigator\.serviceWorker\.getRegistrations/)
   assert.match(apkBuild, /VITE_NATIVE_BUILD=true npm run build/)
+  assert.match(apkBuild, /Control-G-\$\{CONTROL_G_VERSION\}-LATAM-GIS-offline-debug\.apk/)
   assert.match(vite, /injectRegister: isNativeBuild \? null : 'auto'/)
 })
 
@@ -550,6 +551,91 @@ test('la navegación principal cumple una base accesible en web y APK', async ()
   assert.match(sidebar, /aria-label="Cerrar menú de navegación"/)
   assert.match(blogIndex, /aria-pressed=\{category === option\}/)
   assert.doesNotMatch(builder, /<main className="flex-1 min-w-0 overflow-y-auto/)
+})
+
+test('la operación incorpora health check real, telemetría mínima y recuperación segura', async () => {
+  const health = await read('api/health.mjs')
+  const monitoringApi = await read('api/monitoring/client-error.mjs')
+  const monitoringClient = await read('src/lib/monitoring.ts')
+  const boundary = await read('src/components/monitoring/AppErrorBoundary.tsx')
+  const main = await read('src/main.tsx')
+  const backup = await read('scripts/db-backup-restore.mjs')
+  const pkg = JSON.parse(await read('package.json'))
+  const vercel = await read('vercel.json')
+  const operations = await read('docs/runbooks/OPERATIONS_AND_INCIDENTS.md')
+  const restore = await read('docs/runbooks/BACKUP_RESTORE.md')
+
+  assert.match(health, /rest\/v1\/entities\?select=id&limit=0/)
+  assert.match(health, /AbortSignal\.timeout/)
+  assert.match(health, /status: operational \? 'operational' : 'degraded'/)
+  assert.match(health, /X-Robots-Tag/)
+  assert.match(monitoringApi, /MAX_BODY_BYTES = 8_192/)
+  assert.match(monitoringApi, /MAX_EVENTS_PER_WINDOW = 12/)
+  assert.match(monitoringApi, /\[token\]/)
+  assert.match(monitoringApi, /\[email\]/)
+  assert.doesNotMatch(monitoringApi, /SERVICE_ROLE/)
+  assert.match(monitoringClient, /VITE_ERROR_REPORTING_ENABLED === 'true'/)
+  assert.match(monitoringClient, /if \(!ENABLED \|\| !navigator\.onLine\) return/)
+  assert.match(boundary, /Los datos guardados en el dispositivo no se eliminaron/)
+  assert.match(main, /<AppErrorBoundary>/)
+  assert.match(main, /initializeClientMonitoring\(\)/)
+  assert.match(backup, /RESTORE_ONLY_TO_DISPOSABLE_DATABASE/)
+  assert.match(backup, /El destino coincide con el origen/)
+  assert.match(backup, /\^\(control_g_restore_\|restore_\|scratch_\)/)
+  assert.match(backup, /--format=custom/)
+  assert.match(backup, /sha256/)
+  assert.match(pkg.scripts['health:check'], /check-health/)
+  assert.match(pkg.scripts['db:restore:drill'], /restore-drill/)
+  assert.match(vercel, /api\/health/)
+  assert.match(operations, /SEV-1/)
+  assert.match(restore, /RPO 24 horas/)
+})
+
+test('el endpoint health responde sin exponer la configuración de Supabase', async () => {
+  const previousUrl = process.env.VITE_SUPABASE_URL
+  const previousKey = process.env.VITE_SUPABASE_ANON_KEY
+  const previousFetch = globalThis.fetch
+  process.env.VITE_SUPABASE_URL = 'https://supabase.example.test'
+  process.env.VITE_SUPABASE_ANON_KEY = 'public-anon-test-key'
+  globalThis.fetch = async () => ({ ok: true })
+  const { default: healthHandler } = await import('../api/health.mjs')
+  const headers = new Map()
+  const response = {
+    statusCode: 0,
+    body: undefined,
+    setHeader(name, value) { headers.set(name, value) },
+    status(value) { this.statusCode = value; return this },
+    json(value) { this.body = value; return this },
+    end() { return this },
+  }
+  try {
+    await healthHandler({ method: 'GET' }, response)
+    assert.equal(response.statusCode, 200)
+    assert.equal(response.body.status, 'operational')
+    assert.equal(response.body.checks.database.status, 'ok')
+    assert.equal(JSON.stringify(response.body).includes('supabase.example.test'), false)
+    assert.equal(JSON.stringify(response.body).includes('public-anon-test-key'), false)
+    assert.equal(headers.get('Cache-Control'), 'no-store, max-age=0')
+  } finally {
+    globalThis.fetch = previousFetch
+    if (previousUrl === undefined) delete process.env.VITE_SUPABASE_URL
+    else process.env.VITE_SUPABASE_URL = previousUrl
+    if (previousKey === undefined) delete process.env.VITE_SUPABASE_ANON_KEY
+    else process.env.VITE_SUPABASE_ANON_KEY = previousKey
+  }
+})
+
+test('la sanitización de monitoreo elimina credenciales y datos de contacto', async () => {
+  const { sanitizeRoute, sanitizeText } = await import('../api/monitoring/client-error.mjs')
+  const sanitized = sanitizeText('admin@entidad.gov.co Bearer secret-token https://example.com/path?token=abc 3009010300')
+  assert.doesNotMatch(sanitized, /admin@entidad/)
+  assert.doesNotMatch(sanitized, /secret-token/)
+  assert.doesNotMatch(sanitized, /example\.com/)
+  assert.doesNotMatch(sanitized, /3009010300/)
+  assert.match(sanitized, /\[email\]/)
+  assert.match(sanitized, /\[token\]/)
+  assert.equal(sanitizeRoute('/formularios/550e8400-e29b-41d4-a716-446655440000?token=abc'), '/formularios/[id]')
+  assert.equal(sanitizeRoute('ruta-invalida'), '/')
 })
 
 async function filesUnder(path) {

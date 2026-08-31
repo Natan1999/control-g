@@ -1,4 +1,4 @@
-# Control G 2.7 · LATAM + GIS
+# Control G 2.8 · LATAM + GIS
 
 Aplicación multi-entidad para caracterización y acompañamiento psicosocial en campo. La interfaz web y el APK de Capacitor funcionan sin conexión: familias, formularios, respuestas, fotografías y actividades se guardan localmente y se sincronizan de forma idempotente cuando regresa la señal.
 
@@ -14,6 +14,7 @@ Aplicación multi-entidad para caracterización y acompañamiento psicosocial en
 - Configuración regional para 20 países latinoamericanos.
 - Analítica reproducible con diccionario de indicadores y exportación PDF, DOCX, XLSX y CSV.
 - Gobierno de datos: consentimientos, manifiestos SHA-256, retención, accesos sensibles y MFA TOTP configurable.
+- Observabilidad con health check Supabase, límite y sanitización de errores, ADR y runbooks de recuperación.
 
 ## Configuración
 
@@ -24,6 +25,16 @@ Aplicación multi-entidad para caracterización y acompañamiento psicosocial en
 5. Para volver a cargar la capa oficial de municipios de Bolívar, ejecuta `npm run backend:seed:gis`. El proceso usa el archivo versionado en `supabase/seed/` y requiere la clave administrativa solo en el entorno local.
 
 Las claves `service_role`, JWT, Postgres y Dashboard son exclusivamente administrativas: nunca deben usar el prefijo `VITE_`, guardarse en Git ni incluirse en el APK.
+
+## Operación, salud y recuperación
+
+- `GET /api/health` comprueba la aplicación y una consulta RLS de solo lectura a Supabase. No publica URL, claves, entidades ni datos.
+- `npm run health:check` valida el endpoint publicado y es apto para una sonda externa como UptimeRobot.
+- El límite, severidades y procedimiento de incidentes están en `docs/runbooks/OPERATIONS_AND_INCIDENTS.md`.
+- La telemetría sanitizada es opcional y permanece desactivada hasta aprobar privacidad; no incorpora respuestas, GPS, medios ni identificadores.
+- `npm run db:backup`, `npm run db:backup:verify` y `npm run db:restore:drill` implementan respaldo custom, SHA-256 y restauración exclusiva en una base desechable.
+- El procedimiento completo, incluidos Storage, RPO/RTO y criterios de aceptación, está en `docs/runbooks/BACKUP_RESTORE.md`.
+- Las decisiones de arquitectura están registradas en `docs/adr/`.
 
 ## Desarrollo y pruebas
 
@@ -71,7 +82,7 @@ Requiere JDK 17 o superior y Android SDK 35:
 npm run android:apk
 ```
 
-El APK instalable de pruebas queda en `android/app/build/outputs/apk/debug/app-debug.apk`; la copia entregable 2.7.0 se genera en `entregables/Control-G-2.7.0-LATAM-GIS-offline-debug.apk`. Para Play Store o distribución firmada se debe aportar el keystore institucional y configurar la firma de `release` fuera del repositorio.
+El APK instalable de pruebas queda en `android/app/build/outputs/apk/debug/app-debug.apk`; la copia entregable 2.8.0 se genera en `entregables/Control-G-2.8.0-LATAM-GIS-offline-debug.apk`. Para Play Store o distribución firmada se debe aportar el keystore institucional y configurar la firma de `release` fuera del repositorio.
 
 ## Cliente inicial: Gobernación de Bolívar
 
