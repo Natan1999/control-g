@@ -36,6 +36,7 @@ El 83,35 % anterior trataba como completas varias fases con implementación parc
 
 - Migraciones remotas 001–011 aplicadas: fundamentos del Plan Maestro, mínimo privilegio, versiones inmutables, ArcGIS, geometrías de campo, snapshots, retención, catálogos territoriales versionados, gobierno de adjuntos, leases recuperables y flujo editorial de formularios.
 - La migración 011 separa el candidato de la versión publicada, impone un único cambio activo, revisión independiente, aprobación previa, control optimista, publicación atómica, eventos inmutables, RLS y archivado no destructivo. En producción se verificaron dos tablas, tres RPC, dos triggers, RLS activa, acceso autenticado a RPC y bloqueo de escritura directa/anónima.
+- La prueba transaccional remota completó borrador → revisión → aprobación → publicación v1 → archivado, comprobó cuatro eventos editoriales y terminó en `ROLLBACK`; no dejó formularios ni auditoría temporal persistentes.
 - Importador territorial administrable para los 20 países con preview, jerarquía, PostGIS, versión inmutable, SHA-256, historial y confirmación exacta; prueba real de publicación ejecutada dentro de una transacción con rollback.
 - Catálogo DANE Bolívar 2025 publicado: raíz departamental, 46 municipios con geometrías válidas EPSG:4326 y entidad `gov-bolivar-2026` fijada a la nueva versión; el proceso es idempotente.
 - El mapa del superadministrador exige seleccionar entidad y las jurisdicciones de su perfil se convierten en capas de solo lectura que IndexedDB conserva offline.

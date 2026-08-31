@@ -49,6 +49,7 @@ El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases qu
 - Asistente de calidad para formularios y versiones publicadas inmutables con SHA-256.
 - Flujo editorial gobernado: borrador separado de la versión vigente, revisión por una segunda persona, solicitud de cambios con concepto, aprobación, publicación atómica y detección de concurrencia por versión/revisión.
 - Asignación restringida a formularios publicados y archivado no destructivo que desactiva asignaciones pero conserva respuestas, auditoría y versiones históricas.
+- Aceptación editorial ejecutada en el Supabase remoto dentro de una transacción: borrador, revisión, aprobación, publicación v1, cuatro eventos, archivado y `ROLLBACK` sin datos temporales persistentes.
 - Analítica institucional con filtros, supresión de grupos pequeños e informes PDF, DOCX, XLSX y CSV.
 - Snapshots de indicadores calculados en Supabase con corte, filtros, versión metodológica, territorio, muestra y supresión reproducible; ejecución manual verificada y endpoint diario protegido listo para Vercel Cron.
 - Centro de gobierno para consentimiento, integridad de evidencias, accesos sensibles, retención y MFA.
