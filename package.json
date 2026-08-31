@@ -18,6 +18,7 @@
     "backend:verify:jurisdictions": "node scripts/verify-jurisdiction-catalog.mjs",
     "backend:publish:bolivar-jurisdictions": "node scripts/publish-bolivar-jurisdictions.mjs",
     "health:check": "node scripts/check-health.mjs",
+    "health:probe": "node scripts/probe-production.mjs",
     "db:backup": "node scripts/db-backup-restore.mjs backup",
     "db:backup:verify": "node scripts/db-backup-restore.mjs verify",
     "db:restore:drill": "node scripts/db-backup-restore.mjs restore-drill",

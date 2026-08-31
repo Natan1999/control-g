@@ -24,13 +24,13 @@ El porcentaje es ponderado con los pesos del Plan Maestro. Una fase solo recibe 
 | 7. Seguridad y privacidad | 10 % | 80 % | 8,00 % | RLS, evidencia mínima, auditoría, consentimientos, MFA y retención con preview/confirmación/anonimización auditada | Activar AAL2 RLS, purga Storage coordinada, backup-restauración y revisión externa |
 | 8. SEO LATAM | 6 % | 85 % | 5,10 % | Páginas por intención, 15 artículos, sitemap, robots, datos estructurados, CMS y WhatsApp | Medición continua Search Console, clusters por país y calendario editorial sostenido |
 | 9. QA y piloto | 6 % | 74 % | 4,44 % | 33 pruebas automatizadas, build/lint, E2E Supabase y territorial transaccional, dependencias, encabezados, carga y QA accesible/responsive | Dispositivos Android físicos, auditoría WCAG/pentest externo y piloto ArcGIS institucional |
-| 10. Lanzamiento y operación | 3 % | 72 % | 2,16 % | Main/Vercel, health Supabase, error boundary, telemetría sanitizada opcional, herramientas de backup/restore, runbooks, cron protegido y APK debug | Activar sonda/alertas, secretos del cron, ensayo restore, APK release firmada, formación y mesa de ayuda operativa |
+| 10. Lanzamiento y operación | 3 % | 80 % | 2,40 % | Main/Vercel, health Supabase, sonda GitHub cada 5 minutos, incidentes automáticos, error boundary, backup/restore, runbooks, cron protegido y APK debug | Segunda región de monitoreo, secretos del cron, ensayo restore, APK release firmada, formación y mesa de ayuda operativa |
 
-**Avance global auditado: 82,45 %.**
+**Avance global auditado: 82,69 %.**
 
 ## Corrección de la línea base anterior
 
-El 83,35 % anterior trataba como completas varias fases con implementación parcial, especialmente GIS, ArcGIS, seguridad, QA y operación. La reauditoría leyó todos los criterios del documento fuente y separó “código disponible” de “aceptación completa”. Los incrementos 2.5.0 a 2.9.0 elevan la línea base corregida de 72,90 % a 82,45 % con ArcGIS/GeoPackage, geometrías de campo, snapshots, retención, observabilidad, recuperación y catálogos territoriales versionados.
+El 83,35 % anterior trataba como completas varias fases con implementación parcial, especialmente GIS, ArcGIS, seguridad, QA y operación. La reauditoría leyó todos los criterios del documento fuente y separó “código disponible” de “aceptación completa”. Los incrementos 2.5.0 a 2.9.0 elevan la línea base corregida de 72,90 % a 82,69 % con ArcGIS/GeoPackage, geometrías de campo, snapshots, retención, observabilidad externa, recuperación y catálogos territoriales versionados.
 
 ## Evidencias 2.9.0
 
@@ -44,12 +44,13 @@ El 83,35 % anterior trataba como completas varias fases con implementación parc
 - GeoPackage validado como SQLite OGC 1.3 (`application_id` GPKG, `user_version` 10300, WGS84/EPSG:4326, geometría Point e integridad `ok`).
 - Mapa GIS revisado visualmente en escritorio y 390 × 844 px con coropleta protegida, polígonos de evidencia separados de límites, controles de 48 px y sin desbordamiento horizontal.
 - Analítica revisada visualmente en escritorio y móvil; traducciones, supresión de grupos pequeños y exportaciones estructurales verificadas.
-- Suite local aprobada: 33/33 pruebas, lint, TypeScript/Vite/PWA y 269 tareas de pruebas/compilación Gradle sin fallos.
+- Suite local aprobada: 36/36 pruebas, lint, TypeScript/Vite/PWA y 269 tareas de pruebas/compilación Gradle sin fallos.
 - Dependencias de producción auditadas con `npm audit --omit=dev`: 0 vulnerabilidades conocidas después de actualizar React Router a 7.18.3 y corregir el árbol transitivo compatible.
 - Encabezados publicados comprobados: HSTS, CSP, `X-Content-Type-Options`, `X-Frame-Options`, Referrer Policy, Permissions Policy y `X-Robots-Tag` en rutas privadas; el cron anónimo responde `401`.
 - Carga local aprobada con ApacheBench: 1.000 solicitudes a `/` con concurrencia 40 y 500 a `/login` con concurrencia 25, 0 fallos; 1.295 y 1.604 solicitudes/s respectivamente.
 - Accesibilidad responsive comprobada a 390 × 844 px: enlace de salto, un único `main`, etiquetas de campos, alertas anunciables, controles críticos de 44 × 44 px y ausencia de desbordamiento horizontal.
 - Health check sin credenciales que comprueba Vercel y Supabase/PostgREST, devuelve estado/latencia y no expone host, claves, entidades o datos.
+- Sonda externa de GitHub Actions activa cada cinco minutos: valida frontend, HSTS, health y Supabase; abre un único incidente tras dos fallos y lo cierra tras tres éxitos, usando únicamente el token efímero del repositorio.
 - Error boundary para web/APK y telemetría opcional con redacción de tokens, correos, URL y números, lista de orígenes, límite de 8 KiB y rate limit; permanece apagada hasta aprobación de privacidad.
 - Cuatro ADR aceptados y runbooks para severidades, incidentes, rotación, soporte de campo, respaldo y restauración.
 - Herramienta de backup custom con manifiesto SHA-256, verificación `pg_restore` y restauración rechazada si destino/origen coinciden o la base no tiene nombre desechable. El puerto PostgreSQL público no responde; el ensayo debe ejecutarse en la red/VPS de Supabase.

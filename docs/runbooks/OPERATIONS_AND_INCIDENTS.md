@@ -2,17 +2,21 @@
 
 ## Monitoreo mínimo
 
-1. Consultar `https://www.controlg.co/api/health` cada 5 minutos desde dos regiones.
-2. Considerar éxito únicamente HTTP 200, `status=operational` y `checks.database.status=ok`.
-3. Alertar después de dos fallos consecutivos; resolver la alerta después de tres éxitos.
-4. Supervisar adicionalmente el cron diario de snapshots, la tasa de sincronización, errores de Storage y crecimiento de base de datos.
-5. Habilitar telemetría sanitizada solo con aprobación del responsable de privacidad mediante `VITE_ERROR_REPORTING_ENABLED=true`.
+1. GitHub Actions ejecuta `.github/workflows/production-health.yml` cada 5 minutos contra el frontend y `https://www.controlg.co/api/health`.
+2. Considerar éxito únicamente si `/login` responde, la API devuelve HTTP 200, `status=operational` y `checks.database.status=ok`.
+3. El workflow abre un único incidente después de dos fallos consecutivos y lo cierra después de tres éxitos consecutivos. GitHub conserva el historial y notifica según la configuración del repositorio.
+4. Mantener una segunda sonda desde otra región/proveedor antes de declarar alta disponibilidad; GitHub cubre actualmente la primera ubicación externa.
+5. Supervisar adicionalmente el cron diario de snapshots, la tasa de sincronización, errores de Storage y crecimiento de base de datos.
+6. Habilitar telemetría sanitizada solo con aprobación del responsable de privacidad mediante `VITE_ERROR_REPORTING_ENABLED=true`.
 
 Comprobación manual:
 
 ```bash
 npm run health:check
+npm run health:probe
 ```
+
+La sonda no usa credenciales de Supabase ni consulta datos institucionales. El incidente automático registra solamente estado HTTP, versión, disponibilidad del frontend y estado agregado de la base de datos.
 
 ## Severidades
 

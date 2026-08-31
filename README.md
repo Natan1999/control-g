@@ -14,7 +14,7 @@ Aplicación multi-entidad para caracterización y acompañamiento psicosocial en
 - Configuración regional para 20 países latinoamericanos y catálogos administrativos oficiales versionados.
 - Analítica reproducible con diccionario de indicadores y exportación PDF, DOCX, XLSX y CSV.
 - Gobierno de datos: consentimientos, manifiestos SHA-256, retención, accesos sensibles y MFA TOTP configurable.
-- Observabilidad con health check Supabase, límite y sanitización de errores, ADR y runbooks de recuperación.
+- Observabilidad con health check Supabase, sonda externa cada cinco minutos, incidentes deduplicados, sanitización de errores, ADR y runbooks de recuperación.
 
 ## Configuración
 
@@ -29,7 +29,8 @@ Las claves `service_role`, JWT, Postgres y Dashboard son exclusivamente administ
 ## Operación, salud y recuperación
 
 - `GET /api/health` comprueba la aplicación y una consulta RLS de solo lectura a Supabase. No publica URL, claves, entidades ni datos.
-- `npm run health:check` valida el endpoint publicado y es apto para una sonda externa como UptimeRobot.
+- `npm run health:check` valida manualmente el endpoint publicado; `npm run health:probe` comprueba además `/login`, HSTS y la disponibilidad agregada de Supabase.
+- `.github/workflows/production-health.yml` ejecuta la sonda cada cinco minutos, abre un único incidente después de dos fallos consecutivos y lo resuelve después de tres éxitos. Solo usa el `GITHUB_TOKEN` efímero del workflow.
 - El límite, severidades y procedimiento de incidentes están en `docs/runbooks/OPERATIONS_AND_INCIDENTS.md`.
 - La telemetría sanitizada es opcional y permanece desactivada hasta aprobar privacidad; no incorpora respuestas, GPS, medios ni identificadores.
 - `npm run db:backup`, `npm run db:backup:verify` y `npm run db:restore:drill` implementan respaldo custom, SHA-256 y restauración exclusiva en una base desechable.

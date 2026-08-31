@@ -1,0 +1,48 @@
+name: Control G production health
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  issues: write
+
+concurrency:
+  group: control-g-production-health
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    name: Probe web and Supabase
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      CONTROL_G_BASE_URL: https://www.controlg.co
+      HEALTH_RESULT_PATH: ${{ runner.temp }}/control-g-health.json
+    steps:
+      - name: Checkout monitored release
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 20
+
+      - name: Probe frontend and health API
+        id: production_probe
+        continue-on-error: true
+        run: node scripts/probe-production.mjs --output "$HEALTH_RESULT_PATH"
+
+      - name: Open or resolve deduplicated incident
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PROBE_OUTCOME: ${{ steps.production_probe.outcome }}
+        run: node scripts/manage-uptime-incident.mjs
+
+      - name: Fail unhealthy execution
+        if: always() && steps.production_probe.outcome != 'success'
+        run: exit 1

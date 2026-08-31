@@ -16,9 +16,9 @@ Este archivo es el registro técnico vivo de la implementación. El avance globa
 | 7. Seguridad y privacidad | 10 % | Retención auditable y gobierno funcional; AAL2 RLS/restore pendientes | 80 % | 8,00 % |
 | 8. SEO LATAM | 6 % | Implementación avanzada | 85 % | 5,10 % |
 | 9. QA y piloto | 6 % | QA automatizado, seguridad, carga, accesibilidad y prueba transaccional territorial; pilotos físicos pendientes | 74 % | 4,44 % |
-| 10. Lanzamiento, operación y documentación | 3 % | Health, recuperación y runbooks listos; activación de alertas/secretos/firma pendiente | 72 % | 2,16 % |
+| 10. Lanzamiento, operación y documentación | 3 % | Health, sonda externa e incidentes automáticos activos; segunda región/secretos/firma pendientes | 80 % | 2,40 % |
 
-**Avance global actual: 82,45 % ponderado.**
+**Avance global actual: 82,69 % ponderado.**
 
 El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases que todavía no satisfacían todos los criterios del documento fuente. La auditoría detallada está en `docs/PLAN_MAESTRO_COMPLETION_AUDIT.md`; la reducción es metodológica, no una pérdida de funciones.
 
@@ -52,12 +52,13 @@ El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases qu
 - Capa oficial DANE 2025 de los 46 municipios de Bolívar precargada en la entidad inicial.
 - APK Android 2.9.0 compilada con catálogo territorial versionado, GIS de campo, observabilidad, snapshots, retención, ArcGIS administrado, GeoPackage y entrada nativa directa al login. Binario de pruebas: `entregables/Control-G-2.9.0-LATAM-GIS-offline-debug.apk`.
 - Huella SHA-256 del APK: `23d1b229420f6040f297261aab371159be35dc822f180de440ac6e8cfe6f8eb4`.
-- QA técnico aprobado: 33/33 pruebas automatizadas, lint, build web/PWA, prueba transaccional PostGIS con rollback, pruebas unitarias Android y 269 tareas Gradle con `assembleDebug`.
+- QA técnico aprobado: 36/36 pruebas automatizadas, lint, build web/PWA, prueba transaccional PostGIS con rollback, pruebas unitarias Android y 269 tareas Gradle con `assembleDebug`.
 - Auditoría del árbol de producción aprobada con 0 vulnerabilidades conocidas; React Router actualizado a 7.18.3 y dependencias transitivas corregidas sin regresiones de compilación.
 - Encabezados de seguridad publicados verificados y rutas privadas marcadas `noindex`; el endpoint de snapshots rechaza acceso anónimo con `401`.
 - Prueba de carga local: 1.500 solicitudes, concurrencia máxima 40, 0 fallos y hasta 1.604 solicitudes/s en `/login`.
 - Accesibilidad y responsive verificadas en 390 × 844 px: salto al contenido, regiones principales, campos etiquetados, alertas anunciables, control de contraseña 44 × 44 px y cero desbordamiento horizontal.
 - Health check de Vercel/Supabase sin exposición de configuración, error boundary para web/APK y telemetría opcional sanitizada/rate-limited.
+- Sonda GitHub Actions cada cinco minutos sobre frontend y Supabase, con incidente deduplicado tras dos fallos y cierre automático tras tres recuperaciones; no usa secretos de Supabase.
 - Cuatro ADR aceptados y runbooks de operación, incidentes, respaldo/restauración y soporte de campo.
 - Respaldo custom con manifiesto SHA-256 y restauración limitada por código a bases desechables distintas del origen; el ensayo real queda pendiente dentro de la red privada porque `controlg2.dran.cloud:5432` no está expuesto públicamente.
 - Prueba integral contra Supabase aprobada: Auth/MFA, creación y limpieza de usuarios temporales, RPC, RLS, formularios asignados, Storage, PostGIS/GPS/líneas/polígonos, snapshots reproducibles, retención auditada, versiones inmutables, cola ArcGIS e idempotencia.
