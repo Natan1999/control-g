@@ -6,6 +6,7 @@ import {
   ChevronUp,
   ClipboardCheck,
   ExternalLink,
+  FileText,
   Image as ImageIcon,
   Loader2,
   Search,
@@ -189,7 +190,7 @@ export default function FormResponsesPage() {
     }
     setMediaLoading(key)
     try {
-      const bucket = field.type === 'signature' ? BUCKET_IDS.SIGNATURES : BUCKET_IDS.FIELD_PHOTOS
+      const bucket = field.type === 'signature' ? BUCKET_IDS.SIGNATURES : field.type === 'file' ? BUCKET_IDS.EXPORTS : BUCKET_IDS.FIELD_PHOTOS
       const url = await storage.createSignedUrl(bucket, path)
       setMediaUrls(current => ({ ...current, [key]: url }))
       window.open(url, '_blank', 'noopener,noreferrer')
@@ -281,7 +282,8 @@ export default function FormResponsesPage() {
                         <dl className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {fields.filter(field => field.type !== 'note').map(field => {
                             const value = answers[field.id]
-                            const isMedia = (field.type === 'photo' || field.type === 'signature') && typeof value === 'string'
+                            const isMedia = (field.type === 'photo' || field.type === 'signature' || field.type === 'file') && typeof value === 'string'
+                            const isImageMedia = field.type === 'photo' || field.type === 'signature'
                             const key = `${response.$id}:${field.id}`
                             return (
                               <div key={field.id} className="bg-white border border-slate-100 rounded-2xl p-4 min-w-0">
@@ -289,15 +291,15 @@ export default function FormResponsesPage() {
                                 <dd className="mt-2 text-sm text-slate-800 whitespace-pre-wrap break-words">
                                   {isMedia ? (
                                     <div className="space-y-3">
-                                      {mediaUrls[key] && <img src={mediaUrls[key]} alt={field.label} className="w-full max-h-56 object-contain rounded-xl bg-slate-100" />}
+                                      {mediaUrls[key] && isImageMedia && <img src={mediaUrls[key]} alt={field.label} className="w-full max-h-56 object-contain rounded-xl bg-slate-100" />}
                                       <button
                                         type="button"
                                         onClick={() => openEvidence(response.$id, field, value)}
                                         disabled={mediaLoading === key}
                                         className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-blue-50 text-blue-700 font-bold text-xs disabled:opacity-50"
                                       >
-                                        {mediaLoading === key ? <Loader2 size={15} className="animate-spin" /> : mediaUrls[key] ? <ExternalLink size={15} /> : <ImageIcon size={15} />}
-                                        {mediaUrls[key] ? 'Abrir evidencia' : 'Cargar evidencia'}
+                                        {mediaLoading === key ? <Loader2 size={15} className="animate-spin" /> : mediaUrls[key] ? <ExternalLink size={15} /> : field.type === 'file' ? <FileText size={15} /> : <ImageIcon size={15} />}
+                                        {mediaUrls[key] ? (field.type === 'file' ? 'Abrir documento' : 'Abrir evidencia') : (field.type === 'file' ? 'Cargar documento' : 'Cargar evidencia')}
                                       </button>
                                     </div>
                                   ) : displayValue(value)}

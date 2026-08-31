@@ -120,7 +120,11 @@ async function syncMediaQueue(): Promise<string[]> {
   const pending = await localDB.mediaQueue.filter(item => item.status !== 'uploaded').toArray()
   for (const media of pending) {
     try {
-      const bucket = media.bucketId === BUCKET_IDS.SIGNATURES ? BUCKET_IDS.SIGNATURES : BUCKET_IDS.FIELD_PHOTOS
+      const bucket = media.bucketId === BUCKET_IDS.SIGNATURES
+        ? BUCKET_IDS.SIGNATURES
+        : media.bucketId === BUCKET_IDS.EXPORTS
+          ? BUCKET_IDS.EXPORTS
+          : BUCKET_IDS.FIELD_PHOTOS
       const upload = await storage.createFile(bucket, media.id, media.file)
       if (media.entityId && media.professionalId) {
         const checksum = media.sha256 || await sha256Blob(media.file)
@@ -133,7 +137,7 @@ async function syncMediaQueue(): Promise<string[]> {
             field_id: media.answerFieldId || null,
             bucket_id: bucket,
             storage_path: upload.$id,
-            media_type: bucket === BUCKET_IDS.SIGNATURES ? 'signature' : 'photo',
+            media_type: media.mediaType || (bucket === BUCKET_IDS.SIGNATURES ? 'signature' : bucket === BUCKET_IDS.EXPORTS ? 'document' : 'photo'),
             mime_type: media.mimeType || media.file.type || 'application/octet-stream',
             size_bytes: media.file.size,
             sha256: checksum,

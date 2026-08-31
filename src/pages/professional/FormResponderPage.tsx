@@ -145,7 +145,9 @@ const FormResponderPage: React.FC = () => {
       const fieldTypes = new Map(formDef.pages.flatMap(page => page.fields).map(field => [field.id, field.type]))
 
       for (const [fieldId, value] of Object.entries(answers)) {
-        const isSignature = fieldTypes.get(fieldId) === 'signature' && typeof value === 'string' && value.startsWith('data:image/')
+        const fieldType = fieldTypes.get(fieldId)
+        const isSignature = fieldType === 'signature' && typeof value === 'string' && value.startsWith('data:image/')
+        const isDocument = fieldType === 'file' && value instanceof Blob
         if (value instanceof Blob || isSignature) {
           const mediaBlob = value instanceof Blob ? value : await (await fetch(value)).blob()
           const mediaId = crypto.randomUUID()
@@ -157,7 +159,8 @@ const FormResponderPage: React.FC = () => {
             file: mediaBlob,
             name: value instanceof File ? value.name : `${fieldId}.${isSignature ? 'png' : 'jpg'}`,
             mimeType: mediaBlob.type || (isSignature ? 'image/png' : 'image/jpeg'),
-            bucketId: isSignature ? BUCKET_IDS.SIGNATURES : BUCKET_IDS.FIELD_PHOTOS,
+            bucketId: isSignature ? BUCKET_IDS.SIGNATURES : isDocument ? BUCKET_IDS.EXPORTS : BUCKET_IDS.FIELD_PHOTOS,
+            mediaType: isSignature ? 'signature' : isDocument ? 'document' : 'photo',
             status: 'pending',
             entityId: user.entityId || formDef.entityId,
             professionalId: user.id,

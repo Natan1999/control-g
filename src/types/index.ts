@@ -260,6 +260,20 @@ export type FormFieldType =
   | 'geotrace' | 'geoshape'
   | 'calculation' | 'note' | 'file' | 'phone' | 'email' | 'municipality'
 
+export type FormVisibilityOperator =
+  | '==' | '!=' | 'contains' | 'not_contains'
+  | '>' | '>=' | '<' | '<='
+  | 'is_empty' | 'is_not_empty'
+
+export interface FormValidationRules {
+  pattern?: string
+  message?: string
+  min?: number
+  max?: number
+  minLength?: number
+  maxLength?: number
+}
+
 export interface FormField {
   id: string
   type: FormFieldType
@@ -269,12 +283,17 @@ export interface FormField {
   required: boolean
   options?: { label: string; value: string }[] // For select, radio, etc.
   subFields?: FormField[] // For repeat_group recursive logic
-  validation?: string // Regex
+  validation?: string // Regex heredada; se conserva para formularios publicados previamente.
+  validationRules?: FormValidationRules
   calculation?: string // Formula like {{field_a}} + {{field_b}}
+  sensitive?: boolean
+  sensitiveJustification?: string
+  maxFileSizeMb?: number
+  acceptedFileTypes?: string
   visibilityLogic?: {
     fieldId: string
-    operator: '==' | '!=' | 'contains'
-    value: any
+    operator: FormVisibilityOperator
+    value?: any
   }
 }
 

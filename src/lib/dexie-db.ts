@@ -96,6 +96,7 @@ export interface LocalMedia {
   name: string;
   mimeType: string;
   bucketId: string;
+  mediaType?: 'photo' | 'signature' | 'document';
   status: 'pending' | 'uploaded' | 'failed';
   storagePath?: string;
   answerFieldId?: string;

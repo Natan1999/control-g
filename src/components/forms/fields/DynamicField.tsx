@@ -32,17 +32,17 @@ export default function DynamicField({ field, value, onChange, error, disabled }
 
   // Render Label & Information
   const renderHeader = () => (
-    <div className="flex justify-between items-start mb-2 px-1">
-      <label className={labelClass}>
-        {field.label} {field.required && <span className="text-rose-500 font-bold">*</span>}
-      </label>
+    <div className="mb-2 px-1">
+      <div className="flex items-start justify-between gap-3">
+        <label className={labelClass}>
+          {field.label} {field.required && <span className="font-bold text-rose-500">*</span>}
+        </label>
+        {field.sensitive && <span className="shrink-0 rounded-full bg-amber-50 px-2 py-1 text-[9px] font-black uppercase tracking-wide text-amber-800">Dato protegido</span>}
+      </div>
       {field.description && (
-        <div className="group relative">
-          <Info size={14} className="text-slate-300 hover:text-slate-500 cursor-help transition-colors" />
-          <div className="absolute right-0 bottom-full mb-2 w-48 p-2 bg-slate-900 text-white text-[10px] rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
-            {field.description}
-          </div>
-        </div>
+        <p className="mt-2 flex items-start gap-1.5 text-xs leading-5 text-slate-500">
+          <Info size={13} className="mt-0.5 shrink-0 text-blue-500" /> {field.description}
+        </p>
       )}
     </div>
   )
@@ -79,17 +79,20 @@ export default function DynamicField({ field, value, onChange, error, disabled }
         return (
           <input
             type="number"
-            value={value || ''}
+            value={value ?? ''}
             disabled={disabled}
-            onChange={(e) => onChange(Number(e.target.value))}
+            onChange={(e) => onChange(e.target.value === '' ? '' : Number(e.target.value))}
+            min={field.validationRules?.min}
+            max={field.validationRules?.max}
             className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
           />
         )
 
       case 'date':
+      case 'time':
         return (
           <input
-             type="date"
+             type={field.type}
              value={value || ''}
              disabled={disabled}
              onChange={(e) => onChange(e.target.value)}
@@ -117,6 +120,7 @@ export default function DynamicField({ field, value, onChange, error, disabled }
           <div className="grid grid-cols-1 gap-2">
             {field.options?.map((opt) => (
               <button
+                type="button"
                 key={opt.value}
                 onClick={() => onChange(opt.value)}
                 disabled={disabled}
@@ -138,12 +142,14 @@ export default function DynamicField({ field, value, onChange, error, disabled }
         )
 
       case 'checkbox':
+      case 'multi_select':
         return (
            <div className="grid grid-cols-1 gap-2">
             {field.options?.map((opt) => {
               const isChecked = Array.isArray(value) && value.includes(opt.value)
               return (
                 <button
+                  type="button"
                   key={opt.value}
                   onClick={() => {
                     const currentValues = Array.isArray(value) ? value : []
@@ -177,6 +183,39 @@ export default function DynamicField({ field, value, onChange, error, disabled }
 
       case 'photo':
         return <PhotoField value={value || null} onChange={onChange} disabled={disabled} />
+
+      case 'file': {
+        const selectedFile = value instanceof File ? value : null
+        return (
+          <div className="space-y-3">
+            <label className="flex min-h-24 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 px-4 text-center text-xs font-bold text-slate-500 transition-colors hover:border-blue-300 hover:bg-blue-50">
+              <FileText size={24} className="mb-2 text-blue-600" />
+              {selectedFile ? selectedFile.name : value instanceof Blob ? 'Archivo guardado en el dispositivo' : 'Seleccionar archivo para conservarlo offline'}
+              <input
+                type="file"
+                className="sr-only"
+                disabled={disabled}
+                accept=".pdf,application/pdf"
+                onChange={event => onChange(event.target.files?.[0] || null)}
+              />
+            </label>
+            {(selectedFile || value instanceof Blob) && (
+              <div className="flex items-center justify-between gap-3 rounded-xl bg-white px-3 py-2 text-[11px] text-slate-600">
+                <span>{((value as Blob).size / 1_000_000).toFixed(2)} MB · se enviará al sincronizar</span>
+                {!disabled && <button type="button" onClick={() => onChange(null)} className="font-black text-rose-600">Quitar</button>}
+              </div>
+            )}
+          </div>
+        )
+      }
+
+      case 'calculation':
+        return (
+          <div className="rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3">
+            <div className="flex items-center gap-2 text-xs font-bold text-blue-900"><Calculator size={16} /> Resultado automático</div>
+            <output className="mt-2 block text-xl font-black text-blue-950">{value ?? 'Pendiente'}</output>
+          </div>
+        )
 
       case 'gps':
         return <GPSField value={value} onChange={onChange} disabled={disabled} />

@@ -13,9 +13,11 @@ import { TopBar } from '@/components/layout/Sidebar'
 import { databases, DATABASE_ID, COLLECTION_IDS, formEditorialOperations, type FormEditorialStatus } from '@/lib/backend'
 import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
-import { FormField, FormDefinition, FormPage, FormFieldType, ActivityType, Entity } from '@/types'
+import { FormField, FormDefinition, FormPage, FormFieldType, FormVisibilityOperator, ActivityType, Entity } from '@/types'
 import { cloneTemplatePages, FORM_TEMPLATES, type ControlGFormTemplate } from '@/config/form-templates'
-import { analyzeFormQuality, formQualityScore } from '@/lib/form-quality'
+import FormRenderer from '@/components/forms/FormRenderer'
+import { analyzeFormQuality, buildFormPrivacyChecklist, formQualityScore } from '@/lib/form-quality'
+import { estimateFormOfflineFootprint, formatFormBytes } from '@/lib/form-runtime'
 
 const COLORS = {
   primary: '#0038A8',   // Royal Blue
@@ -81,74 +83,6 @@ const FIELD_TYPES: { type: FormFieldType; label: string; icon: any; category: st
   { type: 'phone',         label: 'Teléfono',        icon: Phone,         category: 'Contacto' },
   { type: 'email',         label: 'Email',           icon: Mail,          category: 'Contacto' },
 ]
-
-function FormFieldPreview({ field }: { field: FormField }) {
-  const options = field.options?.slice(0, 4) ?? []
-
-  if (field.type === 'note') {
-    return <div className="rounded-2xl bg-blue-50 border border-blue-100 p-4 text-sm text-blue-900">{field.label}</div>
-  }
-
-  if (field.type === 'photo' || field.type === 'signature' || field.type === 'file') {
-    const Icon = field.type === 'photo' ? Camera : field.type === 'signature' ? PenTool : FileText
-    const hint = field.type === 'photo' ? 'Tomar o adjuntar fotografía' : field.type === 'signature' ? 'Firmar en la pantalla' : 'Adjuntar archivo'
-    return (
-      <div>
-        <div className="text-sm font-semibold text-slate-800 mb-2">{field.label}{field.required && <span className="text-rose-500"> *</span>}</div>
-        <div className="min-h-28 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-2 text-slate-400">
-          <Icon size={24} />
-          <span className="text-xs font-medium">{hint}</span>
-        </div>
-      </div>
-    )
-  }
-
-  if (['select', 'multi_select', 'radio', 'checkbox'].includes(field.type)) {
-    return (
-      <div>
-        <div className="text-sm font-semibold text-slate-800 mb-2">{field.label}{field.required && <span className="text-rose-500"> *</span>}</div>
-        <div className="space-y-2">
-          {(options.length ? options : [{ label: 'Opción de respuesta', value: 'option' }]).map(option => (
-            <div key={option.value} className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-500">
-              <span className={`w-4 h-4 border-2 border-slate-300 ${field.type === 'radio' ? 'rounded-full' : 'rounded'}`} />
-              {option.label}
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  if (field.type === 'repeat_group') {
-    return (
-      <div>
-        <div className="text-sm font-semibold text-slate-800 mb-2">{field.label}{field.required && <span className="text-rose-500"> *</span>}</div>
-        <div className="rounded-2xl border border-slate-200 p-4 text-center text-xs font-semibold text-slate-400">Grupo repetible de integrantes</div>
-      </div>
-    )
-  }
-
-  if (field.type === 'geotrace' || field.type === 'geoshape') {
-    return (
-      <div>
-        <div className="text-sm font-semibold text-slate-800 mb-2">{field.label}{field.required && <span className="text-rose-500"> *</span>}</div>
-        <div className="min-h-28 rounded-2xl border-2 border-dashed border-slate-200 bg-[#EAF1F2] flex flex-col items-center justify-center gap-2 text-[#1B3A4B]">
-          {field.type === 'geotrace' ? <Share2 size={25} /> : <MapPinned size={25} />}
-          <span className="text-xs font-black">{field.type === 'geotrace' ? 'Capturar recorrido offline' : 'Delimitar polígono offline'}</span>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div>
-      <div className="text-sm font-semibold text-slate-800 mb-2">{field.label}{field.required && <span className="text-rose-500"> *</span>}</div>
-      <div className="h-12 rounded-xl border border-slate-200 bg-white px-3 flex items-center text-sm text-slate-400">
-        {field.type === 'date' ? 'dd/mm/aaaa' : field.type === 'time' ? '--:--' : field.type === 'gps' ? 'Capturar ubicación' : 'Respuesta'}
-      </div>
-    </div>
-  )
-}
 
 export default function FormBuilderPage() {
   const { user } = useAuthStore()
@@ -254,6 +188,20 @@ export default function FormBuilderPage() {
   const activePage = form.pages![activePageIdx]
   const qualityIssues = useMemo(() => analyzeFormQuality(form.pages || []), [form.pages])
   const qualityScore = useMemo(() => formQualityScore(form.pages || []), [form.pages])
+  const privacyChecklist = useMemo(() => buildFormPrivacyChecklist(form.pages || []), [form.pages])
+  const offlineEstimate = useMemo(() => estimateFormOfflineFootprint(form.pages || []), [form.pages])
+  const simulationDefinition = useMemo<FormDefinition>(() => ({
+    id: workingFormId || 'form-simulation',
+    entityId: selectedEntityId || 'entity-simulation',
+    title: form.title || 'Formulario sin título',
+    description: form.description,
+    type: form.type || 'ex_ante',
+    pages: form.pages || [],
+    status: 'draft',
+    version: form.version || 1,
+    createdAt: form.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  }), [form, selectedEntityId, workingFormId])
   const editorReadOnly = workflowStatus === 'in_review' || workflowStatus === 'approved'
   const workflow = EDITORIAL_STATUS[workflowStatus]
 
@@ -443,11 +391,11 @@ export default function FormBuilderPage() {
             </button>
             <button 
               onClick={() => { setPreview(!preview); setSelectedFieldId(null) }}
-              aria-label={preview ? 'Volver a editar' : 'Vista previa'}
+              aria-label={preview ? 'Volver a editar' : 'Simular formulario'}
               className="w-10 h-10 sm:w-auto sm:h-auto flex items-center justify-center gap-2 sm:px-4 sm:py-2 text-slate-600 font-bold hover:bg-slate-100 rounded-xl transition-all"
             >
               {preview ? <Layout size={18} /> : <Eye size={18} />}
-              <span className="hidden sm:inline">{preview ? 'Editar' : 'Vista Previa'}</span>
+              <span className="hidden sm:inline">{preview ? 'Editar' : 'Simular'}</span>
             </button>
             {!editorReadOnly && workflowStatus !== 'published' && (
               <button
@@ -662,6 +610,39 @@ export default function FormBuilderPage() {
               </section>
             )}
 
+            {!preview && (
+              <section className="grid gap-4 lg:grid-cols-2" aria-label="Preparación offline y privacidad">
+                <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h2 className="text-sm font-black text-[#1B3A4B]">Estimación offline</h2>
+                      <p className="mt-1 text-xs leading-5 text-slate-500">Tamaño aproximado de una respuesta con toda la evidencia.</p>
+                    </div>
+                    <span className={`rounded-full px-3 py-1.5 text-[10px] font-black uppercase ${offlineEstimate.risk === 'high' ? 'bg-red-50 text-red-800' : offlineEstimate.risk === 'medium' ? 'bg-amber-50 text-amber-900' : 'bg-emerald-50 text-emerald-800'}`}>{offlineEstimate.riskLabel}</span>
+                  </div>
+                  <dl className="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
+                    <div className="rounded-xl bg-slate-50 p-3"><dt className="text-slate-500">Formulario</dt><dd className="mt-1 font-black text-slate-900">{formatFormBytes(offlineEstimate.definitionBytes)}</dd></div>
+                    <div className="rounded-xl bg-slate-50 p-3"><dt className="text-slate-500">Respuesta</dt><dd className="mt-1 font-black text-slate-900">{formatFormBytes(offlineEstimate.estimatedSubmissionBytes)}</dd></div>
+                    <div className="rounded-xl bg-slate-50 p-3"><dt className="text-slate-500">Evidencias</dt><dd className="mt-1 font-black text-slate-900">{offlineEstimate.mediaFields}</dd></div>
+                  </dl>
+                  <p className="mt-3 text-[11px] leading-5 text-slate-500">La cifra es preventiva: el tamaño real depende de cámara, compresión y archivos seleccionados.</p>
+                </article>
+
+                <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+                  <h2 className="text-sm font-black text-[#1B3A4B]">Lista de privacidad</h2>
+                  <p className="mt-1 text-xs leading-5 text-slate-500">Control previo para minimización, consentimiento y protección local.</p>
+                  <ul className="mt-3 space-y-2">
+                    {privacyChecklist.map(item => (
+                      <li key={item.code} className="flex items-start gap-2 text-xs leading-5 text-slate-600">
+                        <CheckCircle2 size={15} className={`mt-0.5 shrink-0 ${item.passed ? 'text-emerald-600' : 'text-amber-600'}`} />
+                        <span><strong className="text-slate-800">{item.label}:</strong> {item.detail}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              </section>
+            )}
+
             {/* Pagination Tabs */}
             <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
               {form.pages!.map((p, idx) => (
@@ -706,20 +687,16 @@ export default function FormBuilderPage() {
             {/* Field List */}
             <div className="space-y-4 min-h-[400px]">
               {preview ? (
-                <div className="max-w-md mx-auto rounded-[32px] bg-white border border-slate-200 shadow-2xl overflow-hidden">
-                  <div className="px-6 py-5 text-white" style={{ background: COLORS.primary }}>
-                    <div className="text-[10px] uppercase tracking-[0.2em] text-white/70 font-bold">Vista móvil</div>
-                    <h3 className="text-xl font-black mt-1">{form.title}</h3>
-                    <p className="text-sm text-white/75 mt-1">{activePage.title}</p>
-                  </div>
-                  <div className="p-5 space-y-6">
-                    {activePage.fields.length === 0 ? (
-                      <p className="py-12 text-center text-sm text-slate-400">Esta página todavía no tiene preguntas.</p>
-                    ) : activePage.fields.map(field => <FormFieldPreview key={field.id} field={field} />)}
-                  </div>
-                  <div className="p-5 border-t border-slate-100">
-                    <div className="h-12 rounded-xl flex items-center justify-center text-sm font-bold text-white" style={{ background: COLORS.primary }}>Guardar y continuar</div>
-                  </div>
+                <div className="mx-auto max-w-xl rounded-[32px] border border-slate-200 bg-slate-100 py-5 shadow-2xl sm:py-8">
+                  <FormRenderer
+                    definition={simulationDefinition}
+                    mode="simulation"
+                    embedded
+                    onSubmit={() => {
+                      setToast('Simulación completada: reglas y validaciones respondieron correctamente. No se guardaron datos.')
+                      window.setTimeout(() => setToast(''), 4_500)
+                    }}
+                  />
                 </div>
               ) : activePage.fields.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 sm:py-24 px-6 bg-white/50 border-2 border-dashed border-slate-200 rounded-[32px] text-center">
@@ -806,6 +783,10 @@ export default function FormBuilderPage() {
                 {(() => {
                   const f = activePage.fields.find(x => x.id === selectedFieldId)
                   if (!f) return null
+                  const allFields = form.pages!.flatMap(page => page.fields)
+                  const currentPosition = allFields.findIndex(field => field.id === f.id)
+                  const conditionDrivers = allFields.slice(0, Math.max(0, currentPosition)).filter(field => field.type !== 'note' && field.type !== 'calculation')
+                  const selectedDriver = conditionDrivers.find(field => field.id === f.visibilityLogic?.fieldId)
                   return (
                     <div className="space-y-6">
                       <div>
@@ -815,17 +796,47 @@ export default function FormBuilderPage() {
                           onChange={e => updateField(f.id, { label: e.target.value })}
                           className="w-full px-4 py-3 bg-slate-50 border-none rounded-2xl text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 transition-all shadow-inner"
                         />
+                        <code className="mt-2 block break-all rounded-lg bg-slate-100 px-3 py-2 text-[10px] text-slate-500">ID: {f.id}</code>
                       </div>
+
+                      <div>
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Ayuda visible en campo</label>
+                        <textarea
+                          value={f.description || ''}
+                          onChange={event => updateField(f.id, { description: event.target.value })}
+                          placeholder="Explica qué debe registrar el profesional y cómo comprobarlo."
+                          rows={3}
+                          className="w-full rounded-2xl border-none bg-slate-50 px-4 py-3 text-xs leading-5 shadow-inner focus:ring-2 focus:ring-blue-500/20"
+                        />
+                      </div>
+
+                      {['text', 'longtext', 'number', 'email', 'phone'].includes(f.type) && (
+                        <div>
+                          <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Texto de ejemplo</label>
+                          <input value={f.placeholder || ''} onChange={event => updateField(f.id, { placeholder: event.target.value })} placeholder="Ejemplo de respuesta" className="w-full rounded-2xl border-none bg-slate-50 px-4 py-3 text-sm shadow-inner focus:ring-2 focus:ring-blue-500/20" />
+                        </div>
+                      )}
 
                       <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
                         <span className="text-xs font-bold text-slate-700">Campo Obligatorio</span>
                         <button
+                          type="button"
                           onClick={() => updateField(f.id, { required: !f.required })}
                           className={`w-12 h-6 rounded-full relative transition-all ${f.required ? 'bg-blue-600' : 'bg-slate-300'}`}
                         >
                           <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${f.required ? 'left-7' : 'left-1'}`} />
                         </button>
                       </div>
+
+                      {!['note', 'calculation'].includes(f.type) && (
+                        <div className="space-y-3 rounded-2xl border border-amber-100 bg-amber-50/60 p-4">
+                          <div className="flex items-center justify-between gap-3">
+                            <div><p className="text-xs font-bold text-amber-950">Dato personal o sensible</p><p className="mt-1 text-[10px] leading-4 text-amber-800">Actívalo para documentar finalidad y revisar consentimiento.</p></div>
+                            <button type="button" onClick={() => updateField(f.id, { sensitive: !f.sensitive, sensitiveJustification: f.sensitive ? undefined : f.sensitiveJustification })} className={`relative h-6 w-12 shrink-0 rounded-full transition-all ${f.sensitive ? 'bg-amber-600' : 'bg-slate-300'}`} aria-label="Clasificar dato sensible"><span className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-all ${f.sensitive ? 'left-7' : 'left-1'}`} /></button>
+                          </div>
+                          {f.sensitive && <textarea value={f.sensitiveJustification || ''} onChange={event => updateField(f.id, { sensitiveJustification: event.target.value })} rows={3} placeholder="Finalidad, base o necesidad de recolectar este dato" className="w-full rounded-xl border border-amber-200 bg-white p-3 text-xs leading-5 focus:outline-none focus:ring-2 focus:ring-amber-500/20" />}
+                        </div>
+                      )}
 
                       {['select', 'multi_select', 'radio', 'checkbox'].includes(f.type) && (
                         <div className="space-y-3">
@@ -867,6 +878,71 @@ export default function FormBuilderPage() {
                         </div>
                       )}
 
+                      {['text', 'longtext', 'number', 'email', 'phone'].includes(f.type) && (
+                        <div className="space-y-3 rounded-2xl border border-slate-200 p-4">
+                          <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Validación</p>
+                            <p className="mt-1 text-[10px] leading-4 text-slate-400">Los límites se comprueban sin conexión antes de avanzar.</p>
+                          </div>
+                          {f.type === 'number' ? (
+                            <div className="grid grid-cols-2 gap-2">
+                              <label className="text-[10px] font-bold text-slate-500">Mínimo<input type="number" value={f.validationRules?.min ?? ''} onChange={event => updateField(f.id, { validationRules: { ...f.validationRules, min: event.target.value === '' ? undefined : Number(event.target.value) } })} className="mt-1 w-full rounded-xl bg-slate-50 px-3 py-2 text-xs" /></label>
+                              <label className="text-[10px] font-bold text-slate-500">Máximo<input type="number" value={f.validationRules?.max ?? ''} onChange={event => updateField(f.id, { validationRules: { ...f.validationRules, max: event.target.value === '' ? undefined : Number(event.target.value) } })} className="mt-1 w-full rounded-xl bg-slate-50 px-3 py-2 text-xs" /></label>
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-2 gap-2">
+                              <label className="text-[10px] font-bold text-slate-500">Mín. caracteres<input type="number" min="0" value={f.validationRules?.minLength ?? ''} onChange={event => updateField(f.id, { validationRules: { ...f.validationRules, minLength: event.target.value === '' ? undefined : Number(event.target.value) } })} className="mt-1 w-full rounded-xl bg-slate-50 px-3 py-2 text-xs" /></label>
+                              <label className="text-[10px] font-bold text-slate-500">Máx. caracteres<input type="number" min="0" value={f.validationRules?.maxLength ?? ''} onChange={event => updateField(f.id, { validationRules: { ...f.validationRules, maxLength: event.target.value === '' ? undefined : Number(event.target.value) } })} className="mt-1 w-full rounded-xl bg-slate-50 px-3 py-2 text-xs" /></label>
+                            </div>
+                          )}
+                          <label className="block text-[10px] font-bold text-slate-500">Patrón opcional (RegExp)<input value={f.validationRules?.pattern || f.validation || ''} onChange={event => updateField(f.id, { validation: undefined, validationRules: { ...f.validationRules, pattern: event.target.value } })} placeholder="Ej: ^[0-9]{6,10}$" className="mt-1 w-full rounded-xl bg-slate-50 px-3 py-2 font-mono text-xs" /></label>
+                          <label className="block text-[10px] font-bold text-slate-500">Mensaje personalizado<input value={f.validationRules?.message || ''} onChange={event => updateField(f.id, { validationRules: { ...f.validationRules, message: event.target.value } })} placeholder="Indica cómo corregir la respuesta" className="mt-1 w-full rounded-xl bg-slate-50 px-3 py-2 text-xs" /></label>
+                        </div>
+                      )}
+
+                      {f.type === 'file' && (
+                        <div className="space-y-3 rounded-2xl border border-slate-200 p-4">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Archivo offline</p>
+                          <label className="block text-[10px] font-bold text-slate-500">Tamaño máximo (MB)<input type="number" min="1" max="25" value={f.maxFileSizeMb ?? 5} onChange={event => updateField(f.id, { maxFileSizeMb: Math.min(25, Math.max(1, Number(event.target.value) || 1)) })} className="mt-1 w-full rounded-xl bg-slate-50 px-3 py-2 text-xs" /></label>
+                          <p className="rounded-xl bg-slate-50 px-3 py-2 text-[10px] leading-4 text-slate-600"><strong>Formato:</strong> PDF. Se conserva cifrado en tránsito y protegido por las políticas de Storage de la entidad.</p>
+                        </div>
+                      )}
+
+                      <div className="space-y-3 rounded-2xl border border-blue-100 bg-blue-50/50 p-4">
+                        <div className="flex items-center justify-between gap-3">
+                          <div><p className="text-xs font-bold text-blue-950">Regla condicional</p><p className="mt-1 text-[10px] leading-4 text-blue-700">Muestra esta pregunta según una respuesta anterior.</p></div>
+                          <button
+                            type="button"
+                            disabled={!conditionDrivers.length}
+                            onClick={() => {
+                              if (f.visibilityLogic) updateField(f.id, { visibilityLogic: undefined })
+                              else if (conditionDrivers[0]) updateField(f.id, { visibilityLogic: { fieldId: conditionDrivers[0].id, operator: '==', value: conditionDrivers[0].options?.[0]?.value || '' } })
+                            }}
+                            className={`relative h-6 w-12 shrink-0 rounded-full transition-all disabled:opacity-40 ${f.visibilityLogic ? 'bg-blue-600' : 'bg-slate-300'}`}
+                            aria-label="Activar regla condicional"
+                          ><span className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-all ${f.visibilityLogic ? 'left-7' : 'left-1'}`} /></button>
+                        </div>
+                        {!conditionDrivers.length && <p className="text-[10px] leading-4 text-blue-700">Agrega primero una pregunta de respuesta; las reglas solo pueden depender de campos anteriores para garantizar el funcionamiento offline.</p>}
+                        {f.visibilityLogic && (
+                          <div className="space-y-2">
+                            <select value={f.visibilityLogic.fieldId} onChange={event => {
+                              const driver = conditionDrivers.find(field => field.id === event.target.value)
+                              updateField(f.id, { visibilityLogic: { ...f.visibilityLogic!, fieldId: event.target.value, value: driver?.options?.[0]?.value || '' } })
+                            }} className="w-full rounded-xl border border-blue-100 bg-white px-3 py-2 text-xs font-bold text-slate-700">
+                              {conditionDrivers.map(field => <option key={field.id} value={field.id}>{field.label}</option>)}
+                            </select>
+                            <select value={f.visibilityLogic.operator} onChange={event => updateField(f.id, { visibilityLogic: { ...f.visibilityLogic!, operator: event.target.value as FormVisibilityOperator } })} className="w-full rounded-xl border border-blue-100 bg-white px-3 py-2 text-xs text-slate-700">
+                              <option value="==">Es igual a</option><option value="!=">Es diferente de</option><option value="contains">Contiene</option><option value="not_contains">No contiene</option><option value=">">Es mayor que</option><option value=">=">Es mayor o igual</option><option value="<">Es menor que</option><option value="<=">Es menor o igual</option><option value="is_empty">Está vacío</option><option value="is_not_empty">No está vacío</option>
+                            </select>
+                            {!['is_empty', 'is_not_empty'].includes(f.visibilityLogic.operator) && (selectedDriver?.options?.length ? (
+                              <select value={String(f.visibilityLogic.value ?? '')} onChange={event => updateField(f.id, { visibilityLogic: { ...f.visibilityLogic!, value: event.target.value } })} className="w-full rounded-xl border border-blue-100 bg-white px-3 py-2 text-xs text-slate-700"><option value="">Selecciona un valor</option>{selectedDriver.options.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}</select>
+                            ) : (
+                              <input value={String(f.visibilityLogic.value ?? '')} onChange={event => updateField(f.id, { visibilityLogic: { ...f.visibilityLogic!, value: event.target.value } })} placeholder="Valor que activa la pregunta" className="w-full rounded-xl border border-blue-100 bg-white px-3 py-2 text-xs text-slate-700" />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
                       {f.type === 'calculation' && (
                         <div>
                           <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Fórmula (Handlebars)</label>
@@ -877,6 +953,7 @@ export default function FormBuilderPage() {
                             className="w-full px-4 py-3 bg-slate-50 border-none rounded-2xl text-xs font-mono focus:ring-2 focus:ring-blue-500/20"
                             rows={3}
                           />
+                          <p className="mt-2 text-[10px] leading-4 text-slate-500">Usa identificadores anteriores entre llaves y operaciones + − × ÷. Ejemplo: <code>{'{{f_ingreso}} * 0.2'}</code>.</p>
                         </div>
                       )}
                     </div>

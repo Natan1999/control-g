@@ -1,136 +1,121 @@
-import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  ChevronRight, ChevronLeft, Save, CheckCircle2, 
-  Layout, AlertCircle, FileText, Loader2 
-} from 'lucide-react'
-import { FormDefinition, FormPage, FormResponse } from '@/types'
-import DynamicField from './fields/DynamicField'
-import { localDB } from '@/lib/dexie-db'
+import { useEffect, useMemo, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ChevronLeft, ChevronRight, FlaskConical, Layout, Loader2, Save } from 'lucide-react'
+import type { FormDefinition, FormPage } from '@/types'
 import { geometryCaptureIsComplete } from '@/lib/geometry-capture'
+import {
+  resolveFormRuntimeState,
+  sanitizeVisibleAnswers,
+  validateFieldValue,
+} from '@/lib/form-runtime'
+import DynamicField from './fields/DynamicField'
 
 interface FormRendererProps {
-  definition: FormDefinition;
-  initialData?: Record<string, any>;
-  onSubmit: (answers: Record<string, any>) => void;
-  onSaveDraft?: (answers: Record<string, any>) => void;
+  definition: FormDefinition
+  initialData?: Record<string, unknown>
+  onSubmit: (answers: Record<string, unknown>) => void | Promise<void>
+  onSaveDraft?: (answers: Record<string, unknown>) => void | Promise<void>
+  mode?: 'capture' | 'simulation'
+  embedded?: boolean
 }
 
-export default function FormRenderer({ 
-  definition, 
-  initialData = {}, 
-  onSubmit, 
-  onSaveDraft 
+export default function FormRenderer({
+  definition,
+  initialData = {},
+  onSubmit,
+  onSaveDraft,
+  mode = 'capture',
+  embedded = false,
 }: FormRendererProps) {
   const [currentPageIdx, setCurrentPageIdx] = useState(0)
-  const [answers, setAnswers] = useState<Record<string, any>>(initialData)
+  const [answers, setAnswers] = useState<Record<string, unknown>>(initialData)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const pages = definition.pages
   const currentPage = pages[currentPageIdx]
-  
-  // Visibility Logic Filtering
-  const visibleFields = currentPage.fields.filter(field => {
-    if (!field.visibilityLogic) return true
-    
-    const targetValue = answers[field.visibilityLogic.fieldId]
-    const operator = field.visibilityLogic.operator
-    const value = field.visibilityLogic.value
+  const runtimeState = useMemo(() => resolveFormRuntimeState(pages, answers), [answers, pages])
+  const effectiveAnswers = runtimeState.answers
+  const visibleFields = currentPage?.fields.filter(field => runtimeState.visibleFieldIds.has(field.id)) || []
+  const progress = pages.length ? ((currentPageIdx + 1) / pages.length) * 100 : 0
 
-    switch (operator) {
-      case '==': return targetValue === value
-      case '!=': return targetValue !== value
-      case 'contains': 
-        return Array.isArray(targetValue) && targetValue.includes(value)
-      default: return true
-    }
-  })
-
-  const progress = ((currentPageIdx + 1) / pages.length) * 100
-
-  // Auto-save draft logic
   useEffect(() => {
-    const timer = setTimeout(() => {
-      onSaveDraft?.(answers)
-    }, 2000)
-    return () => clearTimeout(timer)
-  }, [answers, onSaveDraft])
+    if (mode === 'simulation' || !onSaveDraft) return
+    const timer = window.setTimeout(() => {
+      void onSaveDraft(sanitizeVisibleAnswers(pages, effectiveAnswers))
+    }, 2_000)
+    return () => window.clearTimeout(timer)
+  }, [effectiveAnswers, mode, onSaveDraft, pages])
 
-  const handleFieldChange = (fieldId: string, value: any) => {
-    setAnswers(prev => ({ ...prev, [fieldId]: value }))
-    if (errors[fieldId]) {
-      const newErrors = { ...errors }
-      delete newErrors[fieldId]
-      setErrors(newErrors)
-    }
+  const handleFieldChange = (fieldId: string, value: unknown) => {
+    setAnswers(previous => ({ ...previous, [fieldId]: value }))
+    setErrors(previous => {
+      if (!previous[fieldId]) return previous
+      const next = { ...previous }
+      delete next[fieldId]
+      return next
+    })
+  }
+
+  const errorsForPage = (page: FormPage) => {
+    const next: Record<string, string> = {}
+    page.fields.filter(field => runtimeState.visibleFieldIds.has(field.id)).forEach(field => {
+      const value = effectiveAnswers[field.id]
+      const geometryIncomplete = (field.type === 'geotrace' || field.type === 'geoshape')
+        && !geometryCaptureIsComplete(value, field.type)
+      if (field.required && geometryIncomplete) {
+        next[field.id] = 'Completa la captura geográfica antes de continuar'
+        return
+      }
+      if (field.type === 'file' && value instanceof File && field.maxFileSizeMb && value.size > field.maxFileSizeMb * 1_000_000) {
+        next[field.id] = `El archivo supera el límite de ${field.maxFileSizeMb} MB`
+        return
+      }
+      if (field.type === 'file' && value instanceof File && value.type !== 'application/pdf') {
+        next[field.id] = 'Adjunta un documento PDF válido'
+        return
+      }
+      const validationError = validateFieldValue(field, value)
+      if (validationError) next[field.id] = validationError
+    })
+    return next
   }
 
   const validatePage = (page: FormPage) => {
-    const newErrors: Record<string, string> = {}
-    
-    // Only validate fields that are currently visible
-    const pageVisibleFields = page.fields.filter(f => {
-        if (!f.visibilityLogic) return true
-        const targetValue = answers[f.visibilityLogic.fieldId]
-        const { operator, value } = f.visibilityLogic
-        
-        switch (operator) {
-            case '==': return targetValue === value
-            case '!=': return targetValue !== value
-            case 'contains': return Array.isArray(targetValue) && targetValue.includes(value)
-            default: return true
-        }
-    })
-
-    pageVisibleFields.forEach(field => {
-      // 1. Required Check
-      const geometryIncomplete = (field.type === 'geotrace' || field.type === 'geoshape')
-        && !geometryCaptureIsComplete(answers[field.id], field.type)
-      if (field.required && (!answers[field.id] || geometryIncomplete)) {
-        newErrors[field.id] = 'Este campo es obligatorio'
-        return
-      }
-
-      // 2. Regex Validation
-      if (field.validation && answers[field.id]) {
-        try {
-          const regex = new RegExp(field.validation)
-          if (!regex.test(String(answers[field.id]))) {
-            newErrors[field.id] = 'Formato inválido'
-          }
-        } catch (e) {
-          console.error('Invalid regex for field:', field.id, e)
-        }
-      }
-    })
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+    const next = errorsForPage(page)
+    setErrors(next)
+    return Object.keys(next).length === 0
   }
 
   const handleNext = () => {
-    if (validatePage(currentPage)) {
-      if (currentPageIdx < pages.length - 1) {
-        setCurrentPageIdx(prev => prev + 1)
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-      } else {
-        handleSubmit()
-      }
+    if (!currentPage || !validatePage(currentPage)) return
+    if (currentPageIdx < pages.length - 1) {
+      setCurrentPageIdx(previous => previous + 1)
+      if (!embedded) window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
     }
+    void handleSubmit()
   }
 
   const handleBack = () => {
-    if (currentPageIdx > 0) {
-      setCurrentPageIdx(prev => prev - 1)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
+    if (currentPageIdx === 0) return
+    setCurrentPageIdx(previous => previous - 1)
+    setErrors({})
+    if (!embedded) window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const handleSubmit = async () => {
+    const validation = pages.map(errorsForPage)
+    const firstInvalidPage = validation.findIndex(pageErrors => Object.keys(pageErrors).length > 0)
+    if (firstInvalidPage >= 0) {
+      setCurrentPageIdx(firstInvalidPage)
+      setErrors(validation[firstInvalidPage])
+      return
+    }
+
     setIsSubmitting(true)
     try {
-      await onSubmit(answers)
+      await onSubmit(sanitizeVisibleAnswers(pages, effectiveAnswers))
     } catch (error) {
       console.error('Submission failed:', error)
     } finally {
@@ -138,84 +123,59 @@ export default function FormRenderer({
     }
   }
 
+  if (!currentPage) {
+    return <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm font-bold text-amber-900">Agrega una página antes de simular el formulario.</div>
+  }
+
   return (
-    <div className="max-w-3xl mx-auto space-y-8 pb-32 px-4 shadow-sm">
-      {/* Header & Progress */}
-      <div className="bg-white p-5 sm:p-8 rounded-[28px] sm:rounded-[40px] border border-slate-100 shadow-xl shadow-blue-900/5 border-t-8 border-t-[#0038A8]">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex-1 min-w-0 pr-4">
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight truncate">
-              {definition.title}
-            </h1>
-            <div className="flex items-center gap-2 mt-1">
-               <Layout size={12} className="text-blue-500" />
-               <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.1em]">{currentPage.title}</p>
+    <div className={`mx-auto max-w-3xl space-y-6 px-4 shadow-sm ${embedded ? 'pb-4' : 'pb-32'}`}>
+      {mode === 'simulation' && (
+        <div className="flex items-start gap-3 rounded-2xl border border-violet-200 bg-violet-50 p-4 text-xs leading-5 text-violet-950">
+          <FlaskConical size={18} className="mt-0.5 shrink-0" />
+          <div><strong>Simulación segura.</strong> Prueba páginas, reglas, cálculos y validaciones. Las respuestas no se guardarán ni se sincronizarán.</div>
+        </div>
+      )}
+
+      <div className="rounded-[28px] border border-t-8 border-slate-100 border-t-[#0038A8] bg-white p-5 shadow-xl shadow-blue-900/5 sm:rounded-[40px] sm:p-8">
+        <div className="mb-6 flex items-center justify-between">
+          <div className="min-w-0 flex-1 pr-4">
+            <h1 className="truncate text-xl font-black leading-tight text-slate-900 sm:text-2xl">{definition.title}</h1>
+            <div className="mt-1 flex items-center gap-2">
+              <Layout size={12} className="text-blue-500" />
+              <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-400">{currentPage.title}</p>
             </div>
           </div>
-          <div className="text-right flex-shrink-0">
-            <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-100/50">
-              {currentPageIdx + 1} / {pages.length}
-            </span>
-          </div>
+          <span className="shrink-0 rounded-xl border border-blue-100/50 bg-blue-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-blue-600">{currentPageIdx + 1} / {pages.length}</span>
         </div>
-        
-        <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-          <motion.div 
-            initial={{ width: 0 }}
-            animate={{ width: `${progress}%` }}
-            className="h-full bg-gradient-to-r from-blue-600 to-blue-800 rounded-full"
-          />
+        <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
+          <motion.div initial={{ width: 0 }} animate={{ width: `${progress}%` }} className="h-full rounded-full bg-gradient-to-r from-blue-600 to-blue-800" />
         </div>
       </div>
 
-      {/* Form Content */}
       <AnimatePresence mode="wait">
-        <motion.div
-           key={currentPage.id}
-           initial={{ opacity: 0, y: 10 }}
-           animate={{ opacity: 1, y: 0 }}
-           exit={{ opacity: 0, y: -10 }}
-           className="space-y-6"
-        >
-          {visibleFields.map(field => (
+        <motion.div key={currentPage.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-5">
+          {visibleFields.length ? visibleFields.map(field => (
             <DynamicField
               key={field.id}
               field={field}
-              value={answers[field.id]}
-              onChange={(val) => handleFieldChange(field.id, val)}
+              value={effectiveAnswers[field.id]}
+              onChange={value => handleFieldChange(field.id, value)}
               error={errors[field.id]}
+              disabled={field.type === 'calculation'}
             />
-          ))}
+          )) : (
+            <p className="rounded-2xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500">No hay preguntas visibles en esta página con las respuestas actuales.</p>
+          )}
         </motion.div>
       </AnimatePresence>
 
-      {/* Navigation Bars */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 sm:p-6 safe-bottom bg-white/90 backdrop-blur-xl border-t border-slate-100 z-50">
-        <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
-          <button
-            onClick={handleBack}
-            disabled={currentPageIdx === 0 || isSubmitting}
-            className={`flex items-center gap-2 px-6 py-4 rounded-3xl font-black uppercase tracking-widest text-[10px] transition-all ${
-              currentPageIdx === 0 
-                ? 'opacity-0 pointer-events-none' 
-                : 'text-slate-500 hover:bg-slate-100 active:scale-95'
-            }`}
-          >
+      <div className={`${embedded ? 'sticky bottom-0 rounded-2xl shadow-lg' : 'fixed bottom-0 left-0 right-0 z-50'} safe-bottom border-t border-slate-100 bg-white/95 p-4 backdrop-blur-xl sm:p-6`}>
+        <div className="mx-auto flex max-w-3xl items-center justify-between gap-4">
+          <button type="button" onClick={handleBack} disabled={currentPageIdx === 0 || isSubmitting} className={`flex items-center gap-2 rounded-3xl px-5 py-4 text-[10px] font-black uppercase tracking-widest transition-all ${currentPageIdx === 0 ? 'pointer-events-none opacity-0' : 'text-slate-500 hover:bg-slate-100 active:scale-95'}`}>
             <ChevronLeft size={18} /> Atrás
           </button>
-
-          <button
-            onClick={handleNext}
-            disabled={isSubmitting}
-            className="flex-1 max-w-[240px] flex items-center justify-center gap-3 px-8 py-4 bg-[#0038A8] text-white rounded-[24px] font-black uppercase tracking-widest text-[11px] shadow-xl shadow-blue-900/20 active:scale-95 hover:bg-[#002868] transition-all disabled:opacity-50"
-          >
-            {isSubmitting ? (
-              <Loader2 size={18} className="animate-spin" />
-            ) : currentPageIdx === pages.length - 1 ? (
-              <>Guardar <Save size={18} /></>
-            ) : (
-              <>Siguiente <ChevronRight size={18} /></>
-            )}
+          <button type="button" onClick={handleNext} disabled={isSubmitting} className="flex min-h-12 max-w-[260px] flex-1 items-center justify-center gap-3 rounded-[24px] bg-[#0038A8] px-6 py-4 text-[11px] font-black uppercase tracking-widest text-white shadow-xl shadow-blue-900/20 transition-all hover:bg-[#002868] active:scale-95 disabled:opacity-50">
+            {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : currentPageIdx === pages.length - 1 ? <>{mode === 'simulation' ? 'Probar envío' : 'Guardar'} <Save size={18} /></> : <>Siguiente <ChevronRight size={18} /></>}
           </button>
         </div>
       </div>

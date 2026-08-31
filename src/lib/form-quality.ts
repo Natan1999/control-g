@@ -8,6 +8,13 @@ export interface FormQualityIssue {
   message: string
 }
 
+export interface FormPrivacyCheck {
+  code: string
+  label: string
+  passed: boolean
+  detail: string
+}
+
 const PERSONAL_DATA_PATTERN = /(nombre|apellido|documento|c[eé]dula|tel[eé]fono|correo|direcci[oó]n|salud|diagn[oó]stico|discapacidad|niñ|menor|etnia)/i
 const CONSENT_PATTERN = /(consent|autoriz|tratamiento de datos|habeas data)/i
 
@@ -15,6 +22,7 @@ export function analyzeFormQuality(pages: FormPage[]): FormQualityIssue[] {
   const issues: FormQualityIssue[] = []
   const fields = pages.flatMap(page => page.fields)
   const ids = fields.map(field => field.id.trim()).filter(Boolean)
+  const fieldIndex = new Map(fields.map((field, index) => [field.id, index]))
   const duplicateIds = Array.from(new Set(ids.filter((id, index) => ids.indexOf(id) !== index)))
   const requiredCount = fields.filter(field => field.required).length
 
@@ -30,6 +38,53 @@ export function analyzeFormQuality(pages: FormPage[]): FormQualityIssue[] {
   if (fields.some(field => ['select', 'multi_select', 'radio'].includes(field.type) && !field.options?.some(option => option.label.trim() && option.value.trim()))) {
     issues.push({ code: 'empty-options', severity: 'error', message: 'Las preguntas de selección necesitan opciones de respuesta válidas.' })
   }
+  if (fields.some(field => {
+    const values = field.options?.map(option => option.value.trim()).filter(Boolean) || []
+    return values.length !== new Set(values).size
+  })) {
+    issues.push({ code: 'duplicate-options', severity: 'error', message: 'Hay preguntas con opciones repetidas; cada valor debe ser único.' })
+  }
+  fields.forEach(field => {
+    const pattern = field.validationRules?.pattern || field.validation
+    if (pattern) {
+      try {
+        new RegExp(pattern)
+      } catch {
+        issues.push({ code: `invalid-pattern-${field.id}`, severity: 'error', message: `La expresión de validación de “${field.label}” no es válida.` })
+      }
+    }
+    const { min, max, minLength, maxLength } = field.validationRules || {}
+    if ((min !== undefined && max !== undefined && min > max) || (minLength !== undefined && maxLength !== undefined && minLength > maxLength)) {
+      issues.push({ code: `invalid-range-${field.id}`, severity: 'error', message: `Los límites configurados en “${field.label}” son inconsistentes.` })
+    }
+    if (field.sensitive && !field.sensitiveJustification?.trim()) {
+      issues.push({ code: `sensitive-justification-${field.id}`, severity: 'error', message: `Justifica por qué “${field.label}” necesita recolectar información sensible.` })
+    }
+    if (PERSONAL_DATA_PATTERN.test(`${field.id} ${field.label}`) && !field.sensitive) {
+      issues.push({ code: `unclassified-sensitive-${field.id}`, severity: 'warning', message: `Clasifica “${field.label}” como dato sensible/personal o confirma que no lo es.` })
+    }
+    const rule = field.visibilityLogic
+    if (rule) {
+      const sourcePosition = fieldIndex.get(rule.fieldId)
+      const targetPosition = fieldIndex.get(field.id)
+      if (sourcePosition === undefined) {
+        issues.push({ code: `logic-missing-source-${field.id}`, severity: 'error', message: `La condición de “${field.label}” referencia una pregunta que no existe.` })
+      } else if (rule.fieldId === field.id || (targetPosition !== undefined && sourcePosition >= targetPosition)) {
+        issues.push({ code: `logic-order-${field.id}`, severity: 'error', message: `La condición de “${field.label}” debe depender de una pregunta anterior para funcionar offline.` })
+      }
+      if (!['is_empty', 'is_not_empty'].includes(rule.operator) && (rule.value === undefined || rule.value === '')) {
+        issues.push({ code: `logic-value-${field.id}`, severity: 'error', message: `Completa el valor de la condición de “${field.label}”.` })
+      }
+    }
+    if (field.type === 'calculation') {
+      const dependencies = Array.from(field.calculation?.matchAll(/\{\{\s*([A-Za-z0-9_-]+)\s*\}\}/g) || []).map(match => match[1])
+      if (!field.calculation?.trim() || dependencies.length === 0) {
+        issues.push({ code: `calculation-empty-${field.id}`, severity: 'error', message: `El cálculo “${field.label}” necesita una fórmula con referencias como {{campo}}.` })
+      } else if (dependencies.some(dependency => !fieldIndex.has(dependency) || (fieldIndex.get(dependency) ?? 0) >= (fieldIndex.get(field.id) ?? 0))) {
+        issues.push({ code: `calculation-dependency-${field.id}`, severity: 'error', message: `El cálculo “${field.label}” solo puede usar preguntas numéricas anteriores.` })
+      }
+    }
+  })
   if (!fields.some(field => field.type === 'gps')) {
     issues.push({ code: 'gps', severity: 'warning', message: 'Incluye GPS para trazabilidad territorial y control de calidad.' })
   }
@@ -55,6 +110,41 @@ export function analyzeFormQuality(pages: FormPage[]): FormQualityIssue[] {
   }
 
   return issues
+}
+
+export function buildFormPrivacyChecklist(pages: FormPage[]): FormPrivacyCheck[] {
+  const fields = pages.flatMap(page => page.fields)
+  const personalFields = fields.filter(field => PERSONAL_DATA_PATTERN.test(`${field.id} ${field.label}`) || field.sensitive)
+  const hasConsent = fields.some(field => CONSENT_PATTERN.test(`${field.id} ${field.label}`))
+  const unjustified = fields.filter(field => field.sensitive && !field.sensitiveJustification?.trim())
+  const unclassified = personalFields.filter(field => !field.sensitive)
+
+  return [
+    {
+      code: 'purpose',
+      label: 'Finalidad y minimización',
+      passed: unjustified.length === 0,
+      detail: unjustified.length ? `${unjustified.length} campo(s) sensible(s) no tienen justificación.` : 'Los campos sensibles declarados tienen una finalidad documentada.',
+    },
+    {
+      code: 'classification',
+      label: 'Clasificación de datos',
+      passed: unclassified.length === 0,
+      detail: unclassified.length ? `${unclassified.length} posible(s) dato(s) personal(es) requieren clasificación.` : 'No hay posibles datos personales sin clasificar.',
+    },
+    {
+      code: 'consent',
+      label: 'Consentimiento informado',
+      passed: personalFields.length === 0 || hasConsent,
+      detail: personalFields.length === 0 || hasConsent ? 'El instrumento incluye consentimiento o no trata datos personales detectables.' : 'Agrega autorización de tratamiento y consentimiento aplicable al país.',
+    },
+    {
+      code: 'offline',
+      label: 'Protección offline',
+      passed: !fields.some(field => field.type === 'file' && (field.maxFileSizeMb ?? 5) > 15),
+      detail: 'El APK conserva borradores localmente y los envía por la cola de sincronización al recuperar conexión.',
+    },
+  ]
 }
 
 export function formQualityScore(pages: FormPage[]) {
