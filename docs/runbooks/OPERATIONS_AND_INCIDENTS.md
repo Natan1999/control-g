@@ -6,7 +6,7 @@
 2. Considerar éxito únicamente si `/login` responde, la API devuelve HTTP 200, `status=operational` y `checks.database.status=ok`.
 3. El workflow abre un único incidente después de dos fallos consecutivos y lo cierra después de tres éxitos consecutivos. GitHub conserva el historial y notifica según la configuración del repositorio.
 4. Mantener una segunda sonda desde otra región/proveedor antes de declarar alta disponibilidad; GitHub cubre actualmente la primera ubicación externa.
-5. Supervisar adicionalmente el cron diario de snapshots, la tasa de sincronización, errores de Storage y crecimiento de base de datos.
+5. Supervisar adicionalmente los cron diarios de snapshots y ArcGIS, la tasa de sincronización, errores de Storage y crecimiento de base de datos.
 6. Habilitar telemetría sanitizada solo con aprobación del responsable de privacidad mediante `VITE_ERROR_REPORTING_ENABLED=true`.
 
 Comprobación manual:
@@ -43,6 +43,14 @@ La sonda no usa credenciales de Supabase ni consulta datos institucionales. El i
 2. Ejecutar una llamada autenticada al endpoint desde un entorno seguro; no pegar el secreto en chats o tickets.
 3. Revisar `retention_runs`, snapshots recientes y logs de la función.
 4. Reintentar una sola vez. Si hay errores parciales HTTP 207, resolver cada entidad antes de otro lote.
+
+## Fallo del trabajador ArcGIS
+
+1. Confirmar que `CRON_SECRET` y `SUPABASE_SERVICE_ROLE_KEY` existen exclusivamente en Vercel y no usan el prefijo `VITE_`.
+2. Consultar el historial en Integraciones ArcGIS: `pending`, `partial` y `failed` con reintentos disponibles vuelven a ser elegibles; un `running` abandonado se recupera cuando vence su lease.
+3. Revisar `error_summary`, `retry_count`, `next_retry_at`, `worker_started_at` y `lease_expires_at` sin copiar tokens ni datos de caracterización.
+4. Invocar una sola vez `/api/maintenance/arcgis` con `Authorization: Bearer <CRON_SECRET>` desde un gestor seguro. HTTP 200 indica lote sano, 207 contiene fallos parciales, 401 secreto ausente/incorrecto y 503 configuración de servidor incompleta.
+5. No cambiar manualmente `worker_id`. Si el lease no vence o un trabajo supera su límite, escalar con el identificador técnico del trabajo y conservar la auditoría.
 
 ## Rotación de credenciales
 

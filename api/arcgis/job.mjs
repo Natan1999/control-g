@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 import { isIP } from 'node:net'
 import { createClient } from '@supabase/supabase-js'
 import {
@@ -41,6 +41,8 @@ const FATAL_CONNECTION_ERRORS = new Set([
   'SERVICE_LAYER_REQUIRED',
   'SERVICE_URL_INVALID',
 ])
+
+const JOB_RELEASE_FIELDS = { worker_id: null, lease_expires_at: null }
 
 function cors(req, res) {
   const origin = String(req.headers.origin || '')
@@ -171,6 +173,11 @@ function wait(milliseconds) {
   return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 
+function retryAt(job, retryCount, now = Date.now()) {
+  if (retryCount >= Number(job.max_retries ?? 5)) return null
+  return new Date(now + Math.min(60_000 * (2 ** Number(job.retry_count || 0)), 3_600_000)).toISOString()
+}
+
 async function fetchWithRetry(url, options, retries = 3) {
   let response
   for (let attempt = 0; attempt <= retries; attempt += 1) {
@@ -242,7 +249,7 @@ async function postArcGisAttachment(baseUrl, objectId, token, blob, filename, re
   return result
 }
 
-async function loadIntegration(client, { jobId, connectionId, mappingId }) {
+export async function loadIntegration(client, { jobId, connectionId, mappingId }) {
   let job = null
   if (jobId) {
     const result = await client.from('arcgis_jobs').select('*').eq('id', jobId).single()
@@ -470,9 +477,12 @@ async function exportBatch(client, job, connection, mapping) {
     await client.from('arcgis_jobs').update({
       status: nextStatus,
       cursor_value: String(offset + rawRecords.length),
+      retry_count: 0,
+      next_retry_at: null,
       last_heartbeat_at: new Date().toISOString(),
       completed_at: nextStatus === 'completed' ? new Date().toISOString() : null,
       result_summary: { message: 'El lote no contenía coordenadas publicables.', offset, hasMore },
+      ...JOB_RELEASE_FIELDS,
     }).eq('id', job.id)
     return { status: nextStatus, attempted: 0, succeeded: 0, failed: 0, hasMore }
   }
@@ -546,6 +556,7 @@ async function exportBatch(client, job, connection, mapping) {
   const hasMore = rawRecords.length === batchSize
   const batchFailed = featureFailed + attachments.failed
   const nextStatus = batchFailed ? 'partial' : hasMore ? 'pending' : 'completed'
+  const nextRetryCount = batchFailed ? Number(job.retry_count || 0) + 1 : 0
   const itemCountsResult = await client.from('arcgis_job_items').select('status').eq('job_id', job.id)
   if (itemCountsResult.error) throw new Error(`JOB_ITEMS_COUNT:${itemCountsResult.error.code}`)
   const itemStatuses = itemCountsResult.data || []
@@ -558,6 +569,8 @@ async function exportBatch(client, job, connection, mapping) {
     attempted_count: accumulatedAttempted,
     succeeded_count: accumulatedSucceeded,
     failed_count: accumulatedFailed,
+    retry_count: nextRetryCount,
+    next_retry_at: batchFailed ? retryAt(job, nextRetryCount) : null,
     last_heartbeat_at: new Date().toISOString(),
     completed_at: nextStatus === 'completed' || nextStatus === 'partial' ? new Date().toISOString() : null,
     result_summary: {
@@ -565,6 +578,7 @@ async function exportBatch(client, job, connection, mapping) {
       features: { attempted: records.length, succeeded: featureSucceeded, failed: featureFailed },
       attachments,
     },
+    ...JOB_RELEASE_FIELDS,
   }).eq('id', job.id)
   return {
     status: nextStatus, attempted: records.length, succeeded: featureSucceeded,
@@ -642,22 +656,70 @@ async function importLayer(client, job, connection, mapping) {
   }, { onConflict: 'job_id,source_record_id,operation' })
   await client.from('arcgis_jobs').update({
     status: 'completed', attempted_count: features.length, succeeded_count: features.length,
-    failed_count: 0, completed_at: completedAt, last_heartbeat_at: completedAt,
+    failed_count: 0, retry_count: 0, next_retry_at: null,
+    completed_at: completedAt, last_heartbeat_at: completedAt,
     result_summary: { layerId: upsert.data.id, featureCount: features.length },
+    ...JOB_RELEASE_FIELDS,
   }).eq('id', job.id)
   return { status: 'completed', attempted: features.length, succeeded: features.length, failed: 0, hasMore: false }
 }
 
-async function processJob(client, job, connection, mapping) {
-  if (!mapping || !mapping.enabled || connection.status !== 'active') throw new Error('INTEGRATION_NOT_ACTIVE')
+export function arcGisErrorCode(error) {
+  return safeMessage(error?.message || 'ARCGIS_JOB_FAILED', 'ARCGIS_JOB_FAILED').split(':')[0]
+}
+
+export function arcGisFailurePatch(job, error, now = Date.now()) {
+  const retryCount = Number(job.retry_count || 0) + 1
+  return {
+    status: 'failed',
+    retry_count: retryCount,
+    next_retry_at: retryAt(job, retryCount, now),
+    last_heartbeat_at: new Date(now).toISOString(),
+    error_summary: { code: arcGisErrorCode(error) },
+    ...JOB_RELEASE_FIELDS,
+  }
+}
+
+export async function recordArcGisFailure(client, integration, error) {
+  const code = arcGisErrorCode(error)
+  if (integration?.job?.id) {
+    await client.from('arcgis_jobs').update(arcGisFailurePatch(integration.job, error)).eq('id', integration.job.id)
+  }
+  if (integration?.connection?.id && FATAL_CONNECTION_ERRORS.has(code)) {
+    await client.from('arcgis_connections').update({ status: 'error', last_error_code: code })
+      .eq('id', integration.connection.id)
+  }
+  return code
+}
+
+async function claimManualJob(client, job) {
   if (!['pending', 'partial', 'failed', 'paused'].includes(job.status)) {
-    return { status: job.status, attempted: 0, succeeded: 0, failed: 0, hasMore: false }
+    throw Object.assign(new Error(job.status === 'running' ? 'JOB_ALREADY_RUNNING' : 'JOB_NOT_PROCESSABLE'), { status: 409 })
   }
   if (job.retry_count >= job.max_retries) throw new Error('JOB_RETRY_LIMIT')
-  await client.from('arcgis_jobs').update({
-    status: 'running', started_at: job.started_at || new Date().toISOString(),
-    last_heartbeat_at: new Date().toISOString(), error_summary: {},
-  }).eq('id', job.id)
+  const workerId = `manual:${randomUUID()}`
+  const startedAt = new Date()
+  const result = await client.from('arcgis_jobs').update({
+    status: 'running',
+    worker_id: workerId,
+    worker_started_at: startedAt.toISOString(),
+    lease_expires_at: new Date(startedAt.getTime() + 180_000).toISOString(),
+    started_at: job.started_at || startedAt.toISOString(),
+    completed_at: null,
+    next_retry_at: null,
+    last_heartbeat_at: startedAt.toISOString(),
+    error_summary: {},
+  }).eq('id', job.id).eq('status', job.status).is('worker_id', null).select('*').maybeSingle()
+  if (result.error) throw new Error(`JOB_CLAIM:${result.error.code}`)
+  if (!result.data) throw Object.assign(new Error('JOB_ALREADY_CLAIMED'), { status: 409 })
+  return { job: result.data, workerId }
+}
+
+export async function processClaimedJob(client, job, connection, mapping, workerId) {
+  if (!mapping || !mapping.enabled || connection.status !== 'active') throw new Error('INTEGRATION_NOT_ACTIVE')
+  if (job.status !== 'running' || !workerId || job.worker_id !== workerId) throw new Error('JOB_LEASE_MISMATCH')
+  if (!job.lease_expires_at || Date.parse(job.lease_expires_at) <= Date.now()) throw new Error('JOB_LEASE_EXPIRED')
+  if (job.retry_count >= job.max_retries) throw new Error('JOB_RETRY_LIMIT')
   return job.direction === 'import'
     ? importLayer(client, job, connection, mapping)
     : exportBatch(client, job, connection, mapping)
@@ -670,6 +732,7 @@ export default async function handler(req, res) {
 
   let context
   let integration
+  let claimedJob
   try {
     context = await authenticate(req)
     const body = parseBody(req)
@@ -684,25 +747,16 @@ export default async function handler(req, res) {
       return json(res, 200, { ok: true, action, summary })
     }
     if (action !== 'process' || !integration.job) return json(res, 400, { ok: false, code: 'JOB_REQUIRED' })
-    const result = await processJob(context.client, integration.job, integration.connection, integration.mapping)
+    const claim = await claimManualJob(context.client, integration.job)
+    claimedJob = claim.job
+    integration = { ...integration, job: claimedJob }
+    const result = await processClaimedJob(context.client, claimedJob, integration.connection, integration.mapping, claim.workerId)
     return json(res, 200, { ok: true, action, jobId: integration.job.id, ...result })
   } catch (error) {
     const status = Number(error?.status || 500)
-    const code = safeMessage(error?.message || 'ARCGIS_JOB_FAILED', 'ARCGIS_JOB_FAILED').split(':')[0]
-    if (context?.client && integration?.job?.id) {
-      const job = integration.job
-      await context.client.from('arcgis_jobs').update({
-        status: 'failed',
-        retry_count: Number(job.retry_count || 0) + 1,
-        next_retry_at: new Date(Date.now() + Math.min(60_000 * (2 ** Number(job.retry_count || 0)), 3_600_000)).toISOString(),
-        last_heartbeat_at: new Date().toISOString(),
-        error_summary: { code },
-      }).eq('id', job.id)
-    }
-    if (context?.client && integration?.connection?.id && FATAL_CONNECTION_ERRORS.has(code)) {
-      await context.client.from('arcgis_connections').update({ status: 'error', last_error_code: code })
-        .eq('id', integration.connection.id)
-    }
+    const code = context?.client && claimedJob
+      ? await recordArcGisFailure(context.client, integration, error)
+      : arcGisErrorCode(error)
     return json(res, status >= 400 && status < 600 ? status : 500, { ok: false, code })
   }
 }
