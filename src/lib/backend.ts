@@ -30,6 +30,7 @@ export const COLLECTION_IDS = {
   ARCGIS_JOBS:              'arcgis_jobs',
   CONSENT_RECORDS:          'consent_records',
   RETENTION_POLICIES:       'retention_policies',
+  RETENTION_RUNS:           'retention_runs',
   SENSITIVE_ACCESS_LOG:     'sensitive_access_log',
   BLOG_POSTS:               'blog_posts',
 } as const
@@ -247,6 +248,36 @@ export const governance = {
     })
     if (error) throw new BackendError(error.message, 500)
     return data as string
+  },
+
+  async runRetentionPolicy(input: { policyId: string; execute?: boolean; confirmation?: string }) {
+    const { data, error } = await supabase.rpc('run_retention_policy', {
+      p_policy_id: input.policyId,
+      p_execute: Boolean(input.execute),
+      p_confirmation: input.confirmation || null,
+    })
+    if (error) throw new BackendError(error.message, 500)
+    return data as {
+      run_id: string
+      status: 'completed' | 'review_required' | 'requires_manual_workflow' | 'failed'
+      eligible_count: number
+      affected_count: number
+      cutoff_at: string
+      mode: 'preview' | 'execute'
+      action: 'review' | 'anonymize' | 'delete'
+    }
+  },
+}
+
+export const analyticsOperations = {
+  async runSnapshots(entityId: string, cutoffAt: string, filterContext: Record<string, unknown>) {
+    const { data, error } = await supabase.rpc('run_indicator_snapshots', {
+      p_entity_id: entityId,
+      p_cutoff_at: cutoffAt,
+      p_filter_context: filterContext,
+    })
+    if (error) throw new BackendError(error.message, 500)
+    return data as { entity_id: string; cutoff_at: string; snapshot_count: number; engine: string }
   },
 }
 

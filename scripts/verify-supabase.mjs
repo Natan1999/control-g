@@ -36,6 +36,9 @@ let sensitiveAccessId = null
 let arcGisConnectionId = null
 let arcGisMappingId = null
 let arcGisJobId = null
+let snapshotIds = []
+let retentionPolicyId = null
+let retentionRunIds = []
 
 function ensure(condition, message) {
   if (!condition) throw new Error(message)
@@ -535,7 +538,54 @@ try {
   sensitiveAccessId = loggedAccess
   ensure(sensitiveAccessId, 'No se registró la finalidad del acceso sensible.')
 
-  console.log('Supabase verificado: Auth/MFA, RPC, RLS, asignaciones, Storage, PostGIS/GPS/líneas/polígonos, evidencias, países, indicadores, versiones inmutables, reportes, cola ArcGIS auditable e idempotencia funcionan.')
+  const snapshotCutoff = new Date().toISOString()
+  const snapshotFilter = { verification_run: localId, formId: assignedForm.id }
+  const { data: snapshotSummary, error: snapshotError } = await adminClient.rpc('run_indicator_snapshots', {
+    p_entity_id: 'gov-bolivar-2026',
+    p_cutoff_at: snapshotCutoff,
+    p_filter_context: snapshotFilter,
+  })
+  if (snapshotError) throw snapshotError
+  ensure(snapshotSummary?.snapshot_count >= 5 && snapshotSummary?.engine === 'control-g-server-v1', 'El servidor no generó snapshots reproducibles.')
+  const { data: snapshotRows, error: snapshotRowsError } = await adminClient.from('indicator_snapshots')
+    .select('id,indicator_value,sample_size,suppressed,calculation_metadata,indicator_definitions!inner(code)')
+    .eq('entity_id', 'gov-bolivar-2026')
+    .contains('filter_context', { verification_run: localId })
+  if (snapshotRowsError) throw snapshotRowsError
+  snapshotIds = snapshotRows.map(item => item.id)
+  ensure(snapshotRows.length === snapshotSummary.snapshot_count, 'El resumen de snapshots no coincide con las filas persistidas.')
+  const gpsSnapshot = snapshotRows.find(item => item.indicator_definitions?.code === 'gps_coverage' && item.sample_size === 1)
+  ensure(gpsSnapshot?.indicator_value === 100 && gpsSnapshot.suppressed === true && gpsSnapshot.calculation_metadata?.engine === 'control-g-server-v1', 'El snapshot GPS o la supresión de grupo pequeño no son reproducibles.')
+  const { error: forbiddenSnapshotError } = await professionalClient.rpc('run_indicator_snapshots', {
+    p_entity_id: 'gov-bolivar-2026', p_cutoff_at: snapshotCutoff, p_filter_context: { forbidden: true },
+  })
+  ensure(forbiddenSnapshotError, 'Un profesional pudo ejecutar snapshots institucionales.')
+
+  retentionPolicyId = `verification-retention-${randomUUID()}`
+  const { error: retentionPolicyError } = await adminClient.from('retention_policies').insert({
+    id: retentionPolicyId,
+    entity_id: 'gov-bolivar-2026',
+    data_class: 'form_responses',
+    retention_days: 0,
+    legal_basis: 'Vista previa automatizada de verificación; no modifica datos.',
+    disposition: 'review',
+    status: 'active',
+    effective_from: new Date().toISOString().slice(0, 10),
+    created_by: session.user.id,
+  })
+  if (retentionPolicyError) throw retentionPolicyError
+  const { data: retentionPreview, error: retentionPreviewError } = await adminClient.rpc('run_retention_policy', {
+    p_policy_id: retentionPolicyId, p_execute: false, p_confirmation: null,
+  })
+  if (retentionPreviewError) throw retentionPreviewError
+  retentionRunIds.push(retentionPreview.run_id)
+  ensure(retentionPreview.mode === 'preview' && retentionPreview.eligible_count >= 1 && retentionPreview.affected_count === 0, 'La vista previa de retención modificó datos o no calculó vencimientos.')
+  const { error: forbiddenRetentionError } = await professionalClient.rpc('run_retention_policy', {
+    p_policy_id: retentionPolicyId, p_execute: false, p_confirmation: null,
+  })
+  ensure(forbiddenRetentionError, 'Un profesional pudo ejecutar la vista previa de retención.')
+
+  console.log('Supabase verificado: Auth/MFA, RPC, RLS, asignaciones, Storage, PostGIS/GPS/líneas/polígonos, evidencias, países, snapshots reproducibles, retención auditada, versiones inmutables, reportes, cola ArcGIS e idempotencia funcionan.')
 } finally {
   if (arcGisConnectionId) {
     await serviceClient.from('arcgis_connections').delete().eq('id', arcGisConnectionId)
@@ -543,6 +593,15 @@ try {
   }
   if (sensitiveAccessId) await serviceClient.from('sensitive_access_log').delete().eq('id', sensitiveAccessId)
   if (reportRunId) await serviceClient.from('report_runs').delete().eq('id', reportRunId)
+  if (retentionRunIds.length) await serviceClient.from('retention_runs').delete().in('id', retentionRunIds)
+  if (retentionPolicyId) {
+    await serviceClient.from('audit_log').delete().eq('record_id', retentionPolicyId)
+    await serviceClient.from('retention_policies').delete().eq('id', retentionPolicyId)
+  }
+  if (snapshotIds.length) {
+    await serviceClient.from('indicator_snapshots').delete().in('id', snapshotIds)
+    await serviceClient.from('audit_log').delete().eq('action', 'indicator_snapshots_generated').contains('metadata', { filter_context: { verification_run: localId } })
+  }
   if (foreignEvidenceId) await serviceClient.from('evidence_files').delete().eq('id', foreignEvidenceId)
   if (evidenceId) await serviceClient.from('evidence_files').delete().eq('id', evidenceId)
   await serviceClient.from('form_responses').delete().eq('local_id', localId)

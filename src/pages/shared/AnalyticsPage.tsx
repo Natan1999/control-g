@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   AlertTriangle, BarChart3, CalendarDays, Download, FileSpreadsheet,
-  FileText, Filter, Loader2, MapPinned, RefreshCw, ShieldCheck,
+  FileText, Filter, Loader2, MapPinned, RefreshCw, ShieldCheck, DatabaseZap,
 } from 'lucide-react'
 import {
   Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart,
@@ -11,7 +11,7 @@ import { TopBar } from '@/components/layout/Sidebar'
 import { PageWrapper } from '@/components/shared'
 import { Button } from '@/components/ui/button'
 import { buildAnalyticsReport, listAnalyticsVariables, normalizeIndicatorDefinition } from '@/lib/analytics'
-import { COLLECTION_IDS, DATABASE_ID, databases, governance, ID, Query } from '@/lib/backend'
+import { analyticsOperations, COLLECTION_IDS, DATABASE_ID, databases, governance, ID, Query } from '@/lib/backend'
 import { createReportArtifact, downloadReportArtifact, sha256Hex, type AnalyticsExportFormat } from '@/lib/report-export'
 import { useAuthStore } from '@/stores/authStore'
 import type { AnalyticsFilters } from '@/types/analytics'
@@ -40,9 +40,11 @@ export default function AnalyticsPage() {
   const [responses, setResponses] = useState<any[]>([])
   const [municipalities, setMunicipalities] = useState<any[]>([])
   const [indicatorDefinitions, setIndicatorDefinitions] = useState<any[]>([])
+  const [snapshots, setSnapshots] = useState<any[]>([])
   const [filters, setFilters] = useState<AnalyticsFilters>(EMPTY_FILTERS)
   const [loading, setLoading] = useState(true)
   const [exporting, setExporting] = useState<AnalyticsExportFormat | null>(null)
+  const [snapshotting, setSnapshotting] = useState(false)
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
 
@@ -69,11 +71,12 @@ export default function AnalyticsPage() {
     setLoading(true)
     setError('')
     try {
-      const [formResult, responseResult, municipalityResult, indicatorResult] = await Promise.all([
+      const [formResult, responseResult, municipalityResult, indicatorResult, snapshotResult] = await Promise.all([
         databases.listDocuments(DATABASE_ID, COLLECTION_IDS.FORMS, [Query.equal('entity_id', entityId), Query.limit(1000)]),
         databases.listDocuments(DATABASE_ID, COLLECTION_IDS.FORM_RESPONSES, [Query.equal('entity_id', entityId), Query.orderDesc('captured_at'), Query.limit(5000)]),
         databases.listDocuments(DATABASE_ID, COLLECTION_IDS.ENTITY_MUNICIPALITIES, [Query.equal('entity_id', entityId), Query.orderAsc('municipality_name'), Query.limit(2000)]),
         databases.listDocuments(DATABASE_ID, COLLECTION_IDS.INDICATOR_DEFINITIONS, [Query.limit(1000)]).catch(() => ({ documents: [], total: 0 })),
+        databases.listDocuments(DATABASE_ID, COLLECTION_IDS.INDICATOR_SNAPSHOTS, [Query.equal('entity_id', entityId), Query.orderDesc('cutoff_at'), Query.limit(200)]).catch(() => ({ documents: [], total: 0 })),
       ])
       setForms(formResult.documents)
       setResponses(responseResult.documents)
@@ -81,6 +84,7 @@ export default function AnalyticsPage() {
       setIndicatorDefinitions(indicatorResult.documents
         .filter((item: any) => !item.entity_id || item.entity_id === entityId)
         .map(normalizeIndicatorDefinition))
+      setSnapshots(snapshotResult.documents)
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : 'No fue posible cargar los datos analíticos.')
     } finally {
@@ -103,6 +107,9 @@ export default function AnalyticsPage() {
     filters,
     minimumGroupSize: 5,
   }), [entity?.name, entityId, filters, forms, municipalities, responses])
+  const indicatorById = useMemo(() => new Map(indicatorDefinitions.map(item => [item.id, item])), [indicatorDefinitions])
+  const latestSnapshotCutoff = snapshots[0]?.cutoff_at || ''
+  const latestSnapshots = latestSnapshotCutoff ? snapshots.filter(item => item.cutoff_at === latestSnapshotCutoff) : []
 
   const setFilter = (key: keyof AnalyticsFilters, value: string) => {
     setFilters(current => ({
@@ -150,6 +157,20 @@ export default function AnalyticsPage() {
     }
   }
 
+  const createServerSnapshot = async () => {
+    if (!entityId) return
+    setSnapshotting(true)
+    setError('')
+    setMessage('')
+    try {
+      const result = await analyticsOperations.runSnapshots(entityId, report.cutoffAt, { ...filters })
+      setMessage(`${result.snapshot_count} resultados territoriales calculados y fijados en Supabase con corte ${new Date(result.cutoff_at).toLocaleString('es-CO')}.`)
+      await loadAnalytics()
+    } catch (snapshotError) {
+      setError(snapshotError instanceof Error ? snapshotError.message : 'No fue posible crear el snapshot en el servidor.')
+    } finally { setSnapshotting(false) }
+  }
+
   const timeline = report.timeline.map(item => ({ ...item, label: asDateLabel(item.date) }))
   const thematicChart = report.thematicDistribution.map(item => ({
     ...item,
@@ -163,10 +184,16 @@ export default function AnalyticsPage() {
         title="Analítica institucional"
         subtitle="Indicadores reproducibles, calidad, territorio y salidas ejecutivas"
         actions={(
-          <Button variant="outline" className="h-11 gap-2" onClick={() => void loadAnalytics()} disabled={loading}>
-            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
-            <span className="hidden sm:inline">Actualizar</span>
-          </Button>
+          <div className="flex gap-2">
+            <Button className="h-11 gap-2" onClick={() => void createServerSnapshot()} disabled={loading || snapshotting || !entityId}>
+              {snapshotting ? <Loader2 size={16} className="animate-spin" /> : <DatabaseZap size={16} />}
+              <span className="hidden sm:inline">Fijar corte</span>
+            </Button>
+            <Button variant="outline" className="h-11 gap-2" onClick={() => void loadAnalytics()} disabled={loading}>
+              <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+              <span className="hidden sm:inline">Actualizar</span>
+            </Button>
+          </div>
         )}
       />
 
@@ -226,6 +253,21 @@ export default function AnalyticsPage() {
             </label>
           </div>
         </section>
+
+        {latestSnapshots.length > 0 && (
+          <section className="rounded-2xl border border-emerald-200 bg-emerald-50/60 p-4 shadow-sm sm:p-5" aria-labelledby="server-snapshot-title">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div><h2 id="server-snapshot-title" className="flex items-center gap-2 font-black text-emerald-950"><DatabaseZap size={18} /> Último corte fijado en servidor</h2><p className="mt-1 text-xs text-emerald-800">{new Date(latestSnapshotCutoff).toLocaleString('es-CO')} · motor control-g-server-v1 · {latestSnapshots.length} resultados</p></div>
+              <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-emerald-800">Reproducible</span>
+            </div>
+            <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+              {latestSnapshots.slice(0, 8).map(snapshot => {
+                const definition = indicatorById.get(snapshot.indicator_definition_id)
+                return <article key={snapshot.$id} className="rounded-xl border border-emerald-100 bg-white p-3"><p className="truncate text-xs font-bold text-slate-500">{definition?.name || snapshot.calculation_metadata?.indicator_code || 'Indicador'}</p><p className="mt-1 text-lg font-black text-[#1B3A4B]">{snapshot.suppressed ? 'Grupo protegido' : snapshot.indicator_value === null ? 'Sin dato' : Number(snapshot.indicator_value).toLocaleString('es-CO', { maximumFractionDigits: 2 })}</p><p className="mt-1 truncate text-[11px] text-slate-500">{snapshot.territory_name || 'Toda la entidad'} · n={snapshot.sample_size}</p></article>
+              })}
+            </div>
+          </section>
+        )}
 
         {error && <div role="alert" className="flex gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"><AlertTriangle className="shrink-0" size={18} />{error}</div>}
         {message && <div role="status" className="flex gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800"><ShieldCheck className="shrink-0" size={18} />{message}</div>}

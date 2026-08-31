@@ -2,6 +2,9 @@
   "functions": {
     "api/**/*.mjs": { "maxDuration": 60 }
   },
+  "crons": [
+    { "path": "/api/maintenance/snapshots", "schedule": "15 3 * * *" }
+  ],
   "rewrites": [
     { "source": "/software-caracterizacion-social", "destination": "/software-caracterizacion-social/index.html" },
     { "source": "/encuestas-offline", "destination": "/encuestas-offline/index.html" },
