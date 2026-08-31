@@ -7,6 +7,7 @@ import {
 import { FormDefinition, FormPage, FormResponse } from '@/types'
 import DynamicField from './fields/DynamicField'
 import { localDB } from '@/lib/dexie-db'
+import { geometryCaptureIsComplete } from '@/lib/geometry-capture'
 
 interface FormRendererProps {
   definition: FormDefinition;
@@ -84,7 +85,9 @@ export default function FormRenderer({
 
     pageVisibleFields.forEach(field => {
       // 1. Required Check
-      if (field.required && !answers[field.id]) {
+      const geometryIncomplete = (field.type === 'geotrace' || field.type === 'geoshape')
+        && !geometryCaptureIsComplete(answers[field.id], field.type)
+      if (field.required && (!answers[field.id] || geometryIncomplete)) {
         newErrors[field.id] = 'Este campo es obligatorio'
         return
       }

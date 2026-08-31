@@ -257,6 +257,7 @@ export type FormFieldType =
   | 'text' | 'longtext' | 'number' | 'date' | 'time'
   | 'select' | 'multi_select' | 'radio' | 'checkbox'
   | 'photo' | 'signature' | 'gps' | 'repeat_group'
+  | 'geotrace' | 'geoshape'
   | 'calculation' | 'note' | 'file' | 'phone' | 'email' | 'municipality'
 
 export interface FormField {

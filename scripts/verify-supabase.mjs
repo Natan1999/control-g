@@ -395,6 +395,35 @@ try {
   if (cancelledArcGisJobError) throw cancelledArcGisJobError
   ensure(cancelledArcGisJob.status === 'cancelled', 'La RPC ArcGIS no canceló el trabajo pendiente.')
 
+  const capturedAt = new Date().toISOString()
+  const routeCapture = {
+    captureType: 'geotrace',
+    geometryType: 'LineString',
+    coordinates: [[-75.479, 10.391], [-75.478, 10.392], [-75.477, 10.393]],
+    vertices: [
+      { longitude: -75.479, latitude: 10.391, accuracyM: 7.5, altitudeM: 12, timestamp: Date.now() },
+      { longitude: -75.478, latitude: 10.392, accuracyM: 8, altitudeM: 12, timestamp: Date.now() + 1_000 },
+      { longitude: -75.477, latitude: 10.393, accuracyM: 9, altitudeM: 12, timestamp: Date.now() + 2_000 },
+    ],
+    complete: true,
+    capturedAt,
+    updatedAt: capturedAt,
+  }
+  const polygonCapture = {
+    captureType: 'geoshape',
+    geometryType: 'Polygon',
+    coordinates: [[-75.480, 10.390], [-75.476, 10.390], [-75.476, 10.394], [-75.480, 10.394]],
+    vertices: [
+      { longitude: -75.480, latitude: 10.390, accuracyM: 6, altitudeM: 12, timestamp: Date.now() },
+      { longitude: -75.476, latitude: 10.390, accuracyM: 7, altitudeM: 12, timestamp: Date.now() + 1_000 },
+      { longitude: -75.476, latitude: 10.394, accuracyM: 8, altitudeM: 12, timestamp: Date.now() + 2_000 },
+      { longitude: -75.480, latitude: 10.394, accuracyM: 9, altitudeM: 12, timestamp: Date.now() + 3_000 },
+    ],
+    complete: true,
+    capturedAt,
+    updatedAt: capturedAt,
+  }
+  const responseAnswers = { verification: true, photo: uploadedPath, verification_route: routeCapture, verification_zone: polygonCapture }
   const response = {
     form_id: assignedForm.id,
     entity_id: 'gov-bolivar-2026',
@@ -402,11 +431,11 @@ try {
     professional_id: temporaryUserId,
     municipality_id: 'bolivar-mahates',
     local_id: localId,
-    answers: { verification: true, photo: uploadedPath },
-    answers_json: JSON.stringify({ verification: true, photo: uploadedPath }),
+    answers: responseAnswers,
+    answers_json: JSON.stringify(responseAnswers),
     latitude: 10.391,
     longitude: -75.479,
-    captured_at: new Date().toISOString(),
+    captured_at: capturedAt,
     form_version: 1,
     accuracy_m: 7.5,
     altitude_m: 12,
@@ -428,11 +457,40 @@ try {
 
   const { data: repeatedSync, error: repeatedSyncError } = await professionalClient
     .from('form_responses')
-    .upsert({ ...response, answers: { verification: 'repeated' } }, { onConflict: 'local_id' })
+    .upsert({ ...response, answers: { ...responseAnswers, verification: 'repeated' } }, { onConflict: 'local_id' })
     .select('id')
     .single()
   if (repeatedSyncError) throw repeatedSyncError
   ensure(firstSync.id === repeatedSync.id, 'La sincronización repetida creó un duplicado.')
+
+  const { data: spatialFeatures, error: spatialFeaturesError } = await professionalClient
+    .from('spatial_features')
+    .select('id,response_id,geometry_type,vertex_count,length_m,area_m2,maximum_accuracy_m')
+    .eq('response_id', firstSync.id)
+    .order('geometry_type')
+  if (spatialFeaturesError) throw spatialFeaturesError
+  ensure(
+    spatialFeatures.length === 2
+      && spatialFeatures.some(feature => feature.geometry_type === 'LineString' && feature.vertex_count === 3 && feature.length_m > 0)
+      && spatialFeatures.some(feature => feature.geometry_type === 'Polygon' && feature.vertex_count === 4 && feature.area_m2 > 0)
+      && spatialFeatures.every(feature => feature.maximum_accuracy_m > 0),
+    'El trigger PostGIS no extrajo el recorrido y el polígono con sus métricas.',
+  )
+  const { error: forbiddenSpatialInsertError } = await professionalClient.from('spatial_features').insert({
+    id: `forbidden-spatial-${randomUUID()}`,
+    entity_id: 'gov-bolivar-2026',
+    response_id: firstSync.id,
+    response_local_id: localId,
+    form_id: assignedForm.id,
+    field_id: 'forbidden',
+    professional_id: temporaryUserId,
+    geometry_type: 'LineString',
+    geometry: 'LINESTRING(-75.479 10.391,-75.478 10.392)',
+    geojson: { type: 'Feature', geometry: { type: 'LineString', coordinates: [[-75.479, 10.391], [-75.478, 10.392]] }, properties: {} },
+    vertex_count: 2,
+    captured_at: capturedAt,
+  })
+  ensure(forbiddenSpatialInsertError, 'Un profesional pudo escribir directamente en la tabla espacial derivada.')
 
   const { data: spatialResponse, error: spatialResponseError } = await serviceClient
     .from('form_responses')
@@ -477,7 +535,7 @@ try {
   sensitiveAccessId = loggedAccess
   ensure(sensitiveAccessId, 'No se registró la finalidad del acceso sensible.')
 
-  console.log('Supabase verificado: Auth/MFA, RPC, RLS, asignaciones, Storage, PostGIS/GPS, evidencias, países, indicadores, versiones inmutables, reportes, cola ArcGIS auditable e idempotencia funcionan.')
+  console.log('Supabase verificado: Auth/MFA, RPC, RLS, asignaciones, Storage, PostGIS/GPS/líneas/polígonos, evidencias, países, indicadores, versiones inmutables, reportes, cola ArcGIS auditable e idempotencia funcionan.')
 } finally {
   if (arcGisConnectionId) {
     await serviceClient.from('arcgis_connections').delete().eq('id', arcGisConnectionId)

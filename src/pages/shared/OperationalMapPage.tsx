@@ -24,6 +24,7 @@ import { BottomNav, MobileTopBar } from '@/components/layout/BottomNav'
 import { TopBar } from '@/components/layout/Sidebar'
 import { createMapLayer, loadMapDataset } from '@/lib/gis-service'
 import { parseGeoJson } from '@/lib/geo'
+import { calculateCoverageSummary } from '@/lib/coverage'
 import { useAuthStore } from '@/stores/authStore'
 import type { GeoRecord, MapDataset } from '@/types/gis'
 
@@ -33,6 +34,7 @@ const EMPTY_DATASET: MapDataset = {
   isOnline: false,
   loadedFromCache: false,
   lastUpdatedAt: null,
+  spatialPolicy: { privacyMode: 'aggregate', minimumGroupSize: 5, coverageTarget: 10 },
 }
 
 const SOURCE_LABELS: Record<string, string> = {
@@ -136,8 +138,13 @@ function MapContent() {
     }))
   }, [dimensionKey, filteredRecords])
   const pendingCount = dataset.records.filter(record => record.isPending).length
-  const entitiesWithData = new Set(dataset.records.map(record => record.entityId)).size
   const institutionalLayerCount = dataset.layers.filter(layer => !layer.readOnly).length
+  const coverage = useMemo(() => calculateCoverageSummary(
+    filteredRecords,
+    filteredLayers,
+    dataset.spatialPolicy.minimumGroupSize,
+    dataset.spatialPolicy.coverageTarget,
+  ), [dataset.spatialPolicy.coverageTarget, dataset.spatialPolicy.minimumGroupSize, filteredLayers, filteredRecords])
   const canCreateLayer = Boolean(user?.entityId && (user.role === 'admin' || user.role === 'coordinator'))
 
   function toggleLayer(layerId: string) {
@@ -208,7 +215,7 @@ function MapContent() {
           { label: 'Puntos con GPS', value: dataset.records.length, icon: MapPinned, color: '#1B3A4B' },
           { label: 'Pendientes offline', value: pendingCount, icon: WifiOff, color: '#B7791F' },
           { label: 'Capas territoriales', value: institutionalLayerCount, icon: Layers3, color: '#3D7B9E' },
-          { label: 'Entidades visibles', value: entitiesWithData, icon: ShieldCheck, color: '#2F855A' },
+          { label: 'Zonas con meta', value: coverage.totalZones ? `${coverage.zonesMeetingTarget}/${coverage.totalZones}` : '—', icon: ShieldCheck, color: '#2F855A' },
         ].map(item => (
           <div key={item.label} className="border-l-4 bg-white p-4 shadow-sm" style={{ borderColor: item.color }}>
             <div className="flex items-center justify-between gap-3">
@@ -254,7 +261,7 @@ function MapContent() {
                 <MapIcon size={15} /> Cobertura
               </button>
             </div>
-            {mode === 'choropleth' && <p className="mt-2 text-xs leading-5 text-slate-500">Las zonas más oscuras concentran más capturas visibles. Los grupos pequeños siguen protegidos en los reportes.</p>}
+            {mode === 'choropleth' && <div className="mt-2 space-y-1 text-xs leading-5 text-slate-500"><p>La intensidad se compara contra la meta de {dataset.spatialPolicy.coverageTarget} capturas por zona.</p><p>{coverage.protectedZones} zonas con grupos menores de {dataset.spatialPolicy.minimumGroupSize} están suprimidas; {coverage.uncoveredZones} no tienen registros.</p></div>}
           </div>
 
           <label className="block text-xs font-black uppercase tracking-[0.12em] text-slate-500">
@@ -335,7 +342,7 @@ function MapContent() {
               {loading ? <Loader2 size={19} className="animate-spin" /> : <RefreshCw size={19} />}
             </button>
           </div>
-          <InternalMap records={filteredRecords} layers={filteredLayers} mode={mode} selectedId={selected?.id || null} onSelect={setSelected} recordColors={recordColors} />
+          <InternalMap records={filteredRecords} layers={filteredLayers} mode={mode} selectedId={selected?.id || null} onSelect={setSelected} recordColors={recordColors} minimumGroupSize={dataset.spatialPolicy.minimumGroupSize} coverageTarget={dataset.spatialPolicy.coverageTarget} />
         </section>
 
         <aside className="bg-[#153646] p-5 text-white shadow-sm">

@@ -4,7 +4,7 @@ import {
   ChevronDown, CheckSquare, List, Radio as RadioIcon, 
   Camera, PenTool, MapPin, Layers, Calculator, Info, 
   FileText, Phone, Mail, Trash2, Settings2, GripVertical,
-  ChevronRight, ChevronLeft, Layout, Globe, X, BookOpen, MapPinned, ShieldCheck, AlertTriangle
+  ChevronRight, ChevronLeft, Layout, Globe, X, BookOpen, MapPinned, ShieldCheck, AlertTriangle, Share2
 } from 'lucide-react'
 import { motion, Reorder, AnimatePresence } from 'framer-motion'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -37,6 +37,8 @@ const FIELD_TYPES: { type: FormFieldType; label: string; icon: any; category: st
   { type: 'photo',         label: 'Captura Foto',    icon: Camera,        category: 'Media' },
   { type: 'signature',     label: 'Firma Digital',   icon: PenTool,       category: 'Media' },
   { type: 'gps',           label: 'Ubicación GPS',   icon: MapPin,        category: 'Geografía' },
+  { type: 'geotrace',      label: 'Recorrido GPS',   icon: Share2,        category: 'Geografía' },
+  { type: 'geoshape',      label: 'Área / Polígono', icon: MapPinned,     category: 'Geografía' },
   { type: 'municipality',  label: 'Municipio DANE',  icon: Globe,         category: 'Geografía' },
   { type: 'repeat_group',  label: 'Grupo Familiar',  icon: Layers,        category: 'Complejo' },
   { type: 'calculation',   label: 'Cálculo Auto.',   icon: Calculator,    category: 'Lógica' },
@@ -88,6 +90,18 @@ function FormFieldPreview({ field }: { field: FormField }) {
       <div>
         <div className="text-sm font-semibold text-slate-800 mb-2">{field.label}{field.required && <span className="text-rose-500"> *</span>}</div>
         <div className="rounded-2xl border border-slate-200 p-4 text-center text-xs font-semibold text-slate-400">Grupo repetible de integrantes</div>
+      </div>
+    )
+  }
+
+  if (field.type === 'geotrace' || field.type === 'geoshape') {
+    return (
+      <div>
+        <div className="text-sm font-semibold text-slate-800 mb-2">{field.label}{field.required && <span className="text-rose-500"> *</span>}</div>
+        <div className="min-h-28 rounded-2xl border-2 border-dashed border-slate-200 bg-[#EAF1F2] flex flex-col items-center justify-center gap-2 text-[#1B3A4B]">
+          {field.type === 'geotrace' ? <Share2 size={25} /> : <MapPinned size={25} />}
+          <span className="text-xs font-black">{field.type === 'geotrace' ? 'Capturar recorrido offline' : 'Delimitar polígono offline'}</span>
+        </div>
       </div>
     )
   }

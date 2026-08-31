@@ -18,6 +18,7 @@ export const COLLECTION_IDS = {
   FORM_VERSIONS:            'form_versions',
   FORM_RESPONSES:           'form_responses',
   MAP_LAYERS:               'map_layers',
+  SPATIAL_FEATURES:         'spatial_features',
   COUNTRY_PROFILES:         'country_profiles',
   JURISDICTIONS:            'jurisdictions',
   EVIDENCE_FILES:           'evidence_files',

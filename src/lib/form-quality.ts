@@ -36,6 +36,9 @@ export function analyzeFormQuality(pages: FormPage[]): FormQualityIssue[] {
   if (!fields.some(field => field.type === 'municipality')) {
     issues.push({ code: 'territory', severity: 'recommendation', message: 'Incluye una unidad territorial normalizada para análisis y mapas.' })
   }
+  if (fields.some(field => field.type === 'geotrace' || field.type === 'geoshape') && !fields.some(field => field.type === 'gps')) {
+    issues.push({ code: 'geometry-anchor', severity: 'recommendation', message: 'Combina líneas o polígonos con un punto GPS principal para facilitar control de calidad y búsqueda territorial.' })
+  }
   if (!fields.some(field => field.type === 'photo' || field.type === 'file')) {
     issues.push({ code: 'evidence', severity: 'recommendation', message: 'Evalúa añadir evidencia cuando el protocolo de campo la requiera.' })
   }

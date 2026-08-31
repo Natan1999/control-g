@@ -18,6 +18,8 @@ interface EntityForm {
   timezone: string;
   currency_code: string;
   map_privacy_mode: 'exact' | 'approximate' | 'aggregate';
+  map_minimum_group_size: number;
+  map_coverage_target: number;
   require_mfa_for_privileged: boolean;
   department_id: string;
   department_name: string;
@@ -33,7 +35,7 @@ interface EntityForm {
 
 const EMPTY_FORM: EntityForm = {
   name: '', nit: '', contract_number: '', contract_object: '', operator_name: '',
-  country_code: 'CO', locale: 'es-CO', timezone: 'America/Bogota', currency_code: 'COP', map_privacy_mode: 'exact', require_mfa_for_privileged: true,
+  country_code: 'CO', locale: 'es-CO', timezone: 'America/Bogota', currency_code: 'COP', map_privacy_mode: 'exact', map_minimum_group_size: 5, map_coverage_target: 10, require_mfa_for_privileged: true,
   department_id: '', department_name: '', period_start: '', period_end: '',
   families_per_municipality: 35, coordinator_name: '', coordinator_email: '',
   coordinator_password: '', municipalities: [], manual_municipalities: '',
@@ -60,6 +62,7 @@ export default function AdminEntitiesPage() {
   const [munSearch, setMunSearch] = useState('')
   const [loadingGeography, setLoadingGeography] = useState(false)
   const [countryProfiles, setCountryProfiles] = useState<any[]>([])
+  const [savingPolicyId, setSavingPolicyId] = useState('')
 
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => { 
     setToast({ msg, type }); 
@@ -186,6 +189,8 @@ export default function AdminEntitiesPage() {
         currency_code: form.currency_code,
         default_map_center: countryConfig(form.country_code).mapCenter,
         map_privacy_mode: form.map_privacy_mode,
+        map_minimum_group_size: form.map_minimum_group_size,
+        map_coverage_target: form.map_coverage_target,
         require_mfa_for_privileged: form.require_mfa_for_privileged,
         regional_settings: {
           administrative_division_label: countryProfiles.find(item => item.country_code === form.country_code)?.administrative_levels?.[1] || countryConfig(form.country_code).adminLevel2Label,
@@ -262,6 +267,31 @@ export default function AdminEntitiesPage() {
     } catch {
       showToast('No fue posible actualizar la política MFA', 'error')
     }
+  }
+
+  async function saveSpatialPolicy(entity: any) {
+    const minimumGroupSize = Math.min(100, Math.max(1, Number(entity.map_minimum_group_size || 5)))
+    const coverageTarget = Math.min(1_000_000, Math.max(1, Number(entity.map_coverage_target || 10)))
+    setSavingPolicyId(entity.$id)
+    try {
+      await databases.updateDocument(DATABASE_ID, COLLECTION_IDS.ENTITIES, entity.$id, {
+        map_privacy_mode: entity.map_privacy_mode || 'exact',
+        map_minimum_group_size: minimumGroupSize,
+        map_coverage_target: coverageTarget,
+      })
+      setEntities(previous => previous.map(item => item.$id === entity.$id ? {
+        ...item,
+        map_minimum_group_size: minimumGroupSize,
+        map_coverage_target: coverageTarget,
+      } : item))
+      showToast('Política cartográfica guardada')
+    } catch {
+      showToast('No fue posible guardar la política cartográfica', 'error')
+    } finally { setSavingPolicyId('') }
+  }
+
+  function updateEntityPolicyDraft(entityId: string, field: string, value: string | number) {
+    setEntities(previous => previous.map(item => item.$id === entityId ? { ...item, [field]: value } : item))
   }
 
   const filteredMuns = availableMunicipalities.filter(m => 
@@ -346,6 +376,15 @@ export default function AdminEntitiesPage() {
                       <span className="text-sm text-slate-500">{e.period_start} — {e.period_end}</span>
                     </div>
                   </div>
+                  <details className="mt-5 rounded-2xl border border-slate-100 bg-slate-50/70 p-3">
+                    <summary className="cursor-pointer text-xs font-black uppercase tracking-wide text-[#1B3A4B]">Política del mapa</summary>
+                    <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                      <label className="text-[10px] font-bold uppercase text-slate-500">Precisión<select value={e.map_privacy_mode || 'exact'} onChange={event => updateEntityPolicyDraft(e.$id, 'map_privacy_mode', event.target.value)} className="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-2 text-xs normal-case text-slate-800"><option value="exact">Exacta</option><option value="approximate">~100 m</option><option value="aggregate">~1 km</option></select></label>
+                      <label className="text-[10px] font-bold uppercase text-slate-500">Supresión mínima<input type="number" min={1} max={100} value={e.map_minimum_group_size || 5} onChange={event => updateEntityPolicyDraft(e.$id, 'map_minimum_group_size', Number(event.target.value))} className="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs normal-case text-slate-800" /></label>
+                      <label className="text-[10px] font-bold uppercase text-slate-500">Meta por zona<input type="number" min={1} max={1000000} value={e.map_coverage_target || 10} onChange={event => updateEntityPolicyDraft(e.$id, 'map_coverage_target', Number(event.target.value))} className="mt-1 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs normal-case text-slate-800" /></label>
+                    </div>
+                    <button type="button" disabled={savingPolicyId === e.$id} onClick={() => void saveSpatialPolicy(e)} className="mt-3 min-h-10 w-full rounded-xl bg-[#1B3A4B] px-3 text-xs font-black text-white disabled:opacity-50">{savingPolicyId === e.$id ? 'Guardando…' : 'Guardar política cartográfica'}</button>
+                  </details>
                 </div>
                 
                 <div className="flex flex-col gap-2">
@@ -494,6 +533,18 @@ export default function AdminEntitiesPage() {
                       <option value="aggregate">Agregada — cuadrícula de ~1 km</option>
                     </select>
                     <p className="mt-2 text-xs leading-5 text-slate-500">Controla la precisión mostrada y exportada; la captura GPS original permanece protegida en Supabase.</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Supresión mínima por zona</label>
+                    <input type="number" min={1} max={100} value={form.map_minimum_group_size} onChange={event => setForm(current => ({ ...current, map_minimum_group_size: Number(event.target.value) }))} className="w-full px-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner" />
+                    <p className="mt-2 text-xs leading-5 text-slate-500">Los conteos menores a este valor se muestran como grupo protegido.</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Meta de capturas por zona</label>
+                    <input type="number" min={1} max={1000000} value={form.map_coverage_target} onChange={event => setForm(current => ({ ...current, map_coverage_target: Number(event.target.value) }))} className="w-full px-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner" />
+                    <p className="mt-2 text-xs leading-5 text-slate-500">La coropleta usa esta meta fija para comparar zonas sin distorsionar por el máximo del corte.</p>
                   </div>
 
                   <label className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">

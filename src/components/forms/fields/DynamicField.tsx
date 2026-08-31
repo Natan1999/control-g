@@ -11,6 +11,7 @@ import MunicipalityPicker from './MunicipalityPicker'
 import GPSField from './GPSField'
 import RepeatGroup from './RepeatGroup'
 import PhotoField from './PhotoField'
+import GeometryCaptureField from './GeometryCaptureField'
 
 interface DynamicFieldProps {
   field: FormField;
@@ -179,6 +180,10 @@ export default function DynamicField({ field, value, onChange, error, disabled }
 
       case 'gps':
         return <GPSField value={value} onChange={onChange} disabled={disabled} />
+
+      case 'geotrace':
+      case 'geoshape':
+        return <GeometryCaptureField captureType={field.type} value={value || null} onChange={onChange} disabled={disabled} />
 
       case 'municipality':
         return <MunicipalityPicker value={value} onChange={onChange} disabled={disabled} />

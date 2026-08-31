@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Crosshair, LocateFixed, Minus, Plus, RotateCcw } from 'lucide-react'
 import { geoJsonCoordinates, geoJsonFeatures, pointInGeoJsonGeometry } from '@/lib/geo'
+import { isCoverageBoundaryLayer } from '@/lib/coverage'
 import type { GeoJsonGeometry, GeoJsonPosition, GeoRecord, MapLayer } from '@/types/gis'
 
 interface InternalMapProps {
@@ -10,6 +11,8 @@ interface InternalMapProps {
   selectedId: string | null
   onSelect: (record: GeoRecord | null) => void
   recordColors?: Record<string, string>
+  minimumGroupSize?: number
+  coverageTarget?: number
 }
 
 interface Projection {
@@ -76,7 +79,7 @@ function geometryPoints(geometry: GeoJsonGeometry): GeoJsonPosition[] {
   return []
 }
 
-export function InternalMap({ records, layers, mode, selectedId, onSelect, recordColors = {} }: InternalMapProps) {
+export function InternalMap({ records, layers, mode, selectedId, onSelect, recordColors = {}, minimumGroupSize = 5, coverageTarget = 10 }: InternalMapProps) {
   const [zoom, setZoom] = useState(1)
   const [pan, setPan] = useState({ x: 0, y: 0 })
   const drag = useRef<{ x: number; y: number; panX: number; panY: number } | null>(null)
@@ -111,10 +114,10 @@ export function InternalMap({ records, layers, mode, selectedId, onSelect, recor
   const choropleth = useMemo(() => {
     if (mode !== 'choropleth') return new Map<string, { counts: number[]; maximum: number }>()
     return new Map(layers.map(layer => {
-      const counts = geoJsonFeatures(layer.geojson).map(feature => {
+      const counts = isCoverageBoundaryLayer(layer) ? geoJsonFeatures(layer.geojson).map(feature => {
         if (!feature.geometry || !feature.geometry.type.includes('Polygon')) return 0
         return records.filter(record => pointInGeoJsonGeometry([record.longitude, record.latitude], feature.geometry!)).length
-      })
+      }) : []
       return [layer.id, { counts, maximum: Math.max(0, ...counts) }]
     }))
   }, [layers, mode, records])
@@ -199,11 +202,12 @@ export function InternalMap({ records, layers, mode, selectedId, onSelect, recor
               {geoJsonFeatures(layer.geojson).flatMap((feature, geometryIndex) => {
                 if (!feature.geometry) return []
                 const geometry = feature.geometry
+                const coverageLayer = isCoverageBoundaryLayer(layer)
                 const polygonCount = choropleth.get(layer.id)?.counts[geometryIndex] || 0
-                const maximum = choropleth.get(layer.id)?.maximum || 0
                 const featureName = String(feature.properties?.MPIO_CNMBRE || feature.properties?.name || feature.properties?.NAME || `Zona ${geometryIndex + 1}`)
-                const polygonOpacity = mode === 'choropleth'
-                  ? polygonCount > 0 ? 0.2 + (polygonCount / Math.max(1, maximum)) * 0.65 : 0.05
+                const protectedGroup = polygonCount > 0 && polygonCount < minimumGroupSize
+                const polygonOpacity = mode === 'choropleth' && coverageLayer
+                  ? protectedGroup ? 0.12 : polygonCount > 0 ? 0.2 + (Math.min(polygonCount, coverageTarget) / Math.max(1, coverageTarget)) * 0.65 : 0.05
                   : layer.opacity
                 return [
                 ...geometryPaths(geometry, projection).map((path, pathIndex) => (
@@ -216,7 +220,7 @@ export function InternalMap({ records, layers, mode, selectedId, onSelect, recor
                     strokeWidth={Math.max(1.5, 2.4 / zoom)}
                     vectorEffect="non-scaling-stroke"
                     fillRule="evenodd"
-                  ><title>{mode === 'choropleth' ? `${featureName}: ${polygonCount} capturas` : featureName}</title></path>
+                  ><title>{mode === 'choropleth' && coverageLayer ? protectedGroup ? `${featureName}: grupo protegido (menos de ${minimumGroupSize})` : `${featureName}: ${polygonCount} capturas${polygonCount >= coverageTarget ? ' · meta cumplida' : ''}` : featureName}</title></path>
                 )),
                 ...geometryPoints(geometry).map((coordinate, pointIndex) => {
                   const [x, y] = projection.point(coordinate)

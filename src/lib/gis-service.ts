@@ -2,9 +2,10 @@ import { COLLECTION_IDS, DATABASE_ID, databases, ID, Query } from '@/lib/backend
 import latamCountries from '@/assets/latam-countries.json'
 import { localDB, type LocalGeoRecord, type LocalMapLayer } from '@/lib/dexie-db'
 import { extractAnswerCoordinates, geoJsonCoordinates, normalizeColor, parseGeoJson, validLatitude, validLongitude } from '@/lib/geo'
+import { capturedGeometryFeature, geometryCaptureIsComplete } from '@/lib/geometry-capture'
 import { isOnline } from '@/lib/network'
 import type { User } from '@/types'
-import type { GeoDimensionValue, GeoJsonPosition, GeoRecord, MapDataset, MapLayer, SupportedGeoJson } from '@/types/gis'
+import type { CapturedGeometryValue, GeoDimensionValue, GeoJsonFeature, GeoJsonPosition, GeoRecord, MapDataset, MapLayer, SupportedGeoJson } from '@/types/gis'
 
 interface DimensionDefinition {
   label: string
@@ -16,6 +17,7 @@ const SENSITIVE_FIELD_PATTERN = /(nombre|apellido|document|c[eé]dula|identifica
 const REPORTABLE_FIELD_TYPES = new Set(['number', 'select', 'multi_select', 'radio', 'checkbox', 'date', 'municipality', 'calculation'])
 const BASEMAP = parseGeoJson(latamCountries as unknown)
 type MapPrivacyMode = 'exact' | 'approximate' | 'aggregate'
+type SpatialPolicy = MapDataset['spatialPolicy']
 
 function cacheScope(user: User) {
   return `${user.role}:${user.entityId || 'all'}:${user.id}`
@@ -26,12 +28,31 @@ function normalizePrivacyMode(value: unknown): MapPrivacyMode {
 }
 
 function cachedPrivacyMode(entityId?: string | null) {
-  if (!entityId || typeof localStorage === 'undefined') return 'exact' as const
+  if (!entityId || typeof localStorage === 'undefined') return 'aggregate' as const
   return normalizePrivacyMode(localStorage.getItem(`cg_map_privacy_${entityId}`))
+}
+
+function cachedSpatialPolicy(entityId?: string | null): SpatialPolicy {
+  const fallback = { privacyMode: cachedPrivacyMode(entityId), minimumGroupSize: 5, coverageTarget: 10 }
+  if (!entityId || typeof localStorage === 'undefined') return fallback
+  try {
+    const cached = JSON.parse(localStorage.getItem(`cg_spatial_policy_${entityId}`) || '{}')
+    return {
+      privacyMode: normalizePrivacyMode(cached.privacyMode),
+      minimumGroupSize: Math.min(100, Math.max(1, Number(cached.minimumGroupSize || 5))),
+      coverageTarget: Math.min(1_000_000, Math.max(1, Number(cached.coverageTarget || 10))),
+    }
+  } catch { return fallback }
 }
 
 function rememberPrivacyMode(entityId: string | null | undefined, mode: MapPrivacyMode) {
   if (entityId && typeof localStorage !== 'undefined') localStorage.setItem(`cg_map_privacy_${entityId}`, mode)
+}
+
+function rememberSpatialPolicy(entityId: string | null | undefined, policy: SpatialPolicy) {
+  if (!entityId || typeof localStorage === 'undefined') return
+  rememberPrivacyMode(entityId, policy.privacyMode)
+  localStorage.setItem(`cg_spatial_policy_${entityId}`, JSON.stringify(policy))
 }
 
 function applySpatialPrivacy(records: GeoRecord[], mode: MapPrivacyMode) {
@@ -42,6 +63,23 @@ function applySpatialPrivacy(records: GeoRecord[], mode: MapPrivacyMode) {
     latitude: Number(record.latitude.toFixed(precision)),
     longitude: Number(record.longitude.toFixed(precision)),
   }))
+}
+
+function privacyCoordinates(value: unknown, precision: number): unknown {
+  if (!Array.isArray(value)) return value
+  if (value.length >= 2 && Number.isFinite(Number(value[0])) && Number.isFinite(Number(value[1]))) {
+    return [Number(Number(value[0]).toFixed(precision)), Number(Number(value[1]).toFixed(precision))]
+  }
+  return value.map(item => privacyCoordinates(item, precision))
+}
+
+function applyFeaturePrivacy(feature: GeoJsonFeature, mode: MapPrivacyMode): GeoJsonFeature {
+  const precision = mode === 'aggregate' ? 2 : mode === 'approximate' ? 3 : null
+  if (precision === null || !feature.geometry) return feature
+  return {
+    ...feature,
+    geometry: { ...feature.geometry, coordinates: privacyCoordinates(feature.geometry.coordinates, precision) },
+  }
 }
 
 function scopedQueries(user: User, professionalOnly = false) {
@@ -216,7 +254,78 @@ async function localResponses(user: User, scope: string): Promise<GeoRecord[]> {
   })
 }
 
-async function cachedDataset(scope: string, online: boolean): Promise<MapDataset> {
+async function localGeometryLayers(user: User, mode: MapPrivacyMode): Promise<MapLayer[]> {
+  const responses = await localDB.formResponses
+    .where('professionalId')
+    .equals(user.id)
+    .filter(response => response.entityId === user.entityId && response.status !== 'draft')
+    .toArray()
+  const features = responses.flatMap(response => Object.entries(response.answers).flatMap(([fieldId, answer]) => {
+    if (!geometryCaptureIsComplete(answer)) return []
+    const feature = capturedGeometryFeature(answer as CapturedGeometryValue)
+    if (!feature) return []
+    return [applyFeaturePrivacy({
+      ...feature,
+      properties: {
+        ...feature.properties,
+        control_g_local_id: response.localId,
+        field_id: fieldId,
+        status: response.status,
+        pending_sync: response.status === 'completed',
+      },
+    }, mode)]
+  }))
+  if (!features.length) return []
+  return [{
+    id: 'local:field-geometries',
+    entityId: user.entityId || 'device',
+    name: 'Geometrías pendientes del dispositivo',
+    description: 'Recorridos y polígonos guardados localmente; se sincronizan al recuperar internet.',
+    layerType: 'mixed',
+    geojson: { type: 'FeatureCollection', features },
+    color: '#B7791F',
+    opacity: 0.24,
+    visibleDefault: true,
+    status: 'active',
+    updatedAt: new Date().toISOString(),
+    source: 'Captura offline Control G',
+    readOnly: true,
+  }]
+}
+
+function spatialFeatureLayers(documents: any[], mode: MapPrivacyMode): MapLayer[] {
+  const groups = [
+    { type: 'LineString', name: 'Recorridos GPS sincronizados', color: '#2F855A', layerType: 'lines' as const },
+    { type: 'Polygon', name: 'Áreas GPS sincronizadas', color: '#6B5B95', layerType: 'polygons' as const },
+  ]
+  return groups.flatMap(group => {
+    const features = documents.filter(document => document.geometry_type === group.type).flatMap(document => {
+      try {
+        const parsed = parseGeoJson(document.geojson)
+        const feature = parsed.type === 'Feature' ? parsed : null
+        return feature ? [applyFeaturePrivacy(feature, mode)] : []
+      } catch { return [] }
+    })
+    if (!features.length) return []
+    return [{
+      id: `control-g:spatial:${group.type.toLowerCase()}`,
+      entityId: documents[0]?.entity_id || 'system',
+      name: group.name,
+      description: 'Geometrías derivadas de formularios y gobernadas por RLS/PostGIS.',
+      layerType: group.layerType,
+      geojson: { type: 'FeatureCollection', features },
+      color: group.color,
+      opacity: 0.22,
+      visibleDefault: true,
+      status: 'active' as const,
+      updatedAt: new Date().toISOString(),
+      source: 'Control G · PostGIS',
+      readOnly: true,
+    }]
+  })
+}
+
+async function cachedDataset(scope: string, online: boolean, spatialPolicy: SpatialPolicy): Promise<MapDataset> {
   const [records, layers] = await Promise.all([
     localDB.geoRecords.where('cacheScope').equals(scope).toArray(),
     localDB.mapLayers.where('cacheScope').equals(scope).toArray(),
@@ -227,7 +336,7 @@ async function cachedDataset(scope: string, online: boolean): Promise<MapDataset
   ].filter((value): value is string => typeof value === 'string' && value.length > 0).sort()
   const lastUpdatedAt = timestamps.length ? timestamps[timestamps.length - 1] : null
 
-  return { records, layers, isOnline: online, loadedFromCache: true, lastUpdatedAt }
+  return { records, layers, isOnline: online, loadedFromCache: true, lastUpdatedAt, spatialPolicy }
 }
 
 function mergeRecords(remote: GeoRecord[], local: GeoRecord[]) {
@@ -259,21 +368,23 @@ async function cacheDataset(scope: string, records: GeoRecord[], layers: MapLaye
 export async function loadMapDataset(user: User): Promise<MapDataset> {
   const scope = cacheScope(user)
   const connected = await isOnline()
-  const localPrivacyMode = cachedPrivacyMode(user.entityId)
+  const localPolicy = cachedSpatialPolicy(user.entityId)
+  const localPrivacyMode = localPolicy.privacyMode
   const rawPendingRecords = await localResponses(user, scope)
   const pendingRecords = applySpatialPrivacy(rawPendingRecords, localPrivacyMode)
+  const pendingGeometryLayers = await localGeometryLayers(user, localPrivacyMode)
 
   if (!connected) {
-    const cached = await cachedDataset(scope, false)
+    const cached = await cachedDataset(scope, false, localPolicy)
     const records = mergeRecords(cached.records, pendingRecords)
     const layers = cached.layers.length ? cached.layers : baseMapLayers(records)
-    return { ...cached, records, layers }
+    return { ...cached, records, layers: [...layers, ...pendingGeometryLayers] }
   }
 
   try {
     const common = scopedQueries(user, false)
     const professional = scopedQueries(user, true)
-    const [responseResult, activityResult, familyResult, layerResult, formResult, entityResult] = await Promise.all([
+    const [responseResult, activityResult, familyResult, layerResult, spatialResult, formResult, entityResult] = await Promise.all([
       databases.listDocuments(DATABASE_ID, COLLECTION_IDS.FORM_RESPONSES, [
         ...professional,
         Query.orderDesc('captured_at'),
@@ -294,6 +405,11 @@ export async function loadMapDataset(user: User): Promise<MapDataset> {
         Query.equal('status', 'active'),
         Query.limit(200),
       ]).catch(() => ({ documents: [], total: 0 })),
+      databases.listDocuments(DATABASE_ID, COLLECTION_IDS.SPATIAL_FEATURES, [
+        ...professional,
+        Query.orderDesc('captured_at'),
+        Query.limit(3000),
+      ]).catch(() => ({ documents: [], total: 0 })),
       databases.listDocuments(DATABASE_ID, COLLECTION_IDS.FORMS, [
         ...common,
         Query.limit(500),
@@ -310,23 +426,33 @@ export async function loadMapDataset(user: User): Promise<MapDataset> {
       ...familyResult.documents.map((document: any) => mapRecord(document, 'family', 'Hogar caracterizado')),
     ].filter((record): record is GeoRecord => record !== null)
     const countryCode = entityResult?.country_code ? String(entityResult.country_code) : undefined
-    const privacyMode = normalizePrivacyMode(entityResult?.map_privacy_mode)
-    rememberPrivacyMode(user.entityId, privacyMode)
+    const spatialPolicy: SpatialPolicy = {
+      privacyMode: user.entityId ? normalizePrivacyMode(entityResult?.map_privacy_mode) : 'aggregate',
+      minimumGroupSize: Math.min(100, Math.max(1, Number(entityResult?.map_minimum_group_size || 5))),
+      coverageTarget: Math.min(1_000_000, Math.max(1, Number(entityResult?.map_coverage_target || 10))),
+    }
+    const privacyMode = spatialPolicy.privacyMode
+    rememberSpatialPolicy(user.entityId, spatialPolicy)
     const records = applySpatialPrivacy(rawRecords, privacyMode)
-    const layers = [...baseMapLayers(records, countryCode), ...layerResult.documents.map(mapLayer)]
+    const layers = [
+      ...baseMapLayers(records, countryCode),
+      ...layerResult.documents.map(mapLayer),
+      ...spatialFeatureLayers(spatialResult.documents, privacyMode),
+    ]
     await cacheDataset(scope, records, layers)
 
     return {
       records: mergeRecords(records, applySpatialPrivacy(rawPendingRecords, privacyMode)),
-      layers,
+      layers: [...layers, ...await localGeometryLayers(user, privacyMode)],
       isOnline: true,
       loadedFromCache: false,
       lastUpdatedAt: new Date().toISOString(),
+      spatialPolicy,
     }
   } catch (error) {
-    const cached = await cachedDataset(scope, true)
+    const cached = await cachedDataset(scope, true, localPolicy)
     if (cached.records.length || cached.layers.length || pendingRecords.length) {
-      return { ...cached, records: mergeRecords(cached.records, pendingRecords) }
+      return { ...cached, records: mergeRecords(cached.records, pendingRecords), layers: [...cached.layers, ...pendingGeometryLayers] }
     }
     throw error
   }

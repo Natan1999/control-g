@@ -22,6 +22,24 @@ export interface GeoDimensionValue {
   value: string | number | boolean
 }
 
+export interface CapturedGeometryVertex {
+  latitude: number
+  longitude: number
+  accuracyM: number | null
+  altitudeM: number | null
+  timestamp: number
+}
+
+export interface CapturedGeometryValue {
+  captureType: 'geotrace' | 'geoshape'
+  geometryType: 'LineString' | 'Polygon'
+  coordinates: GeoJsonPosition[]
+  vertices: CapturedGeometryVertex[]
+  complete: boolean
+  capturedAt: string
+  updatedAt: string
+}
+
 export type GeoJsonPosition = [number, number]
 
 export interface GeoJsonGeometry {
@@ -65,4 +83,9 @@ export interface MapDataset {
   isOnline: boolean
   loadedFromCache: boolean
   lastUpdatedAt: string | null
+  spatialPolicy: {
+    privacyMode: 'exact' | 'approximate' | 'aggregate'
+    minimumGroupSize: number
+    coverageTarget: number
+  }
 }

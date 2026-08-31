@@ -1,4 +1,4 @@
-# Control G 2.5 · LATAM + GIS
+# Control G 2.6 · LATAM + GIS
 
 Aplicación multi-entidad para caracterización y acompañamiento psicosocial en campo. La interfaz web y el APK de Capacitor funcionan sin conexión: familias, formularios, respuestas, fotografías y actividades se guardan localmente y se sincronizan de forma idempotente cuando regresa la señal.
 
@@ -10,7 +10,7 @@ Aplicación multi-entidad para caracterización y acompañamiento psicosocial en
 - Supabase Auth, Postgres, Storage y funciones SQL protegidas.
 - Aislamiento por entidad mediante Row Level Security (RLS).
 - Identificadores locales únicos para evitar duplicados en reintentos de sincronización.
-- PostGIS, índices GiST, capas GeoJSON por entidad y mapa vectorial offline con puntos, grupos, calor y coropletas de cobertura.
+- PostGIS, índices GiST, capas GeoJSON por entidad y mapa vectorial offline con puntos, recorridos, polígonos, grupos, calor y coropletas de cobertura.
 - Configuración regional para 20 países latinoamericanos.
 - Analítica reproducible con diccionario de indicadores y exportación PDF, DOCX, XLSX y CSV.
 - Gobierno de datos: consentimientos, manifiestos SHA-256, retención, accesos sensibles y MFA TOTP configurable.
@@ -18,7 +18,7 @@ Aplicación multi-entidad para caracterización y acompañamiento psicosocial en
 ## Configuración
 
 1. Copia `.env.example` a `.env.local` y configura únicamente `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` para la aplicación.
-2. Ejecuta, en orden, las migraciones de `supabase/migrations/` en la instancia de Supabase. Las migraciones `202608310001` a `202608310005` agregan PostGIS/GIS LATAM, gobierno de datos, evidencias con mínimo privilegio, versiones inmutables de formularios y la cola ArcGIS auditable.
+2. Ejecuta, en orden, las migraciones de `supabase/migrations/` en la instancia de Supabase. Las migraciones `202608310001` a `202608310006` agregan PostGIS/GIS LATAM, gobierno de datos, evidencias con mínimo privilegio, versiones inmutables de formularios, la cola ArcGIS auditable y geometrías de campo derivadas.
 3. La migración instala `admin_create_user`, una RPC `SECURITY DEFINER` que valida el JWT, el rol y la entidad antes de crear Auth + perfil en una sola transacción.
 4. Para crear o verificar las cuentas iniciales, define `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` y `CONTROL_G_INITIAL_PASSWORD`, y ejecuta `npm run backend:seed`.
 5. Para volver a cargar la capa oficial de municipios de Bolívar, ejecuta `npm run backend:seed:gis`. El proceso usa el archivo versionado en `supabase/seed/` y requiere la clave administrativa solo en el entorno local.
@@ -44,11 +44,12 @@ El primer inicio de sesión del dispositivo requiere conexión. Después, la ses
 - Las rutas privadas `/admin/map`, `/coord/map`, `/apoyo/map` y `/field/map` respetan rol y entidad.
 - El mapa base de 20 países está embebido y funciona sin proveedor de teselas ni conexión.
 - Las capturas GPS, actividades, hogares y capas institucionales quedan disponibles en IndexedDB; la visualización ofrece puntos, agrupación adaptativa, calor y cobertura por polígonos.
+- El constructor incorpora campos de recorrido y área: capturan vértices GPS sin internet, conservan precisión/altitud/tiempo y, al sincronizar, generan geometrías PostGIS con longitud, perímetro y área.
 - Las respuestas se pueden clasificar por variables temáticas no sensibles; nombres, documentos, teléfonos, direcciones, firmas y fotos se excluyen del índice cartográfico.
 - Administración y coordinación disponen de `/admin/integrations/arcgis` y `/coord/integrations/arcgis`: verificación de servicios, importación pública, OAuth 2.0 de aplicación en servidor, lotes, reintentos, idempotencia, cancelación y trazabilidad por registro. Supabase conserva solo una referencia al secreto; el Client Secret real vive en las variables cifradas del servidor y nunca llega al navegador o al APK.
 - La importación elimina campos con nombres sensibles y conserva únicamente atributos escalares acotados. La publicación saliente usa una lista explícita de metadatos operativos no sensibles.
 - La descarga soporta GeoJSON, CSV WGS84, Shapefile ZIP, GeoPackage OGC 1.3 e informe territorial PDF.
-- La precisión visible y exportable se configura por entidad como exacta, aproximada (~100 m) o agregada (~1 km); el GPS original permanece protegido en Supabase.
+- La precisión visible y exportable, el umbral de supresión de grupos pequeños y la meta de capturas por zona se configuran por entidad; el GPS original permanece protegido en Supabase.
 
 La capa inicial de los 46 municipios de Bolívar proviene del servicio DIVIPOLA/MGN 2025 del DANE y se cachea para uso offline después del inicio de sesión.
 
@@ -68,7 +69,7 @@ Requiere JDK 17 o superior y Android SDK 35:
 npm run android:apk
 ```
 
-El APK instalable de pruebas queda en `android/app/build/outputs/apk/debug/app-debug.apk`; la copia entregable 2.5.0 se genera en `entregables/Control-G-2.5.0-LATAM-GIS-offline-debug.apk`. Para Play Store o distribución firmada se debe aportar el keystore institucional y configurar la firma de `release` fuera del repositorio.
+El APK instalable de pruebas queda en `android/app/build/outputs/apk/debug/app-debug.apk`; la copia entregable 2.6.0 se genera en `entregables/Control-G-2.6.0-LATAM-GIS-offline-debug.apk`. Para Play Store o distribución firmada se debe aportar el keystore institucional y configurar la firma de `release` fuera del repositorio.
 
 ## Cliente inicial: Gobernación de Bolívar
 
