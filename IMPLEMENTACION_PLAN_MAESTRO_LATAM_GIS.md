@@ -48,6 +48,7 @@ El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases qu
 - Diez plantillas reutilizables de caracterización con GPS, evidencia y consentimiento.
 - Asistente de calidad, checklist de privacidad, estimación offline y simulador funcional para formularios y versiones publicadas inmutables con SHA-256.
 - Motor común web/APK con lógica condicional en cascada, nueve operadores, validaciones offline, cálculos aritméticos seguros, ayudas visibles, archivos y eliminación de respuestas de ramas ocultas antes de sincronizar.
+- Documentos PDF en cola offline y Storage privado, con manifiesto `document`, resolución previa a la respuesta y apertura administrativa mediante URL firmada.
 - Flujo editorial gobernado: borrador separado de la versión vigente, revisión por una segunda persona, solicitud de cambios con concepto, aprobación, publicación atómica y detección de concurrencia por versión/revisión.
 - Asignación restringida a formularios publicados y archivado no destructivo que desactiva asignaciones pero conserva respuestas, auditoría y versiones históricas.
 - Aceptación editorial ejecutada en el Supabase remoto dentro de una transacción: borrador, revisión, aprobación, publicación v1, cuatro eventos, archivado y `ROLLBACK` sin datos temporales persistentes.
@@ -60,6 +61,7 @@ El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases qu
 - APK Android 2.13.0 con catálogo territorial versionado, GIS de campo, motor avanzado de formularios offline, flujo editorial gobernado, observabilidad, snapshots, retención, ArcGIS administrado, adjuntos fotográficos gobernados, GeoPackage y entrada nativa directa al login. Binario: `entregables/Control-G-2.13.0-LATAM-GIS-offline-debug.apk`.
 - Huella SHA-256 del APK 2.13.0: `304928648f6fc560f17c037d7ade09398d825d8cc3ea8fbd608dbab2eeeeb3a4`.
 - QA técnico aprobado: 56/56 pruebas automatizadas, lint, validación sintáctica ArcGIS, TypeScript/Vite/PWA, 269 tareas Gradle con pruebas unitarias y `assembleDebug`; auditoría de producción con 0 vulnerabilidades conocidas.
+- Producción 2.13.0 verificada después del despliegue: frontend HTTP 200 con HSTS y health Supabase `operational/ok`.
 - Auditoría del árbol de producción aprobada con 0 vulnerabilidades conocidas; React Router actualizado a 7.18.3 y dependencias transitivas corregidas sin regresiones de compilación.
 - Encabezados de seguridad publicados verificados y rutas privadas marcadas `noindex`; los endpoints de snapshots y trabajador ArcGIS rechazan acceso anónimo con `401`.
 - Prueba de carga local: 1.500 solicitudes, concurrencia máxima 40, 0 fallos y hasta 1.604 solicitudes/s en `/login`.

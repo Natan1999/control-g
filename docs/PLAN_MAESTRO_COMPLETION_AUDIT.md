@@ -39,7 +39,9 @@ El 83,35 % anterior trataba como completas varias fases con implementación parc
 - Validaciones offline de requerido, RegExp, mínimo/máximo, longitud, correo, teléfono, geometría y tamaño de archivo; el valor numérico cero y el booleano falso son respuestas válidas.
 - Cálculos aritméticos locales con referencias `{{campo}}`, precedencia y paréntesis, sin `eval` ni ejecución de código dinámico.
 - Propiedades de campo para ayuda visible, datos sensibles y justificación, límites, patrón/mensaje, archivo y condición; checklist de privacidad y estimación preventiva de almacenamiento por respuesta.
+- Los documentos PDF se conservan offline, se cargan antes que la respuesta al bucket privado de documentos, se registran como `document` en el manifiesto y el coordinador los abre mediante URL firmada.
 - Simulación móvil funcional aprobada a 390 × 844 px: errores obligatorios, aparición condicional, cálculo 5 × 4 = 20, navegación de dos páginas, envío local, cero desbordamiento horizontal y cero errores de consola.
+- Release 2.13.0 desplegada desde `main`: sonda final con frontend `200`, HSTS, health `operational`, base Supabase `ok` y 133 ms de latencia ascendente.
 
 - Migraciones remotas 001–011 aplicadas: fundamentos del Plan Maestro, mínimo privilegio, versiones inmutables, ArcGIS, geometrías de campo, snapshots, retención, catálogos territoriales versionados, gobierno de adjuntos, leases recuperables y flujo editorial de formularios.
 - La migración 011 separa el candidato de la versión publicada, impone un único cambio activo, revisión independiente, aprobación previa, control optimista, publicación atómica, eventos inmutables, RLS y archivado no destructivo. En producción se verificaron dos tablas, tres RPC, dos triggers, RLS activa, acceso autenticado a RPC y bloqueo de escritura directa/anónima.
