@@ -21,6 +21,7 @@ import { Sidebar } from '@/components/layout/Sidebar'
 // Private application screens are split from the public marketing bundle.
 const AdminDashboard = lazy(() => import('@/pages/admin/DashboardPage'))
 const AdminEntitiesPage = lazy(() => import('@/pages/admin/EntitiesPage'))
+const CountryCatalogPage = lazy(() => import('@/pages/admin/CountryCatalogPage'))
 const AdminSettingsPage = lazy(() => import('@/pages/admin/SettingsPage'))
 const AdminBlogPage = lazy(() => import('@/pages/admin/BlogManagerPage'))
 const AdminBlogEditorPage = lazy(() => import('@/pages/admin/BlogEditorPage'))
@@ -137,6 +138,7 @@ export default function App() {
             <Routes>
               <Route index element={<AdminDashboard />} />
               <Route path="entities" element={<AdminEntitiesPage />} />
+              <Route path="territories" element={<CountryCatalogPage />} />
               <Route path="forms" element={<FormsListPage />} />
               <Route path="forms/new" element={<FormBuilderPage />} />
               <Route path="forms/edit/:id" element={<FormBuilderPage />} />

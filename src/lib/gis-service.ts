@@ -4,6 +4,7 @@ import { localDB, type LocalGeoRecord, type LocalMapLayer } from '@/lib/dexie-db
 import { extractAnswerCoordinates, geoJsonCoordinates, normalizeColor, parseGeoJson, validLatitude, validLongitude } from '@/lib/geo'
 import { capturedGeometryFeature, geometryCaptureIsComplete } from '@/lib/geometry-capture'
 import { isOnline } from '@/lib/network'
+import { supabase } from '@/lib/supabase'
 import type { User } from '@/types'
 import type { CapturedGeometryValue, GeoDimensionValue, GeoJsonFeature, GeoJsonPosition, GeoRecord, MapDataset, MapLayer, SupportedGeoJson } from '@/types/gis'
 
@@ -189,6 +190,77 @@ function mapLayer(document: any): MapLayer {
     source: document.source || undefined,
     sourceUrl: document.source_url || undefined,
   }
+}
+
+async function loadJurisdictionDocuments(countryProfileId: string) {
+  const pageSize = 1_000
+  const maximum = 10_000
+  const documents: any[] = []
+  for (let start = 0; start < maximum; start += pageSize) {
+    const { data, error } = await supabase.from(COLLECTION_IDS.JURISDICTIONS)
+      .select('id,country_profile_id,parent_id,level,code,name,local_type,geometry,source_name,source_url,source_version,status,updated_at')
+      .eq('country_profile_id', countryProfileId)
+      .eq('status', 'active')
+      .not('geometry', 'is', null)
+      .order('level')
+      .order('code')
+      .range(start, start + pageSize - 1)
+    if (error) throw error
+    documents.push(...(data || []))
+    if ((data || []).length < pageSize) break
+  }
+  return documents
+}
+
+function jurisdictionLayers(documents: any[], entityId: string): MapLayer[] {
+  const byLevel = new Map<number, any[]>()
+  for (const document of documents) {
+    const level = Number(document.level)
+    if (!Number.isInteger(level)) continue
+    const group = byLevel.get(level) || []
+    group.push(document)
+    byLevel.set(level, group)
+  }
+  const deepestLevel = Math.max(-1, ...byLevel.keys())
+  const colors = ['#315D6B', '#3D7B9E', '#2F855A', '#B7791F', '#6B5B95', '#C05640', '#218380', '#8B6F47', '#475569']
+  return Array.from(byLevel.entries()).sort(([left], [right]) => left - right).flatMap(([level, group]) => {
+    const features = group.flatMap(document => {
+      try {
+        const geometry = parseGeoJson(document.geometry)
+        if (geometry.type !== 'Polygon' && geometry.type !== 'MultiPolygon') return []
+        return [{
+          type: 'Feature' as const,
+          geometry,
+          properties: {
+            jurisdiction_code: String(document.code),
+            jurisdiction_name: String(document.name),
+            administrative_level: level,
+            local_type: String(document.local_type),
+            source_version: document.source_version ? String(document.source_version) : null,
+          },
+        }]
+      } catch { return [] }
+    })
+    if (!features.length) return []
+    const first = group[0]
+    const updateTimes = group.map(item => String(item.updated_at || '')).sort()
+    return [{
+      id: `jurisdictions:${first.country_profile_id}:${level}`,
+      entityId,
+      name: `${String(first.local_type || 'Territorios')} · nivel ${level}`,
+      description: `${features.length.toLocaleString('es-CO')} divisiones oficiales versionadas para esta entidad.`,
+      layerType: 'polygons' as const,
+      geojson: { type: 'FeatureCollection' as const, features },
+      color: colors[level] || colors[0],
+      opacity: 0.1,
+      visibleDefault: level === deepestLevel,
+      status: 'active' as const,
+      updatedAt: updateTimes[updateTimes.length - 1] || new Date().toISOString(),
+      source: String(first.source_name || 'Catálogo territorial versionado'),
+      sourceUrl: first.source_url ? String(first.source_url) : undefined,
+      readOnly: true,
+    }]
+  })
 }
 
 function pointInBounds(record: GeoRecord, coordinates: GeoJsonPosition[]) {
@@ -419,6 +491,9 @@ export async function loadMapDataset(user: User): Promise<MapDataset> {
         : Promise.resolve(null),
     ])
 
+    const jurisdictionDocuments = entityResult?.country_profile_id && user.entityId
+      ? await loadJurisdictionDocuments(String(entityResult.country_profile_id))
+      : []
     const catalog = dimensionCatalog(formResult.documents)
     const rawRecords = [
       ...responseResult.documents.map((document: any) => mapRecord(document, 'response', 'Respuesta de formulario', catalog)),
@@ -436,6 +511,7 @@ export async function loadMapDataset(user: User): Promise<MapDataset> {
     const records = applySpatialPrivacy(rawRecords, privacyMode)
     const layers = [
       ...baseMapLayers(records, countryCode),
+      ...jurisdictionLayers(jurisdictionDocuments, user.entityId || 'system'),
       ...layerResult.documents.map(mapLayer),
       ...spatialFeatureLayers(spatialResult.documents, privacyMode),
     ]

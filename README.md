@@ -1,4 +1,4 @@
-# Control G 2.8 · LATAM + GIS
+# Control G 2.9 · LATAM + GIS
 
 Aplicación multi-entidad para caracterización y acompañamiento psicosocial en campo. La interfaz web y el APK de Capacitor funcionan sin conexión: familias, formularios, respuestas, fotografías y actividades se guardan localmente y se sincronizan de forma idempotente cuando regresa la señal.
 
@@ -11,7 +11,7 @@ Aplicación multi-entidad para caracterización y acompañamiento psicosocial en
 - Aislamiento por entidad mediante Row Level Security (RLS).
 - Identificadores locales únicos para evitar duplicados en reintentos de sincronización.
 - PostGIS, índices GiST, capas GeoJSON por entidad y mapa vectorial offline con puntos, recorridos, polígonos, grupos, calor y coropletas de cobertura.
-- Configuración regional para 20 países latinoamericanos.
+- Configuración regional para 20 países latinoamericanos y catálogos administrativos oficiales versionados.
 - Analítica reproducible con diccionario de indicadores y exportación PDF, DOCX, XLSX y CSV.
 - Gobierno de datos: consentimientos, manifiestos SHA-256, retención, accesos sensibles y MFA TOTP configurable.
 - Observabilidad con health check Supabase, límite y sanitización de errores, ADR y runbooks de recuperación.
@@ -19,10 +19,10 @@ Aplicación multi-entidad para caracterización y acompañamiento psicosocial en
 ## Configuración
 
 1. Copia `.env.example` a `.env.local` y configura únicamente `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` para la aplicación.
-2. Ejecuta, en orden, las migraciones de `supabase/migrations/` en la instancia de Supabase. Las migraciones `202608310001` a `202608310007` agregan PostGIS/GIS LATAM, gobierno de datos, evidencias con mínimo privilegio, versiones inmutables de formularios, la cola ArcGIS, geometrías de campo, snapshots reproducibles y retención auditable.
+2. Ejecuta, en orden, las migraciones de `supabase/migrations/` en la instancia de Supabase. Las migraciones `202608310001` a `202608310008` agregan PostGIS/GIS LATAM, gobierno de datos, evidencias con mínimo privilegio, versiones inmutables de formularios, la cola ArcGIS, geometrías de campo, snapshots reproducibles, retención auditable y catálogos territoriales versionados.
 3. La migración instala `admin_create_user`, una RPC `SECURITY DEFINER` que valida el JWT, el rol y la entidad antes de crear Auth + perfil en una sola transacción.
 4. Para crear o verificar las cuentas iniciales, define `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` y `CONTROL_G_INITIAL_PASSWORD`, y ejecuta `npm run backend:seed`.
-5. Para volver a cargar la capa oficial de municipios de Bolívar, ejecuta `npm run backend:seed:gis`. El proceso usa el archivo versionado en `supabase/seed/` y requiere la clave administrativa solo en el entorno local.
+5. Para volver a cargar la capa visual oficial de municipios de Bolívar, ejecuta `npm run backend:seed:gis`. Para publicar su catálogo PostGIS versionado y fijarlo a la entidad inicial, ejecuta `npm run backend:publish:bolivar-jurisdictions`. Ambos usan el archivo de `supabase/seed/` y requieren la clave administrativa solo en el entorno local.
 
 Las claves `service_role`, JWT, Postgres y Dashboard son exclusivamente administrativas: nunca deben usar el prefijo `VITE_`, guardarse en Git ni incluirse en el APK.
 
@@ -44,7 +44,7 @@ npm run build
 npm run backend:check
 ```
 
-La comprobación integral opcional (`npm run backend:verify`) inicia sesión, crea y elimina usuarios y datos temporales, y valida RLS, formularios, Storage, idempotencia y la cola ArcGIS. `npm run backend:verify:arcgis` prueba además la API publicada contra un Feature Service público, importa dos polígonos al mapa interno y limpia todo al terminar. Ambas requieren `SUPABASE_SERVICE_ROLE_KEY` solo en el entorno de ejecución.
+La comprobación integral opcional (`npm run backend:verify`) inicia sesión, crea y elimina usuarios y datos temporales, y valida RLS, formularios, Storage, idempotencia y la cola ArcGIS. `npm run backend:verify:arcgis` prueba además la API publicada contra un Feature Service público. `npm run backend:verify:jurisdictions` ensaya preview, publicación versionada, jerarquía y PostGIS dentro de una transacción que termina en rollback. Estas pruebas requieren credenciales administrativas solo en el entorno de ejecución.
 
 Una migración individual se puede aplicar por el canal administrativo de Supabase con `npm run backend:migrate:file -- supabase/migrations/ARCHIVO.sql`, proporcionando las variables administrativas indicadas por el script. No se registran secretos en el repositorio.
 
@@ -53,6 +53,8 @@ El primer inicio de sesión del dispositivo requiere conexión. Después, la ses
 ## Mapa territorial e interoperabilidad GIS
 
 - Las rutas privadas `/admin/map`, `/coord/map`, `/apoyo/map` y `/field/map` respetan rol y entidad.
+- El superadministrador selecciona una entidad antes de consultar el mapa; las capturas y políticas de clientes distintos nunca se mezclan en la vista.
+- `/admin/territories` importa GeoJSON Polygon/MultiPolygon, previsualiza, valida jerarquías, genera SHA-256 y publica una versión inmutable del catálogo oficial sin borrar la anterior.
 - El mapa base de 20 países está embebido y funciona sin proveedor de teselas ni conexión.
 - Las capturas GPS, actividades, hogares y capas institucionales quedan disponibles en IndexedDB; la visualización ofrece puntos, agrupación adaptativa, calor y cobertura por polígonos.
 - El constructor incorpora campos de recorrido y área: capturan vértices GPS sin internet, conservan precisión/altitud/tiempo y, al sincronizar, generan geometrías PostGIS con longitud, perímetro y área.
@@ -62,7 +64,7 @@ El primer inicio de sesión del dispositivo requiere conexión. Después, la ses
 - La descarga soporta GeoJSON, CSV WGS84, Shapefile ZIP, GeoPackage OGC 1.3 e informe territorial PDF.
 - La precisión visible y exportable, el umbral de supresión de grupos pequeños y la meta de capturas por zona se configuran por entidad; el GPS original permanece protegido en Supabase.
 
-La capa inicial de los 46 municipios de Bolívar proviene del servicio DIVIPOLA/MGN 2025 del DANE y se cachea para uso offline después del inicio de sesión.
+La capa inicial y el catálogo PostGIS de los 46 municipios de Bolívar provienen del servicio DIVIPOLA/MGN 2025 del DANE. La versión territorial está fijada a la entidad inicial y se cachea para uso offline después del inicio de sesión.
 
 ## Analítica y gobierno de datos
 
@@ -82,7 +84,7 @@ Requiere JDK 17 o superior y Android SDK 35:
 npm run android:apk
 ```
 
-El APK instalable de pruebas queda en `android/app/build/outputs/apk/debug/app-debug.apk`; la copia entregable 2.8.0 se genera en `entregables/Control-G-2.8.0-LATAM-GIS-offline-debug.apk`. Para Play Store o distribución firmada se debe aportar el keystore institucional y configurar la firma de `release` fuera del repositorio.
+El APK instalable de pruebas queda en `android/app/build/outputs/apk/debug/app-debug.apk`; la copia entregable 2.9.0 se genera en `entregables/Control-G-2.9.0-LATAM-GIS-offline-debug.apk`. Para Play Store o distribución firmada se debe aportar el keystore institucional y configurar la firma de `release` fuera del repositorio.
 
 ## Cliente inicial: Gobernación de Bolívar
 

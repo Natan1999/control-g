@@ -1,6 +1,10 @@
 #!/usr/bin/env node
+import { config } from 'dotenv'
 import { readFile, realpath } from 'node:fs/promises'
 import { resolve, relative, sep } from 'node:path'
+
+config({ path: '.env.local' })
+config()
 
 const [migrationPath] = process.argv.slice(2)
 const dashboardUrl = process.env.SUPABASE_DASHBOARD_URL || process.env.SUPABASE_URL

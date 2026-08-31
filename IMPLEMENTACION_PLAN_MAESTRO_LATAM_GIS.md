@@ -7,18 +7,18 @@ Este archivo es el registro técnico vivo de la implementación. El avance globa
 | Fase | Peso | Estado | Avance de fase | Aporte global |
 |---|---:|---|---:|---:|
 | 0. Auditoría y línea base | 5 % | Auditoría y ADR completos; ensayo restore en red privada pendiente | 95 % | 4,75 % |
-| 1. Núcleo multiempresa y multipaís | 10 % | Base funcional; importadores/pilotos pendientes | 70 % | 7 % |
+| 1. Núcleo multiempresa y multipaís | 10 % | Importador/versionador operativo y primer catálogo oficial; segundo piloto LATAM pendiente | 82 % | 8,20 % |
 | 2. Offline, GPS y sincronización | 15 % | Funcional; piloto físico multidía pendiente | 80 % | 12 % |
-| 3. PostGIS, mapa interno y capas | 15 % | Operativa con puntos, recorridos, polígonos, cobertura y privacidad parametrizable | 90 % | 13,50 % |
+| 3. PostGIS, mapa interno y capas | 15 % | Operativa con catálogos oficiales, alcance por entidad, puntos, recorridos, polígonos, cobertura y privacidad | 92 % | 13,80 % |
 | 4. ArcGIS e interoperabilidad | 10 % | Operación administrada y E2E pública; credencial institucional/adjuntos pendientes | 70 % | 7,00 % |
 | 5. Analítica y reportes | 12 % | Cortes reproducibles en servidor; datasets patrón/programación operativa pendientes | 85 % | 10,20 % |
 | 6. Formularios y plantillas | 8 % | Diez plantillas, calidad y versiones inmutables | 85 % | 6,80 % |
 | 7. Seguridad y privacidad | 10 % | Retención auditable y gobierno funcional; AAL2 RLS/restore pendientes | 80 % | 8,00 % |
 | 8. SEO LATAM | 6 % | Implementación avanzada | 85 % | 5,10 % |
-| 9. QA y piloto | 6 % | QA automatizado, seguridad, carga y accesibilidad base; pilotos físicos pendientes | 72 % | 4,32 % |
+| 9. QA y piloto | 6 % | QA automatizado, seguridad, carga, accesibilidad y prueba transaccional territorial; pilotos físicos pendientes | 74 % | 4,44 % |
 | 10. Lanzamiento, operación y documentación | 3 % | Health, recuperación y runbooks listos; activación de alertas/secretos/firma pendiente | 72 % | 2,16 % |
 
-**Avance global actual: 80,83 % ponderado.**
+**Avance global actual: 82,45 % ponderado.**
 
 El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases que todavía no satisfacían todos los criterios del documento fuente. La auditoría detallada está en `docs/PLAN_MAESTRO_COMPLETION_AUDIT.md`; la reducción es metodológica, no una pérdida de funciones.
 
@@ -29,6 +29,10 @@ El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases qu
 - Extracción automática de líneas y polígonos al sincronizar una respuesta, con tabla PostGIS gobernada, índice GiST, métricas operativas y RLS por entidad/profesional.
 - Políticas cartográficas por entidad para precisión, supresión de grupos pequeños y meta de capturas por zona; los polígonos de evidencia no se contabilizan como límites administrativos.
 - Mapa base de 20 países latinoamericanos embebido en la aplicación y disponible sin internet.
+- Importador GeoJSON gobernado para cualquier país: preview sin publicación, validación Polygon/MultiPolygon y jerarquía, límite 10.000/12 MiB, SHA-256, historial y confirmación exacta.
+- Versionado territorial transaccional: clona el catálogo vigente, conserva versiones retiradas, reconstruye padres, evita auditoría masiva por fila y permite fijar explícitamente las entidades a una versión.
+- Catálogo DANE 2025 de Bolívar publicado en Supabase con raíz departamental y 46 municipios PostGIS válidos; `gov-bolivar-2026` quedó fijada a esta versión.
+- Selector de entidad obligatorio para el mapa del superadministrador, evitando mezclar capturas, políticas y capas de diferentes clientes.
 - Caché IndexedDB de puntos y capas; precarga automática posterior al inicio de sesión.
 - Filtros por fuente, estado y variable temática no sensible de los formularios.
 - Importación de capas GeoJSON y ArcGIS REST Feature Service por entidad.
@@ -46,9 +50,9 @@ El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases qu
 - Retención con vista previa obligatoria, registro auditable y ejecución confirmada por superadmin; anonimización de respuestas y purga limitada a clases sin archivos externos.
 - Migraciones PostGIS/RLS aplicadas al Supabase remoto y verificadas: PostGIS 3.3.7, geometrías de punto/línea/polígono, índices GiST, configuración regional y aislamiento por entidad.
 - Capa oficial DANE 2025 de los 46 municipios de Bolívar precargada en la entidad inicial.
-- APK Android 2.8.0 compilada con GIS de campo, observabilidad, snapshots, retención, ArcGIS administrado, GeoPackage y entrada nativa directa al login. Binario de pruebas: `entregables/Control-G-2.8.0-LATAM-GIS-offline-debug.apk`.
-- Huella SHA-256 del APK: `b8a92ef4dceb7897ed2914dba163ad635e6897c772cf5080e284febe4399aefd`.
-- QA técnico aprobado: 32/32 pruebas automatizadas, lint, build web/PWA, pruebas unitarias Android y 269 tareas Gradle con `assembleDebug`.
+- APK Android 2.9.0 compilada con catálogo territorial versionado, GIS de campo, observabilidad, snapshots, retención, ArcGIS administrado, GeoPackage y entrada nativa directa al login. Binario de pruebas: `entregables/Control-G-2.9.0-LATAM-GIS-offline-debug.apk`.
+- Huella SHA-256 del APK: `23d1b229420f6040f297261aab371159be35dc822f180de440ac6e8cfe6f8eb4`.
+- QA técnico aprobado: 33/33 pruebas automatizadas, lint, build web/PWA, prueba transaccional PostGIS con rollback, pruebas unitarias Android y 269 tareas Gradle con `assembleDebug`.
 - Auditoría del árbol de producción aprobada con 0 vulnerabilidades conocidas; React Router actualizado a 7.18.3 y dependencias transitivas corregidas sin regresiones de compilación.
 - Encabezados de seguridad publicados verificados y rutas privadas marcadas `noindex`; el endpoint de snapshots rechaza acceso anónimo con `401`.
 - Prueba de carga local: 1.500 solicitudes, concurrencia máxima 40, 0 fallos y hasta 1.604 solicitudes/s en `/login`.

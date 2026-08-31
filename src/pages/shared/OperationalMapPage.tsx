@@ -23,9 +23,11 @@ import { GisInteroperabilityDialog } from '@/components/gis/GisInteroperabilityD
 import { BottomNav, MobileTopBar } from '@/components/layout/BottomNav'
 import { TopBar } from '@/components/layout/Sidebar'
 import { createMapLayer, loadMapDataset } from '@/lib/gis-service'
+import { COLLECTION_IDS, DATABASE_ID, databases, Query } from '@/lib/backend'
 import { parseGeoJson } from '@/lib/geo'
 import { calculateCoverageSummary } from '@/lib/coverage'
 import { useAuthStore } from '@/stores/authStore'
+import type { User } from '@/types'
 import type { GeoRecord, MapDataset } from '@/types/gis'
 
 const EMPTY_DATASET: MapDataset = {
@@ -75,24 +77,46 @@ function MapContent() {
   const [currentPosition, setCurrentPosition] = useState<GeoRecord | null>(null)
   const [dimensionKey, setDimensionKey] = useState('')
   const [showInteroperability, setShowInteroperability] = useState(false)
+  const [entities, setEntities] = useState<any[]>([])
+  const [selectedEntityId, setSelectedEntityId] = useState(() => user?.entityId || (typeof localStorage === 'undefined' ? '' : localStorage.getItem('cg_admin_map_entity') || ''))
+  const scopedUser = useMemo<User | null>(() => {
+    if (!user) return null
+    if (user.role !== 'admin') return user
+    return selectedEntityId ? { ...user, entityId: selectedEntityId } : null
+  }, [selectedEntityId, user])
+
+  useEffect(() => {
+    if (!user || user.role !== 'admin') return
+    void databases.listDocuments(DATABASE_ID, COLLECTION_IDS.ENTITIES, [
+      Query.equal('status', 'active'), Query.orderAsc('name'), Query.limit(500),
+    ]).then(result => {
+      setEntities(result.documents)
+      if (!result.documents.some((entity: any) => entity.$id === selectedEntityId)) {
+        const next = result.documents[0]?.$id || ''
+        setSelectedEntityId(next)
+        if (next) localStorage.setItem('cg_admin_map_entity', next)
+      }
+    }).catch(() => setError('No fue posible cargar las entidades disponibles para el mapa.'))
+  }, [selectedEntityId, user])
 
   const load = useCallback(async () => {
-    if (!user) return
+    if (!scopedUser) {
+      setLoading(false)
+      return
+    }
     setLoading(true)
     setError('')
     try {
-      const result = await loadMapDataset(user)
+      const result = await loadMapDataset(scopedUser)
       setDataset(result)
-      setVisibleLayers(current => current.size
-        ? current
-        : new Set(result.layers.filter(layer => layer.visibleDefault).map(layer => layer.id)))
+      setVisibleLayers(new Set(result.layers.filter(layer => layer.visibleDefault).map(layer => layer.id)))
     } catch (loadError) {
       console.error('Error loading internal map:', loadError)
       setError('No fue posible cargar el mapa ni existe una copia local disponible en este dispositivo.')
     } finally {
       setLoading(false)
     }
-  }, [user])
+  }, [scopedUser])
 
   useEffect(() => { void load() }, [load])
 
@@ -138,14 +162,14 @@ function MapContent() {
     }))
   }, [dimensionKey, filteredRecords])
   const pendingCount = dataset.records.filter(record => record.isPending).length
-  const institutionalLayerCount = dataset.layers.filter(layer => !layer.readOnly).length
+  const institutionalLayerCount = dataset.layers.filter(layer => !layer.id.startsWith('base:')).length
   const coverage = useMemo(() => calculateCoverageSummary(
     filteredRecords,
     filteredLayers,
     dataset.spatialPolicy.minimumGroupSize,
     dataset.spatialPolicy.coverageTarget,
   ), [dataset.spatialPolicy.coverageTarget, dataset.spatialPolicy.minimumGroupSize, filteredLayers, filteredRecords])
-  const canCreateLayer = Boolean(user?.entityId && (user.role === 'admin' || user.role === 'coordinator'))
+  const canCreateLayer = Boolean(scopedUser?.entityId && (scopedUser.role === 'admin' || scopedUser.role === 'coordinator'))
 
   function toggleLayer(layerId: string) {
     setVisibleLayers(current => {
@@ -157,14 +181,14 @@ function MapContent() {
   }
 
   async function locateDevice() {
-    if (!user) return
+    if (!scopedUser) return
     setError('')
     try {
       const position = await Geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 12_000 })
       const record: GeoRecord = {
         id: 'device-current-position',
-        entityId: user.entityId || 'device',
-        professionalId: user.id,
+        entityId: scopedUser.entityId || 'device',
+        professionalId: scopedUser.id,
         source: 'local',
         status: 'ubicación actual',
         latitude: position.coords.latitude,
@@ -185,7 +209,7 @@ function MapContent() {
 
   async function saveLayer(event: React.FormEvent) {
     event.preventDefault()
-    if (!user || !layerFile || !layerName.trim()) return
+    if (!scopedUser || !layerFile || !layerName.trim()) return
     if (layerFile.size > 6 * 1024 * 1024) {
       setError('La capa supera 6 MB. Simplifica el GeoJSON antes de cargarlo.')
       return
@@ -194,7 +218,7 @@ function MapContent() {
     setError('')
     try {
       const geojson = parseGeoJson(await layerFile.text())
-      await createMapLayer(user, { name: layerName, color: layerColor, geojson })
+      await createMapLayer(scopedUser, { name: layerName, color: layerColor, geojson })
       setShowLayerForm(false)
       setLayerName('')
       setLayerFile(null)
@@ -210,6 +234,23 @@ function MapContent() {
   return (
     <div className="mx-auto max-w-[1500px] space-y-4 p-4 sm:p-6 lg:p-8">
       <h1 className="sr-only">Mapa territorial operativo de Control G</h1>
+      {user?.role === 'admin' && (
+        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex sm:items-end sm:justify-between sm:gap-5">
+          <div><h2 className="font-black text-[#1B3A4B]">Alcance multiempresa</h2><p className="mt-1 text-sm leading-6 text-slate-500">Selecciona una entidad para evitar mezclar capturas, políticas y catálogos territoriales entre clientes.</p></div>
+          <label className="mt-3 block min-w-0 text-xs font-black uppercase tracking-wide text-slate-500 sm:mt-0 sm:w-96">Entidad visible
+            <select value={selectedEntityId} onChange={event => {
+              const next = event.target.value
+              setSelectedEntityId(next)
+              localStorage.setItem('cg_admin_map_entity', next)
+              setSelected(null)
+              setCurrentPosition(null)
+            }} className="mt-1 min-h-12 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-bold normal-case tracking-normal text-slate-900">
+              {!entities.length && <option value="">No hay entidades activas</option>}
+              {entities.map((entity: any) => <option key={entity.$id} value={entity.$id}>{entity.name} · {entity.country_code || 'CO'}</option>)}
+            </select>
+          </label>
+        </section>
+      )}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
           { label: 'Puntos con GPS', value: dataset.records.length, icon: MapPinned, color: '#1B3A4B' },
@@ -400,9 +441,9 @@ function MapContent() {
         </div>
       )}
 
-      {showInteroperability && user && (
+      {showInteroperability && scopedUser && (
         <GisInteroperabilityDialog
-          user={user}
+          user={scopedUser}
           records={filteredRecords.filter(record => record.id !== 'device-current-position')}
           layers={filteredLayers}
           onClose={() => setShowInteroperability(false)}

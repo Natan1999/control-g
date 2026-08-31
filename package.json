@@ -1,7 +1,7 @@
 {
   "name": "control-g",
   "private": true,
-  "version": "2.8.0",
+  "version": "2.9.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,6 +15,8 @@
     "backend:migrate:file": "node scripts/apply-supabase-migration.mjs",
     "backend:seed": "node scripts/seed-supabase.mjs",
     "backend:seed:gis": "node scripts/seed-gis-layer.mjs",
+    "backend:verify:jurisdictions": "node scripts/verify-jurisdiction-catalog.mjs",
+    "backend:publish:bolivar-jurisdictions": "node scripts/publish-bolivar-jurisdictions.mjs",
     "health:check": "node scripts/check-health.mjs",
     "db:backup": "node scripts/db-backup-restore.mjs backup",
     "db:backup:verify": "node scripts/db-backup-restore.mjs verify",

@@ -1,4 +1,4 @@
-const RELEASE = process.env.CONTROL_G_VERSION || '2.8.0'
+const RELEASE = process.env.CONTROL_G_VERSION || '2.9.0'
 const TIMEOUT_MS = 7_000
 
 function setHeaders(res) {

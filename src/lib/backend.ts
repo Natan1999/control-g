@@ -21,6 +21,7 @@ export const COLLECTION_IDS = {
   SPATIAL_FEATURES:         'spatial_features',
   COUNTRY_PROFILES:         'country_profiles',
   JURISDICTIONS:            'jurisdictions',
+  JURISDICTION_IMPORT_RUNS: 'jurisdiction_import_runs',
   EVIDENCE_FILES:           'evidence_files',
   INDICATOR_DEFINITIONS:    'indicator_definitions',
   INDICATOR_SNAPSHOTS:      'indicator_snapshots',

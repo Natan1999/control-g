@@ -8,6 +8,7 @@ import {
   AlertCircle, Menu, X, Newspaper, Map,
   ShieldCheck,
   CloudCog,
+  Globe2,
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { SyncIndicator } from '@/components/shared'
@@ -24,6 +25,7 @@ const navItems: Record<UserRole, NavItem[]> = {
   admin: [
     { path: '/admin',          label: 'Dashboard',     icon: <LayoutDashboard size={18} /> },
     { path: '/admin/entities', label: 'Entidades',     icon: <Building2 size={18} /> },
+    { path: '/admin/territories', label: 'Catálogos territoriales', icon: <Globe2 size={18} /> },
     { path: '/admin/forms',    label: 'Formularios',   icon: <ClipboardList size={18} /> },
     { path: '/admin/responses', label: 'Respuestas',   icon: <ClipboardList size={18} /> },
     { path: '/admin/map',       label: 'Mapa territorial', icon: <Map size={18} /> },
