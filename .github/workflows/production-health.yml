@@ -21,7 +21,6 @@ jobs:
     timeout-minutes: 5
     env:
       CONTROL_G_BASE_URL: https://www.controlg.co
-      HEALTH_RESULT_PATH: ${{ runner.temp }}/control-g-health.json
     steps:
       - name: Checkout monitored release
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -34,6 +33,8 @@ jobs:
       - name: Probe frontend and health API
         id: production_probe
         continue-on-error: true
+        env:
+          HEALTH_RESULT_PATH: ${{ runner.temp }}/control-g-health.json
         run: node scripts/probe-production.mjs --output "$HEALTH_RESULT_PATH"
 
       - name: Open or resolve deduplicated incident
@@ -41,6 +42,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           PROBE_OUTCOME: ${{ steps.production_probe.outcome }}
+          HEALTH_RESULT_PATH: ${{ runner.temp }}/control-g-health.json
         run: node scripts/manage-uptime-incident.mjs
 
       - name: Fail unhealthy execution
