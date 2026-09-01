@@ -23,7 +23,7 @@ El porcentaje es ponderado con los pesos del Plan Maestro. Una fase solo recibe 
 | 6. Formularios y plantillas | 8 % | 100 % | 8,00 % | Motor offline compartido, matriz, moneda, audio/PDF, lógica, cálculos, traducciones regionales administrables, perfiles de validación para 20 países, privacidad, simulación, plantillas, flujo editorial y asignación avanzada | — |
 | 7. Seguridad y privacidad | 10 % | 83 % | 8,30 % | RLS, evidencia mínima, auditoría, recuperación de contraseña con enlace único, reautenticación, política robusta, consentimientos, MFA y retención auditable | Activar AAL2 RLS, purga Storage coordinada, backup-restauración y revisión externa |
 | 8. SEO LATAM | 6 % | 92 % | 5,52 % | Páginas por intención, cluster estático para 20 países, contenido portugués Brasil, 15 artículos, sitemap, canonical, datos estructurados, CMS y WhatsApp | Medición continua Search Console y calendario editorial sostenido |
-| 9. QA y piloto | 6 % | 81 % | 4,86 % | 75 pruebas, build/lint, E2E Supabase, dataset patrón, resistencia IndexedDB, seguridad, recuperación, carga, permisos Android y QA móvil funcional | Dispositivos Android físicos, auditoría WCAG/pentest externo y piloto ArcGIS institucional |
+| 9. QA y piloto | 6 % | 81 % | 4,86 % | 76 pruebas, build/lint, E2E Supabase, dataset patrón, resistencia IndexedDB, seguridad, recuperación, carga, permisos Android y QA móvil funcional | Dispositivos Android físicos, auditoría WCAG/pentest externo y piloto ArcGIS institucional |
 | 10. Lanzamiento y operación | 3 % | 80 % | 2,40 % | Main/Vercel, health Supabase, sonda GitHub cada 5 minutos, incidentes automáticos, error boundary, backup/restore, runbooks, cron protegido y APK debug | Segunda región de monitoreo, secretos del cron, ensayo restore, APK release firmada, formación y mesa de ayuda operativa |
 
 **Avance global auditado: 87,69 %.**
@@ -37,6 +37,7 @@ El 83,35 % anterior trataba como completas varias fases con implementación parc
 - Recuperación autoservicio desde el login mediante enlace de uso único de Supabase, pantalla separada para establecer la nueva clave y mensaje uniforme que no revela si un correo existe.
 - Cambio de contraseña protegido por reautenticación real con la clave vigente; la misma política de 12 caracteres, mayúscula, minúscula, número y símbolo cubre administración, coordinación y campo.
 - QA móvil de las rutas `/recuperar-contrasena` y `/restablecer-contrasena`: formulario accesible, enlace vencido bloqueado, un único `main` y cero desbordamiento horizontal.
+- Producción 2.16.0 aceptada: health `operational`, Supabase `ok`, ruta de restablecimiento HTTP 200 y encabezados `no-store`/`noindex`. El correo de recuperación fue rechazado por falta de SMTP en la instancia autohospedada, por lo que queda disponible un procedimiento de emergencia que valida el superadmin y copia la clave temporal solo al portapapeles.
 
 - El mapa calcula en el dispositivo rutas de hasta 100 visitas mediante vecino más cercano y mejora 2-opt, conserva la operación sin red, enumera paradas y declara explícitamente que la distancia geodésica no reemplaza navegación vial.
 - El importador de capas inspecciona WGS84, mínimos de vértices, cierre, duplicados, autointersección y huecos fuera del anillo exterior antes de habilitar la publicación.
@@ -60,7 +61,7 @@ El 83,35 % anterior trataba como completas varias fases con implementación parc
 - Propiedades de campo para ayuda visible, datos sensibles y justificación, límites, patrón/mensaje, archivo y condición; checklist de privacidad y estimación preventiva de almacenamiento por respuesta.
 - Los documentos PDF se conservan offline, se cargan antes que la respuesta al bucket privado de documentos, se registran como `document` en el manifiesto y el coordinador los abre mediante URL firmada.
 - Simulación móvil funcional aprobada a 390 × 844 px: errores obligatorios, aparición condicional, cálculo 5 × 4 = 20, navegación de dos páginas, envío local, cero desbordamiento horizontal y cero errores de consola.
-- Release candidata 2.16.0 compilada para web/PWA y Android; la aceptación productiva se registra después de publicar `main`.
+- Release 2.16.0 compilada para web/PWA y Android, publicada en `main` y aceptada en producción.
 
 - Migraciones remotas 001–012 aplicadas: fundamentos del Plan Maestro, mínimo privilegio, versiones inmutables, ArcGIS, geometrías de campo, snapshots, retención, catálogos territoriales versionados, gobierno de adjuntos, leases recuperables, flujo editorial, asignaciones avanzadas y audio privado.
 - La migración 011 separa el candidato de la versión publicada, impone un único cambio activo, revisión independiente, aprobación previa, control optimista, publicación atómica, eventos inmutables, RLS y archivado no destructivo. En producción se verificaron dos tablas, tres RPC, dos triggers, RLS activa, acceso autenticado a RPC y bloqueo de escritura directa/anónima.
@@ -77,7 +78,7 @@ El 83,35 % anterior trataba como completas varias fases con implementación parc
 - GeoPackage validado como SQLite OGC 1.3 (`application_id` GPKG, `user_version` 10300, WGS84/EPSG:4326, geometría Point e integridad `ok`).
 - Mapa GIS revisado visualmente en escritorio y 390 × 844 px con coropleta protegida, polígonos de evidencia separados de límites, controles de 48 px y sin desbordamiento horizontal.
 - Analítica revisada visualmente en escritorio y móvil; traducciones, supresión de grupos pequeños y exportaciones estructurales verificadas.
-- Suite local aprobada: 75/75 pruebas, lint, TypeScript/Vite/PWA y 269 tareas Gradle con pruebas unitarias y compilación Android sin fallos.
+- Suite local aprobada: 76/76 pruebas, lint, TypeScript/Vite/PWA y 269 tareas Gradle con pruebas unitarias y compilación Android sin fallos.
 - Dependencias de producción auditadas con `npm audit --omit=dev`: 0 vulnerabilidades conocidas después de actualizar React Router a 7.18.3 y corregir el árbol transitivo compatible.
 - Encabezados publicados comprobados: HSTS, CSP, `X-Content-Type-Options`, `X-Frame-Options`, Referrer Policy, Permissions Policy y `X-Robots-Tag` en rutas privadas; el cron anónimo responde `401`.
 - Carga local aprobada con ApacheBench: 1.000 solicitudes a `/` con concurrencia 40 y 500 a `/login` con concurrencia 25, 0 fallos; 1.295 y 1.604 solicitudes/s respectivamente.

@@ -27,6 +27,8 @@ Aplicación multi-entidad para caracterización y acompañamiento psicosocial en
 4. Para crear o verificar las cuentas iniciales, define `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` y `CONTROL_G_INITIAL_PASSWORD`, y ejecuta `npm run backend:seed`.
 5. Para volver a cargar la capa visual oficial de municipios de Bolívar, ejecuta `npm run backend:seed:gis`. Para publicar su catálogo PostGIS versionado y fijarlo a la entidad inicial, ejecuta `npm run backend:publish:bolivar-jurisdictions`. Ambos usan el archivo de `supabase/seed/` y requieren la clave administrativa solo en el entorno local.
 
+Si el correo transaccional de Supabase no está disponible, el propietario puede recuperar exclusivamente el superadministrador global con `npm run admin:recover`, después de exportar `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` en una terminal segura. El procedimiento comprueba rol y entidad, genera una clave temporal aleatoria y la copia al portapapeles de macOS sin imprimirla ni escribirla en archivos.
+
 Las claves `service_role`, JWT, Postgres y Dashboard son exclusivamente administrativas: nunca deben usar el prefijo `VITE_`, guardarse en Git ni incluirse en el APK.
 
 ## Operación, salud y recuperación

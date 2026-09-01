@@ -15,7 +15,7 @@ Este archivo es el registro técnico vivo de la implementación. El avance globa
 | 6. Formularios y plantillas | 8 % | Completa: motor offline, traducciones regionales, validaciones de 20 países, matriz/moneda/audio, asignación, simulación, privacidad, plantillas y publicación inmutable | 100 % | 8,00 % |
 | 7. Seguridad y privacidad | 10 % | Recuperación segura, reautenticación, retención auditable y gobierno funcional; AAL2 RLS/restore pendientes | 83 % | 8,30 % |
 | 8. SEO LATAM | 6 % | Cluster estático para 20 países, Brasil en portugués, blog, CMS, sitemap y embudos; medición sostenida pendiente | 92 % | 5,52 % |
-| 9. QA y piloto | 6 % | 75 pruebas, seguridad, recuperación, carga, resistencia IndexedDB, dataset patrón, permisos Android y QA funcional; pilotos físicos pendientes | 81 % | 4,86 % |
+| 9. QA y piloto | 6 % | 76 pruebas, seguridad, recuperación, carga, resistencia IndexedDB, dataset patrón, permisos Android y QA funcional; pilotos físicos pendientes | 81 % | 4,86 % |
 | 10. Lanzamiento, operación y documentación | 3 % | Health, sonda externa e incidentes automáticos activos; segunda región/secretos/firma pendientes | 80 % | 2,40 % |
 
 **Avance global actual: 87,69 % ponderado.**
@@ -66,8 +66,8 @@ El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases qu
 - Capa oficial DANE 2025 de los 46 municipios de Bolívar precargada en la entidad inicial.
 - APK Android 2.16.0 con recuperación de acceso, rutas offline, topología, localización LATAM, catálogo territorial, GIS de campo, matriz/moneda/audio, asignación, gobierno editorial, observabilidad, snapshots, retención, ArcGIS y entrada nativa directa al login. Binario: `entregables/Control-G-2.16.0-LATAM-GIS-offline-debug.apk`.
 - Huella SHA-256 del APK 2.16.0: `a042107e28ceea131a34c4b55a4d12ef66cfb026cb296f56e711c081b498a3b3`.
-- QA técnico aprobado: 75/75 pruebas automatizadas, lint, TypeScript/Vite/PWA, recuperación de acceso, resistencia IndexedDB y dataset patrón, 269 tareas Gradle con pruebas unitarias y `assembleDebug`; auditoría de producción con 0 vulnerabilidades conocidas.
-- Producción 2.14.0 verificada después del despliegue: frontend HTTP 200 con HSTS y health Supabase `operational/ok`.
+- QA técnico aprobado: 76/76 pruebas automatizadas, lint, TypeScript/Vite/PWA, recuperación de acceso, resistencia IndexedDB y dataset patrón, 269 tareas Gradle con pruebas unitarias y `assembleDebug`; auditoría de producción con 0 vulnerabilidades conocidas.
+- Producción 2.16.0 verificada después del despliegue: frontend y ruta segura de recuperación HTTP 200 con HSTS, `no-store`/`noindex` y health Supabase `operational/ok`.
 - Auditoría del árbol de producción aprobada con 0 vulnerabilidades conocidas; React Router actualizado a 7.18.3 y dependencias transitivas corregidas sin regresiones de compilación.
 - Encabezados de seguridad publicados verificados y rutas privadas marcadas `noindex`; los endpoints de snapshots y trabajador ArcGIS rechazan acceso anónimo con `401`.
 - Prueba de carga local: 1.500 solicitudes, concurrencia máxima 40, 0 fallos y hasta 1.604 solicitudes/s en `/login`.

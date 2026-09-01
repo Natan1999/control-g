@@ -52,3 +52,18 @@ test('el login y las rutas públicas ofrecen recuperación completa por Supabase
   assert.match(vercel, /"source": "\/recuperar-contrasena"[\s\S]*?"X-Robots-Tag"[\s\S]*?"noindex/)
   assert.match(vercel, /"source": "\/restablecer-contrasena"[\s\S]*?"Cache-Control"[\s\S]*?"no-store/)
 })
+
+test('la recuperación operativa del superadministrador no imprime ni persiste la clave temporal', async () => {
+  const [script, pkg] = await Promise.all([
+    readFile('scripts/reset-superadmin-password.mjs', 'utf8'),
+    readFile('package.json', 'utf8'),
+  ])
+  assert.match(pkg, /"admin:recover": "node scripts\/reset-superadmin-password\.mjs"/)
+  assert.match(script, /SUPABASE_SERVICE_ROLE_KEY/)
+  assert.match(script, /profile\.role !== 'admin'/)
+  assert.match(script, /profile\.entity_id !== null/)
+  assert.match(script, /auth\.admin\.updateUserById/)
+  assert.match(script, /spawnSync\('pbcopy'/)
+  assert.doesNotMatch(script, /console\.log\([^\n]*temporaryPassword/)
+  assert.doesNotMatch(script, /writeFile/)
+})

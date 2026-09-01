@@ -15,6 +15,7 @@
     "backend:migrate:file": "node scripts/apply-supabase-migration.mjs",
     "backend:seed": "node scripts/seed-supabase.mjs",
     "backend:seed:gis": "node scripts/seed-gis-layer.mjs",
+    "admin:recover": "node scripts/reset-superadmin-password.mjs",
     "backend:verify:jurisdictions": "node scripts/verify-jurisdiction-catalog.mjs",
     "backend:publish:bolivar-jurisdictions": "node scripts/publish-bolivar-jurisdictions.mjs",
     "health:check": "node scripts/check-health.mjs",
