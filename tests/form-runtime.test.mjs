@@ -106,6 +106,36 @@ test('el audio se contabiliza como evidencia offline', () => {
   assert.ok(estimate.estimatedSubmissionBytes >= 8_000_000)
 })
 
+test('los perfiles nacionales validan documentos, teléfonos y códigos postales sin red', () => {
+  assert.equal(runtime.validateLatamProfile('national_id', '1.234.567.890', 'CO'), null)
+  assert.match(runtime.validateLatamProfile('national_id', 'ABC', 'CO'), /documento/i)
+  assert.equal(runtime.validateLatamProfile('national_id', 'ABCD900101HDFRRS09', 'MX'), null)
+  assert.equal(runtime.validateLatamProfile('phone_latam', '+57 300 901 0300', 'CO'), null)
+  assert.equal(runtime.validateLatamProfile('postal_code', '130001', 'CO'), null)
+  assert.match(runtime.validateLatamProfile('postal_code', '13', 'CO'), /postal/i)
+  assert.equal(runtime.validateFieldValue(field('cedula', 'text', { validationProfile: 'national_id', validationCountryCode: 'CO' }), 'ABC'), 'El documento no cumple el formato de CO')
+})
+
+test('las traducciones cambian contenido visible sin alterar IDs ni valores almacenados', () => {
+  const pages = [{
+    id: 'p1',
+    title: 'Datos del hogar',
+    translations: { 'pt-BR': { title: 'Dados da família' } },
+    fields: [{
+      ...field('agua', 'radio'),
+      label: '¿Tiene agua?',
+      options: [{ label: 'Sí', value: 'si' }, { label: 'No', value: 'no' }],
+      translations: { 'pt-BR': { label: 'Tem água?', options: { si: 'Sim', no: 'Não' } } },
+    }],
+  }]
+  const localized = runtime.localizeFormPages(pages, 'pt-BR')
+  assert.equal(localized[0].title, 'Dados da família')
+  assert.equal(localized[0].fields[0].label, 'Tem água?')
+  assert.deepEqual(localized[0].fields[0].options.map(option => option.value), ['si', 'no'])
+  assert.deepEqual(runtime.availableFormLocales(pages), ['pt-BR'])
+  assert.equal(runtime.localizeFormPages(pages, 'es-CO')[0].title, 'Datos del hogar')
+})
+
 test('el constructor y el capturador comparten el mismo renderizador real', async () => {
   const [builder, renderer, responder, sync, inbox] = await Promise.all([
     readFile('src/pages/coordinator/FormBuilderPage.tsx', 'utf8'),
@@ -118,6 +148,8 @@ test('el constructor y el capturador comparten el mismo renderizador real', asyn
   assert.match(builder, /mode="simulation"/)
   assert.match(builder, /buildFormPrivacyChecklist/)
   assert.match(builder, /estimateFormOfflineFootprint/)
+  assert.match(builder, /Traducciones de campo/)
+  assert.match(builder, /Perfil de validación LATAM/)
   assert.match(renderer, /sanitizeVisibleAnswers/)
   assert.match(renderer, /mode === 'simulation'/)
   assert.match(responder, /isDocument \? BUCKET_IDS\.EXPORTS/)

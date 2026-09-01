@@ -1,18 +1,19 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, CheckCircle2, ChevronRight, FileCheck2, MapPin, ShieldCheck, WifiOff } from 'lucide-react'
 import { LeadFunnel } from '@/components/marketing/LeadFunnel'
 import { StickyWhatsApp, WhatsAppCta } from '@/components/marketing/WhatsAppCta'
 import { PublicHeader } from '@/components/marketing/PublicHeader'
 import { PublicFooter } from '@/components/marketing/PublicFooter'
-import { getSeoPage, SEO_PAGES } from '@/lib/marketing'
+import { CORE_SEO_PAGES, COUNTRY_SEO_PAGES, getSeoPage } from '@/lib/marketing'
 
 const ICONS = [WifiOff, FileCheck2, MapPin, ShieldCheck, CheckCircle2, ChevronRight]
 
-export default function SolutionPage({ path }: { path: string }) {
-  const page = getSeoPage(path)
+export default function SolutionPage({ path }: { path?: string }) {
+  const location = useLocation()
+  const page = getSeoPage(path || location.pathname)
   if (!page) return null
 
-  const relatedPages = SEO_PAGES.filter(item => item.path !== '/' && item.path !== page.path)
+  const relatedPages = CORE_SEO_PAGES.filter(item => item.path !== '/' && item.path !== page.path)
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
@@ -131,6 +132,22 @@ export default function SolutionPage({ path }: { path: string }) {
             </div>
           </div>
         </section>
+
+        {(page.path === '/encuestas-offline' || page.countryCode) && (
+          <section className="border-t border-slate-100 bg-slate-50 px-5 py-16" aria-labelledby="countries-title">
+            <div className="mx-auto max-w-6xl">
+              <h2 id="countries-title" className="text-2xl font-black text-slate-900">Control G para operaciones en Latinoamérica</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Consulte la configuración territorial y el enfoque de encuestas offline para cada país.</p>
+              <nav className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5" aria-label="Soluciones por país">
+                {COUNTRY_SEO_PAGES.map(countryPage => (
+                  <Link key={countryPage.path} to={countryPage.path} className={`min-h-11 border px-3 py-3 text-sm font-bold transition ${countryPage.path === page.path ? 'border-[#1B3A4B] bg-[#1B3A4B] text-white' : 'border-slate-200 bg-white text-slate-700 hover:border-[#3D7B9E]'}`}>
+                    {countryPage.heading.replace(/^Encuestas y caracterización offline en |^Pesquisas e caracterização offline no /, '')}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+          </section>
+        )}
       </main>
 
       <PublicFooter />

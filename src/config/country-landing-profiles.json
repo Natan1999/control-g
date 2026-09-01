@@ -1,0 +1,22 @@
+[
+  { "code": "AR", "name": "Argentina", "slug": "argentina", "locale": "es-AR", "admin1": "provincias", "admin2": "municipios y departamentos", "institutions": "provincias, municipios y organismos públicos" },
+  { "code": "BO", "name": "Bolivia", "slug": "bolivia", "locale": "es-BO", "admin1": "departamentos", "admin2": "municipios", "institutions": "gobiernos departamentales y municipales" },
+  { "code": "BR", "name": "Brasil", "slug": "brasil", "locale": "pt-BR", "admin1": "estados", "admin2": "municípios", "institutions": "estados, municípios e organizações públicas" },
+  { "code": "CL", "name": "Chile", "slug": "chile", "locale": "es-CL", "admin1": "regiones", "admin2": "comunas", "institutions": "gobiernos regionales, municipalidades y servicios públicos" },
+  { "code": "CO", "name": "Colombia", "slug": "colombia", "locale": "es-CO", "admin1": "departamentos", "admin2": "municipios", "institutions": "gobernaciones, alcaldías y entidades públicas" },
+  { "code": "CR", "name": "Costa Rica", "slug": "costa-rica", "locale": "es-CR", "admin1": "provincias", "admin2": "cantones", "institutions": "municipalidades e instituciones públicas" },
+  { "code": "CU", "name": "Cuba", "slug": "cuba", "locale": "es-CU", "admin1": "provincias", "admin2": "municipios", "institutions": "entidades territoriales y organizaciones públicas" },
+  { "code": "DO", "name": "República Dominicana", "slug": "republica-dominicana", "locale": "es-DO", "admin1": "provincias", "admin2": "municipios", "institutions": "ayuntamientos e instituciones públicas" },
+  { "code": "EC", "name": "Ecuador", "slug": "ecuador", "locale": "es-EC", "admin1": "provincias", "admin2": "cantones", "institutions": "gobiernos autónomos descentralizados y entidades públicas" },
+  { "code": "SV", "name": "El Salvador", "slug": "el-salvador", "locale": "es-SV", "admin1": "departamentos", "admin2": "municipios y distritos", "institutions": "municipalidades e instituciones públicas" },
+  { "code": "GT", "name": "Guatemala", "slug": "guatemala", "locale": "es-GT", "admin1": "departamentos", "admin2": "municipios", "institutions": "municipalidades y entidades públicas" },
+  { "code": "HN", "name": "Honduras", "slug": "honduras", "locale": "es-HN", "admin1": "departamentos", "admin2": "municipios", "institutions": "municipalidades e instituciones públicas" },
+  { "code": "MX", "name": "México", "slug": "mexico", "locale": "es-MX", "admin1": "estados", "admin2": "municipios y alcaldías", "institutions": "gobiernos estatales, municipios y dependencias públicas" },
+  { "code": "NI", "name": "Nicaragua", "slug": "nicaragua", "locale": "es-NI", "admin1": "departamentos y regiones", "admin2": "municipios", "institutions": "alcaldías e instituciones públicas" },
+  { "code": "PA", "name": "Panamá", "slug": "panama", "locale": "es-PA", "admin1": "provincias y comarcas", "admin2": "distritos", "institutions": "municipios e instituciones públicas" },
+  { "code": "PY", "name": "Paraguay", "slug": "paraguay", "locale": "es-PY", "admin1": "departamentos", "admin2": "distritos", "institutions": "gobernaciones, municipalidades y entidades públicas" },
+  { "code": "PE", "name": "Perú", "slug": "peru", "locale": "es-PE", "admin1": "departamentos y regiones", "admin2": "provincias y distritos", "institutions": "gobiernos regionales, municipalidades y entidades públicas" },
+  { "code": "PR", "name": "Puerto Rico", "slug": "puerto-rico", "locale": "es-PR", "admin1": "regiones", "admin2": "municipios", "institutions": "municipios y agencias públicas" },
+  { "code": "UY", "name": "Uruguay", "slug": "uruguay", "locale": "es-UY", "admin1": "departamentos", "admin2": "municipios", "institutions": "intendencias, municipios y organismos públicos" },
+  { "code": "VE", "name": "Venezuela", "slug": "venezuela", "locale": "es-VE", "admin1": "estados", "admin2": "municipios", "institutions": "gobernaciones, alcaldías y organizaciones públicas" }
+]

@@ -8,7 +8,7 @@ import { LeadFunnel } from '@/components/marketing/LeadFunnel'
 import { StickyWhatsApp, WhatsAppCta } from '@/components/marketing/WhatsAppCta'
 import { PublicHeader } from '@/components/marketing/PublicHeader'
 import { PublicFooter } from '@/components/marketing/PublicFooter'
-import { getSeoPage, SEO_PAGES } from '@/lib/marketing'
+import { CORE_SEO_PAGES, getSeoPage } from '@/lib/marketing'
 
 const LANDING_SEO = getSeoPage('/')!
 
@@ -167,7 +167,7 @@ export default function LandingPage() {
             </p>
           </div>
           <div className="grid md:grid-cols-2 gap-5 mt-10">
-            {SEO_PAGES.filter(page => page.path !== '/').map(page => (
+            {CORE_SEO_PAGES.filter(page => page.path !== '/').map(page => (
               <Link
                 key={page.path}
                 to={page.path}

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Crosshair, LocateFixed, Minus, Plus, RotateCcw } from 'lucide-react'
 import { geoJsonCoordinates, geoJsonFeatures, pointInGeoJsonGeometry } from '@/lib/geo'
 import { isCoverageBoundaryLayer } from '@/lib/coverage'
-import type { GeoJsonGeometry, GeoJsonPosition, GeoRecord, MapLayer } from '@/types/gis'
+import type { GeoJsonGeometry, GeoJsonPosition, GeoRecord, MapLayer, MapRouteOverlay } from '@/types/gis'
 
 interface InternalMapProps {
   records: GeoRecord[]
@@ -13,6 +13,7 @@ interface InternalMapProps {
   recordColors?: Record<string, string>
   minimumGroupSize?: number
   coverageTarget?: number
+  route?: MapRouteOverlay | null
 }
 
 interface Projection {
@@ -79,7 +80,7 @@ function geometryPoints(geometry: GeoJsonGeometry): GeoJsonPosition[] {
   return []
 }
 
-export function InternalMap({ records, layers, mode, selectedId, onSelect, recordColors = {}, minimumGroupSize = 5, coverageTarget = 10 }: InternalMapProps) {
+export function InternalMap({ records, layers, mode, selectedId, onSelect, recordColors = {}, minimumGroupSize = 5, coverageTarget = 10, route = null }: InternalMapProps) {
   const [zoom, setZoom] = useState(1)
   const [pan, setPan] = useState({ x: 0, y: 0 })
   const drag = useRef<{ x: number; y: number; panX: number; panY: number } | null>(null)
@@ -88,8 +89,9 @@ export function InternalMap({ records, layers, mode, selectedId, onSelect, recor
   const projection = useMemo(() => {
     const coordinates: GeoJsonPosition[] = records.map(record => [record.longitude, record.latitude])
     for (const layer of layers) coordinates.push(...geoJsonCoordinates(layer.geojson))
+    if (route) coordinates.push(...route.coordinates)
     return createProjection(coordinates)
-  }, [layers, records])
+  }, [layers, records, route])
 
   const clusters = useMemo(() => {
     if (!projection) return []
@@ -235,6 +237,30 @@ export function InternalMap({ records, layers, mode, selectedId, onSelect, recor
             const [x, y] = projection.point([record.longitude, record.latitude])
             return <circle key={`heat:${record.id}`} cx={x} cy={y} r={56 / zoom} fill="url(#control-g-heat)" />
           })}
+
+          {route && route.coordinates.length >= 2 && (
+            <g aria-label={`Ruta de campo con ${route.stops.length} paradas`}>
+              <path
+                d={linePath(route.coordinates, projection)}
+                fill="none"
+                stroke="#E6533C"
+                strokeWidth={5 / zoom}
+                strokeDasharray={`${12 / zoom} ${7 / zoom}`}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity={0.9}
+              />
+              {route.stops.map(stop => {
+                const [x, y] = projection.point(stop.coordinate)
+                return (
+                  <g key={`route-stop:${stop.id}`} aria-label={`Parada ${stop.order}`}>
+                    <circle cx={x} cy={y} r={12 / zoom} fill="#E6533C" stroke="white" strokeWidth={3 / zoom} />
+                    <text x={x} y={y} dy="0.34em" textAnchor="middle" fill="white" fontSize={Math.max(8, 10 / zoom)} fontWeight="900">{stop.order}</text>
+                  </g>
+                )
+              })}
+            </g>
+          )}
 
           {mode === 'points' && records.map(record => {
             const [x, y] = projection.point([record.longitude, record.latitude])

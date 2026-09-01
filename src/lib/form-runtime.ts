@@ -1,4 +1,4 @@
-import type { FormField, FormPage } from '@/types'
+import type { FormField, FormFieldTranslation, FormPage, FormValidationProfile } from '@/types'
 
 export interface FormOfflineEstimate {
   definitionBytes: number
@@ -13,6 +13,134 @@ export function isEmptyFormValue(value: unknown): boolean {
   if (typeof value === 'string') return value.trim().length === 0
   if (Array.isArray(value)) return value.length === 0
   return false
+}
+
+const NATIONAL_ID_PATTERNS: Record<string, RegExp> = {
+  AR: /^\d{7,8}$/,
+  BO: /^[A-Z0-9]{5,12}$/,
+  BR: /^\d{11}(\d{3})?$/,
+  CL: /^\d{7,8}[0-9K]$/,
+  CO: /^\d{6,10}$/,
+  CR: /^\d{9,12}$/,
+  CU: /^\d{11}$/,
+  DO: /^\d{11}$/,
+  EC: /^\d{10}$/,
+  SV: /^\d{9}$/,
+  GT: /^\d{13}$/,
+  HN: /^\d{13}$/,
+  MX: /^([A-Z]{4}\d{6}[A-Z]{6}[A-Z0-9]\d|[A-Z&Ñ]{3,4}\d{6}[A-Z0-9]{3})$/,
+  NI: /^[A-Z0-9]{13,16}$/,
+  PA: /^[A-Z0-9]{4,20}$/,
+  PY: /^\d{5,10}$/,
+  PE: /^[A-Z0-9]{8,12}$/,
+  PR: /^\d{9}$/,
+  UY: /^\d{7,8}$/,
+  VE: /^[VEJPG]?\d{6,10}$/,
+}
+
+const POSTAL_CODE_PATTERNS: Record<string, RegExp> = {
+  AR: /^[A-Z]?\d{4}[A-Z]{0,3}$/,
+  BO: /^\d{4}$/,
+  BR: /^\d{8}$/,
+  CL: /^\d{7}$/,
+  CO: /^\d{6}$/,
+  CR: /^\d{5}$/,
+  CU: /^\d{5}$/,
+  DO: /^\d{5}$/,
+  EC: /^\d{6}$/,
+  SV: /^\d{4}$/,
+  GT: /^\d{5}$/,
+  HN: /^\d{5}$/,
+  MX: /^\d{5}$/,
+  NI: /^\d{5}$/,
+  PA: /^\d{4}$/,
+  PY: /^\d{4}$/,
+  PE: /^\d{5}$/,
+  PR: /^\d{5}(\d{4})?$/,
+  UY: /^\d{5}$/,
+  VE: /^\d{4}$/,
+}
+
+const PHONE_LENGTHS: Record<string, [number, number]> = {
+  AR: [10, 13], BO: [8, 11], BR: [10, 13], CL: [9, 12], CO: [10, 12], CR: [8, 11],
+  CU: [8, 11], DO: [10, 11], EC: [9, 12], SV: [8, 11], GT: [8, 11], HN: [8, 11],
+  MX: [10, 12], NI: [8, 11], PA: [7, 11], PY: [9, 12], PE: [9, 12], PR: [10, 11],
+  UY: [8, 11], VE: [10, 12],
+}
+
+export function validateLatamProfile(
+  profile: FormValidationProfile,
+  value: unknown,
+  countryCode = 'CO',
+): string | null {
+  const country = countryCode.toUpperCase()
+  const raw = String(value ?? '').trim().toUpperCase()
+  if (!raw) return null
+  if (profile === 'phone_latam') {
+    const digits = raw.replace(/\D/g, '')
+    const [minimum, maximum] = PHONE_LENGTHS[country] || [7, 15]
+    return digits.length >= minimum && digits.length <= maximum
+      ? null
+      : `El teléfono no cumple la longitud esperada para ${country}`
+  }
+  const normalized = raw.replace(/[.\s-]/g, '')
+  const pattern = profile === 'postal_code'
+    ? POSTAL_CODE_PATTERNS[country]
+    : NATIONAL_ID_PATTERNS[country]
+  if (!pattern) return normalized.length >= 4 && normalized.length <= 20
+    ? null
+    : `El valor no cumple el formato configurado para ${country}`
+  if (pattern.test(normalized)) return null
+  return profile === 'postal_code'
+    ? `El código postal no cumple el formato de ${country}`
+    : `El documento no cumple el formato de ${country}`
+}
+
+function localizedValue<T>(translations: Record<string, T> | undefined, locale: string | undefined) {
+  if (!translations || !locale) return undefined
+  const normalizedLocale = locale.replace('_', '-').toLowerCase()
+  const exactKey = Object.keys(translations).find(key => key.replace('_', '-').toLowerCase() === normalizedLocale)
+  if (exactKey) return translations[exactKey]
+  const language = normalizedLocale.split('-')[0]
+  const languageKey = Object.keys(translations).find(key => key.replace('_', '-').toLowerCase() === language)
+  return languageKey ? translations[languageKey] : undefined
+}
+
+function localizeField(field: FormField, locale?: string): FormField {
+  const translation = localizedValue<FormFieldTranslation>(field.translations, locale)
+  const subFields = field.subFields?.map(subField => localizeField(subField, locale))
+  if (!translation) return subFields ? { ...field, subFields } : field
+  return {
+    ...field,
+    label: translation.label?.trim() || field.label,
+    description: translation.description?.trim() || field.description,
+    placeholder: translation.placeholder?.trim() || field.placeholder,
+    options: field.options?.map(option => ({ ...option, label: translation.options?.[option.value]?.trim() || option.label })),
+    matrixRows: field.matrixRows?.map(row => ({ ...row, label: translation.matrixRows?.[row.value]?.trim() || row.label })),
+    subFields,
+  }
+}
+
+export function localizeFormPages(pages: FormPage[], locale?: string): FormPage[] {
+  if (!locale) return pages
+  return pages.map(page => {
+    const translation = localizedValue(page.translations, locale)
+    return {
+      ...page,
+      title: translation?.title?.trim() || page.title,
+      description: translation?.description?.trim() || page.description,
+      fields: page.fields.map(field => localizeField(field, locale)),
+    }
+  })
+}
+
+export function availableFormLocales(pages: FormPage[]) {
+  const locales = new Set<string>()
+  pages.forEach(page => {
+    Object.keys(page.translations || {}).forEach(locale => locales.add(locale))
+    page.fields.forEach(field => Object.keys(field.translations || {}).forEach(locale => locales.add(locale)))
+  })
+  return Array.from(locales).sort()
 }
 
 function comparableValue(value: unknown) {
@@ -99,6 +227,10 @@ export function validateFieldValue(field: FormField, value: unknown): string | n
   }
   if (field.type === 'phone' && !/^\+?[0-9 ()-]{7,20}$/.test(textValue)) {
     return 'Escribe un teléfono válido'
+  }
+  if (field.validationProfile) {
+    const profileError = validateLatamProfile(field.validationProfile, value, field.validationCountryCode || 'CO')
+    if (profileError) return rules?.message || profileError
   }
   return null
 }

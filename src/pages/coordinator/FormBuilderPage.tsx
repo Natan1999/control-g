@@ -14,8 +14,9 @@ import { TopBar } from '@/components/layout/Sidebar'
 import { databases, DATABASE_ID, COLLECTION_IDS, formEditorialOperations, type FormEditorialStatus } from '@/lib/backend'
 import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
-import { FormField, FormDefinition, FormPage, FormFieldType, FormVisibilityOperator, ActivityType, Entity } from '@/types'
+import { FormField, FormDefinition, FormPage, FormFieldType, FormVisibilityOperator, ActivityType, Entity, FormValidationProfile } from '@/types'
 import { cloneTemplatePages, FORM_TEMPLATES, type ControlGFormTemplate } from '@/config/form-templates'
+import { LATAM_COUNTRIES } from '@/config/countries'
 import FormRenderer from '@/components/forms/FormRenderer'
 import { analyzeFormQuality, buildFormPrivacyChecklist, formQualityScore } from '@/lib/form-quality'
 import { estimateFormOfflineFootprint, formatFormBytes } from '@/lib/form-runtime'
@@ -106,6 +107,7 @@ export default function FormBuilderPage() {
   const [preview, setPreview] = useState(false)
   const [toast, setToast] = useState('')
   const [showTemplates, setShowTemplates] = useState(false)
+  const [editingLocale, setEditingLocale] = useState('')
   const [workingFormId, setWorkingFormId] = useState<string | null>(id || null)
   const [changeId, setChangeId] = useState<string | null>(null)
   const [changeRevision, setChangeRevision] = useState<number | null>(null)
@@ -208,9 +210,11 @@ export default function FormBuilderPage() {
   }), [form, selectedEntityId, workingFormId])
   const editorReadOnly = workflowStatus === 'in_review' || workflowStatus === 'approved'
   const workflow = EDITORIAL_STATUS[workflowStatus]
+  const entityCountryCode = entities.find(entity => entity.id === selectedEntityId)?.countryCode || 'CO'
 
   const addField = (type: FormFieldType) => {
     const entityCurrency = entities.find(entity => entity.id === selectedEntityId)?.currencyCode || 'COP'
+    const validationCountryCode = entities.find(entity => entity.id === selectedEntityId)?.countryCode || 'CO'
     const newField: FormField = {
       id: `f_${Date.now()}`,
       type,
@@ -225,6 +229,8 @@ export default function FormBuilderPage() {
       currencyCode: type === 'currency' ? entityCurrency : undefined,
       maxDurationSeconds: type === 'audio' ? 300 : undefined,
       maxFileSizeMb: type === 'audio' ? 8 : undefined,
+      validationProfile: type === 'phone' ? 'phone_latam' : undefined,
+      validationCountryCode: type === 'phone' ? validationCountryCode : undefined,
     }
     const newPages = [...form.pages!]
     newPages[activePageIdx].fields.push(newField)
@@ -237,6 +243,29 @@ export default function FormBuilderPage() {
     newPages[activePageIdx].fields = newPages[activePageIdx].fields.map(f => 
       f.id === fieldId ? { ...f, ...updates } : f
     )
+    setForm({ ...form, pages: newPages })
+  }
+
+  const updateFieldTranslation = (field: FormField, updates: Partial<NonNullable<FormField['translations']>[string]>) => {
+    if (!editingLocale) return
+    updateField(field.id, {
+      translations: {
+        ...(field.translations || {}),
+        [editingLocale]: { ...(field.translations?.[editingLocale] || {}), ...updates },
+      },
+    })
+  }
+
+  const updatePageTranslation = (page: FormPage, title: string) => {
+    if (!editingLocale) return
+    const newPages = [...form.pages!]
+    newPages[activePageIdx] = {
+      ...page,
+      translations: {
+        ...(page.translations || {}),
+        [editingLocale]: { ...(page.translations?.[editingLocale] || {}), title },
+      },
+    }
     setForm({ ...form, pages: newPages })
   }
 
@@ -550,6 +579,21 @@ export default function FormBuilderPage() {
                </div>
             </div>
 
+            {!preview && !editorReadOnly && (
+              <section className="rounded-2xl border border-sky-100 bg-sky-50/60 p-4 shadow-sm sm:flex sm:items-center sm:justify-between sm:gap-5" aria-labelledby="form-language-title">
+                <div>
+                  <h2 id="form-language-title" className="flex items-center gap-2 text-sm font-black text-[#1B3A4B]"><Globe size={18} /> Traducciones de campo</h2>
+                  <p className="mt-1 text-xs leading-5 text-slate-600">El idioma base conserva los identificadores y valores. Las traducciones cambian etiquetas, ayudas y opciones sin romper respuestas offline.</p>
+                </div>
+                <label className="mt-3 block text-[10px] font-black uppercase tracking-widest text-slate-500 sm:mt-0 sm:w-72">Contenido que estás editando
+                  <select value={editingLocale} onChange={event => setEditingLocale(event.target.value)} className="mt-1 min-h-11 w-full rounded-xl border border-sky-200 bg-white px-3 text-xs font-bold normal-case tracking-normal text-slate-800">
+                    <option value="">Idioma base del formulario</option>
+                    {Array.from(new Map([...LATAM_COUNTRIES.map(country => [country.locale, `${country.name} · ${country.locale}`] as const), ['en-US', 'English · en-US']]).entries()).map(([locale, label]) => <option key={locale} value={locale}>{label}</option>)}
+                  </select>
+                </label>
+              </section>
+            )}
+
             {!preview && (
               <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5" aria-labelledby="editorial-workflow-title">
                 <div className="flex flex-wrap items-start justify-between gap-3">
@@ -666,7 +710,7 @@ export default function FormBuilderPage() {
                       : 'bg-white text-slate-400 border-slate-100 hover:border-slate-300'
                   }`}
                 >
-                  {p.title}
+                  {editingLocale ? p.translations?.[editingLocale]?.title || p.title : p.title}
                 </button>
               ))}
               {!preview && !editorReadOnly && (
@@ -684,8 +728,12 @@ export default function FormBuilderPage() {
               <label className="block bg-white border border-slate-100 rounded-2xl p-4 shadow-sm text-[10px] font-black text-slate-400 uppercase tracking-widest">
                 Nombre de esta página o momento
                 <input
-                  value={activePage.title}
+                  value={editingLocale ? activePage.translations?.[editingLocale]?.title || '' : activePage.title}
                   onChange={event => {
+                    if (editingLocale) {
+                      updatePageTranslation(activePage, event.target.value)
+                      return
+                    }
                     const newPages = [...form.pages!]
                     newPages[activePageIdx] = { ...activePage, title: event.target.value }
                     setForm({ ...form, pages: newPages })
@@ -702,6 +750,7 @@ export default function FormBuilderPage() {
                   <FormRenderer
                     definition={simulationDefinition}
                     mode="simulation"
+                    locale={editingLocale || undefined}
                     embedded
                     onSubmit={() => {
                       setToast('Simulación completada: reglas y validaciones respondieron correctamente. No se guardaron datos.')
@@ -743,7 +792,7 @@ export default function FormBuilderPage() {
                               )}
                               <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">{f.type}</span>
                             </div>
-                            <h4 className="font-bold text-slate-800 break-words">{f.label}</h4>
+                            <h4 className="font-bold text-slate-800 break-words">{editingLocale ? f.translations?.[editingLocale]?.label || f.label : f.label}</h4>
                           </div>
                         </div>
                         {!editorReadOnly && <div className="flex items-center gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
@@ -798,13 +847,15 @@ export default function FormBuilderPage() {
                   const currentPosition = allFields.findIndex(field => field.id === f.id)
                   const conditionDrivers = allFields.slice(0, Math.max(0, currentPosition)).filter(field => field.type !== 'note' && field.type !== 'calculation')
                   const selectedDriver = conditionDrivers.find(field => field.id === f.visibilityLogic?.fieldId)
+                  const translation = editingLocale ? f.translations?.[editingLocale] : undefined
                   return (
                     <div className="space-y-6">
                       <div>
                         <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Etiqueta de Pregunta</label>
                         <input
-                          value={f.label}
-                          onChange={e => updateField(f.id, { label: e.target.value })}
+                          value={editingLocale ? translation?.label || '' : f.label}
+                          onChange={event => editingLocale ? updateFieldTranslation(f, { label: event.target.value }) : updateField(f.id, { label: event.target.value })}
+                          placeholder={editingLocale ? f.label : undefined}
                           className="w-full px-4 py-3 bg-slate-50 border-none rounded-2xl text-sm font-semibold focus:ring-2 focus:ring-blue-500/20 transition-all shadow-inner"
                         />
                         <code className="mt-2 block break-all rounded-lg bg-slate-100 px-3 py-2 text-[10px] text-slate-500">ID: {f.id}</code>
@@ -813,8 +864,8 @@ export default function FormBuilderPage() {
                       <div>
                         <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Ayuda visible en campo</label>
                         <textarea
-                          value={f.description || ''}
-                          onChange={event => updateField(f.id, { description: event.target.value })}
+                          value={editingLocale ? translation?.description || '' : f.description || ''}
+                          onChange={event => editingLocale ? updateFieldTranslation(f, { description: event.target.value }) : updateField(f.id, { description: event.target.value })}
                           placeholder="Explica qué debe registrar el profesional y cómo comprobarlo."
                           rows={3}
                           className="w-full rounded-2xl border-none bg-slate-50 px-4 py-3 text-xs leading-5 shadow-inner focus:ring-2 focus:ring-blue-500/20"
@@ -824,7 +875,7 @@ export default function FormBuilderPage() {
                       {['text', 'longtext', 'number', 'currency', 'email', 'phone'].includes(f.type) && (
                         <div>
                           <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Texto de ejemplo</label>
-                          <input value={f.placeholder || ''} onChange={event => updateField(f.id, { placeholder: event.target.value })} placeholder="Ejemplo de respuesta" className="w-full rounded-2xl border-none bg-slate-50 px-4 py-3 text-sm shadow-inner focus:ring-2 focus:ring-blue-500/20" />
+                          <input value={editingLocale ? translation?.placeholder || '' : f.placeholder || ''} onChange={event => editingLocale ? updateFieldTranslation(f, { placeholder: event.target.value }) : updateField(f.id, { placeholder: event.target.value })} placeholder={editingLocale ? f.placeholder || 'Ejemplo de respuesta' : 'Ejemplo de respuesta'} className="w-full rounded-2xl border-none bg-slate-50 px-4 py-3 text-sm shadow-inner focus:ring-2 focus:ring-blue-500/20" />
                         </div>
                       )}
 
@@ -856,8 +907,12 @@ export default function FormBuilderPage() {
                             {f.options?.map((opt, oIdx) => (
                               <div key={oIdx} className="flex gap-2">
                                 <input
-                                  value={opt.label}
+                                  value={editingLocale ? translation?.options?.[opt.value] || '' : opt.label}
                                   onChange={e => {
+                                    if (editingLocale) {
+                                      updateFieldTranslation(f, { options: { ...(translation?.options || {}), [opt.value]: e.target.value } })
+                                      return
+                                    }
                                     const newOpts = [...f.options!]
                                     newOpts[oIdx] = { label: e.target.value, value: e.target.value.toLowerCase().replace(/\s+/g, '_') }
                                     updateField(f.id, { options: newOpts })
@@ -865,7 +920,7 @@ export default function FormBuilderPage() {
                                   placeholder={`Opción ${oIdx + 1}`}
                                   className="flex-1 px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs focus:ring-2 focus:ring-blue-500/20"
                                 />
-                                <button 
+                                {!editingLocale && <button
                                   onClick={() => {
                                     const newOpts = f.options!.filter((_, i) => i !== oIdx)
                                     updateField(f.id, { options: newOpts })
@@ -873,10 +928,10 @@ export default function FormBuilderPage() {
                                   className="p-2 text-rose-400 hover:text-rose-600 transition-colors"
                                 >
                                   <Trash2 size={14} />
-                                </button>
+                                </button>}
                               </div>
                             ))}
-                            <button
+                            {!editingLocale && <button
                               onClick={() => {
                                 const newOpts = [...(f.options || []), { label: '', value: '' }]
                                 updateField(f.id, { options: newOpts })
@@ -884,7 +939,7 @@ export default function FormBuilderPage() {
                               className="w-full py-2 border-2 border-dashed border-slate-200 rounded-xl text-[10px] font-bold text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-all flex items-center justify-center gap-2"
                             >
                               <Plus size={14} /> Añadir Opción
-                            </button>
+                            </button>}
                           </div>
                         </div>
                       )}
@@ -896,8 +951,12 @@ export default function FormBuilderPage() {
                             {f.matrixRows?.map((row, rowIndex) => (
                               <div key={`${row.value}-${rowIndex}`} className="flex gap-2">
                                 <input
-                                  value={row.label}
+                                  value={editingLocale ? translation?.matrixRows?.[row.value] || '' : row.label}
                                   onChange={event => {
+                                    if (editingLocale) {
+                                      updateFieldTranslation(f, { matrixRows: { ...(translation?.matrixRows || {}), [row.value]: event.target.value } })
+                                      return
+                                    }
                                     const rows = [...(f.matrixRows || [])]
                                     rows[rowIndex] = { label: event.target.value, value: event.target.value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '_') }
                                     updateField(f.id, { matrixRows: rows })
@@ -905,10 +964,10 @@ export default function FormBuilderPage() {
                                   placeholder={`Ítem ${rowIndex + 1}`}
                                   className="flex-1 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500/20"
                                 />
-                                <button type="button" onClick={() => updateField(f.id, { matrixRows: f.matrixRows?.filter((_, index) => index !== rowIndex) })} className="p-2 text-rose-400 hover:text-rose-600" aria-label="Eliminar fila"><Trash2 size={14} /></button>
+                                {!editingLocale && <button type="button" onClick={() => updateField(f.id, { matrixRows: f.matrixRows?.filter((_, index) => index !== rowIndex) })} className="p-2 text-rose-400 hover:text-rose-600" aria-label="Eliminar fila"><Trash2 size={14} /></button>}
                               </div>
                             ))}
-                            <button type="button" onClick={() => updateField(f.id, { matrixRows: [...(f.matrixRows || []), { label: '', value: '' }] })} className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 py-2 text-[10px] font-bold text-slate-400 hover:bg-slate-50"><Plus size={14} /> Añadir fila</button>
+                            {!editingLocale && <button type="button" onClick={() => updateField(f.id, { matrixRows: [...(f.matrixRows || []), { label: '', value: '' }] })} className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-200 py-2 text-[10px] font-bold text-slate-400 hover:bg-slate-50"><Plus size={14} /> Añadir fila</button>}
                           </div>
                         </div>
                       )}
@@ -932,6 +991,24 @@ export default function FormBuilderPage() {
                           )}
                           <label className="block text-[10px] font-bold text-slate-500">Patrón opcional (RegExp)<input value={f.validationRules?.pattern || f.validation || ''} onChange={event => updateField(f.id, { validation: undefined, validationRules: { ...f.validationRules, pattern: event.target.value } })} placeholder="Ej: ^[0-9]{6,10}$" className="mt-1 w-full rounded-xl bg-slate-50 px-3 py-2 font-mono text-xs" /></label>
                           <label className="block text-[10px] font-bold text-slate-500">Mensaje personalizado<input value={f.validationRules?.message || ''} onChange={event => updateField(f.id, { validationRules: { ...f.validationRules, message: event.target.value } })} placeholder="Indica cómo corregir la respuesta" className="mt-1 w-full rounded-xl bg-slate-50 px-3 py-2 text-xs" /></label>
+                        </div>
+                      )}
+
+                      {['text', 'phone'].includes(f.type) && (
+                        <div className="space-y-3 rounded-2xl border border-cyan-100 bg-cyan-50/50 p-4">
+                          <div><p className="text-[10px] font-black uppercase tracking-widest text-cyan-900">Perfil de validación LATAM</p><p className="mt-1 text-[10px] leading-4 text-cyan-800">Aplica reglas locales sin internet. No consulta registros oficiales ni confirma que el documento exista.</p></div>
+                          <select value={f.validationProfile || ''} onChange={event => updateField(f.id, {
+                            validationProfile: (event.target.value || undefined) as FormValidationProfile | undefined,
+                            validationCountryCode: event.target.value ? f.validationCountryCode || entityCountryCode : undefined,
+                          })} className="min-h-11 w-full rounded-xl border border-cyan-100 bg-white px-3 text-xs font-bold text-slate-700">
+                            <option value="">Sin perfil nacional</option>
+                            <option value="national_id">Documento de identidad</option>
+                            <option value="phone_latam">Teléfono nacional</option>
+                            <option value="postal_code">Código postal</option>
+                          </select>
+                          {f.validationProfile && <select value={f.validationCountryCode || entityCountryCode} onChange={event => updateField(f.id, { validationCountryCode: event.target.value })} className="min-h-11 w-full rounded-xl border border-cyan-100 bg-white px-3 text-xs font-bold text-slate-700">
+                            {LATAM_COUNTRIES.map(country => <option key={country.code} value={country.code}>{country.name} · {country.code}</option>)}
+                          </select>}
                         </div>
                       )}
 

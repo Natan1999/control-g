@@ -7,6 +7,7 @@ import {
   resolveFormRuntimeState,
   sanitizeVisibleAnswers,
   validateFieldValue,
+  localizeFormPages,
 } from '@/lib/form-runtime'
 import DynamicField from './fields/DynamicField'
 
@@ -17,6 +18,7 @@ interface FormRendererProps {
   onSaveDraft?: (answers: Record<string, unknown>) => void | Promise<void>
   mode?: 'capture' | 'simulation'
   embedded?: boolean
+  locale?: string
 }
 
 export default function FormRenderer({
@@ -26,13 +28,15 @@ export default function FormRenderer({
   onSaveDraft,
   mode = 'capture',
   embedded = false,
+  locale,
 }: FormRendererProps) {
   const [currentPageIdx, setCurrentPageIdx] = useState(0)
   const [answers, setAnswers] = useState<Record<string, unknown>>(initialData)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const pages = definition.pages
+  const effectiveLocale = locale || (typeof navigator === 'undefined' ? 'es-CO' : navigator.language)
+  const pages = useMemo(() => localizeFormPages(definition.pages, effectiveLocale), [definition.pages, effectiveLocale])
   const currentPage = pages[currentPageIdx]
   const runtimeState = useMemo(() => resolveFormRuntimeState(pages, answers), [answers, pages])
   const effectiveAnswers = runtimeState.answers

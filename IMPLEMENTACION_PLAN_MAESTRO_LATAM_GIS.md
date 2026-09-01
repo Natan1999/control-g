@@ -8,23 +8,25 @@ Este archivo es el registro técnico vivo de la implementación. El avance globa
 |---|---:|---|---:|---:|
 | 0. Auditoría y línea base | 5 % | Auditoría y ADR completos; ensayo restore en red privada pendiente | 95 % | 4,75 % |
 | 1. Núcleo multiempresa y multipaís | 10 % | Importador/versionador operativo y primer catálogo oficial; segundo piloto LATAM pendiente | 82 % | 8,20 % |
-| 2. Offline, GPS y sincronización | 15 % | Funcional; piloto físico multidía pendiente | 80 % | 12 % |
-| 3. PostGIS, mapa interno y capas | 15 % | Operativa con catálogos oficiales, alcance por entidad, puntos, recorridos, polígonos, cobertura y privacidad | 92 % | 13,80 % |
+| 2. Offline, GPS y sincronización | 15 % | Funcional y ensayada con 750 respuestas/1.500 evidencias; piloto físico multidía pendiente | 83 % | 12,45 % |
+| 3. PostGIS, mapa interno y capas | 15 % | Operativa con rutas offline, topología, catálogos oficiales, alcance por entidad, recorridos, polígonos, cobertura y privacidad | 95 % | 14,25 % |
 | 4. ArcGIS e interoperabilidad | 10 % | Operación administrada, trabajador desacoplado recuperable, E2E pública y adjuntos fotográficos gobernados; validación OAuth institucional pendiente | 84 % | 8,40 % |
-| 5. Analítica y reportes | 12 % | Cortes reproducibles en servidor; datasets patrón/programación operativa pendientes | 85 % | 10,20 % |
-| 6. Formularios y plantillas | 8 % | Motor avanzado offline con matriz/moneda/audio, asignación operativa, simulación real, privacidad, diez plantillas y publicación inmutable | 98 % | 7,84 % |
+| 5. Analítica y reportes | 12 % | Cortes reproducibles y dataset patrón aprobado; programación operativa pendiente | 88 % | 10,56 % |
+| 6. Formularios y plantillas | 8 % | Completa: motor offline, traducciones regionales, validaciones de 20 países, matriz/moneda/audio, asignación, simulación, privacidad, plantillas y publicación inmutable | 100 % | 8,00 % |
 | 7. Seguridad y privacidad | 10 % | Retención auditable y gobierno funcional; AAL2 RLS/restore pendientes | 80 % | 8,00 % |
-| 8. SEO LATAM | 6 % | Implementación avanzada | 85 % | 5,10 % |
-| 9. QA y piloto | 6 % | 60 pruebas, seguridad, carga, permisos Android, QA móvil funcional y prueba transaccional territorial; pilotos físicos pendientes | 77 % | 4,62 % |
+| 8. SEO LATAM | 6 % | Cluster estático para 20 países, Brasil en portugués, blog, CMS, sitemap y embudos; medición sostenida pendiente | 92 % | 5,52 % |
+| 9. QA y piloto | 6 % | 73 pruebas, seguridad, carga, resistencia IndexedDB, dataset patrón, permisos Android y QA funcional; pilotos físicos pendientes | 80 % | 4,80 % |
 | 10. Lanzamiento, operación y documentación | 3 % | Health, sonda externa e incidentes automáticos activos; segunda región/secretos/firma pendientes | 80 % | 2,40 % |
 
-**Avance global actual: 85,31 % ponderado.**
+**Avance global actual: 87,33 % ponderado.**
 
 El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases que todavía no satisfacían todos los criterios del documento fuente. La auditoría detallada está en `docs/PLAN_MAESTRO_COMPLETION_AUDIT.md`; la reducción es metodológica, no una pérdida de funciones.
 
 ## Entregables verificados al 31 de agosto de 2026
 
 - Mapa vectorial interno con zoom, desplazamiento, selección, capas, puntos, grupos adaptativos, modo de calor y coropleta de cobertura.
+- Planificador offline de hasta 100 visitas con distancia geodésica, vecino más cercano, mejora 2-opt, orden numerado y operación sobre puntos cacheados.
+- Inspección topológica previa a publicar capas: WGS84, vértices, cierre, duplicados, autointersecciones y huecos externos.
 - Campos de recorrido GPS y área/polígono con captura de hasta 2.000 vértices, longitud, perímetro, área, precisión y funcionamiento offline.
 - Extracción automática de líneas y polígonos al sincronizar una respuesta, con tabla PostGIS gobernada, índice GiST, métricas operativas y RLS por entidad/profesional.
 - Políticas cartográficas por entidad para precisión, supresión de grupos pequeños y meta de capturas por zona; los polígonos de evidencia no se contabilizan como límites administrativos.
@@ -50,6 +52,8 @@ El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases qu
 - Motor común web/APK con lógica condicional en cascada, nueve operadores, validaciones offline, cálculos aritméticos seguros, ayudas visibles, archivos y eliminación de respuestas de ramas ocultas antes de sincronizar.
 - Documentos PDF en cola offline y Storage privado, con manifiesto `document`, resolución previa a la respuesta y apertura administrativa mediante URL firmada.
 - Matrices completas, montos con moneda ISO y evidencia de audio con grabación/duración local, cola offline, bucket privado, manifiesto SHA-256 y reproducción administrativa por URL firmada.
+- Traducciones administrables por variante regional para páginas, preguntas, ayudas, ejemplos, opciones y matrices, con resolución offline exacta y valores estables.
+- Validación offline de documentos, teléfonos y códigos postales para los 20 perfiles de país LATAM.
 - Flujo editorial gobernado: borrador separado de la versión vigente, revisión por una segunda persona, solicitud de cambios con concepto, aprobación, publicación atómica y detección de concurrencia por versión/revisión.
 - Asignación restringida a formularios publicados con selección por territorio, grupo, vigencia, prioridad, cuota e instrucciones; el archivado/desasignado es no destructivo y conserva respuestas, auditoría y versiones históricas.
 - Aceptación editorial ejecutada en el Supabase remoto dentro de una transacción: borrador, revisión, aprobación, publicación v1, cuatro eventos, archivado y `ROLLBACK` sin datos temporales persistentes.
@@ -59,9 +63,9 @@ El 83,35 % anterior fue recalibrado porque contabilizaba como completas fases qu
 - Retención con vista previa obligatoria, registro auditable y ejecución confirmada por superadmin; anonimización de respuestas y purga limitada a clases sin archivos externos.
 - Migraciones PostGIS/RLS aplicadas al Supabase remoto y verificadas: PostGIS 3.3.7, geometrías de punto/línea/polígono, índices GiST, configuración regional y aislamiento por entidad.
 - Capa oficial DANE 2025 de los 46 municipios de Bolívar precargada en la entidad inicial.
-- APK Android 2.14.0 con catálogo territorial versionado, GIS de campo, matriz/moneda/audio offline, asignación operativa, flujo editorial gobernado, observabilidad, snapshots, retención, ArcGIS administrado, GeoPackage y entrada nativa directa al login. Binario: `entregables/Control-G-2.14.0-LATAM-GIS-offline-debug.apk`.
-- Huella SHA-256 del APK 2.14.0: `84df1c91b469ce34d14d79c8074c5c453cdd94950a25b944442226986fdcf96a`.
-- QA técnico aprobado: 60/60 pruebas automatizadas, lint, validación sintáctica ArcGIS, TypeScript/Vite/PWA, 269 tareas Gradle con pruebas unitarias y `assembleDebug`; auditoría de producción con 0 vulnerabilidades conocidas.
+- APK Android 2.15.0 con rutas offline, topología, localización LATAM, catálogo territorial, GIS de campo, matriz/moneda/audio, asignación, gobierno editorial, observabilidad, snapshots, retención, ArcGIS y entrada nativa directa al login. Binario: `entregables/Control-G-2.15.0-LATAM-GIS-offline-debug.apk`.
+- Huella SHA-256 del APK 2.15.0: `60768c64274a904ff01869c3fb80a3205fa964b46e77c93ef26f55575a82f618`.
+- QA técnico aprobado: 73/73 pruebas automatizadas, lint, TypeScript/Vite/PWA, resistencia IndexedDB y dataset patrón, 269 tareas Gradle con pruebas unitarias y `assembleDebug`; auditoría de producción con 0 vulnerabilidades conocidas.
 - Producción 2.14.0 verificada después del despliegue: frontend HTTP 200 con HSTS y health Supabase `operational/ok`.
 - Auditoría del árbol de producción aprobada con 0 vulnerabilidades conocidas; React Router actualizado a 7.18.3 y dependencias transitivas corregidas sin regresiones de compilación.
 - Encabezados de seguridad publicados verificados y rutas privadas marcadas `noindex`; los endpoints de snapshots y trabajador ArcGIS rechazan acceso anónimo con `401`.

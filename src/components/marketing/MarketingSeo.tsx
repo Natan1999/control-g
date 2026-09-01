@@ -63,7 +63,8 @@ export function MarketingSeo() {
     const socialImage = blogPost
       ? (blogCover(blogPost).startsWith('http') ? blogCover(blogPost) : `${SITE_URL}${blogCover(blogPost)}`)
       : `${SITE_URL}/og-image.png`
-    document.documentElement.lang = 'es-CO'
+    const pageLocale = page?.locale || 'es-CO'
+    document.documentElement.lang = pageLocale
     document.title = title
     setMeta('meta[name="description"]', { name: 'description', content: description })
     setMeta('meta[name="keywords"]', { name: 'keywords', content: keywords.join(', ') })
@@ -74,7 +75,7 @@ export function MarketingSeo() {
     setMeta('meta[property="og:description"]', { property: 'og:description', content: description })
     setMeta('meta[property="og:image"]', { property: 'og:image', content: socialImage })
     setMeta('meta[property="og:image:alt"]', { property: 'og:image:alt', content: 'Control G, plataforma de caracterización y encuestas offline' })
-    setMeta('meta[property="og:locale"]', { property: 'og:locale', content: 'es_CO' })
+    setMeta('meta[property="og:locale"]', { property: 'og:locale', content: pageLocale.replace('-', '_') })
     setMeta('meta[name="twitter:card"]', { name: 'twitter:card', content: 'summary_large_image' })
     setMeta('meta[name="twitter:title"]', { name: 'twitter:title', content: title })
     setMeta('meta[name="twitter:description"]', { name: 'twitter:description', content: description })

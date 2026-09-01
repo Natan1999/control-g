@@ -1,7 +1,7 @@
 {
   "name": "control-g",
   "private": true,
-  "version": "2.14.0",
+  "version": "2.15.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -95,6 +95,7 @@
     "eslint": "^8.55.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "fake-indexeddb": "^6.2.4",
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.2.2",

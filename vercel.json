@@ -9,6 +9,7 @@
   "rewrites": [
     { "source": "/software-caracterizacion-social", "destination": "/software-caracterizacion-social/index.html" },
     { "source": "/encuestas-offline", "destination": "/encuestas-offline/index.html" },
+    { "source": "/encuestas-offline/:country", "destination": "/encuestas-offline/:country/index.html" },
     { "source": "/levantamiento-informacion-campo", "destination": "/levantamiento-informacion-campo/index.html" },
     { "source": "/software-entidades-gobierno", "destination": "/software-entidades-gobierno/index.html" },
     { "source": "/blog", "destination": "/blog/index.html" },
@@ -30,7 +31,7 @@
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(self), geolocation=(self), microphone=()" },
+        { "key": "Permissions-Policy", "value": "camera=(self), geolocation=(self), microphone=(self)" },
         { "key": "Content-Security-Policy", "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://www.controlg.co https://controlg2.dran.cloud wss://controlg2.dran.cloud https://geoportal.dane.gov.co https://api-colombia.com https://*.arcgis.com https://*.arcgisonline.com https://*.esri.com; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests" }
       ]
     },

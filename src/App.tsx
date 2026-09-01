@@ -128,6 +128,7 @@ export default function App() {
       <Route path="/encuestas-offline" element={<SolutionPage path="/encuestas-offline" />} />
       <Route path="/levantamiento-informacion-campo" element={<SolutionPage path="/levantamiento-informacion-campo" />} />
       <Route path="/software-entidades-gobierno" element={<SolutionPage path="/software-entidades-gobierno" />} />
+      <Route path="/encuestas-offline/:countrySlug" element={<SolutionPage />} />
       <Route path="/blog" element={<BlogIndexPage />} />
       <Route path="/blog/:slug" element={<BlogPostPage />} />
 

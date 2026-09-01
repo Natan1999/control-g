@@ -5,6 +5,26 @@
   <url><loc>https://www.controlg.co/encuestas-offline</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.controlg.co/levantamiento-informacion-campo</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.controlg.co/software-entidades-gobierno</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/argentina</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/bolivia</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/brasil</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/chile</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/colombia</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/costa-rica</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/cuba</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/republica-dominicana</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/ecuador</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/el-salvador</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/guatemala</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/honduras</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/mexico</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/nicaragua</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/panama</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/paraguay</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/peru</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/puerto-rico</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/uruguay</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.controlg.co/encuestas-offline/venezuela</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.controlg.co/blog</loc><lastmod>2026-08-24</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://www.controlg.co/blog/control-g-vs-kobotoolbox</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.controlg.co/blog/control-g-vs-odk</loc><lastmod>2026-08-24</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>

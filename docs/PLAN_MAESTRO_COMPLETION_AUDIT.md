@@ -2,7 +2,7 @@
 
 Fecha de corte: 31 de agosto de 2026
 
-Versión auditada: 2.14.0
+Versión auditada: 2.15.0
 
 Fuente contractual: `entregables/Plan_Maestro_Implementacion_Control_G_LATAM_GIS.docx`
 
@@ -16,23 +16,32 @@ El porcentaje es ponderado con los pesos del Plan Maestro. Una fase solo recibe 
 |---|---:|---:|---:|---|---|
 | 0. Auditoría y línea base | 5 % | 95 % | 4,75 % | Inventario, matriz de brechas, cuatro ADR formales, pruebas y registro vivo | Restauración real ensayada dentro de la red de Supabase |
 | 1. Multiempresa y multipaís | 10 % | 82 % | 8,20 % | RLS por entidad, 20 perfiles, importador/versionador transaccional, historial SHA-256 y catálogo oficial Bolívar | Catálogos nacionales para los demás países y segundo piloto institucional LATAM |
-| 2. Offline, GPS y sincronización | 15 % | 80 % | 12,00 % | Dexie, cola idempotente, medios antes que respuestas, metadatos GNSS, rechazo 0/0 y manifiesto SHA-256 | Ensayo físico multidía en modo avión, cierre forzado, batería y gran volumen de evidencias |
-| 3. PostGIS y mapa interno | 15 % | 92 % | 13,80 % | PostGIS/GiST, mapa offline, selector multiempresa, catálogos oficiales cacheados, puntos, recorridos, polígonos, calor, cobertura y privacidad | Herramientas topológicas avanzadas, enrutamiento y validación física prolongada |
+| 2. Offline, GPS y sincronización | 15 % | 83 % | 12,45 % | Dexie, cola idempotente, medios antes que respuestas, GNSS/manifiesto y ensayo reproducible de 750 respuestas + 1.500 evidencias con cierre forzado | Ensayo físico multidía en modo avión, batería y gran volumen de evidencia real |
+| 3. PostGIS y mapa interno | 15 % | 95 % | 14,25 % | PostGIS/GiST, mapa offline, rutas geodésicas 2-opt, inspección topológica, catálogos cacheados, recorridos, polígonos, calor, cobertura y privacidad | Enrutamiento vial con red oficial y validación física prolongada |
 | 4. ArcGIS e interoperabilidad | 10 % | 84 % | 8,40 % | API autenticada, OAuth de aplicación en servidor, cola idempotente, trabajador programado con reclamo atómico/leases recuperables, E2E público, formatos GIS y adjuntos fotográficos gobernados con autorización, integridad y trazabilidad | Credencial OAuth/sandbox institucional, prueba real de adjuntos y activación segura del trabajador en Vercel |
-| 5. Indicadores y reportes | 12 % | 85 % | 10,20 % | Diccionario versionado, KPIs, territorio, supresión, salidas trazables y snapshots servidor con corte/filtros/metodología | Activar cron en Vercel y ampliar regresión con datasets patrón |
-| 6. Formularios y plantillas | 8 % | 98 % | 7,84 % | Motor offline compartido, matriz, moneda, audio/PDF privados, lógica condicional, validaciones, cálculos, ayudas, privacidad, simulación, diez plantillas, flujo editorial y asignación por territorio/grupo/vigencia/prioridad/cuota | Traducciones administrables y validación especializada por dominios/países |
+| 5. Indicadores y reportes | 12 % | 88 % | 10,56 % | Diccionario versionado, KPIs, territorio, supresión, salidas trazables, snapshots servidor y dataset patrón con resultados fijos y privacidad regresiva | Activar cron en Vercel y ampliar el banco de datasets sectoriales |
+| 6. Formularios y plantillas | 8 % | 100 % | 8,00 % | Motor offline compartido, matriz, moneda, audio/PDF, lógica, cálculos, traducciones regionales administrables, perfiles de validación para 20 países, privacidad, simulación, plantillas, flujo editorial y asignación avanzada | — |
 | 7. Seguridad y privacidad | 10 % | 80 % | 8,00 % | RLS, evidencia mínima, auditoría, consentimientos, MFA y retención con preview/confirmación/anonimización auditada | Activar AAL2 RLS, purga Storage coordinada, backup-restauración y revisión externa |
-| 8. SEO LATAM | 6 % | 85 % | 5,10 % | Páginas por intención, 15 artículos, sitemap, robots, datos estructurados, CMS y WhatsApp | Medición continua Search Console, clusters por país y calendario editorial sostenido |
-| 9. QA y piloto | 6 % | 77 % | 4,62 % | 60 pruebas automatizadas, build/lint, E2E Supabase y territorial transaccional, dependencias, encabezados, carga, permisos Android y QA móvil funcional del motor de formularios | Dispositivos Android físicos, auditoría WCAG/pentest externo y piloto ArcGIS institucional |
+| 8. SEO LATAM | 6 % | 92 % | 5,52 % | Páginas por intención, cluster estático para 20 países, contenido portugués Brasil, 15 artículos, sitemap, canonical, datos estructurados, CMS y WhatsApp | Medición continua Search Console y calendario editorial sostenido |
+| 9. QA y piloto | 6 % | 80 % | 4,80 % | 73 pruebas, build/lint, E2E Supabase, dataset patrón, resistencia IndexedDB, seguridad, carga, permisos Android y QA móvil funcional | Dispositivos Android físicos, auditoría WCAG/pentest externo y piloto ArcGIS institucional |
 | 10. Lanzamiento y operación | 3 % | 80 % | 2,40 % | Main/Vercel, health Supabase, sonda GitHub cada 5 minutos, incidentes automáticos, error boundary, backup/restore, runbooks, cron protegido y APK debug | Segunda región de monitoreo, secretos del cron, ensayo restore, APK release firmada, formación y mesa de ayuda operativa |
 
-**Avance global auditado: 85,31 %.**
+**Avance global auditado: 87,33 %.**
 
 ## Corrección de la línea base anterior
 
-El 83,35 % anterior trataba como completas varias fases con implementación parcial, especialmente GIS, ArcGIS, seguridad, QA y operación. La reauditoría leyó todos los criterios del documento fuente y separó “código disponible” de “aceptación completa”. Los incrementos 2.5.0 a 2.14.0 elevan la línea base corregida de 72,90 % a 85,31 % con ArcGIS/GeoPackage, geometrías de campo, snapshots, retención, observabilidad externa, recuperación, catálogos territoriales versionados, adjuntos ArcGIS, ejecución desacoplada recuperable, gobierno editorial, motor avanzado de formularios offline y asignación operativa territorial.
+El 83,35 % anterior trataba como completas varias fases con implementación parcial, especialmente GIS, ArcGIS, seguridad, QA y operación. La reauditoría leyó todos los criterios del documento fuente y separó “código disponible” de “aceptación completa”. Los incrementos 2.5.0 a 2.15.0 elevan la línea base corregida de 72,90 % a 87,33 % con ArcGIS/GeoPackage, geometrías de campo, snapshots, retención, observabilidad, catálogos versionados, gobierno editorial, formularios offline avanzados, asignación operativa, rutas offline, topología, localización LATAM y resistencia IndexedDB reproducible.
 
-## Evidencias 2.14.0
+## Evidencias 2.15.0
+
+- El mapa calcula en el dispositivo rutas de hasta 100 visitas mediante vecino más cercano y mejora 2-opt, conserva la operación sin red, enumera paradas y declara explícitamente que la distancia geodésica no reemplaza navegación vial.
+- El importador de capas inspecciona WGS84, mínimos de vértices, cierre, duplicados, autointersección y huecos fuera del anillo exterior antes de habilitar la publicación.
+- El constructor administra traducciones regionales de páginas, etiquetas, ayudas, ejemplos, opciones y matrices sin cambiar identificadores ni valores; el capturador resuelve la variante exacta disponible offline.
+- Perfiles offline para documento, teléfono y código postal cubren los 20 países configurados y el asistente de calidad detecta país inválido o traducciones incompletas.
+- Ensayo Dexie reproducible aprobado con 750 respuestas y 1.500 evidencias: persistencia tras cierre forzado, reapertura, carga parcial de medios y liberación posterior de respuestas.
+- Dataset patrón fija 10 registros, siete KPIs, supresión, filtros y territorio; su regresión detectó y corrigió la reaparición de un campo sensible dinámico en las variables analíticas.
+- Cluster SEO estático de 20 países publicado en la compilación, con versión portuguesa para Brasil, canonical, idioma, FAQ/Organization/WebApplication, sitemap e ingreso atribuido al WhatsApp comercial.
+- La política web autoriza micrófono únicamente al mismo origen, manteniendo cámara y geolocalización acotadas a Control G.
 
 - Nuevos tipos de campo matriz, moneda ISO y audio; se simulan y capturan con el mismo motor web/APK, se validan sin red y se presentan con formato legible en la bandeja administrativa.
 - El audio se graba como Blob local, respeta duración/tamaño preventivo, entra a la cola offline antes de la respuesta, se carga al bucket privado `field-audio`, se registra en el manifiesto como `audio` y se reproduce mediante URL firmada.
@@ -47,7 +56,7 @@ El 83,35 % anterior trataba como completas varias fases con implementación parc
 - Propiedades de campo para ayuda visible, datos sensibles y justificación, límites, patrón/mensaje, archivo y condición; checklist de privacidad y estimación preventiva de almacenamiento por respuesta.
 - Los documentos PDF se conservan offline, se cargan antes que la respuesta al bucket privado de documentos, se registran como `document` en el manifiesto y el coordinador los abre mediante URL firmada.
 - Simulación móvil funcional aprobada a 390 × 844 px: errores obligatorios, aparición condicional, cálculo 5 × 4 = 20, navegación de dos páginas, envío local, cero desbordamiento horizontal y cero errores de consola.
-- Release 2.14.0 compilada para web/PWA y Android, publicada desde `main` y aceptada en producción: frontend HTTP 200 con HSTS, health `operational`, base de datos `ok` y 204 ms de latencia Supabase en la sonda de aceptación.
+- Release candidata 2.15.0 compilada para web/PWA y Android; la aceptación productiva se registra después de publicar `main`.
 
 - Migraciones remotas 001–012 aplicadas: fundamentos del Plan Maestro, mínimo privilegio, versiones inmutables, ArcGIS, geometrías de campo, snapshots, retención, catálogos territoriales versionados, gobierno de adjuntos, leases recuperables, flujo editorial, asignaciones avanzadas y audio privado.
 - La migración 011 separa el candidato de la versión publicada, impone un único cambio activo, revisión independiente, aprobación previa, control optimista, publicación atómica, eventos inmutables, RLS y archivado no destructivo. En producción se verificaron dos tablas, tres RPC, dos triggers, RLS activa, acceso autenticado a RPC y bloqueo de escritura directa/anónima.
@@ -64,7 +73,7 @@ El 83,35 % anterior trataba como completas varias fases con implementación parc
 - GeoPackage validado como SQLite OGC 1.3 (`application_id` GPKG, `user_version` 10300, WGS84/EPSG:4326, geometría Point e integridad `ok`).
 - Mapa GIS revisado visualmente en escritorio y 390 × 844 px con coropleta protegida, polígonos de evidencia separados de límites, controles de 48 px y sin desbordamiento horizontal.
 - Analítica revisada visualmente en escritorio y móvil; traducciones, supresión de grupos pequeños y exportaciones estructurales verificadas.
-- Suite local aprobada: 60/60 pruebas, lint, validación sintáctica ArcGIS, TypeScript/Vite/PWA y 269 tareas Gradle con pruebas unitarias y compilación Android sin fallos.
+- Suite local aprobada: 73/73 pruebas, lint, TypeScript/Vite/PWA y 269 tareas Gradle con pruebas unitarias y compilación Android sin fallos.
 - Dependencias de producción auditadas con `npm audit --omit=dev`: 0 vulnerabilidades conocidas después de actualizar React Router a 7.18.3 y corregir el árbol transitivo compatible.
 - Encabezados publicados comprobados: HSTS, CSP, `X-Content-Type-Options`, `X-Frame-Options`, Referrer Policy, Permissions Policy y `X-Robots-Tag` en rutas privadas; el cron anónimo responde `401`.
 - Carga local aprobada con ApacheBench: 1.000 solicitudes a `/` con concurrencia 40 y 500 a `/login` con concurrencia 25, 0 fallos; 1.295 y 1.604 solicitudes/s respectivamente.
@@ -74,7 +83,7 @@ El 83,35 % anterior trataba como completas varias fases con implementación parc
 - Error boundary para web/APK y telemetría opcional con redacción de tokens, correos, URL y números, lista de orígenes, límite de 8 KiB y rate limit; permanece apagada hasta aprobación de privacidad.
 - Cuatro ADR aceptados y runbooks para severidades, incidentes, rotación, soporte de campo, respaldo y restauración.
 - Herramienta de backup custom con manifiesto SHA-256, verificación `pg_restore` y restauración rechazada si destino/origen coinciden o la base no tiene nombre desechable. El puerto PostgreSQL público no responde; el ensayo debe ejecutarse en la red/VPS de Supabase.
-- APK de prueba 2.14.0 generado con `versionCode 18`, `minSdk 23`, SDK objetivo 35, permisos de audio verificados y SHA-256 `84df1c91b469ce34d14d79c8074c5c453cdd94950a25b944442226986fdcf96a`.
+- APK de prueba 2.15.0 generado con `versionCode 19`, `minSdk 23`, SDK objetivo 35, permisos de audio verificados y SHA-256 `60768c64274a904ff01869c3fb80a3205fa964b46e77c93ef26f55575a82f618`.
 - La imposición RLS AAL2 permanece deliberadamente manual porque puede bloquear usuarios privilegiados sin TOTP. Su archivo contiene prerrequisitos y no forma parte de las migraciones automáticas.
 
 ## Condiciones para declarar 100 %

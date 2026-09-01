@@ -17,6 +17,7 @@ export interface FormPrivacyCheck {
 
 const PERSONAL_DATA_PATTERN = /(nombre|apellido|documento|c[eé]dula|tel[eé]fono|correo|direcci[oó]n|salud|diagn[oó]stico|discapacidad|niñ|menor|etnia)/i
 const CONSENT_PATTERN = /(consent|autoriz|tratamiento de datos|habeas data)/i
+const LATAM_COUNTRY_CODES = new Set(['AR', 'BO', 'BR', 'CL', 'CO', 'CR', 'CU', 'DO', 'EC', 'SV', 'GT', 'HN', 'MX', 'NI', 'PA', 'PY', 'PE', 'PR', 'UY', 'VE'])
 
 export function analyzeFormQuality(pages: FormPage[]): FormQualityIssue[] {
   const issues: FormQualityIssue[] = []
@@ -75,6 +76,9 @@ export function analyzeFormQuality(pages: FormPage[]): FormQualityIssue[] {
     if (field.type === 'audio' && ((field.maxDurationSeconds ?? 300) < 10 || (field.maxDurationSeconds ?? 300) > 1_800)) {
       issues.push({ code: `audio-duration-${field.id}`, severity: 'error', message: `La duración de “${field.label}” debe estar entre 10 y 1.800 segundos.` })
     }
+    if (field.validationProfile && !LATAM_COUNTRY_CODES.has((field.validationCountryCode || '').toUpperCase())) {
+      issues.push({ code: `validation-country-${field.id}`, severity: 'error', message: `Selecciona un país LATAM válido para la regla de “${field.label}”.` })
+    }
     if (PERSONAL_DATA_PATTERN.test(`${field.id} ${field.label}`) && !field.sensitive) {
       issues.push({ code: `unclassified-sensitive-${field.id}`, severity: 'warning', message: `Clasifica “${field.label}” como dato sensible/personal o confirma que no lo es.` })
     }
@@ -123,6 +127,19 @@ export function analyzeFormQuality(pages: FormPage[]): FormQualityIssue[] {
   if (fields.length > 80) {
     issues.push({ code: 'length', severity: 'recommendation', message: 'El formulario supera 80 preguntas; considera dividirlo en momentos o módulos.' })
   }
+
+  const translatedLocales = new Set<string>()
+  pages.forEach(page => {
+    Object.keys(page.translations || {}).forEach(locale => translatedLocales.add(locale))
+    page.fields.forEach(field => Object.keys(field.translations || {}).forEach(locale => translatedLocales.add(locale)))
+  })
+  translatedLocales.forEach(locale => {
+    const missingPages = pages.filter(page => !page.translations?.[locale]?.title?.trim()).length
+    const missingFields = fields.filter(field => !field.translations?.[locale]?.label?.trim()).length
+    if (missingPages || missingFields) {
+      issues.push({ code: `translation-incomplete-${locale}`, severity: 'warning', message: `La traducción ${locale} está incompleta: faltan ${missingPages} página(s) y ${missingFields} etiqueta(s).` })
+    }
+  })
 
   return issues
 }

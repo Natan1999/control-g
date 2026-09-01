@@ -10,7 +10,55 @@ if (process.env.VITE_NATIVE_BUILD === 'true') {
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const dist = join(root, 'dist')
 const siteUrl = 'https://www.controlg.co'
-const pages = JSON.parse(await readFile(join(root, 'src/config/seo-pages.json'), 'utf8'))
+const corePages = JSON.parse(await readFile(join(root, 'src/config/seo-pages.json'), 'utf8'))
+const countryProfiles = JSON.parse(await readFile(join(root, 'src/config/country-landing-profiles.json'), 'utf8'))
+const buildCountryPage = profile => {
+  const portuguese = profile.code === 'BR'
+  return {
+    path: `/encuestas-offline/${profile.slug}`,
+    title: portuguese ? `Pesquisas offline no ${profile.name} | Control G` : `Encuestas offline en ${profile.name} | Control G`,
+    description: portuguese
+      ? `Caracterização e pesquisas offline no ${profile.name}. Capture dados, GPS e evidências sem internet para operações de campo de órgãos públicos.`
+      : `Caracterización y encuestas offline en ${profile.name}. Capture datos, GPS y evidencias sin internet para operativos territoriales de entidades públicas.`,
+    eyebrow: portuguese ? `Operações de campo no ${profile.name}` : `Operación territorial en ${profile.name}`,
+    heading: portuguese ? `Pesquisas e caracterização offline no ${profile.name}` : `Encuestas y caracterización offline en ${profile.name}`,
+    lead: portuguese
+      ? `Organize equipes por ${profile.admin1} e ${profile.admin2}, colete informações sem sinal e sincronize quando a conexão voltar.`
+      : `Organice equipos por ${profile.admin1} y ${profile.admin2}, recolecte información sin señal y sincronice cuando regrese la conectividad.`,
+    keywords: portuguese
+      ? [`pesquisa offline ${profile.name}`, 'coleta de dados sem internet', `software para ${profile.institutions}`, 'formulários offline Android', 'caracterização territorial']
+      : [`encuestas offline ${profile.name}`, `software de caracterización ${profile.name}`, 'recolección de datos sin internet', `software para ${profile.institutions}`, 'formularios offline Android'],
+    whatsappMessage: portuguese
+      ? `Olá, procuro uma plataforma de pesquisas offline para uma operação no ${profile.name}. Quero conhecer o Control G.`
+      : `Hola, busco una plataforma de encuestas offline para un operativo en ${profile.name}. Quiero conocer Control G.`,
+    sections: portuguese ? [
+      { title: 'Coleta sem depender de cobertura', body: 'As equipes baixam formulários e atribuições antes de ir a campo. Respostas, GPS, fotos, áudio e assinaturas permanecem no dispositivo até que seja possível sincronizar.' },
+      { title: `Operação organizada por ${profile.admin1}`, body: `A plataforma separa entidades, equipes, formulários e territórios. Coordenadores distribuem trabalho por ${profile.admin2}, prioridade, período e meta.` },
+      { title: 'Dados prontos para controle e análise', body: 'Ao recuperar a conexão, evidências e respostas chegam ao Supabase com rastreabilidade. Painéis, mapas e relatórios ajudam a acompanhar cobertura e qualidade.' },
+    ] : [
+      { title: 'Captura sin depender de cobertura', body: 'Los equipos descargan formularios y asignaciones antes de salir. Respuestas, GPS, fotos, audio y firmas permanecen en el dispositivo hasta que sea posible sincronizar.' },
+      { title: `Operación organizada por ${profile.admin1}`, body: `La plataforma separa entidades, equipos, instrumentos y territorios. Los coordinadores distribuyen trabajo por ${profile.admin2}, prioridad, vigencia y cuota.` },
+      { title: 'Datos preparados para control y análisis', body: 'Al recuperar internet, evidencias y respuestas llegan a Supabase con trazabilidad. Los tableros, mapas e informes permiten seguir cobertura y calidad.' },
+    ],
+    benefits: portuguese
+      ? ['Aplicativo Android offline', 'Formulários configuráveis', 'GPS, fotos, áudio e assinaturas', `Cobertura por ${profile.admin2}`, 'Sincronização automática', 'Mapas e relatórios institucionais']
+      : ['Aplicación Android offline', 'Formularios configurables', 'GPS, fotografías, audio y firmas', `Cobertura por ${profile.admin2}`, 'Sincronización automática', 'Mapas e informes institucionales'],
+    faqs: portuguese ? [
+      { question: `O Control G funciona sem internet no ${profile.name}?`, answer: 'Sim. Depois de preparar a conta e baixar as atribuições, a coleta continua sem conexão e sincroniza quando o dispositivo volta a ter internet.' },
+      { question: `Pode ser configurado para ${profile.institutions}?`, answer: 'Sim. Cada organização mantém seus próprios usuários, territórios, formulários, permissões e dados separados.' },
+      { question: 'Os formulários podem ser adaptados à legislação local?', answer: 'Sim. Perguntas, consentimentos, validações, idioma e regras de tratamento de dados podem ser configurados antes da publicação.' },
+      { question: 'Como solicitar uma demonstração?', answer: 'Envie uma mensagem pelo WhatsApp informando o tipo de operação, territórios, quantidade de usuários e formulários necessários.' },
+    ] : [
+      { question: `¿Control G funciona sin internet en ${profile.name}?`, answer: 'Sí. Después de preparar la cuenta y descargar las asignaciones, la captura continúa sin conexión y sincroniza cuando el dispositivo vuelve a tener internet.' },
+      { question: `¿Se puede configurar para ${profile.institutions}?`, answer: 'Sí. Cada organización mantiene usuarios, territorios, formularios, permisos y datos propios separados de las demás entidades.' },
+      { question: '¿Los formularios se adaptan a las normas del país?', answer: 'Sí. Las preguntas, consentimientos, validaciones, idioma y reglas de tratamiento de datos se configuran antes de publicar cada instrumento.' },
+      { question: '¿Cómo solicito una demostración?', answer: 'Escriba por WhatsApp e indique el tipo de operativo, territorios, número de usuarios y formularios requeridos para preparar una demostración enfocada.' },
+    ],
+    countryCode: profile.code,
+    locale: profile.locale,
+  }
+}
+const pages = [...corePages, ...countryProfiles.map(buildCountryPage)]
 const localBlogPosts = JSON.parse(await readFile(join(root, 'src/config/blog-posts.json'), 'utf8'))
 let blogPosts = localBlogPosts
 
@@ -71,8 +119,8 @@ const structuredData = page => ({
         '@type': 'ContactPoint',
         telephone: '+57-300-901-0300',
         contactType: 'sales',
-        availableLanguage: ['Spanish'],
-        areaServed: ['CO', 'LATAM'],
+        availableLanguage: page.countryCode === 'BR' ? ['Portuguese', 'Spanish'] : ['Spanish'],
+        areaServed: [page.countryCode || 'CO', 'LATAM'],
       },
       areaServed: [
         { '@type': 'Country', name: 'Colombia' },
@@ -90,14 +138,14 @@ const structuredData = page => ({
       description: page.description,
       featureList: page.benefits,
       provider: { '@id': `${siteUrl}/#organization` },
-      areaServed: ['Colombia', 'Latinoamérica'],
+      areaServed: [page.countryCode || 'Colombia', 'Latinoamérica'],
     },
     {
       '@type': 'WebPage',
       url: `${siteUrl}${page.path}`,
       name: page.title,
       description: page.description,
-      inLanguage: 'es-CO',
+      inLanguage: page.locale || 'es-CO',
       about: { '@id': `${siteUrl}/#software` },
     },
     {
@@ -144,6 +192,7 @@ const staticContent = page => `
 function renderPage(page) {
   const canonical = `${siteUrl}${page.path}`
   let html = shell
+    .replace(/<html\s+lang=["'][^"']+["']/i, `<html lang="${escapeHtml(page.locale || 'es-CO')}"`)
     .replace(/<title>[\s\S]*?<\/title>/i, '')
     .replace(/<link[^>]+rel=["']canonical["'][^>]*>/gi, '')
     .replace(/<meta[^>]+(?:name|property)=["'](?:description|keywords|robots|og:[^"']+|twitter:[^"']+)["'][^>]*>/gi, '')
@@ -163,7 +212,7 @@ function renderPage(page) {
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Control G, caracterización y encuestas offline" />
     <meta property="og:site_name" content="Control G" />
-    <meta property="og:locale" content="es_CO" />
+    <meta property="og:locale" content="${escapeHtml((page.locale || 'es-CO').replace('-', '_'))}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${escapeHtml(page.title)}" />
     <meta name="twitter:description" content="${escapeHtml(page.description)}" />

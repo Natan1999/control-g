@@ -1,0 +1,36 @@
+{
+  "entity": { "id": "pattern-entity", "name": "Entidad patrón" },
+  "forms": [
+    {
+      "id": "pattern-form",
+      "definition": "[{\"id\":\"page\",\"title\":\"Patrón\",\"fields\":[{\"id\":\"water\",\"label\":\"Acceso a agua\",\"type\":\"radio\",\"required\":true,\"options\":[{\"label\":\"Sí\",\"value\":\"si\"},{\"label\":\"No\",\"value\":\"no\"}]},{\"id\":\"income\",\"label\":\"Ingreso\",\"type\":\"number\",\"required\":true},{\"id\":\"full_name\",\"label\":\"Nombre completo\",\"type\":\"text\",\"required\":true,\"sensitive\":true}]}]"
+    }
+  ],
+  "municipalities": [
+    { "id": "territory-a", "municipality_name": "Zona A", "families_target": 10 },
+    { "id": "territory-b", "municipality_name": "Zona B", "families_target": 10 }
+  ],
+  "responses": [
+    { "id": "r1", "form_id": "pattern-form", "municipality_id": "territory-a", "status": "approved", "captured_at": "2026-08-01T10:00:00Z", "synced_at": "2026-08-01T10:10:00Z", "latitude": 10.01, "longitude": -75.01, "answers": { "water": "si", "income": 100, "full_name": "Persona 1" } },
+    { "id": "r2", "form_id": "pattern-form", "municipality_id": "territory-a", "status": "approved", "captured_at": "2026-08-01T11:00:00Z", "synced_at": "2026-08-01T11:20:00Z", "latitude": 10.02, "longitude": -75.02, "answers": { "water": "si", "income": 200, "full_name": "Persona 2" } },
+    { "id": "r3", "form_id": "pattern-form", "municipality_id": "territory-a", "status": "approved", "captured_at": "2026-08-02T10:00:00Z", "synced_at": "2026-08-02T10:30:00Z", "latitude": 10.03, "longitude": -75.03, "answers": { "water": "si", "income": 300, "full_name": "Persona 3" } },
+    { "id": "r4", "form_id": "pattern-form", "municipality_id": "territory-a", "status": "approved", "captured_at": "2026-08-02T11:00:00Z", "synced_at": "2026-08-02T11:40:00Z", "latitude": 10.04, "longitude": -75.04, "answers": { "water": "si", "income": 400, "full_name": "Persona 4" } },
+    { "id": "r5", "form_id": "pattern-form", "municipality_id": "territory-a", "status": "reviewed", "captured_at": "2026-08-03T10:00:00Z", "synced_at": "2026-08-03T10:50:00Z", "latitude": 10.05, "longitude": -75.05, "answers": { "water": "si", "income": 500, "full_name": "Persona 5" } },
+    { "id": "r6", "form_id": "pattern-form", "municipality_id": "territory-a", "status": "reviewed", "captured_at": "2026-08-03T11:00:00Z", "synced_at": "2026-08-03T12:00:00Z", "latitude": 10.06, "longitude": -75.06, "answers": { "water": "si", "income": 600, "full_name": "Persona 6" } },
+    { "id": "r7", "form_id": "pattern-form", "municipality_id": "territory-a", "status": "rejected", "captured_at": "2026-08-04T10:00:00Z", "synced_at": "2026-08-04T11:10:00Z", "latitude": 10.07, "longitude": -75.07, "answers": { "water": "no", "income": 700, "full_name": "Persona 7" } },
+    { "id": "r8", "form_id": "pattern-form", "municipality_id": "territory-b", "status": "synced", "captured_at": "2026-08-04T11:00:00Z", "synced_at": "2026-08-04T12:20:00Z", "latitude": 10.08, "longitude": -75.08, "answers": { "water": "no", "income": 800, "full_name": "Persona 8" } },
+    { "id": "r9", "form_id": "pattern-form", "municipality_id": "territory-b", "status": "synced", "captured_at": "2026-08-05T10:00:00Z", "synced_at": "2026-08-05T11:30:00Z", "latitude": 0, "longitude": 0, "answers": { "water": "", "income": 900, "full_name": "Persona 9" } },
+    { "id": "r10", "form_id": "pattern-form", "municipality_id": "territory-b", "status": "synced", "captured_at": "2026-08-05T11:00:00Z", "synced_at": "2026-08-05T12:40:00Z", "latitude": null, "longitude": null, "answers": { "income": 1000, "full_name": "Persona 10" } }
+  ],
+  "expected": {
+    "records": 10,
+    "gpsCoverage": 80,
+    "reviewedShare": 70,
+    "approvedShare": 57.14,
+    "rejectedShare": 14.29,
+    "requiredCompleteness": 93.33,
+    "medianSyncLag": 55,
+    "thematicVisible": 6,
+    "thematicSuppressed": 2
+  }
+}

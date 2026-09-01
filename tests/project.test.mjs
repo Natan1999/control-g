@@ -144,6 +144,29 @@ test('el sitio tiene páginas SEO indexables y embudos hacia WhatsApp', async ()
   assert.ok(pages.every(page => page.faqs.length >= 4), 'Cada intención necesita preguntas frecuentes')
 })
 
+test('el cluster SEO regional cubre los 20 países con páginas estáticas y embudo atribuido', async () => {
+  const profiles = JSON.parse(await read('src/config/country-landing-profiles.json'))
+  const [marketing, app, solution, generator, sitemap, vercel] = await Promise.all([
+    read('src/lib/marketing.ts'),
+    read('src/App.tsx'),
+    read('src/pages/landing/SolutionPage.tsx'),
+    read('scripts/generate-seo-pages.mjs'),
+    read('public/sitemap.xml'),
+    read('vercel.json'),
+  ])
+  assert.equal(profiles.length, 20)
+  assert.equal(new Set(profiles.map(profile => profile.code)).size, 20)
+  assert.equal(new Set(profiles.map(profile => profile.slug)).size, 20)
+  for (const profile of profiles) assert.ok(sitemap.includes(`https://www.controlg.co/encuestas-offline/${profile.slug}`), `Falta ${profile.name} en el sitemap`)
+  assert.match(marketing, /buildCountrySeoPage/)
+  assert.match(marketing, /COUNTRY_SEO_PAGES/)
+  assert.match(marketing, /WHATSAPP_NUMBER = '573009010300'/)
+  assert.match(app, /encuestas-offline\/:countrySlug/)
+  assert.match(solution, /Soluciones por país/)
+  assert.match(generator, /country-landing-profiles\.json/)
+  assert.match(vercel, /encuestas-offline\/:country/)
+})
+
 test('el blog SEO tiene contenido profesional, rutas estáticas y datos estructurados', async () => {
   const posts = JSON.parse(await read('src/config/blog-posts.json'))
   const app = await read('src/App.tsx')

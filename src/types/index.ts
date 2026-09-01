@@ -274,6 +274,16 @@ export interface FormValidationRules {
   maxLength?: number
 }
 
+export type FormValidationProfile = 'national_id' | 'phone_latam' | 'postal_code'
+
+export interface FormFieldTranslation {
+  label?: string
+  description?: string
+  placeholder?: string
+  options?: Record<string, string>
+  matrixRows?: Record<string, string>
+}
+
 export interface FormField {
   id: string
   type: FormFieldType
@@ -286,6 +296,8 @@ export interface FormField {
   subFields?: FormField[] // For repeat_group recursive logic
   validation?: string // Regex heredada; se conserva para formularios publicados previamente.
   validationRules?: FormValidationRules
+  validationProfile?: FormValidationProfile
+  validationCountryCode?: string
   calculation?: string // Formula like {{field_a}} + {{field_b}}
   sensitive?: boolean
   sensitiveJustification?: string
@@ -293,6 +305,7 @@ export interface FormField {
   maxDurationSeconds?: number
   acceptedFileTypes?: string
   currencyCode?: string
+  translations?: Record<string, FormFieldTranslation>
   visibilityLogic?: {
     fieldId: string
     operator: FormVisibilityOperator
@@ -304,6 +317,7 @@ export interface FormPage {
   id: string
   title: string
   description?: string
+  translations?: Record<string, { title?: string; description?: string }>
   fields: FormField[]
 }
 

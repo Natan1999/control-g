@@ -9,7 +9,7 @@ import type {
   IndicatorDefinition,
 } from '@/types/analytics'
 
-const SENSITIVE_FIELD_PATTERN = /(nombre|apellido|document|cedula|identific|telefono|celular|correo|email|direccion|firma|signature|foto|photo|archivo|file|victima|salud|diagnost|menor|niñ|etnia|discapacidad)/i
+const SENSITIVE_FIELD_PATTERN = /(nombre|apellido|(^|_)(full|first|last)_?name($|_)|document|cedula|identific|telefono|celular|phone|correo|email|direccion|address|firma|signature|foto|photo|archivo|file|victima|salud|health|diagnost|menor|niñ|etnia|discapacidad)/i
 const NON_ANALYTIC_TYPES = new Set(['photo', 'signature', 'document', 'file', 'geolocation', 'gps', 'section_title', 'note'])
 const REVIEWED_STATUSES = new Set(['reviewed', 'approved', 'rejected'])
 const STATUS_LABELS: Record<string, string> = {
@@ -169,8 +169,9 @@ export function listAnalyticsVariables(forms: any[], responses: any[]): Analytic
   }
   for (const row of responses) {
     const response = normalizeResponse(row)
+    const sensitiveFieldIds = new Set((fieldsByForm.get(response.formId) || []).filter(field => field.sensitive).map(field => field.id))
     for (const key of Object.keys(response.answers)) {
-      if (key === '_metadata' || SENSITIVE_FIELD_PATTERN.test(key)) continue
+      if (key === '_metadata' || sensitiveFieldIds.has(key) || SENSITIVE_FIELD_PATTERN.test(key)) continue
       const composite = `${response.formId}:${key}`
       if (!byKey.has(composite)) byKey.set(composite, { key, label: key.replace(/_/g, ' '), formId: response.formId, sensitive: false })
     }

@@ -89,3 +89,12 @@ export interface MapDataset {
     coverageTarget: number
   }
 }
+
+export interface MapRouteOverlay {
+  coordinates: GeoJsonPosition[]
+  stops: Array<{
+    id: string
+    order: number
+    coordinate: GeoJsonPosition
+  }>
+}

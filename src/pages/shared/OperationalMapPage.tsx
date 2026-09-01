@@ -13,6 +13,7 @@ import {
   MapPinned,
   Map as MapIcon,
   RefreshCw,
+  Route,
   Share2,
   ShieldCheck,
   WifiOff,
@@ -24,11 +25,12 @@ import { BottomNav, MobileTopBar } from '@/components/layout/BottomNav'
 import { TopBar } from '@/components/layout/Sidebar'
 import { createMapLayer, loadMapDataset } from '@/lib/gis-service'
 import { COLLECTION_IDS, DATABASE_ID, databases, Query } from '@/lib/backend'
-import { parseGeoJson } from '@/lib/geo'
+import { analyzeGeoJsonTopology, assertValidGeoJsonTopology, parseGeoJson, type GeoJsonTopologyReport } from '@/lib/geo'
 import { calculateCoverageSummary } from '@/lib/coverage'
+import { formatRouteDistance, planFieldRoute } from '@/lib/field-route'
 import { useAuthStore } from '@/stores/authStore'
 import type { User } from '@/types'
-import type { GeoRecord, MapDataset } from '@/types/gis'
+import type { GeoRecord, MapDataset, MapRouteOverlay } from '@/types/gis'
 
 const EMPTY_DATASET: MapDataset = {
   records: [],
@@ -73,10 +75,14 @@ function MapContent() {
   const [layerName, setLayerName] = useState('')
   const [layerColor, setLayerColor] = useState('#3D7B9E')
   const [layerFile, setLayerFile] = useState<File | null>(null)
+  const [layerInspection, setLayerInspection] = useState<GeoJsonTopologyReport | null>(null)
+  const [inspectingLayer, setInspectingLayer] = useState(false)
   const [savingLayer, setSavingLayer] = useState(false)
   const [currentPosition, setCurrentPosition] = useState<GeoRecord | null>(null)
   const [dimensionKey, setDimensionKey] = useState('')
   const [showInteroperability, setShowInteroperability] = useState(false)
+  const [routeEnabled, setRouteEnabled] = useState(false)
+  const [routeMaximumStops, setRouteMaximumStops] = useState(25)
   const [entities, setEntities] = useState<any[]>([])
   const [selectedEntityId, setSelectedEntityId] = useState(() => user?.entityId || (typeof localStorage === 'undefined' ? '' : localStorage.getItem('cg_admin_map_entity') || ''))
   const scopedUser = useMemo<User | null>(() => {
@@ -161,6 +167,19 @@ function MapContent() {
       return value === null || value === undefined || value === '' ? [] : [[record.id, thematicColor(String(value))]]
     }))
   }, [dimensionKey, filteredRecords])
+  const routePlan = useMemo(() => {
+    if (!routeEnabled) return null
+    const candidates = filteredRecords.filter(record => record.id !== 'device-current-position')
+    return planFieldRoute(candidates, currentPosition, routeMaximumStops)
+  }, [currentPosition, filteredRecords, routeEnabled, routeMaximumStops])
+  const routeOverlay = useMemo<MapRouteOverlay | null>(() => routePlan && routePlan.stops.length ? ({
+    coordinates: routePlan.coordinates,
+    stops: routePlan.stops.map(stop => ({
+      id: stop.record.id,
+      order: stop.order,
+      coordinate: [stop.record.longitude, stop.record.latitude],
+    })),
+  }) : null, [routePlan])
   const pendingCount = dataset.records.filter(record => record.isPending).length
   const institutionalLayerCount = dataset.layers.filter(layer => !layer.id.startsWith('base:')).length
   const coverage = useMemo(() => calculateCoverageSummary(
@@ -218,16 +237,38 @@ function MapContent() {
     setError('')
     try {
       const geojson = parseGeoJson(await layerFile.text())
+      assertValidGeoJsonTopology(geojson)
       await createMapLayer(scopedUser, { name: layerName, color: layerColor, geojson })
       setShowLayerForm(false)
       setLayerName('')
       setLayerFile(null)
+      setLayerInspection(null)
       await load()
     } catch (saveError) {
       console.error('Error creating map layer:', saveError)
       setError(saveError instanceof Error ? saveError.message : 'No fue posible guardar la capa territorial.')
     } finally {
       setSavingLayer(false)
+    }
+  }
+
+  async function inspectLayerFile(file: File | null) {
+    setLayerFile(file)
+    setLayerInspection(null)
+    if (!file) return
+    if (file.size > 6 * 1024 * 1024) {
+      setError('La capa supera 6 MB. Simplifica el GeoJSON antes de cargarlo.')
+      return
+    }
+    setInspectingLayer(true)
+    setError('')
+    try {
+      const geojson = parseGeoJson(await file.text())
+      setLayerInspection(analyzeGeoJsonTopology(geojson))
+    } catch (inspectionError) {
+      setError(inspectionError instanceof Error ? inspectionError.message : 'No fue posible revisar la capa territorial.')
+    } finally {
+      setInspectingLayer(false)
     }
   }
 
@@ -368,6 +409,47 @@ function MapContent() {
           <button type="button" onClick={locateDevice} className="flex min-h-12 w-full items-center justify-center gap-2 bg-[#E9F1F3] px-4 text-sm font-black text-[#1B3A4B]">
             <LocateFixed size={18} /> Mi ubicación
           </button>
+          <div className="space-y-3 border border-slate-200 p-3">
+            <button type="button" onClick={() => {
+              setRouteEnabled(value => !value)
+              setMode('points')
+            }} aria-pressed={routeEnabled} className={`flex min-h-12 w-full items-center justify-center gap-2 px-3 text-sm font-black ${routeEnabled ? 'bg-[#E6533C] text-white' : 'bg-slate-100 text-[#1B3A4B]'}`}>
+              <Route size={18} /> {routeEnabled ? 'Ocultar ruta' : 'Planear ruta offline'}
+            </button>
+            {routeEnabled && (
+              <div className="space-y-3">
+                <label className="block text-[10px] font-black uppercase tracking-wide text-slate-500">Máximo de visitas
+                  <select value={routeMaximumStops} onChange={event => setRouteMaximumStops(Number(event.target.value))} className="mt-1 min-h-11 w-full border border-slate-200 bg-white px-3 text-xs font-bold text-slate-800">
+                    <option value={10}>10 visitas</option>
+                    <option value={25}>25 visitas</option>
+                    <option value={50}>50 visitas</option>
+                    <option value={100}>100 visitas</option>
+                  </select>
+                </label>
+                {routePlan?.stops.length ? (
+                  <>
+                    <dl className="grid grid-cols-2 gap-2 text-center text-[10px]">
+                      <div className="bg-slate-50 p-2"><dt className="text-slate-500">Paradas</dt><dd className="mt-1 text-sm font-black text-slate-900">{routePlan.stops.length}</dd></div>
+                      <div className="bg-slate-50 p-2"><dt className="text-slate-500">Distancia recta</dt><dd className="mt-1 text-sm font-black text-slate-900">{formatRouteDistance(routePlan.totalDistanceMeters)}</dd></div>
+                    </dl>
+                    <ol className="max-h-48 space-y-1 overflow-y-auto pr-1">
+                      {routePlan.stops.map(stop => (
+                        <li key={stop.record.id}>
+                          <button type="button" onClick={() => setSelected(stop.record)} className="flex min-h-10 w-full items-center gap-2 text-left text-xs text-slate-700">
+                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#E6533C] text-[10px] font-black text-white">{stop.order}</span>
+                            <span className="min-w-0 flex-1 truncate">{stop.record.label}</span>
+                            <span className="shrink-0 text-[10px] text-slate-400">+{formatRouteDistance(stop.distanceFromPreviousMeters)}</span>
+                          </button>
+                        </li>
+                      ))}
+                    </ol>
+                    <p className="text-[10px] leading-4 text-slate-500">Se calcula en el dispositivo con los puntos cacheados. Es una secuencia aproximada en línea recta, no navegación vial.</p>
+                    {routePlan.truncated && <p className="text-[10px] font-bold text-amber-700">Hay más puntos visibles; aumenta el máximo o aplica filtros.</p>}
+                  </>
+                ) : <p className="text-xs leading-5 text-slate-500">No hay puntos válidos con GPS para planificar.</p>}
+              </div>
+            )}
+          </div>
           <button type="button" onClick={() => setShowInteroperability(true)} className="flex min-h-12 w-full items-center justify-center gap-2 border border-[#1B3A4B] px-4 text-sm font-black text-[#1B3A4B]">
             <Share2 size={18} /> Exportar / ArcGIS
           </button>
@@ -383,7 +465,7 @@ function MapContent() {
               {loading ? <Loader2 size={19} className="animate-spin" /> : <RefreshCw size={19} />}
             </button>
           </div>
-          <InternalMap records={filteredRecords} layers={filteredLayers} mode={mode} selectedId={selected?.id || null} onSelect={setSelected} recordColors={recordColors} minimumGroupSize={dataset.spatialPolicy.minimumGroupSize} coverageTarget={dataset.spatialPolicy.coverageTarget} />
+          <InternalMap records={filteredRecords} layers={filteredLayers} mode={mode} selectedId={selected?.id || null} onSelect={setSelected} recordColors={recordColors} minimumGroupSize={dataset.spatialPolicy.minimumGroupSize} coverageTarget={dataset.spatialPolicy.coverageTarget} route={routeOverlay} />
         </section>
 
         <aside className="bg-[#153646] p-5 text-white shadow-sm">
@@ -431,10 +513,18 @@ function MapContent() {
             </div>
             <div className="mt-6 space-y-5">
               <label className="block text-sm font-black text-slate-800">Nombre de la capa<input required value={layerName} onChange={event => setLayerName(event.target.value)} className="mt-2 min-h-12 w-full border border-slate-300 px-4 font-medium outline-none focus:border-[#1B3A4B]" placeholder="Límites de municipios" /></label>
-              <label className="block text-sm font-black text-slate-800">Archivo GeoJSON<input required type="file" accept=".geojson,.json,application/geo+json,application/json" onChange={event => setLayerFile(event.target.files?.[0] || null)} className="mt-2 block min-h-12 w-full border border-dashed border-slate-300 p-3 text-sm font-medium" /></label>
+              <label className="block text-sm font-black text-slate-800">Archivo GeoJSON<input required type="file" accept=".geojson,.json,application/geo+json,application/json" onChange={event => void inspectLayerFile(event.target.files?.[0] || null)} className="mt-2 block min-h-12 w-full border border-dashed border-slate-300 p-3 text-sm font-medium" /></label>
+              {inspectingLayer && <p className="flex items-center gap-2 bg-slate-50 p-3 text-xs font-bold text-slate-600"><Loader2 size={15} className="animate-spin" /> Revisando coordenadas y topología…</p>}
+              {layerInspection && (
+                <div className={`border p-3 text-xs ${layerInspection.valid ? 'border-emerald-200 bg-emerald-50 text-emerald-900' : 'border-rose-200 bg-rose-50 text-rose-900'}`}>
+                  <p className="font-black">{layerInspection.valid ? 'Topología válida para publicar' : 'La capa necesita correcciones'}</p>
+                  <p className="mt-1 leading-5">{layerInspection.featureCount} elementos · {layerInspection.geometryCount} geometrías · {layerInspection.vertexCount} vértices.</p>
+                  {layerInspection.issues.length > 0 && <ul className="mt-2 list-disc space-y-1 pl-4">{layerInspection.issues.slice(0, 4).map((issue, index) => <li key={`${issue.code}:${issue.path}:${index}`}>{issue.message}</li>)}</ul>}
+                </div>
+              )}
               <label className="flex items-center justify-between gap-4 text-sm font-black text-slate-800">Color de la capa<input type="color" value={layerColor} onChange={event => setLayerColor(event.target.value)} className="h-12 w-20 cursor-pointer border border-slate-300 bg-white p-1" /></label>
             </div>
-            <button type="submit" disabled={savingLayer || !layerFile || !layerName.trim()} className="mt-7 flex min-h-12 w-full items-center justify-center gap-2 bg-[#1B3A4B] px-5 text-sm font-black text-white disabled:opacity-50">
+            <button type="submit" disabled={savingLayer || inspectingLayer || !layerFile || !layerName.trim() || !layerInspection?.valid} className="mt-7 flex min-h-12 w-full items-center justify-center gap-2 bg-[#1B3A4B] px-5 text-sm font-black text-white disabled:opacity-50">
               {savingLayer ? <Loader2 size={18} className="animate-spin" /> : <FileUp size={18} />} Guardar capa en Supabase
             </button>
           </form>

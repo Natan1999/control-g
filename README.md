@@ -1,4 +1,4 @@
-# Control G 2.14 · LATAM + GIS
+# Control G 2.15 · LATAM + GIS
 
 Aplicación multi-entidad para caracterización y acompañamiento psicosocial en campo. La interfaz web y el APK de Capacitor funcionan sin conexión: familias, formularios, respuestas, fotografías y actividades se guardan localmente y se sincronizan de forma idempotente cuando regresa la señal.
 
@@ -10,12 +10,12 @@ Aplicación multi-entidad para caracterización y acompañamiento psicosocial en
 - Supabase Auth, Postgres, Storage y funciones SQL protegidas.
 - Aislamiento por entidad mediante Row Level Security (RLS).
 - Identificadores locales únicos para evitar duplicados en reintentos de sincronización.
-- PostGIS, índices GiST, capas GeoJSON por entidad y mapa vectorial offline con puntos, recorridos, polígonos, grupos, calor y coropletas de cobertura.
+- PostGIS, índices GiST, capas GeoJSON por entidad y mapa vectorial offline con puntos, recorridos, polígonos, grupos, calor, coropletas y planificación de rutas de visita.
 - Configuración regional para 20 países latinoamericanos y catálogos administrativos oficiales versionados.
 - Analítica reproducible con diccionario de indicadores y exportación PDF, DOCX, XLSX y CSV.
 - Gobierno de datos: consentimientos, manifiestos SHA-256, retención, accesos sensibles y MFA TOTP configurable.
 - Flujo editorial gobernado para formularios: borrador, revisión por una segunda persona, aprobación, publicación inmutable y archivado recuperable.
-- Motor avanzado compartido por web/APK y simulador: reglas condicionales en cascada, validaciones offline, cálculos seguros, matriz, moneda, audio, PDF, ayudas visibles, clasificación de datos sensibles y estimación de almacenamiento.
+- Motor avanzado compartido por web/APK y simulador: reglas condicionales en cascada, validaciones LATAM offline, traducciones regionales administrables, cálculos seguros, matriz, moneda, audio, PDF, ayudas visibles, clasificación de datos sensibles y estimación de almacenamiento.
 - Observabilidad con health check Supabase, sonda externa cada cinco minutos, incidentes deduplicados, sanitización de errores, ADR y runbooks de recuperación.
 
 ## Configuración
@@ -49,6 +49,8 @@ npm run backend:check
 
 La comprobación integral opcional (`npm run backend:verify`) inicia sesión, crea y elimina usuarios y datos temporales, y valida RLS, formularios, Storage, idempotencia y la cola ArcGIS. `npm run backend:verify:arcgis` prueba además la API publicada contra un Feature Service público. `npm run backend:verify:jurisdictions` ensaya preview, publicación versionada, jerarquía y PostGIS dentro de una transacción que termina en rollback. Estas pruebas requieren credenciales administrativas solo en el entorno de ejecución.
 
+La suite local incluye un ensayo IndexedDB con 750 respuestas y 1.500 evidencias que simula cierre forzado y reanudación, además de un dataset patrón que fija KPIs, supresión estadística y exclusión de variables sensibles.
+
 Una migración individual se puede aplicar por el canal administrativo de Supabase con `npm run backend:migrate:file -- supabase/migrations/ARCHIVO.sql`, proporcionando las variables administrativas indicadas por el script. No se registran secretos en el repositorio.
 
 El primer inicio de sesión del dispositivo requiere conexión. Después, la sesión, los formularios y las familias quedan precargados localmente; fotos, audios, PDF, firmas y respuestas permanecen en cola hasta que el dispositivo recupere señal.
@@ -60,6 +62,8 @@ El primer inicio de sesión del dispositivo requiere conexión. Después, la ses
 - `/admin/territories` importa GeoJSON Polygon/MultiPolygon, previsualiza, valida jerarquías, genera SHA-256 y publica una versión inmutable del catálogo oficial sin borrar la anterior.
 - El mapa base de 20 países está embebido y funciona sin proveedor de teselas ni conexión.
 - Las capturas GPS, actividades, hogares y capas institucionales quedan disponibles en IndexedDB; la visualización ofrece puntos, agrupación adaptativa, calor y cobertura por polígonos.
+- La ruta de campo ordena hasta 100 visitas con distancia geodésica y mejora 2-opt directamente en el dispositivo; funciona sobre la caché y se identifica como aproximación, no como navegación vial.
+- Antes de publicar una capa, el cargador revisa WGS84, número de vértices, cierre de anillos, autointersecciones, duplicados y huecos externos.
 - El constructor incorpora campos de recorrido y área: capturan vértices GPS sin internet, conservan precisión/altitud/tiempo y, al sincronizar, generan geometrías PostGIS con longitud, perímetro y área.
 - Las respuestas se pueden clasificar por variables temáticas no sensibles; nombres, documentos, teléfonos, direcciones, firmas y fotos se excluyen del índice cartográfico.
 - Administración y coordinación disponen de `/admin/integrations/arcgis` y `/coord/integrations/arcgis`: verificación de servicios, importación pública, OAuth 2.0 de aplicación en servidor, lotes, reintentos, idempotencia, cancelación y trazabilidad por registro. Supabase conserva solo una referencia al secreto; el Client Secret real vive en las variables cifradas del servidor y nunca llega al navegador o al APK.
@@ -90,7 +94,7 @@ Requiere JDK 17 o superior y Android SDK 35:
 npm run android:apk
 ```
 
-El APK instalable de pruebas queda en `android/app/build/outputs/apk/debug/app-debug.apk`; la copia entregable 2.14.0 se genera en `entregables/Control-G-2.14.0-LATAM-GIS-offline-debug.apk`. Para Play Store o distribución firmada se debe aportar el keystore institucional y configurar la firma de `release` fuera del repositorio.
+El APK instalable de pruebas queda en `android/app/build/outputs/apk/debug/app-debug.apk`; la copia entregable 2.15.0 se genera en `entregables/Control-G-2.15.0-LATAM-GIS-offline-debug.apk`. Para Play Store o distribución firmada se debe aportar el keystore institucional y configurar la firma de `release` fuera del repositorio.
 
 ## Cliente inicial: Gobernación de Bolívar
 
