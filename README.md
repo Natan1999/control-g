@@ -1,4 +1,4 @@
-# Control G 2.15 · LATAM + GIS
+# Control G 2.16 · LATAM + GIS
 
 Aplicación multi-entidad para caracterización y acompañamiento psicosocial en campo. La interfaz web y el APK de Capacitor funcionan sin conexión: familias, formularios, respuestas, fotografías y actividades se guardan localmente y se sincronizan de forma idempotente cuando regresa la señal.
 
@@ -17,6 +17,7 @@ Aplicación multi-entidad para caracterización y acompañamiento psicosocial en
 - Flujo editorial gobernado para formularios: borrador, revisión por una segunda persona, aprobación, publicación inmutable y archivado recuperable.
 - Motor avanzado compartido por web/APK y simulador: reglas condicionales en cascada, validaciones LATAM offline, traducciones regionales administrables, cálculos seguros, matriz, moneda, audio, PDF, ayudas visibles, clasificación de datos sensibles y estimación de almacenamiento.
 - Observabilidad con health check Supabase, sonda externa cada cinco minutos, incidentes deduplicados, sanitización de errores, ADR y runbooks de recuperación.
+- Recuperación de acceso por enlace de uso único de Supabase y cambio de contraseña con reautenticación y política institucional común para todos los roles.
 
 ## Configuración
 
@@ -94,7 +95,7 @@ Requiere JDK 17 o superior y Android SDK 35:
 npm run android:apk
 ```
 
-El APK instalable de pruebas queda en `android/app/build/outputs/apk/debug/app-debug.apk`; la copia entregable 2.15.0 se genera en `entregables/Control-G-2.15.0-LATAM-GIS-offline-debug.apk`. Para Play Store o distribución firmada se debe aportar el keystore institucional y configurar la firma de `release` fuera del repositorio.
+El APK instalable de pruebas queda en `android/app/build/outputs/apk/debug/app-debug.apk`; la copia entregable 2.16.0 se genera en `entregables/Control-G-2.16.0-LATAM-GIS-offline-debug.apk`. Para Play Store o distribución firmada se debe aportar el keystore institucional y configurar la firma de `release` fuera del repositorio.
 
 ## Cliente inicial: Gobernación de Bolívar
 

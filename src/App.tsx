@@ -6,6 +6,7 @@ import type { UserRole } from '@/types'
 
 // Auth
 import LoginPage from '@/pages/auth/LoginPage'
+import PasswordRecoveryPage from '@/pages/auth/PasswordRecoveryPage'
 import LandingPage from '@/pages/landing/LandingPage'
 import SolutionPage from '@/pages/landing/SolutionPage'
 import { MarketingSeo } from '@/components/marketing/MarketingSeo'
@@ -122,6 +123,8 @@ export default function App() {
       <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background text-sm font-semibold text-muted-foreground">Cargando Control G…</div>}>
       <Routes>
       <Route path="/login" element={user ? <Navigate to={defaultRoutes[user.role as UserRole]} replace /> : <LoginPage />} />
+      <Route path="/recuperar-contrasena" element={<PasswordRecoveryPage mode="request" />} />
+      <Route path="/restablecer-contrasena" element={<PasswordRecoveryPage mode="update" />} />
 
       {/* Public search-intent pages. Each route has unique content and metadata. */}
       <Route path="/software-caracterizacion-social" element={<SolutionPage path="/software-caracterizacion-social" />} />

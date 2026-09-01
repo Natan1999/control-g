@@ -2,23 +2,34 @@ import { useState } from 'react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { useAuthStore } from '@/stores/authStore'
 import { updatePassword } from '@/lib/auth'
+import { validateSecurePassword } from '@/lib/password-policy'
 
 export default function AdminSettingsPage() {
   const { user } = useAuthStore()
   const [currentPw, setCurrentPw] = useState('')
   const [newPw, setNewPw] = useState('')
+  const [confirmPw, setConfirmPw] = useState('')
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null)
 
   async function handlePasswordChange() {
     if (!currentPw || !newPw) return
+    const policyError = validateSecurePassword(newPw)
+    if (policyError) {
+      setMsg({ text: policyError, ok: false })
+      return
+    }
+    if (newPw !== confirmPw) {
+      setMsg({ text: 'Las contraseñas no coinciden.', ok: false })
+      return
+    }
     setSaving(true)
     try {
       await updatePassword(currentPw, newPw)
       setMsg({ text: 'Contraseña actualizada correctamente', ok: true })
-      setCurrentPw(''); setNewPw('')
-    } catch (e: any) {
-      setMsg({ text: e.message || 'Error al actualizar', ok: false })
+      setCurrentPw(''); setNewPw(''); setConfirmPw('')
+    } catch (error) {
+      setMsg({ text: error instanceof Error ? error.message : 'Error al actualizar', ok: false })
     } finally {
       setSaving(false)
       setTimeout(() => setMsg(null), 3000)
@@ -46,10 +57,15 @@ export default function AdminSettingsPage() {
               placeholder="Contraseña actual"
               className="w-full px-3 py-2 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A4B]/30" />
             <input type="password" value={newPw} onChange={e => setNewPw(e.target.value)}
-              placeholder="Nueva contraseña"
+              autoComplete="new-password"
+              placeholder="Nueva contraseña segura"
+              className="w-full px-3 py-2 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A4B]/30" />
+            <input type="password" value={confirmPw} onChange={e => setConfirmPw(e.target.value)}
+              autoComplete="new-password"
+              placeholder="Confirmar nueva contraseña"
               className="w-full px-3 py-2 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A4B]/30" />
             {msg && <p className={`text-sm ${msg.ok ? 'text-green-600' : 'text-red-600'}`}>{msg.text}</p>}
-            <button onClick={handlePasswordChange} disabled={saving || !currentPw || !newPw}
+            <button onClick={handlePasswordChange} disabled={saving || !currentPw || !newPw || !confirmPw}
               className="w-full py-2.5 text-white rounded-xl text-sm font-bold disabled:opacity-60"
               style={{ background: '#1B3A4B' }}>
               {saving ? 'Actualizando...' : 'Actualizar contraseña'}

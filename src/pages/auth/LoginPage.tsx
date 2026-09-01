@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Eye, EyeOff, Loader2, MapPin, Shield, Wifi, AlertCircle } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
@@ -20,6 +20,7 @@ export default function LoginPage() {
   const [email, setEmail]               = useState('')
   const [password, setPassword]         = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [searchParams] = useSearchParams()
 
   // ── Rate limiting ──────────────────────────────────────────────────────────
   const [attempts, setAttempts] = useState(() => Number(localStorage.getItem('cg_login_attempts') || '0'))
@@ -172,6 +173,12 @@ export default function LoginPage() {
           <h1 className="text-2xl font-black text-foreground">Iniciar sesión</h1>
           <p className="text-muted-foreground mt-1 mb-8">Accede con tus credenciales institucionales</p>
 
+          {searchParams.get('password') === 'updated' && (
+            <div className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm font-semibold text-emerald-800" role="status">
+              Contraseña actualizada. Inicia sesión con tu nueva clave.
+            </div>
+          )}
+
           {/* Formulario real */}
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
@@ -193,9 +200,10 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label htmlFor="login-password" className="block text-sm font-semibold text-foreground mb-1.5">
-                Contraseña
-              </label>
+              <div className="mb-1.5 flex items-center justify-between gap-4">
+                <label htmlFor="login-password" className="block text-sm font-semibold text-foreground">Contraseña</label>
+                <Link to="/recuperar-contrasena" className="text-xs font-bold text-brand-primary hover:underline">¿Olvidaste tu contraseña?</Link>
+              </div>
               <div className="relative">
                 <input
                   id="login-password"

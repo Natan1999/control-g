@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { LogOut, RefreshCw, User, PenLine } from 'lucide-react'
+import { CheckCircle2, LogOut, RefreshCw, User, PenLine } from 'lucide-react'
 import { MobileTopBar, BottomNav } from '@/components/layout/BottomNav'
 import { useAuthStore } from '@/stores/authStore'
 import { useSyncStore } from '@/stores/syncStore'
 import { getInitials } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 import { processSyncQueue, updateLocalCache } from '@/lib/sync-engine'
+import { updatePassword } from '@/lib/auth'
+import { validateSecurePassword } from '@/lib/password-policy'
 
 export default function FieldProfilePage() {
   const { user, signOut } = useAuthStore()
@@ -15,6 +17,8 @@ export default function FieldProfilePage() {
 
   const [pwForm, setPwForm] = useState({ current: '', next: '', confirm: '' })
   const [pwError, setPwError] = useState('')
+  const [pwSuccess, setPwSuccess] = useState(false)
+  const [pwLoading, setPwLoading] = useState(false)
   const [syncMessage, setSyncMessage] = useState('')
 
   const handleLogout = async () => {
@@ -39,13 +43,24 @@ export default function FieldProfilePage() {
     }
   }
 
-  const handlePwSubmit = (e: React.FormEvent) => {
+  const handlePwSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setPwError('')
-    if (pwForm.next.length < 8) { setPwError('La nueva contraseña debe tener al menos 8 caracteres.'); return }
+    setPwSuccess(false)
+    if (!pwForm.current) { setPwError('Ingresa tu contraseña actual.'); return }
+    const policyError = validateSecurePassword(pwForm.next)
+    if (policyError) { setPwError(policyError); return }
     if (pwForm.next !== pwForm.confirm) { setPwError('Las contraseñas no coinciden.'); return }
-    // Password changes are handled by Supabase Auth.
-    alert('Funcionalidad de cambio de contraseña disponible próximamente.')
+    setPwLoading(true)
+    try {
+      await updatePassword(pwForm.current, pwForm.next)
+      setPwForm({ current: '', next: '', confirm: '' })
+      setPwSuccess(true)
+    } catch (error) {
+      setPwError(error instanceof Error ? error.message : 'No fue posible cambiar la contraseña.')
+    } finally {
+      setPwLoading(false)
+    }
   }
 
   return (
@@ -154,12 +169,14 @@ export default function FieldProfilePage() {
                 />
               ))}
               {pwError && <p className="text-xs text-red-500 font-medium">{pwError}</p>}
+              {pwSuccess && <p className="flex items-center gap-2 text-xs font-semibold text-emerald-700"><CheckCircle2 size={15} /> Contraseña actualizada correctamente.</p>}
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl text-white font-semibold text-sm hover:opacity-90 transition-opacity"
+                disabled={pwLoading}
+                className="w-full py-3 rounded-xl text-white font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-60"
                 style={{ background: '#1B3A4B' }}
               >
-                Actualizar contraseña
+                {pwLoading ? 'Actualizando…' : 'Actualizar contraseña'}
               </button>
             </form>
           </div>

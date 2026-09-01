@@ -105,7 +105,26 @@ export async function updateProfile(
   return mapProfile(updated)
 }
 
-export async function updatePassword(_currentPassword: string, newPassword: string): Promise<void> {
+export async function updatePassword(currentPassword: string, newPassword: string): Promise<void> {
+  const { data: current, error: currentError } = await supabase.auth.getUser()
+  const email = current.user?.email
+  if (currentError || !email) throw mapAuthError(currentError || new Error('No existe una sesión activa.'))
+
+  const { error: reauthenticationError } = await supabase.auth.signInWithPassword({
+    email,
+    password: currentPassword,
+  })
+  if (reauthenticationError) throw new Error('La contraseña actual es incorrecta.')
+
+  const { error } = await supabase.auth.updateUser({ password: newPassword })
+  if (error) throw mapAuthError(error)
+}
+
+export async function completePasswordRecovery(newPassword: string): Promise<void> {
+  const { data, error: sessionError } = await supabase.auth.getSession()
+  if (sessionError || !data.session) {
+    throw new Error('El enlace de recuperación no es válido o ya venció. Solicita uno nuevo.')
+  }
   const { error } = await supabase.auth.updateUser({ password: newPassword })
   if (error) throw mapAuthError(error)
 }

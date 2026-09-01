@@ -5,6 +5,7 @@ import { PageWrapper } from '@/components/shared'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
 import { Query } from '@/lib/backend'
 import { updatePassword } from '@/lib/auth'
+import { validateSecurePassword } from '@/lib/password-policy'
 import { useAuthStore } from '@/stores/authStore'
 
 export default function SettingsPage() {
@@ -42,7 +43,8 @@ export default function SettingsPage() {
   async function handleChangePassword() {
     setPwError('')
     if (!pwForm.current.trim()) { setPwError('Ingresa tu contraseña actual'); return }
-    if (pwForm.next.length < 8) { setPwError('La nueva contraseña debe tener al menos 8 caracteres'); return }
+    const policyError = validateSecurePassword(pwForm.next)
+    if (policyError) { setPwError(policyError); return }
     if (pwForm.next !== pwForm.confirm) { setPwError('Las contraseñas no coinciden'); return }
 
     setPwLoading(true)
