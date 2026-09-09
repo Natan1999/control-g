@@ -14,6 +14,7 @@ import { MfaGate } from '@/components/auth/MfaGate'
 import { SkipLink } from '@/components/a11y/SkipLink'
 
 const BlogIndexPage = lazy(() => import('@/pages/blog/BlogIndexPage'))
+const MunicipalDemoPage = lazy(() => import('@/pages/demo/MunicipalDemoPage'))
 const BlogPostPage = lazy(() => import('@/pages/blog/BlogPostPage'))
 
 // Layout
@@ -124,6 +125,7 @@ export default function App() {
       <Routes>
       <Route path="/login" element={user ? <Navigate to={defaultRoutes[user.role as UserRole]} replace /> : <LoginPage />} />
       <Route path="/recuperar-contrasena" element={<PasswordRecoveryPage mode="request" />} />
+      <Route path="/demo" element={<MunicipalDemoPage />} />
       <Route path="/restablecer-contrasena" element={<PasswordRecoveryPage mode="update" />} />
 
       {/* Public search-intent pages. Each route has unique content and metadata. */}

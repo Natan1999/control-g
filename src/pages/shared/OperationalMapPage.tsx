@@ -18,6 +18,8 @@ import {
   ShieldCheck,
   WifiOff,
   X,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react'
 import { InternalMap } from '@/components/gis/InternalMap'
 import { GisInteroperabilityDialog } from '@/components/gis/GisInteroperabilityDialog'
@@ -61,14 +63,26 @@ function sourceLabel(source: GeoRecord['source']) {
   return SOURCE_LABELS[source] || source
 }
 
-function MapContent() {
-  const { user } = useAuthStore()
+export function MapContent({ demoDataset, demoUser }: { demoDataset?: MapDataset; demoUser?: User } = {}) {
+  const auth = useAuthStore()
+  const user = demoUser || auth.user
+  const [expanded, setExpanded] = useState(false)
+  const [toolsOpen, setToolsOpen] = useState(false)
+  const [layerOpacity, setLayerOpacity] = useState<Record<string, number>>({})
+  useEffect(() => {
+    if (!expanded) return
+    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') setExpanded(false) }
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKey)
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = previousOverflow }
+  }, [expanded])
   const [dataset, setDataset] = useState<MapDataset>(EMPTY_DATASET)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [sourceFilter, setSourceFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [mode, setMode] = useState<'points' | 'clusters' | 'heat' | 'choropleth'>('clusters')
+  const [mode, setMode] = useState<'points' | 'clusters' | 'heat' | 'choropleth'>(demoDataset ? 'heat' : 'clusters')
   const [selected, setSelected] = useState<GeoRecord | null>(null)
   const [visibleLayers, setVisibleLayers] = useState<Set<string>>(new Set())
   const [showLayerForm, setShowLayerForm] = useState(false)
@@ -92,7 +106,7 @@ function MapContent() {
   }, [selectedEntityId, user])
 
   useEffect(() => {
-    if (!user || user.role !== 'admin') return
+    if (demoDataset || !user || user.role !== 'admin') return
     void databases.listDocuments(DATABASE_ID, COLLECTION_IDS.ENTITIES, [
       Query.equal('status', 'active'), Query.orderAsc('name'), Query.limit(500),
     ]).then(result => {
@@ -103,7 +117,7 @@ function MapContent() {
         if (next) localStorage.setItem('cg_admin_map_entity', next)
       }
     }).catch(() => setError('No fue posible cargar las entidades disponibles para el mapa.'))
-  }, [selectedEntityId, user])
+  }, [selectedEntityId, user, demoDataset])
 
   const load = useCallback(async () => {
     if (!scopedUser) {
@@ -113,7 +127,7 @@ function MapContent() {
     setLoading(true)
     setError('')
     try {
-      const result = await loadMapDataset(scopedUser)
+      const result = demoDataset || await loadMapDataset(scopedUser)
       setDataset(result)
       setVisibleLayers(new Set(result.layers.filter(layer => layer.visibleDefault).map(layer => layer.id)))
     } catch (loadError) {
@@ -122,9 +136,10 @@ function MapContent() {
     } finally {
       setLoading(false)
     }
-  }, [scopedUser])
+  }, [scopedUser, demoDataset])
 
   useEffect(() => { void load() }, [load])
+  useEffect(() => { setSelected(null); setCurrentPosition(null); setSourceFilter('all'); setStatusFilter('all') }, [scopedUser?.id, scopedUser?.entityId])
 
   const statuses = useMemo(() => Array.from(new Set(dataset.records.map(record => record.status))).sort(), [dataset.records])
   const filteredRecords = useMemo(() => {
@@ -135,8 +150,8 @@ function MapContent() {
     })
   }, [currentPosition, dataset.records, sourceFilter, statusFilter])
   const filteredLayers = useMemo(
-    () => dataset.layers.filter(layer => visibleLayers.has(layer.id)),
-    [dataset.layers, visibleLayers],
+    () => dataset.layers.filter(layer => visibleLayers.has(layer.id)).map(layer => ({ ...layer, opacity: layerOpacity[layer.id] ?? layer.opacity })),
+    [dataset.layers, visibleLayers, layerOpacity],
   )
   const dimensionOptions = useMemo(() => {
     const options = new Map<string, { label: string; count: number }>()
@@ -188,7 +203,7 @@ function MapContent() {
     dataset.spatialPolicy.minimumGroupSize,
     dataset.spatialPolicy.coverageTarget,
   ), [dataset.spatialPolicy.coverageTarget, dataset.spatialPolicy.minimumGroupSize, filteredLayers, filteredRecords])
-  const canCreateLayer = Boolean(scopedUser?.entityId && (scopedUser.role === 'admin' || scopedUser.role === 'coordinator'))
+  const canCreateLayer = !demoDataset && Boolean(scopedUser?.entityId && (scopedUser.role === 'admin' || scopedUser.role === 'coordinator'))
 
   function toggleLayer(layerId: string) {
     setVisibleLayers(current => {
@@ -274,8 +289,8 @@ function MapContent() {
 
   return (
     <div className="mx-auto max-w-[1500px] space-y-4 p-4 sm:p-6 lg:p-8">
-      <h1 className="sr-only">Mapa territorial operativo de Control G</h1>
-      {user?.role === 'admin' && (
+      <h2 className="sr-only">Mapa territorial operativo de Control G</h2>
+      {!demoDataset && user?.role === 'admin' && (
         <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex sm:items-end sm:justify-between sm:gap-5">
           <div><h2 className="font-black text-[#1B3A4B]">Alcance multiempresa</h2><p className="mt-1 text-sm leading-6 text-slate-500">Selecciona una entidad para evitar mezclar capturas, políticas y catálogos territoriales entre clientes.</p></div>
           <label className="mt-3 block min-w-0 text-xs font-black uppercase tracking-wide text-slate-500 sm:mt-0 sm:w-96">Entidad visible
@@ -312,7 +327,7 @@ function MapContent() {
       <div className={`flex items-start gap-3 border px-4 py-3 text-sm ${dataset.loadedFromCache ? 'border-amber-200 bg-amber-50 text-amber-900' : 'border-emerald-200 bg-emerald-50 text-emerald-900'}`}>
         {dataset.loadedFromCache ? <WifiOff className="mt-0.5 shrink-0" size={18} /> : <CheckCircle2 className="mt-0.5 shrink-0" size={18} />}
         <div>
-          <p className="font-black">{dataset.loadedFromCache ? 'Mapa disponible desde la memoria del dispositivo' : 'Mapa actualizado desde Supabase'}</p>
+          <p className="font-black">{demoDataset ? 'Demostración · datos ficticios disponibles sin internet' : dataset.loadedFromCache ? 'Mapa disponible desde la memoria del dispositivo' : 'Mapa actualizado desde Supabase'}</p>
           <p className="mt-0.5 text-xs leading-5 opacity-80">
             Los puntos y límites vectoriales permanecen visibles sin internet. No se muestran respuestas personales dentro del mapa.
           </p>
@@ -325,8 +340,16 @@ function MapContent() {
         </div>
       )}
 
-      <div className="grid gap-4 xl:grid-cols-[270px_minmax(0,1fr)_300px]">
-        <aside className="space-y-5 bg-white p-4 shadow-sm">
+      <div className={`${expanded ? 'fixed inset-0 z-[45] !m-0 flex h-[100dvh] flex-col bg-slate-100 p-2 sm:p-4' : 'rounded-2xl border border-slate-200 bg-slate-100 p-2 sm:p-3'}`}>
+        <div className="flex shrink-0 flex-wrap items-center gap-2 rounded-xl bg-[#153646] p-3 text-white">
+          <h2 className="mr-auto text-sm font-black">Explorador territorial <span className="ml-2 text-xs font-normal text-white/60">{filteredRecords.length} puntos</span></h2>
+          <button type="button" onClick={() => setToolsOpen(value => !value)} aria-expanded={toolsOpen} className="min-h-11 rounded-lg bg-white/10 px-3 text-xs font-bold"><Layers3 size={16} className="mr-2 inline" />Capas y filtros</button>
+          <button type="button" onClick={() => setShowInteroperability(true)} className="min-h-11 rounded-lg bg-white/10 px-3 text-xs font-bold">Exportar</button>
+          <button type="button" onClick={() => setExpanded(value => !value)} className="min-h-11 rounded-lg bg-white px-3 text-xs font-bold text-[#153646]">{expanded ? <Minimize2 size={16} className="mr-2 inline" /> : <Maximize2 size={16} className="mr-2 inline" />}{expanded ? 'Salir de pantalla completa' : 'Pantalla completa'}</button>
+        </div>
+        <div className={`relative mt-2 grid min-h-0 gap-2 ${expanded ? 'flex-1 overflow-hidden' : ''} ${toolsOpen ? 'lg:grid-cols-[260px_minmax(0,1fr)]' : 'grid-cols-1'}`}>
+        <aside className={`${toolsOpen ? 'block' : 'hidden'} ${expanded ? 'absolute inset-y-0 left-0 z-20 w-[min(290px,85vw)] overflow-y-auto lg:relative lg:w-auto' : ''} space-y-5 rounded-xl bg-white p-4 shadow-sm`}>
+          <button type="button" onClick={() => setToolsOpen(false)} className="min-h-11 text-xs font-bold text-slate-600">Cerrar panel de herramientas</button>
           <div>
             <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Visualización</p>
             <div className="mt-3 grid grid-cols-2 gap-2">
@@ -397,11 +420,12 @@ function MapContent() {
               {dataset.layers.length === 0 ? (
                 <p className="py-3 text-xs leading-5 text-slate-500">No hay límites GeoJSON cargados para esta entidad.</p>
               ) : dataset.layers.map(layer => (
-                <label key={layer.id} className="flex min-h-11 cursor-pointer items-center gap-3 text-sm font-semibold text-slate-700">
+                <div key={layer.id} className="border-b border-slate-100 pb-2"><label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm font-semibold text-slate-700">
                   <input type="checkbox" checked={visibleLayers.has(layer.id)} onChange={() => toggleLayer(layer.id)} className="h-5 w-5 accent-[#1B3A4B]" />
                   <span className="h-3 w-3 shrink-0" style={{ background: layer.color }} />
-                  <span className="truncate">{layer.name}</span>
+                  <span className="min-w-0" title={layer.description}>{layer.name}</span>
                 </label>
+                {visibleLayers.has(layer.id) && <label className="flex items-center gap-2 text-[10px] text-slate-500">Opacidad<input aria-label={`Opacidad de ${layer.name}`} type="range" min="0" max="1" step="0.05" value={layerOpacity[layer.id] ?? layer.opacity} onChange={event => setLayerOpacity(current => ({ ...current, [layer.id]: Number(event.target.value) }))} className="h-7 min-w-0 flex-1" /></label>}</div>
               ))}
             </div>
           </div>
@@ -455,7 +479,7 @@ function MapContent() {
           </button>
         </aside>
 
-        <section className="min-w-0 overflow-hidden border border-slate-200 bg-white shadow-sm">
+        <section className={`relative flex min-h-0 min-w-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm ${expanded ? 'h-full' : ''}`}>
           <div className="flex min-h-14 items-center justify-between gap-3 border-b border-slate-200 px-4">
             <div className="min-w-0">
               <h2 className="truncate text-sm font-black text-slate-900">Mapa operativo interno</h2>
@@ -465,10 +489,11 @@ function MapContent() {
               {loading ? <Loader2 size={19} className="animate-spin" /> : <RefreshCw size={19} />}
             </button>
           </div>
-          <InternalMap records={filteredRecords} layers={filteredLayers} mode={mode} selectedId={selected?.id || null} onSelect={setSelected} recordColors={recordColors} minimumGroupSize={dataset.spatialPolicy.minimumGroupSize} coverageTarget={dataset.spatialPolicy.coverageTarget} route={routeOverlay} />
+          <InternalMap expanded={expanded} records={filteredRecords} layers={filteredLayers} mode={mode} selectedId={selected?.id || null} onSelect={setSelected} recordColors={recordColors} minimumGroupSize={dataset.spatialPolicy.minimumGroupSize} coverageTarget={dataset.spatialPolicy.coverageTarget} route={routeOverlay} />
+          {selected && <div className="absolute bottom-16 right-3 z-10 max-h-[40vh] w-[min(290px,80%)] overflow-y-auto rounded-2xl border border-white/30 bg-[#153646]/95 p-4 text-white shadow-xl"><button type="button" aria-label="Cerrar ficha del punto" onClick={() => setSelected(null)} className="float-right flex h-11 w-11 items-center justify-center"><X size={18} /></button><h3 className="font-bold">{selected.label}</h3><p className="mt-2 text-xs text-white/70">{selected.status} · {new Date(selected.capturedAt).toLocaleDateString()}</p><p className="mt-2 font-mono text-xs">{selected.latitude.toFixed(6)}, {selected.longitude.toFixed(6)}</p>{Object.entries(selected.dimensions || {}).map(([key, item]) => <p key={key} className="mt-2 text-xs"><span className="text-white/60">{item.label}: </span>{String(item.value)}</p>)}</div>}
         </section>
 
-        <aside className="bg-[#153646] p-5 text-white shadow-sm">
+        <aside className="hidden">
           <div className="flex items-center justify-between gap-3">
             <p className="text-xs font-black uppercase tracking-[0.16em] text-white/60">Detalle territorial</p>
             {selected && <button type="button" onClick={() => setSelected(null)} className="flex h-11 w-11 items-center justify-center text-white/70" aria-label="Cerrar detalle"><X size={18} /></button>}
@@ -500,7 +525,7 @@ function MapContent() {
             </div>
           )}
         </aside>
-      </div>
+      </div></div>
 
       {showLayerForm && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/55 p-0 sm:items-center sm:p-6" onMouseDown={event => {
@@ -538,6 +563,7 @@ function MapContent() {
           layers={filteredLayers}
           onClose={() => setShowInteroperability(false)}
           onLayerImported={load}
+          exportOnly={Boolean(demoDataset)}
         />
       )}
     </div>

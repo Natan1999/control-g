@@ -7,6 +7,7 @@ import {
   downloadPointShapefile,
   downloadTerritorialPdf,
   downloadWgs84Csv,
+  downloadTerritorialArchive,
   fetchArcGisLayer,
   publishRecordsToArcGis,
 } from '@/lib/gis-interop'
@@ -19,9 +20,10 @@ interface GisInteroperabilityDialogProps {
   layers: MapLayer[]
   onClose: () => void
   onLayerImported: () => Promise<void>
+  exportOnly?: boolean
 }
 
-export function GisInteroperabilityDialog({ user, records, layers, onClose, onLayerImported }: GisInteroperabilityDialogProps) {
+export function GisInteroperabilityDialog({ user, records, layers, onClose, onLayerImported, exportOnly = false }: GisInteroperabilityDialogProps) {
   const [serviceUrl, setServiceUrl] = useState('')
   const [token, setToken] = useState('')
   const [layerName, setLayerName] = useState('Capa ArcGIS')
@@ -32,7 +34,7 @@ export function GisInteroperabilityDialog({ user, records, layers, onClose, onLa
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const closeButtonRef = useRef<HTMLButtonElement | null>(null)
-  const canManage = Boolean(user.entityId && (user.role === 'admin' || user.role === 'coordinator'))
+  const canManage = !exportOnly && Boolean(user.entityId && (user.role === 'admin' || user.role === 'coordinator'))
 
   useEffect(() => {
     closeButtonRef.current?.focus()
@@ -148,6 +150,7 @@ export function GisInteroperabilityDialog({ user, records, layers, onClose, onLa
               <Download size={20} className="text-[#3D7B9E]" />
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <button type="button" onClick={() => { clearMessages(); try { downloadTerritorialArchive(records, layers); setSuccess('Paquete territorial generado con puntos y capas visibles.') } catch { setError('No fue posible generar el paquete territorial.') } }} className="flex min-h-20 items-center gap-3 border border-slate-200 px-4 text-left text-sm font-black text-slate-800 hover:border-[#3D7B9E]"><FileArchive size={24} className="shrink-0 text-[#3D7B9E]" /><span>Territorio completo ZIP<br /><small className="font-medium text-slate-500">Puntos + capas GeoJSON</small></span></button>
               <button type="button" onClick={() => runExport(() => downloadGeoJson(records))} className="flex min-h-20 items-center gap-3 border border-slate-200 px-4 text-left text-sm font-black text-slate-800 hover:border-[#3D7B9E]">
                 <FileJson size={24} className="shrink-0 text-[#3D7B9E]" /><span>GeoJSON<br /><small className="font-medium text-slate-500">QGIS y ArcGIS</small></span>
               </button>

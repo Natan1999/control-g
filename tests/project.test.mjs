@@ -265,7 +265,7 @@ test('el mapa operativo está integrado para todos los roles y funciona desde ca
   }
   assert.match(sidebar, /Mapa territorial/)
   assert.match(home, /Mapa de mis capturas/)
-  assert.match(map, /Mapa vectorial offline/)
+  assert.match(map, /Sin conexión/)
   assert.match(map, /mode === 'clusters'/)
   assert.match(map, /Grupo de \$\{cluster\.records\.length\} puntos/)
   assert.match(map, /mode === 'choropleth'/)

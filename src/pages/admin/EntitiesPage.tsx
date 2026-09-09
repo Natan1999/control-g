@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { Plus, Building2, X, Search, MapPin, Calendar, Users, Mail, Hash, Globe2, ShieldCheck } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TopBar } from '@/components/layout/Sidebar'
@@ -17,6 +18,8 @@ interface EntityForm {
   locale: string;
   timezone: string;
   currency_code: string;
+  map_latitude: string;
+  map_longitude: string;
   map_privacy_mode: 'exact' | 'approximate' | 'aggregate';
   map_minimum_group_size: number;
   map_coverage_target: number;
@@ -39,6 +42,7 @@ const EMPTY_FORM: EntityForm = {
   department_id: '', department_name: '', period_start: '', period_end: '',
   families_per_municipality: 35, coordinator_name: '', coordinator_email: '',
   coordinator_password: '', municipalities: [], manual_municipalities: '',
+  map_latitude: '', map_longitude: '',
 }
 
 const COLORS = {
@@ -94,7 +98,7 @@ export default function AdminEntitiesPage() {
       // Default to Bolívar (13) if available
       const bolivar = depts.find(d => d.id === '13')
       if (bolivar) {
-        setForm(f => ({ ...f, department_id: '13', department_name: 'BOLÍVAR' }))
+        setForm(f => f.country_code === 'CO' && !f.department_id ? ({ ...f, department_id: '13', department_name: 'BOLÍVAR' }) : f)
       }
     } catch (err) {
       console.error("Error loading departments", err)
@@ -135,6 +139,7 @@ export default function AdminEntitiesPage() {
       department_name: '',
       municipalities: [],
       manual_municipalities: '',
+      map_latitude: '', map_longitude: '',
     }))
     setAvailableMunicipalities([])
   }
@@ -171,6 +176,27 @@ export default function AdminEntitiesPage() {
       showToast('La contraseña del coordinador debe tener al menos 12 caracteres', 'error')
       return
     }
+    if (form.period_end < form.period_start) {
+      showToast('La fecha final no puede ser anterior al inicio del contrato.', 'error')
+      return
+    }
+    if (!Number.isInteger(form.families_per_municipality) || form.families_per_municipality < 0) {
+      showToast('La meta territorial debe ser un número entero no negativo.', 'error')
+      return
+    }
+    try { new Intl.DateTimeFormat(form.locale, { timeZone: form.timezone }).format() } catch {
+      showToast('Revisa el idioma regional y la zona horaria.', 'error')
+      return
+    }
+    const customCenter = form.map_latitude.trim() !== '' || form.map_longitude.trim() !== ''
+    if (!/^[A-Z]{3}$/.test(form.currency_code) || !Number.isInteger(form.map_minimum_group_size) || form.map_minimum_group_size < 1 || form.map_minimum_group_size > 100 || !Number.isInteger(form.map_coverage_target) || form.map_coverage_target < 1 || form.map_coverage_target > 1000000) {
+      showToast('Revisa la moneda (tres letras), el mínimo de privacidad (1–100) y la meta de capturas.', 'error')
+      return
+    }
+    if (customCenter && (!form.map_latitude.trim() || !form.map_longitude.trim() || !Number.isFinite(Number(form.map_latitude)) || !Number.isFinite(Number(form.map_longitude)) || Math.abs(Number(form.map_latitude)) > 90 || Math.abs(Number(form.map_longitude)) > 180)) {
+      showToast('El centro del mapa necesita latitud (-90 a 90) y longitud (-180 a 180) válidas.', 'error')
+      return
+    }
 
     setSaving(true)
     try {
@@ -187,7 +213,7 @@ export default function AdminEntitiesPage() {
         locale: form.locale,
         timezone: form.timezone,
         currency_code: form.currency_code,
-        default_map_center: countryConfig(form.country_code).mapCenter,
+        default_map_center: customCenter ? { latitude: Number(form.map_latitude), longitude: Number(form.map_longitude) } : countryConfig(form.country_code).mapCenter,
         map_privacy_mode: form.map_privacy_mode,
         map_minimum_group_size: form.map_minimum_group_size,
         map_coverage_target: form.map_coverage_target,
@@ -209,6 +235,7 @@ export default function AdminEntitiesPage() {
           .split(/[\n,;]/)
           .map(name => name.trim())
           .filter(Boolean)
+          .filter((name, index, names) => names.findIndex(item => item.toLocaleLowerCase() === name.toLocaleLowerCase()) === index)
           .map(name => ({ id: '', name }))
         const municipalities = form.country_code === 'CO' ? form.municipalities : manualMunicipalities
         for (const mun of municipalities) {
@@ -304,13 +331,13 @@ export default function AdminEntitiesPage() {
         title="Gestión de Entidades"
         subtitle="Administra contratos, operadores y cobertura territorial"
         actions={
-          <button
+          <div className="flex flex-wrap gap-3"><Link to="/demo" className="flex min-h-12 items-center rounded-2xl border border-slate-200 px-4 text-sm font-bold">Demo de alcaldía</Link><button
             onClick={() => setShowForm(true)}
             className="flex items-center gap-2 px-6 py-3 text-white rounded-2xl text-sm font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all"
             style={{ background: COLORS.primary }}
           >
             <Plus size={18} /> Nueva Entidad
-          </button>
+          </button></div>
         }
       />
 
@@ -515,8 +542,16 @@ export default function AdminEntitiesPage() {
                     )}
                   </div>
 
+                  <div className="col-span-full grid gap-4 sm:grid-cols-3">
+                    <label className="text-xs font-bold text-slate-500">Idioma regional<input value={form.locale} onChange={event => setForm(current => ({ ...current, locale: event.target.value }))} placeholder="es-CO" className="mt-2 w-full rounded-xl border p-3 text-sm" /></label>
+                    <label className="text-xs font-bold text-slate-500">Zona horaria<input value={form.timezone} onChange={event => setForm(current => ({ ...current, timezone: event.target.value }))} placeholder="America/Bogota" className="mt-2 w-full rounded-xl border p-3 text-sm" /></label>
+                    <label className="text-xs font-bold text-slate-500">Moneda<input value={form.currency_code} maxLength={3} onChange={event => setForm(current => ({ ...current, currency_code: event.target.value.toUpperCase() }))} placeholder="COP" className="mt-2 w-full rounded-xl border p-3 text-sm" /></label>
+                    <label className="text-xs font-bold text-slate-500">Centro del mapa: latitud<input type="number" step="any" min={-90} max={90} value={form.map_latitude} onChange={event => setForm(current => ({ ...current, map_latitude: event.target.value }))} placeholder="Opcional" className="mt-2 w-full rounded-xl border p-3 text-sm" /></label>
+                    <label className="text-xs font-bold text-slate-500">Centro del mapa: longitud<input type="number" step="any" min={-180} max={180} value={form.map_longitude} onChange={event => setForm(current => ({ ...current, map_longitude: event.target.value }))} placeholder="Opcional" className="mt-2 w-full rounded-xl border p-3 text-sm" /></label>
+                    <p className="self-center text-xs leading-5 text-slate-500">Personaliza la operación territorial. Los límites oficiales se cargan como capas GeoJSON desde el mapa; el centro no reemplaza la cartografía local.</p>
+                  </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Meta: Familias por Municipio</label>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Meta por territorio</label>
                     <input type="number" value={form.families_per_municipality} onChange={e => setForm(f => ({ ...f, families_per_municipality: +e.target.value }))}
                       className="w-full px-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner" />
                   </div>

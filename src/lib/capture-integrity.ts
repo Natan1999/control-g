@@ -25,7 +25,7 @@ function errorQuality(error: unknown): Pick<GeoCaptureMetadata, 'qualityStatus' 
   return { qualityStatus: 'unavailable', qualityNotes: 'El dispositivo no entregó una coordenada dentro del tiempo permitido.' }
 }
 
-export async function captureGeoMetadata(maxAccuracyM = 50): Promise<GeoCaptureMetadata> {
+export async function captureGeoMetadata(maxAccuracyM = 50, enabled = true): Promise<GeoCaptureMetadata> {
   const base = {
     latitude: null,
     longitude: null,
@@ -37,6 +37,7 @@ export async function captureGeoMetadata(maxAccuracyM = 50): Promise<GeoCaptureM
     provider: Capacitor.isNativePlatform() ? 'capacitor_gnss' : 'browser_geolocation',
     mockedSignal: null,
   }
+  if (!enabled) return { ...base, qualityStatus: 'unavailable', qualityNotes: 'Captura adicional de ubicación omitida por el profesional.' }
   try {
     const position = await Geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 15_000, maximumAge: 0 })
     const latitude = position.coords.latitude

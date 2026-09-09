@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
-import { MapPin, Navigation, Map as MapIcon, RefreshCw, CheckCircle2 } from 'lucide-react'
+import { useState } from 'react'
+import { Geolocation } from '@capacitor/geolocation'
+import { MapPin, Navigation, Map as MapIcon, RefreshCw } from 'lucide-react'
 
 interface GPSValue {
   latitude: number;
@@ -19,18 +20,12 @@ export default function GPSField({ value, onChange, disabled }: GPSFieldProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const captureLocation = () => {
+  const captureLocation = async () => {
     setLoading(true)
     setError(null)
 
-    if (!navigator.geolocation) {
-      setError('Geolocalización no soportada en este navegador')
-      setLoading(false)
-      return
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
+    try {
+        const pos = await Geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 20000, maximumAge: 0 })
         const newValue: GPSValue = {
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
@@ -39,19 +34,9 @@ export default function GPSField({ value, onChange, disabled }: GPSFieldProps) {
           timestamp: pos.timestamp
         }
         onChange(newValue)
-        setLoading(false)
-      },
-      (err) => {
-        console.error('GPS Error:', err)
-        setError('Error al obtener ubicación. Asegúrate de dar permisos.')
-        setLoading(false)
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-      }
-    )
+    } catch {
+      setError('No se obtuvo ubicación. Activa el GPS y permite el acceso. Si el campo es opcional, puedes continuar sin coordenadas.')
+    } finally { setLoading(false) }
   }
 
   return (
@@ -69,6 +54,8 @@ export default function GPSField({ value, onChange, disabled }: GPSFieldProps) {
               </div>
             </div>
             <button
+               type="button"
+               aria-label="Actualizar ubicación"
                onClick={captureLocation}
                disabled={loading || disabled}
                className="p-2.5 bg-white text-emerald-600 rounded-xl hover:bg-emerald-100 transition-colors shadow-sm"
@@ -95,12 +82,13 @@ export default function GPSField({ value, onChange, disabled }: GPSFieldProps) {
                rel="noopener noreferrer"
                className="flex items-center gap-2 text-[10px] font-black text-emerald-700 uppercase tracking-widest hover:underline"
              >
-               <MapIcon size={14} /> Ver en el mapa
+               <MapIcon size={14} /> Google Maps (requiere internet)
              </a>
           </div>
         </div>
       ) : (
         <button
+          type="button"
           onClick={captureLocation}
           disabled={loading || disabled}
           className="w-full flex flex-col items-center justify-center gap-4 py-10 bg-white border-2 border-dashed border-slate-200 rounded-[32px] hover:border-blue-500 hover:bg-blue-50/30 transition-all group"
@@ -112,11 +100,12 @@ export default function GPSField({ value, onChange, disabled }: GPSFieldProps) {
           </div>
           <div className="text-center">
             <span className="block text-sm font-black text-slate-800 uppercase tracking-widest mb-1">Capturar GPS</span>
-            <p className="text-[10px] text-slate-400 font-medium">Se requiere alta precisión para reporte oficial</p>
+            <p className="text-xs text-slate-500 font-medium">Funciona sin datos móviles si el dispositivo recibe señal GPS.</p>
           </div>
-          {error && <p className="text-[10px] text-rose-500 font-bold px-4">{error}</p>}
         </button>
       )}
+      {error && <p role="alert" className="text-xs text-rose-600">{error}</p>}
+      {value && <button type="button" disabled={disabled || loading} onClick={() => onChange(null)} className="min-h-11 text-xs font-bold text-slate-600">Quitar ubicación</button>}
     </div>
   )
 }

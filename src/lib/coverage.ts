@@ -12,6 +12,7 @@ export interface CoverageSummary {
 
 export function isCoverageBoundaryLayer(layer: MapLayer) {
   return !layer.id.startsWith('control-g:spatial:')
+    && !layer.id.startsWith('base:')
     && layer.id !== 'local:field-geometries'
     && layer.layerType !== 'lines'
     && layer.layerType !== 'points'

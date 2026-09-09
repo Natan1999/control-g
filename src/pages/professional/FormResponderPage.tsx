@@ -6,7 +6,8 @@ import { databases, DATABASE_ID, COLLECTION_IDS, Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import { Loader2, ArrowLeft, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { localDB } from '@/lib/dexie-db'
+import { localDB, type LocalMedia } from '@/lib/dexie-db'
+import { saveCompletedCapture } from '@/lib/save-capture'
 import { BUCKET_IDS } from '@/lib/backend'
 import {
   getCachedFormAssignments,
@@ -25,6 +26,7 @@ const FormResponderPage: React.FC = () => {
   const [initialAnswers, setInitialAnswers] = useState<Record<string, any>>({})
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState('')
+  const [captureLocation, setCaptureLocation] = useState(true)
   const draftLocalId = useRef<string>(crypto.randomUUID())
 
   useEffect(() => {
@@ -148,11 +150,12 @@ const FormResponderPage: React.FC = () => {
     try {
       // GNSS works without data service. Preserve the original coordinate,
       // precision and quality instead of silently replacing low-quality values.
-      const geo = await captureGeoMetadata(50)
+      const geo = await captureGeoMetadata(50, captureLocation)
 
       const localId = draftLocalId.current
       const storedAnswers: Record<string, any> = { ...answers }
       const fieldTypes = new Map(formDef.pages.flatMap(page => page.fields).map(field => [field.id, field.type]))
+      const media: LocalMedia[] = []
 
       for (const [fieldId, value] of Object.entries(answers)) {
         const fieldType = fieldTypes.get(fieldId)
@@ -163,7 +166,7 @@ const FormResponderPage: React.FC = () => {
           const mediaBlob = value instanceof Blob ? value : await (await fetch(value)).blob()
           const mediaId = crypto.randomUUID()
           const sha256 = await sha256Blob(mediaBlob)
-          await localDB.mediaQueue.add({
+          media.push({
             id: mediaId,
             activityLocalId: localId,
             answerFieldId: fieldId,
@@ -184,7 +187,7 @@ const FormResponderPage: React.FC = () => {
       }
 
       const existingDraft = await localDB.formResponses.get(localId)
-      await localDB.formResponses.put({
+      await saveCompletedCapture(localDB, {
         localId,
         formId: formDef.id,
         entityId: user.entityId || formDef.entityId,
@@ -210,19 +213,23 @@ const FormResponderPage: React.FC = () => {
         status: 'completed', // Ready to be synced
         createdAt: existingDraft?.createdAt || Date.now(),
         updatedAt: Date.now()
-      })
+      }, media)
 
       await refreshPendingCount()
       let savedState = 'pending'
-      if (await isOnline()) {
-        await processSyncQueue()
-        const savedResponse = await localDB.formResponses.get(localId)
-        if (savedResponse?.status === 'synced') savedState = 'synced'
-      }
+      // A network failure after a durable save must never be reported as data loss.
+      try {
+        if (await isOnline()) {
+          await processSyncQueue()
+          const savedResponse = await localDB.formResponses.get(localId)
+          if (savedResponse?.status === 'synced') savedState = 'synced'
+        }
+      } catch { /* The durable outbox will retry when connectivity returns. */ }
       navigate(`/field/capture?saved=${savedState}`)
     } catch (err) {
       console.error('Failed to save response:', err)
       alert('Error al guardar la información localmente.')
+      throw err
     }
   }
 
@@ -293,6 +300,7 @@ const FormResponderPage: React.FC = () => {
 
       {/* Form Content Wrapper */}
       <div className="pt-8 pb-32">
+        <label className="mx-auto mb-5 flex max-w-3xl items-start gap-3 rounded-2xl border bg-white p-4 text-sm"><input type="checkbox" checked={captureLocation} onChange={event => setCaptureLocation(event.target.checked)} className="mt-1 h-5 w-5" /><span>Adjuntar ubicación del dispositivo al envío<span className="mt-1 block text-xs text-slate-500">No necesita internet. Puedes desactivar esta captura adicional; los campos GPS obligatorios del formulario conservan su validación.</span></span></label>
         <FormRenderer 
           definition={formDef}
           initialData={initialAnswers}

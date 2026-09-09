@@ -1,4 +1,4 @@
-import { parseGeoJson } from '@/lib/geo'
+import { parseGeoJson, geoJsonFeatures } from '@/lib/geo'
 import { concatBytes, utf8, zipStored } from '@/lib/zip'
 import type { GeoJsonFeatureCollection, GeoRecord, MapLayer, SupportedGeoJson } from '@/types/gis'
 
@@ -42,6 +42,26 @@ export function recordsToGeoJson(records: GeoRecord[]): GeoJsonFeatureCollection
 export function downloadGeoJson(records: GeoRecord[], name = 'control-g-capturas') {
   const blob = new Blob([JSON.stringify(recordsToGeoJson(records), null, 2)], { type: 'application/geo+json;charset=utf-8' })
   download(blob, `${safeFilename(name)}.geojson`)
+}
+
+export function buildTerritorialArchive(records: GeoRecord[], layers: MapLayer[]) {
+  // Deliberately exclude arbitrary layer attributes and form answers: these
+  // can contain personal data. Keep geometry and a non-personal layer label.
+  const files = layers.map((layer, index) => ({
+    name: `capas/${index + 1}-${safeFilename(layer.name)}.geojson`,
+    bytes: utf8(JSON.stringify({ type: 'FeatureCollection', features: geoJsonFeatures(layer.geojson).map((feature, featureIndex) => ({
+      type: 'Feature', geometry: feature.geometry, properties: { layer_name: layer.name, feature_index: featureIndex + 1 },
+    })) })),
+  }))
+  return zipStored([
+    { name: 'capturas.geojson', bytes: utf8(JSON.stringify(recordsToGeoJson(records))) },
+    ...files,
+    { name: 'LEEME.txt', bytes: utf8('Control G · Exportación territorial\nCRS: WGS84 (EPSG:4326). Orden: longitud, latitud.\nIncluye puntos filtrados y geometrías de capas visibles. Sin respuestas ni atributos personales.\nArcGIS Pro: descomprimir y usar JSON To Features para cada GeoJSON. QGIS: abrir directamente.\nLos registros demo-* y las capas de Villa Esperanza son ficticios.\n') },
+  ])
+}
+
+export function downloadTerritorialArchive(records: GeoRecord[], layers: MapLayer[]) {
+  download(new Blob([buildTerritorialArchive(records, layers)], { type: 'application/zip' }), 'control-g-territorio-wgs84.zip')
 }
 
 export async function downloadGeoPackage(records: GeoRecord[], name = 'control-g-capturas') {

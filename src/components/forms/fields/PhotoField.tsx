@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Camera, Image as ImageIcon, Trash2 } from 'lucide-react'
+import { Capacitor } from '@capacitor/core'
+import { Camera as NativeCamera, CameraResultType, CameraSource } from '@capacitor/camera'
 
 interface PhotoFieldProps {
   value: File | Blob | null
@@ -9,6 +11,21 @@ interface PhotoFieldProps {
 
 export default function PhotoField({ value, onChange, disabled }: PhotoFieldProps) {
   const [preview, setPreview] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+  async function takePhoto() {
+    setBusy(true)
+    setError('')
+    try {
+      const photo = await NativeCamera.getPhoto({ resultType: CameraResultType.Uri, source: CameraSource.Camera, quality: 80, width: 1920, height: 1920, correctOrientation: true, saveToGallery: false })
+      if (!photo.webPath) throw new Error('No se recibió la fotografía')
+      const response = await fetch(photo.webPath)
+      const blob = await response.blob()
+      onChange(new File([blob], `evidencia-${Date.now()}.${photo.format}`, { type: blob.type || `image/${photo.format}` }))
+    } catch (cause) {
+      if (!/cancel/i.test(String(cause))) setError('No se pudo abrir la cámara. Revisa sus permisos o adjunta una fotografía.')
+    } finally { setBusy(false) }
+  }
 
   useEffect(() => {
     if (!(value instanceof Blob)) {
@@ -36,7 +53,9 @@ export default function PhotoField({ value, onChange, disabled }: PhotoFieldProp
     )
   }
 
-  return (
+  return (<div className="space-y-3">
+    {Capacitor.isNativePlatform() && <button type="button" disabled={disabled || busy} onClick={() => void takePhoto()} className="flex min-h-14 w-full items-center justify-center gap-3 rounded-2xl bg-[#153646] px-4 font-bold text-white"><Camera size={22} />{busy ? 'Abriendo cámara…' : 'Tomar foto con la cámara'}</button>}
+    {error && <p role="alert" className="text-sm text-rose-600">{error}</p>}
     <label className="flex min-h-44 cursor-pointer flex-col items-center justify-center gap-3 rounded-3xl border-2 border-dashed border-slate-200 bg-white text-slate-500 transition-colors hover:border-blue-400 hover:bg-blue-50/30">
       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 text-blue-700">
         <Camera size={25} />
@@ -55,6 +74,6 @@ export default function PhotoField({ value, onChange, disabled }: PhotoFieldProp
         className="hidden"
         onChange={(event) => onChange(event.target.files?.[0] || null)}
       />
-    </label>
+    </label></div>
   )
 }
