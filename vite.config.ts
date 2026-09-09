@@ -32,23 +32,13 @@ export default defineConfig({
         ],
       },
       workbox: {
+        importScripts: ['sw-privacy-cleanup.js'],
         // Cache app shell (HTML, JS, CSS)
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         // Runtime caching strategies
         runtimeCaching: [
-          {
-            // Supabase reads get a short network-first cache. Field records and
-            // mutations are persisted separately in IndexedDB by the sync engine.
-            urlPattern: /https:\/\/controlg2\.dran\.cloud\/rest\/v1\/.*/i,
-            handler: 'NetworkFirst',
-            method: 'GET',
-            options: {
-              cacheName: 'control-g-supabase-read-cache',
-              networkTimeoutSeconds: 5,
-              expiration: { maxEntries: 500, maxAgeSeconds: 7 * 24 * 60 * 60 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
+          // Authenticated API responses must never share a URL-keyed HTTP cache.
+          // The sync engine and GIS service own the user/entity-scoped offline data.
           {
             // Google Fonts and other external assets
             urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
