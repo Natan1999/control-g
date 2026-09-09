@@ -491,7 +491,8 @@ export async function loadMapDataset(user: User): Promise<MapDataset> {
         : Promise.resolve(null),
     ])
 
-    const jurisdictionDocuments = entityResult?.country_profile_id && user.entityId
+    // Fictional sectors must not inherit official country jurisdictions as demo targets.
+    const jurisdictionDocuments = !entityResult?.regional_settings?.is_demo && entityResult?.country_profile_id && user.entityId
       ? await loadJurisdictionDocuments(String(entityResult.country_profile_id))
       : []
     const catalog = dimensionCatalog(formResult.documents)

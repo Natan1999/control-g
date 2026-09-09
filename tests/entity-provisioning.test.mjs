@@ -32,4 +32,6 @@ test('no existe entrada pública al demo ni contraseñas en el resultado persist
   assert.match(sql,/pg_advisory_xact_lock/)
   assert.match(sql,/auth.uid\(\)/)
   assert.match(sql,/revoke all on function/)
+  const gis=await readFile('src/lib/gis-service.ts','utf8')
+  assert.match(gis,/!entityResult\?\.regional_settings\?\.is_demo/)
 })
