@@ -63,9 +63,8 @@ function sourceLabel(source: GeoRecord['source']) {
   return SOURCE_LABELS[source] || source
 }
 
-export function MapContent({ demoDataset, demoUser }: { demoDataset?: MapDataset; demoUser?: User } = {}) {
-  const auth = useAuthStore()
-  const user = demoUser || auth.user
+export function MapContent() {
+  const { user } = useAuthStore()
   const [expanded, setExpanded] = useState(false)
   const [toolsOpen, setToolsOpen] = useState(false)
   const [layerOpacity, setLayerOpacity] = useState<Record<string, number>>({})
@@ -82,7 +81,7 @@ export function MapContent({ demoDataset, demoUser }: { demoDataset?: MapDataset
   const [error, setError] = useState('')
   const [sourceFilter, setSourceFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [mode, setMode] = useState<'points' | 'clusters' | 'heat' | 'choropleth'>(demoDataset ? 'heat' : 'clusters')
+  const [mode, setMode] = useState<'points' | 'clusters' | 'heat' | 'choropleth'>('clusters')
   const [selected, setSelected] = useState<GeoRecord | null>(null)
   const [visibleLayers, setVisibleLayers] = useState<Set<string>>(new Set())
   const [showLayerForm, setShowLayerForm] = useState(false)
@@ -106,7 +105,7 @@ export function MapContent({ demoDataset, demoUser }: { demoDataset?: MapDataset
   }, [selectedEntityId, user])
 
   useEffect(() => {
-    if (demoDataset || !user || user.role !== 'admin') return
+    if (!user || user.role !== 'admin') return
     void databases.listDocuments(DATABASE_ID, COLLECTION_IDS.ENTITIES, [
       Query.equal('status', 'active'), Query.orderAsc('name'), Query.limit(500),
     ]).then(result => {
@@ -117,7 +116,7 @@ export function MapContent({ demoDataset, demoUser }: { demoDataset?: MapDataset
         if (next) localStorage.setItem('cg_admin_map_entity', next)
       }
     }).catch(() => setError('No fue posible cargar las entidades disponibles para el mapa.'))
-  }, [selectedEntityId, user, demoDataset])
+  }, [selectedEntityId, user])
 
   const load = useCallback(async () => {
     if (!scopedUser) {
@@ -127,7 +126,7 @@ export function MapContent({ demoDataset, demoUser }: { demoDataset?: MapDataset
     setLoading(true)
     setError('')
     try {
-      const result = demoDataset || await loadMapDataset(scopedUser)
+      const result = await loadMapDataset(scopedUser)
       setDataset(result)
       setVisibleLayers(new Set(result.layers.filter(layer => layer.visibleDefault).map(layer => layer.id)))
     } catch (loadError) {
@@ -136,7 +135,7 @@ export function MapContent({ demoDataset, demoUser }: { demoDataset?: MapDataset
     } finally {
       setLoading(false)
     }
-  }, [scopedUser, demoDataset])
+  }, [scopedUser])
 
   useEffect(() => { void load() }, [load])
   useEffect(() => { setSelected(null); setCurrentPosition(null); setSourceFilter('all'); setStatusFilter('all') }, [scopedUser?.id, scopedUser?.entityId])
@@ -203,7 +202,7 @@ export function MapContent({ demoDataset, demoUser }: { demoDataset?: MapDataset
     dataset.spatialPolicy.minimumGroupSize,
     dataset.spatialPolicy.coverageTarget,
   ), [dataset.spatialPolicy.coverageTarget, dataset.spatialPolicy.minimumGroupSize, filteredLayers, filteredRecords])
-  const canCreateLayer = !demoDataset && Boolean(scopedUser?.entityId && (scopedUser.role === 'admin' || scopedUser.role === 'coordinator'))
+  const canCreateLayer = Boolean(scopedUser?.entityId && (scopedUser.role === 'admin' || scopedUser.role === 'coordinator'))
 
   function toggleLayer(layerId: string) {
     setVisibleLayers(current => {
@@ -290,7 +289,7 @@ export function MapContent({ demoDataset, demoUser }: { demoDataset?: MapDataset
   return (
     <div className="mx-auto max-w-[1500px] space-y-4 p-4 sm:p-6 lg:p-8">
       <h2 className="sr-only">Mapa territorial operativo de Control G</h2>
-      {!demoDataset && user?.role === 'admin' && (
+      {user?.role === 'admin' && (
         <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex sm:items-end sm:justify-between sm:gap-5">
           <div><h2 className="font-black text-[#1B3A4B]">Alcance multiempresa</h2><p className="mt-1 text-sm leading-6 text-slate-500">Selecciona una entidad para evitar mezclar capturas, políticas y catálogos territoriales entre clientes.</p></div>
           <label className="mt-3 block min-w-0 text-xs font-black uppercase tracking-wide text-slate-500 sm:mt-0 sm:w-96">Entidad visible
@@ -327,7 +326,7 @@ export function MapContent({ demoDataset, demoUser }: { demoDataset?: MapDataset
       <div className={`flex items-start gap-3 border px-4 py-3 text-sm ${dataset.loadedFromCache ? 'border-amber-200 bg-amber-50 text-amber-900' : 'border-emerald-200 bg-emerald-50 text-emerald-900'}`}>
         {dataset.loadedFromCache ? <WifiOff className="mt-0.5 shrink-0" size={18} /> : <CheckCircle2 className="mt-0.5 shrink-0" size={18} />}
         <div>
-          <p className="font-black">{demoDataset ? 'Demostración · datos ficticios disponibles sin internet' : dataset.loadedFromCache ? 'Mapa disponible desde la memoria del dispositivo' : 'Mapa actualizado desde Supabase'}</p>
+          <p className="font-black">{dataset.loadedFromCache ? 'Mapa disponible desde la memoria del dispositivo' : 'Mapa actualizado desde Supabase'}</p>
           <p className="mt-0.5 text-xs leading-5 opacity-80">
             Los puntos y límites vectoriales permanecen visibles sin internet. No se muestran respuestas personales dentro del mapa.
           </p>
@@ -563,7 +562,6 @@ export function MapContent({ demoDataset, demoUser }: { demoDataset?: MapDataset
           layers={filteredLayers}
           onClose={() => setShowInteroperability(false)}
           onLayerImported={load}
-          exportOnly={Boolean(demoDataset)}
         />
       )}
     </div>

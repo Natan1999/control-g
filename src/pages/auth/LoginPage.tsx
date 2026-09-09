@@ -272,7 +272,6 @@ export default function LoginPage() {
 
           <p className="text-center text-xs text-muted-foreground mt-8">
             ¿Problemas de acceso? Contacta al administrador de tu organización.
-            <Link to="/demo" className="mt-4 block font-bold text-brand-primary hover:underline">Explorar la demo de una alcaldía</Link>
           </p>
         </div>
       </motion.div>

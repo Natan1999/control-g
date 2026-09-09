@@ -7,6 +7,7 @@ import {
   PieChart, Pie, Cell, Legend, LineChart, Line,
 } from 'recharts'
 import { TopBar } from '@/components/layout/Sidebar'
+import { ResponseOverview } from '@/components/shared/ResponseOverview'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
 import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
@@ -235,6 +236,7 @@ export default function CoordDashboard() {
         }
       />
 
+      <ResponseOverview entityId={user?.entityId} prefix="/coord" />
       {/* ─── KPI Cards ──────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {kpis.map(kpi => (

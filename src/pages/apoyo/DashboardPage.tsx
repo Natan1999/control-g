@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Users, CheckCircle, Clock, AlertCircle, RefreshCw } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
+import { ResponseOverview } from '@/components/shared/ResponseOverview'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
 import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
@@ -132,6 +133,7 @@ export default function ApoyoDashboard() {
         }
       />
 
+      <ResponseOverview entityId={user?.entityId} prefix="/apoyo" />
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
         {kpis.map(kpi => (

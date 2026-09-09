@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
+import { supabase } from '@/lib/supabase'
+import { buildMunicipalProvisionBundle, generateDemoAccounts, type ProvisionAccount } from '@/lib/entity-provisioning'
 import { Plus, Building2, X, Search, MapPin, Calendar, Users, Mail, Hash, Globe2, ShieldCheck } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TopBar } from '@/components/layout/Sidebar'
-import { account, databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
-import { ID, Query } from '@/lib/backend'
+import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
+import { Query } from '@/lib/backend'
 import { getDepartments, getMunicipalities, Department, Municipality } from '@/services/geographyService'
 import { countryConfig, countryName, LATAM_COUNTRIES } from '@/config/countries'
 
@@ -67,6 +68,20 @@ export default function AdminEntitiesPage() {
   const [loadingGeography, setLoadingGeography] = useState(false)
   const [countryProfiles, setCountryProfiles] = useState<any[]>([])
   const [savingPolicyId, setSavingPolicyId] = useState('')
+  const [demoMode, setDemoMode] = useState(false)
+  const [demoAccounts, setDemoAccounts] = useState<ProvisionAccount[]>([])
+  const [createdAccounts, setCreatedAccounts] = useState<ProvisionAccount[]>([])
+  const requestId = useRef(crypto.randomUUID())
+
+  function prepareDemo() {
+    requestId.current = crypto.randomUUID()
+    const accounts = generateDemoAccounts(requestId.current.slice(0,8))
+    setDemoAccounts(accounts)
+    setDemoMode(true)
+    setCreatedAccounts([])
+    setForm({ ...EMPTY_FORM, name: 'Alcaldía Villa Esperanza · DEMO', department_name: 'BOLÍVAR', department_id: '13', contract_number: `DEMO-${requestId.current.slice(0,8)}`, contract_object: 'Caracterización ficticia de juventud y servicios públicos', period_start: new Date().toISOString().slice(0,10), period_end: `${new Date().getFullYear()+1}-12-31`, coordinator_name: accounts[0].full_name, coordinator_email: accounts[0].email, coordinator_password: accounts[0].password, map_latitude:'10.36', map_longitude:'-75.42' })
+    setShowForm(true)
+  }
 
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => { 
     setToast({ msg, type }); 
@@ -200,8 +215,15 @@ export default function AdminEntitiesPage() {
 
     setSaving(true)
     try {
-      // 1. Create the tenant before its coordinator account.
-      const entity = await databases.createDocument(DATABASE_ID, COLLECTION_IDS.ENTITIES, ID.unique(), {
+      const center = customCenter ? { latitude: Number(form.map_latitude), longitude: Number(form.map_longitude) } : countryConfig(form.country_code).mapCenter
+      const demo = demoMode ? buildMunicipalProvisionBundle(center) : null
+      const territories = demo ? demo.territories : form.country_code === 'CO' ? form.municipalities : [...new Set(form.manual_municipalities.split(/[\n,;]/).map(name => name.trim()).filter(Boolean))].map(name => ({id:'',name}))
+      if (!territories.length) throw new Error('Agrega al menos un territorio de operación.')
+      const accounts: ProvisionAccount[] = demoMode ? demoAccounts.map((account,index) => index === 0 ? {...account,email:form.coordinator_email,password:form.coordinator_password,full_name:form.coordinator_name} : account) : [{key:'coordinator',email:form.coordinator_email,password:form.coordinator_password,full_name:form.coordinator_name,role:'coordinator'}]
+      const { error } = await supabase.rpc('provision_entity', {p_request_id:requestId.current, p_accounts:accounts, p_demo:demo, p_entity:{
+        is_demo: demoMode,
+        entity_kind: 'municipality',
+        territories,
         name: form.name,
         nit: form.nit,
         contract_number: form.contract_number,
@@ -213,7 +235,7 @@ export default function AdminEntitiesPage() {
         locale: form.locale,
         timezone: form.timezone,
         currency_code: form.currency_code,
-        default_map_center: customCenter ? { latitude: Number(form.map_latitude), longitude: Number(form.map_longitude) } : countryConfig(form.country_code).mapCenter,
+        default_map_center: center,
         map_privacy_mode: form.map_privacy_mode,
         map_minimum_group_size: form.map_minimum_group_size,
         map_coverage_target: form.map_coverage_target,
@@ -227,45 +249,16 @@ export default function AdminEntitiesPage() {
         families_per_municipality: form.families_per_municipality,
         status: 'active',
         created_by: form.coordinator_email,
-      })
-
-      try {
-        // 2. Configure its municipalities.
-        const manualMunicipalities = form.manual_municipalities
-          .split(/[\n,;]/)
-          .map(name => name.trim())
-          .filter(Boolean)
-          .filter((name, index, names) => names.findIndex(item => item.toLocaleLowerCase() === name.toLocaleLowerCase()) === index)
-          .map(name => ({ id: '', name }))
-        const municipalities = form.country_code === 'CO' ? form.municipalities : manualMunicipalities
-        for (const mun of municipalities) {
-          await databases.createDocument(DATABASE_ID, COLLECTION_IDS.ENTITY_MUNICIPALITIES, ID.unique(), {
-            entity_id: entity.$id,
-            municipality_name: mun.name,
-            department: form.department_name,
-            country_code: form.country_code,
-            families_target: form.families_per_municipality,
-            dane_code: mun.id || null,
-            admin_level_2_code: mun.id || null,
-          })
-        }
-
-        // 3. The protected Supabase RPC creates Auth + profile atomically.
-        await account.create(
-          ID.unique(),
-          form.coordinator_email,
-          form.coordinator_password,
-          form.coordinator_name,
-          { role: 'coordinator', entityId: entity.$id },
-        )
-      } catch (setupError) {
-        await databases.deleteDocument(DATABASE_ID, COLLECTION_IDS.ENTITIES, entity.$id).catch(() => {})
-        throw setupError
-      }
+      }})
+      if (error) throw new Error(error.code === 'PGRST202' ? 'Falta aplicar la migración de creación de entidades en Supabase. No se creó ningún usuario ni entidad.' : error.message)
+      setCreatedAccounts(accounts)
+      requestId.current = crypto.randomUUID()
 
       showToast(`Entidad "${form.name}" y coordinador creados exitosamente`)
       setShowForm(false)
       setForm(EMPTY_FORM)
+      setDemoAccounts([])
+      setDemoMode(false)
       loadEntities()
     } catch (err: any) {
       showToast('Error al guardar: ' + (err?.message ?? 'intenta de nuevo'), 'error')
@@ -331,8 +324,8 @@ export default function AdminEntitiesPage() {
         title="Gestión de Entidades"
         subtitle="Administra contratos, operadores y cobertura territorial"
         actions={
-          <div className="flex flex-wrap gap-3"><Link to="/demo" className="flex min-h-12 items-center rounded-2xl border border-slate-200 px-4 text-sm font-bold">Demo de alcaldía</Link><button
-            onClick={() => setShowForm(true)}
+          <div className="flex flex-wrap gap-3"><button type="button" onClick={prepareDemo} className="flex min-h-12 items-center rounded-2xl border border-slate-200 px-4 text-sm font-bold">Crear alcaldía demo privada</button><button
+            onClick={() => { setDemoMode(false); setDemoAccounts([]); setForm(EMPTY_FORM); requestId.current=crypto.randomUUID(); setShowForm(true) }}
             className="flex items-center gap-2 px-6 py-3 text-white rounded-2xl text-sm font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all"
             style={{ background: COLORS.primary }}
           >
@@ -340,6 +333,8 @@ export default function AdminEntitiesPage() {
           </button></div>
         }
       />
+
+      {createdAccounts.length > 0 && <section className="my-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5"><h2 className="font-bold">Entidad creada · accesos institucionales</h2><p className="mt-2 text-sm">Estos usuarios ingresan por /login en web y APK. Conserva las claves temporales antes de cerrar: no se volverán a mostrar. Cada usuario deberá cambiarlas; los perfiles privilegiados siguen la política MFA de la entidad.</p><div className="mt-4 space-y-3">{createdAccounts.map(account => <div key={account.key} className="rounded-xl bg-white p-3 text-sm"><strong>{account.full_name} · {account.role}</strong><p className="break-all">{account.email}</p><code className="block break-all select-all">{account.password}</code></div>)}</div><button type="button" onClick={() => setCreatedAccounts([])} className="mt-4 min-h-11 font-bold">Ya guardé los accesos · ocultar claves</button></section>}
 
       {loading ? (
         <div className="mt-20 flex flex-col items-center gap-4">
@@ -467,7 +462,7 @@ export default function AdminEntitiesPage() {
                   {/* Basic Info Section */}
                   <div className="md:col-span-2 flex items-center gap-2 mb-2">
                     <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">1</span>
-                    <h4 className="font-bold text-slate-800">Información del Contratante</h4>
+                    <h4 className="font-bold text-slate-800">{demoMode ? 'Alcaldía demo privada · 5 cuentas, 2 formularios y 240 respuestas' : 'Información del Contratante'}</h4>
                   </div>
                   
                   <div className="md:col-span-2">
@@ -592,9 +587,9 @@ export default function AdminEntitiesPage() {
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">
                         {countryConfig(form.country_code).adminLevel2Label} de operación
                       </label>
-                      {form.country_code === 'CO' && <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">{form.municipalities.length} Seleccionados</span>}
+                      {!demoMode && form.country_code === 'CO' && <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">{form.municipalities.length} Seleccionados</span>}
                     </div>
-                    {form.country_code === 'CO' ? <>
+                    {demoMode ? <p className="rounded-xl bg-blue-50 p-4 text-sm text-blue-950">La demo crea seis sectores ficticios: Centro, La Esperanza, Los Cedros, El Progreso, Ribera y Zona rural. Sus capas y capturas se ubican alrededor del centro del mapa configurado. No representan límites oficiales.</p> : form.country_code === 'CO' ? <>
                       <div className="relative mb-3">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                         <input value={munSearch} onChange={event => setMunSearch(event.target.value)} placeholder="Filtrar municipios..." className="w-full pl-11 pr-4 py-3 bg-slate-50 border-none rounded-2xl text-xs font-medium focus:ring-2 focus:ring-blue-500/10 focus:bg-white transition-all" />
