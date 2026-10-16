@@ -29,6 +29,9 @@ export interface SeoPage {
   faqs: SeoFaq[]
   countryCode?: string
   locale?: string
+  updatedAt?: string
+  relatedLinks?: Array<{ title: string; path: string }>
+  sources?: Array<{ title: string; publisher: string; url: string }>
 }
 
 interface CountryLandingProfile {
@@ -39,15 +42,33 @@ interface CountryLandingProfile {
   admin1: string
   admin2: string
   institutions: string
+  lead?: string
+  operationalSections?: SeoSection[]
+  localFaq?: SeoFaq
+  sources?: SeoPage['sources']
+  relatedLinks?: SeoPage['relatedLinks']
+  updatedAt?: string
+}
+
+function withCountryContext(profile: CountryLandingProfile, page: SeoPage): SeoPage {
+  return {
+    ...page,
+    lead: profile.lead || page.lead,
+    sections: [...page.sections, ...(profile.operationalSections || [])],
+    faqs: [...page.faqs, ...(profile.localFaq ? [profile.localFaq] : [])],
+    sources: profile.sources,
+    relatedLinks: profile.relatedLinks,
+    updatedAt: profile.updatedAt,
+  }
 }
 
 export function buildCountrySeoPage(profile: CountryLandingProfile): SeoPage {
   const portuguese = profile.code === 'BR'
   if (portuguese) {
-    return {
+    return withCountryContext(profile, {
       path: `/encuestas-offline/${profile.slug}`,
       title: `Pesquisas offline no ${profile.name} | Control G`,
-      description: `Caracterização e pesquisas offline no ${profile.name}. Capture dados, GPS e evidências sem internet para operações de campo de órgãos públicos.`,
+      description: `Pesquisas offline no ${profile.name} para empresas, órgãos públicos e ONGs. Colete dados, GPS e evidências sem internet e sincronize depois.`,
       eyebrow: `Operações de campo no ${profile.name}`,
       heading: `Pesquisas e caracterização offline no ${profile.name}`,
       lead: `Organize equipes por ${profile.admin1} e ${profile.admin2}, colete informações sem sinal e sincronize quando a conexão voltar.`,
@@ -67,12 +88,12 @@ export function buildCountrySeoPage(profile: CountryLandingProfile): SeoPage {
       ],
       countryCode: profile.code,
       locale: profile.locale,
-    }
+    })
   }
-  return {
+  return withCountryContext(profile, {
     path: `/encuestas-offline/${profile.slug}`,
     title: `Encuestas offline en ${profile.name} | Control G`,
-    description: `Caracterización y encuestas offline en ${profile.name}. Capture datos, GPS y evidencias sin internet para operativos territoriales de entidades públicas.`,
+    description: `Encuestas offline en ${profile.name} para empresas, entidades y ONG. Capture datos, GPS y evidencias sin internet y sincronice al recuperar conexión.`,
     eyebrow: `Operación territorial en ${profile.name}`,
     heading: `Encuestas y caracterización offline en ${profile.name}`,
     lead: `Organice equipos por ${profile.admin1} y ${profile.admin2}, recolecte información sin señal y sincronice cuando regrese la conectividad.`,
@@ -92,7 +113,7 @@ export function buildCountrySeoPage(profile: CountryLandingProfile): SeoPage {
     ],
     countryCode: profile.code,
     locale: profile.locale,
-  }
+  })
 }
 
 export const CORE_SEO_PAGES = seoPagesData as SeoPage[]
@@ -105,12 +126,15 @@ export function getSeoPage(pathname: string) {
 }
 
 export function whatsappUrl(message: string, placement = 'website') {
-  const attributedMessage = `${message}\n\nOrigen: controlg.co · ${placement}`
+  const route = typeof window === 'undefined' ? '' : window.location.pathname
+  const attributedMessage = `${message}\n\nOrigen: controlg.co${route} · ${placement}`
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(attributedMessage)}`
 }
 
 export function trackMarketingEvent(eventName: string, data: Record<string, string> = {}) {
-  const event = { event: eventName, ...data }
+  if (typeof window === 'undefined') return
+  // Click intent is not a completed conversation or a sale. No beneficiary data.
+  const event = { event: eventName, ...data, page_path: window.location.pathname }
   const target = window as Window & { dataLayer?: Array<Record<string, string>> }
   target.dataLayer = target.dataLayer || []
   target.dataLayer.push(event)
@@ -126,7 +150,7 @@ export function buildStructuredData(page: SeoPage) {
       alternateName: 'Control G',
       url: SITE_URL,
       logo: `${SITE_URL}/pwa-512x512.png`,
-      description: 'Plataforma de caracterización, encuestas y levantamiento de información en campo para entidades públicas y organizaciones.',
+      description: 'Plataforma de caracterización, encuestas y levantamiento de información en campo para empresas, entidades públicas y ONG en Colombia y Latinoamérica.',
       contactPoint: {
         '@type': 'ContactPoint',
         telephone: '+57-300-901-0300',

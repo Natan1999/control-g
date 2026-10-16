@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { buildStructuredData, getSeoPage, SITE_URL } from '@/lib/marketing'
-import { BLOG_META, blogCover, buildBlogIndexStructuredData, buildBlogStructuredData, getBlogPost } from '@/lib/blog'
+import { BLOG_META, blogCover, blogCoverAlt, buildBlogIndexStructuredData, buildBlogStructuredData, getBlogPost } from '@/lib/blog'
 import { usePublishedBlogPosts } from '@/hooks/useBlogContent'
 
 function setMeta(selector: string, attributes: Record<string, string>) {
@@ -30,7 +30,7 @@ function setCanonical(url: string | null) {
 export function MarketingSeo() {
   const { pathname } = useLocation()
   const blogSlug = pathname.match(/^\/blog\/([^/]+)\/?$/)?.[1]
-  const { posts: availableBlogPosts } = usePublishedBlogPosts(Boolean(blogSlug))
+  const { posts: availableBlogPosts } = usePublishedBlogPosts(Boolean(blogSlug) || pathname === '/blog')
   const availableBlogPost = blogSlug ? availableBlogPosts.find(post => post.slug === blogSlug) : undefined
 
   useEffect(() => {
@@ -39,11 +39,15 @@ export function MarketingSeo() {
     const isBlogIndex = pathname === '/blog' || pathname === '/blog/'
     const structuredDataId = 'control-g-structured-data'
     document.getElementById(structuredDataId)?.remove()
+    document.querySelectorAll('meta[property^="article:"]').forEach(element => element.remove())
 
     if (!page && !isBlogIndex && !blogPost) {
       document.title = pathname === '/login' ? 'Iniciar sesión | Control G' : 'Control G | Plataforma institucional'
       setMeta('meta[name="robots"]', { name: 'robots', content: 'noindex, nofollow, noarchive' })
       setCanonical(null)
+      document.documentElement.lang = 'es-CO'
+      setMeta('meta[name="description"]', { name: 'description', content: 'Acceso privado y operación institucional de Control G.' })
+      document.querySelectorAll('meta[property^="og:"], meta[name^="twitter:"], meta[name="keywords"]').forEach(element => element.remove())
       return
     }
 
@@ -58,7 +62,7 @@ export function MarketingSeo() {
     const structuredData = blogPost
       ? buildBlogStructuredData(blogPost)
       : isBlogIndex
-        ? buildBlogIndexStructuredData()
+        ? buildBlogIndexStructuredData(availableBlogPosts)
         : buildStructuredData(page!)
     const socialImage = blogPost
       ? (blogCover(blogPost).startsWith('http') ? blogCover(blogPost) : `${SITE_URL}${blogCover(blogPost)}`)
@@ -74,12 +78,16 @@ export function MarketingSeo() {
     setMeta('meta[property="og:title"]', { property: 'og:title', content: title })
     setMeta('meta[property="og:description"]', { property: 'og:description', content: description })
     setMeta('meta[property="og:image"]', { property: 'og:image', content: socialImage })
-    setMeta('meta[property="og:image:alt"]', { property: 'og:image:alt', content: 'Control G, plataforma de caracterización y encuestas offline' })
+    setMeta('meta[property="og:image:alt"]', { property: 'og:image:alt', content: blogPost ? blogCoverAlt(blogPost) : 'Control G, plataforma de caracterización y encuestas offline' })
     setMeta('meta[property="og:locale"]', { property: 'og:locale', content: pageLocale.replace('-', '_') })
     setMeta('meta[name="twitter:card"]', { name: 'twitter:card', content: 'summary_large_image' })
     setMeta('meta[name="twitter:title"]', { name: 'twitter:title', content: title })
     setMeta('meta[name="twitter:description"]', { name: 'twitter:description', content: description })
     setMeta('meta[name="twitter:image"]', { name: 'twitter:image', content: socialImage })
+    if (blogPost) {
+      setMeta('meta[property="article:published_time"]', { property: 'article:published_time', content: blogPost.publishedAt })
+      setMeta('meta[property="article:modified_time"]', { property: 'article:modified_time', content: blogPost.updatedAt })
+    }
     setCanonical(canonical)
 
     const script = document.createElement('script')
@@ -87,7 +95,7 @@ export function MarketingSeo() {
     script.type = 'application/ld+json'
     script.text = JSON.stringify(structuredData)
     document.head.appendChild(script)
-  }, [pathname, blogSlug, availableBlogPost])
+  }, [pathname, blogSlug, availableBlogPost, availableBlogPosts])
 
   return null
 }

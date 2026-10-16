@@ -4,6 +4,7 @@ import { ArrowLeft, ImagePlus, Loader2, Plus, Save, Trash2 } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/authStore'
+import { BLOG_POSTS } from '@/lib/blog'
 
 type SectionDraft = { title: string; body: string }
 type FaqDraft = { question: string; answer: string }
@@ -75,6 +76,9 @@ export default function BlogEditorPage() {
 
   async function save() {
     setError('')
+    if (BLOG_POSTS.some(post => post.slug === slug)) { setError('Esta URL pertenece a un artículo de la base editorial versionada. Elija otra URL; esa base se modifica desde el repositorio.'); return }
+    if (status === 'published' && imageUrl && !imageAlt.trim()) { setError('Describa la portada en el texto alternativo antes de publicar.'); return }
+    if (sources.some(source => source.url.trim() && !/^https:\/\/[^\s]+$/i.test(source.url.trim()))) { setError('Las fuentes deben usar una dirección HTTPS válida.'); return }
     if (!seoChecks.every(check => check.ok)) { setError('Corrija las longitudes SEO marcadas antes de guardar.'); return }
     const cleanSections = sections.filter(section => section.title.trim() && section.body.trim()).map(section => ({ title: section.title.trim(), paragraphs: section.body.split(/\n\s*\n/).map(item => item.trim()).filter(Boolean) }))
     const cleanFaqs = faqs.filter(faq => faq.question.trim() && faq.answer.trim())

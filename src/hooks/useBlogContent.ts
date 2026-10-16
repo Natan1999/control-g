@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { BLOG_POSTS, normalizeBlogRow, type BlogPost } from '@/lib/blog'
-import { supabase } from '@/lib/supabase'
+import { BLOG_POSTS, type BlogPost } from '@/lib/blog'
+import { useBlogSnapshot } from '@/components/marketing/BlogSnapshot'
 
 function mergePosts(remote: BlogPost[]) {
   const posts = new Map(BLOG_POSTS.map(post => [post.slug, post]))
@@ -9,21 +9,21 @@ function mergePosts(remote: BlogPost[]) {
 }
 
 export function usePublishedBlogPosts(enabled = true) {
-  const [remotePosts, setRemotePosts] = useState<BlogPost[]>([])
+  const initialPosts = useBlogSnapshot()
+  const [remotePosts, setRemotePosts] = useState<BlogPost[]>(initialPosts)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!enabled) { setLoading(false); return }
     let active = true
-    supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('status', 'published')
-      .order('published_at', { ascending: false })
-      .then(({ data }) => {
-        if (active && data) setRemotePosts(data.map(normalizeBlogRow))
+    // The public projection also powers server-rendered HTML and the sitemap.
+    fetch('/api/marketing?path=/blog-catalog.json', { signal: AbortSignal.timeout(10000) })
+      .then(response => response.ok ? response.json() : Promise.reject(new Error('Public catalog unavailable')))
+      .then(data => {
+        if (active && Array.isArray(data.posts)) setRemotePosts(data.posts)
         if (active) setLoading(false)
       })
+      .catch(() => { if (active) setLoading(false) })
     return () => { active = false }
   }, [enabled])
 

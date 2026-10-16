@@ -1,64 +1,100 @@
 [
   {
     "path": "/",
-    "title": "Control G | Caracterización y encuestas offline",
-    "description": "Software para caracterizaciones, encuestas y levantamiento de información en campo sin internet. Diseñado para entidades públicas de Colombia y Latinoamérica.",
-    "eyebrow": "Tecnología de campo para entidades públicas",
-    "heading": "Caracterizaciones y encuestas sin conexión a internet",
-    "lead": "Control G permite diseñar formularios, asignar equipos, recolectar evidencias sin señal y sincronizar la información cuando vuelve la conectividad.",
+    "title": "Control G | Encuestas offline, caracterización y GIS",
+    "description": "Caracterización y encuestas sin internet con GPS, evidencias, mapas GIS y seguimiento. Para empresas, entidades públicas y ONG en Colombia y Latinoamérica.",
+    "eyebrow": "Datos de campo para Colombia y Latinoamérica",
+    "heading": "Caracterización y encuestas que avanzan sin internet",
+    "lead": "Diseñe formularios, asigne equipos y recolecte datos, fotos, firmas y ubicación desde Android. Al recuperar conexión, sincronice para revisar resultados y analizar su territorio. Para empresas, entidades públicas, corporaciones y ONG.",
     "keywords": [
-      "software de caracterización social",
       "encuestas offline Colombia",
-      "aplicación para recolectar datos sin internet",
-      "levantamiento de información en campo",
-      "software para entidades públicas",
-      "formularios offline"
+      "software de caracterización",
+      "encuestas con inteligencia artificial",
+      "encuestas georreferenciadas",
+      "levantamiento de información",
+      "plataforma GIS para trabajo de campo",
+      "encuestas para empresas",
+      "formularios sin internet Latinoamérica"
     ],
     "whatsappMessage": "Hola, llegué desde controlg.co. Quiero conocer Control G para un proyecto de caracterización o levantamiento de información.",
     "sections": [
       {
-        "title": "Recolección confiable aun cuando no hay señal",
-        "body": "Los profesionales descargan sus formularios y asignaciones antes de salir a campo. En veredas, corregimientos y zonas rurales pueden registrar respuestas, fotografías, firmas y ubicación sin depender de una conexión activa."
+        "title": "Del cuestionario al operativo de campo",
+        "body": "Convierta instrumentos de caracterización, sondeos, visitas e inspecciones en formularios con validaciones y evidencias. Puede preparar borradores con asistencia de inteligencia artificial, revisarlos con su equipo y configurar el instrumento aprobado en Control G. Cada profesional accede a las asignaciones de su organización."
       },
       {
-        "title": "Información organizada para tomar decisiones",
-        "body": "Al recuperar internet, la aplicación sincroniza los registros con la plataforma central. Coordinadores y administradores consultan avances, revisan evidencias y consolidan resultados por equipo, municipio o intervención."
+        "title": "Capture sin señal y sincronice con trazabilidad",
+        "body": "Prepare la cuenta, los formularios y los permisos antes de salir. En campo, guarde respuestas y evidencias en el dispositivo aunque no exista internet. Cuando se restablezca la conexión, revise los pendientes y confirme la sincronización; el coordinador recibe la información para su revisión."
+      },
+      {
+        "title": "Entienda lo que ocurre en el territorio",
+        "body": "Explore puntos, capas, filtros, agrupaciones, calor y cobertura en el mapa interno. Exporte información geográfica para trabajar con herramientas GIS, incluido ArcGIS mediante formatos y conexiones compatibles que se configuran según el proyecto. La precisión del GPS depende del dispositivo y del entorno."
+      },
+      {
+        "title": "Una operación ajustada a su organización",
+        "body": "Centralice usuarios, formularios, familias cuando corresponda y territorios dentro de una entidad separada. La puesta en marcha puede incluir adaptación del cuestionario, instalación en tablets, capacitación y un piloto con sus dispositivos. Defina el alcance, los entregables y el soporte antes de iniciar."
       }
     ],
     "benefits": [
-      "Formularios personalizados sin programar",
-      "Aplicación Android y plataforma web",
-      "Captura offline con sincronización posterior",
-      "Fotografías, firmas y geolocalización",
-      "Asignación de formularios por profesional",
-      "Paneles de seguimiento y control de calidad"
+      "Constructor visual y preparación de cuestionarios asistida por IA con revisión humana",
+      "APK Android para captura offline y sincronización posterior",
+      "Fotos, firmas, archivos y ubicación según el instrumento",
+      "Coordinación, apoyo y profesionales con asignaciones",
+      "Mapa territorial, capas GIS, calor y cobertura",
+      "Analítica, revisión y exportaciones para su equipo"
     ],
     "faqs": [
       {
-        "question": "¿Control G funciona completamente sin internet?",
-        "answer": "Sí. Después de iniciar sesión y descargar las asignaciones, el profesional puede diligenciar formularios y guardar evidencias sin conexión. Los registros quedan protegidos en el dispositivo y se sincronizan cuando regresa la señal."
+        "question": "¿Para qué sirve Control G?",
+        "answer": "Control G organiza caracterizaciones, encuestas y levantamientos de información en campo. Integra formularios, profesionales, captura offline, evidencias, GPS, revisión y mapa territorial para empresas, entidades públicas, corporaciones y ONG."
       },
       {
-        "question": "¿Se pueden crear formularios diferentes para cada entidad?",
-        "answer": "Sí. Cada entidad configura sus propios formularios, preguntas, validaciones, etapas y equipos. Control G se adapta a caracterizaciones sociales, censos, visitas técnicas, diagnósticos y otros operativos de campo."
+        "question": "¿Puedo realizar encuestas sin internet?",
+        "answer": "Sí. Primero prepare la cuenta, descargue los formularios asignados y pruebe los permisos en el dispositivo. Después puede guardar respuestas y evidencias offline. Al recuperar conexión, compruebe que los registros pendientes se hayan sincronizado."
       },
       {
-        "question": "¿La plataforma sirve para alcaldías y gobernaciones?",
-        "answer": "Sí. Está diseñada para entidades nacionales y territoriales, operadores, ONG y organizaciones que necesitan coordinar equipos y consolidar información recolectada en zonas urbanas o rurales."
+        "question": "¿Cómo se utiliza inteligencia artificial para las encuestas?",
+        "answer": "La IA puede ayudar a preparar un borrador de preguntas y opciones que un responsable debe revisar, probar y aprobar. El formulario aprobado se configura en el constructor de Control G. Este flujo no implica un generador automático integrado ni una validación metodológica automática."
       },
       {
-        "question": "¿Cómo solicito una demostración?",
-        "answer": "Puede solicitar una demostración por WhatsApp. Un asesor revisará el tipo de entidad, el número de profesionales, los territorios y los formularios requeridos para preparar una propuesta."
+        "question": "¿Los datos se pueden llevar a ArcGIS?",
+        "answer": "Sí. Los resultados georreferenciados pueden exportarse en formatos compatibles para preparar capas en herramientas GIS. Una conexión a servicios de ArcGIS requiere configurar destino, permisos, campos y autenticación según el proyecto; no se publica automáticamente sin esa preparación."
+      },
+      {
+        "question": "¿En qué países se puede utilizar?",
+        "answer": "Control G permite configurar entidades para Colombia y otros países de Latinoamérica. Antes de implementar se ajustan territorios, idioma del instrumento, catálogos, zona horaria, responsables y requisitos del proyecto."
+      },
+      {
+        "question": "¿Cómo solicito una propuesta?",
+        "answer": "Escríbanos por WhatsApp con el país, territorios, objetivo del estudio, cantidad de encuestas, dispositivos y fechas. Con esa información se define una demostración privada y una propuesta de implementación."
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Encuestas con inteligencia artificial",
+        "path": "/encuestas-con-inteligencia-artificial"
+      },
+      {
+        "title": "Encuestas georreferenciadas",
+        "path": "/encuestas-georreferenciadas"
+      },
+      {
+        "title": "Soluciones para empresas",
+        "path": "/encuestas-para-empresas"
+      },
+      {
+        "title": "Caracterización en Colombia",
+        "path": "/caracterizacion-colombia"
       }
     ]
   },
   {
     "path": "/software-caracterizacion-social",
     "title": "Software de caracterización social | Control G",
-    "description": "Plataforma para caracterización social y socioeconómica de hogares, comunidades y beneficiarios. Captura offline para alcaldías y gobernaciones.",
+    "description": "Software de caracterización social y socioeconómica de hogares, comunidades y beneficiarios. Formularios offline, evidencias y seguimiento en Colombia y LATAM.",
     "eyebrow": "Caracterización social y socioeconómica",
     "heading": "Software de caracterización social para entidades y territorios",
-    "lead": "Convierta instrumentos de caracterización en formularios digitales, coordine profesionales y consolide datos de hogares, comunidades y grupos poblacionales, incluso en lugares sin internet.",
+    "lead": "Convierta instrumentos de caracterización en formularios digitales y consolide información de hogares, comunidades y grupos poblacionales. Para entidades públicas, empresas con gestión social, corporaciones, fundaciones y ONG.",
     "keywords": [
       "software de caracterización social",
       "aplicación caracterización socioeconómica",
@@ -80,6 +116,30 @@
       {
         "title": "Cobertura urbana, rural y rural dispersa",
         "body": "El modo offline facilita el trabajo en municipios, veredas y zonas con conectividad intermitente. La captura continúa en el dispositivo y la sincronización se ejecuta cuando existe una conexión disponible."
+      },
+      {
+        "title": "Defina si describe hogares, personas o visitas",
+        "body": "Una caracterización debe indicar qué representa cada respuesta. Un hogar puede tener varios integrantes y recibir varias visitas; esas observaciones no deben convertirse automáticamente en nuevas familias. Antes de configurar el formulario, acuerde identificadores y reglas para cambios de composición, información faltante y visitas de seguimiento. Revise con el equipo qué persona puede responder por otros integrantes y qué temas requieren una respuesta individual. Esa definición permite consolidar sin mezclar unidades ni sumar varias veces a un mismo hogar."
+      },
+      {
+        "title": "Prepare variables que respondan al propósito",
+        "body": "El cuestionario debe relacionarse con una decisión del programa: describir condiciones, identificar barreras, organizar atención o seguir una intervención. Para cada variable, documente significado, periodo, opciones y uso. Incluya criterios consistentes para no sabe, no aplica o negativa cuando correspondan. Un instrumento más largo no es necesariamente mejor; preguntas que no se utilizarán añaden tiempo y trabajo de revisión. Si parte de un cuestionario institucional o un borrador asistido por IA, conserve la aprobación del equipo responsable antes de publicarlo."
+      },
+      {
+        "title": "Aplique momentos con definiciones comparables",
+        "body": "Organizar el trabajo por momentos permite distinguir una visita inicial, una actividad y un seguimiento. Para interpretar cambios debe conservar la relación con la unidad y conocer si las preguntas siguen midiendo lo mismo. Documente actualizaciones de opciones, periodos o criterios de selección. No atribuya a la intervención una diferencia que puede originarse en participantes distintos o en un cambio de instrumento. La plataforma organiza los registros; el método de evaluación establece qué conclusión puede sostener cada comparación."
+      },
+      {
+        "title": "Convierta la revisión en una tarea concreta",
+        "body": "Acorde qué revisa coordinación y cuándo se devuelve un registro. Una observación útil señala un campo, una inconsistencia o una evidencia que necesita aclaración. El profesional debe saber si puede corregir desde información existente o si requiere volver al terreno. Revise también pendientes de sincronización, porque los registros conservados en una tablet no forman todavía parte del corte central. Establezca un procedimiento al terminar cada jornada y otro al cerrar el proyecto para evitar entregas con información local sin recibir."
+      },
+      {
+        "title": "Acorde entregables antes de iniciar",
+        "body": "Defina tablas, mapas, informes estándar y archivos que necesitará la organización. Prepare un diccionario de variables y un catálogo territorial para que otra persona pueda interpretar los resultados. Las capas geográficas y las evidencias personales pueden requerir entregas y accesos distintos. La demostración privada debe incluir un caso representativo del formulario, una cuenta profesional y una revisión por coordinación. Con ese piloto se acuerdan configuración, dispositivos, capacitación, tiempos de soporte y las tareas adicionales que el proyecto necesita."
+      },
+      {
+        "title": "Revise quién verá la información de personas y familias",
+        "body": "La captura y la difusión de resultados requieren niveles de detalle distintos. Un profesional necesita acceso a sus asignaciones y un coordinador a la revisión del proyecto; un informe público puede necesitar únicamente datos agregados. Antes de pedir fotografías, firmas o posición exacta, indique qué función cumplirán y cómo se tratarán las excepciones. Compruebe el contenido real de las exportaciones y retire identificadores que el destinatario no necesita. El proyecto debe conservar responsables de acceso, uso y cierre para que la separación por entidad se acompañe de una gestión adecuada dentro de la propia organización."
       }
     ],
     "benefits": [
@@ -107,6 +167,20 @@
         "question": "¿Funciona para proyectos en diferentes países?",
         "answer": "Sí. La plataforma es configurable para entidades de Colombia y otros países de Latinoamérica, ajustando territorios, formularios, equipos y flujos de revisión."
       }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Caracterización en Colombia",
+        "path": "/caracterizacion-colombia"
+      },
+      {
+        "title": "Encuestas para ONG",
+        "path": "/encuestas-para-ong"
+      },
+      {
+        "title": "Guía de gobierno de datos",
+        "path": "/blog/gobierno-datos-encuestas-campo"
+      }
     ]
   },
   {
@@ -132,11 +206,35 @@
       },
       {
         "title": "Sincronización cuando vuelve la conexión",
-        "body": "Las respuestas pendientes permanecen en una cola local. Al detectar internet, Control G carga primero las evidencias y después el formulario, manteniendo visible cualquier error que requiera intervención."
+        "body": "Las respuestas y sus evidencias permanecen pendientes en el dispositivo hasta completar el proceso de sincronización. Cuando existe conectividad, el profesional puede consultar el estado y reintentar los envíos que requieran atención. El cierre del operativo debe confirmar que no queden registros pendientes."
       },
       {
         "title": "Datos de campo con mayor contexto",
         "body": "Además de preguntas abiertas o cerradas, el instrumento puede solicitar fotografías, ubicación GPS, firmas, fechas, selecciones múltiples y grupos repetitivos para registrar integrantes o elementos inspeccionados."
+      },
+      {
+        "title": "Prepare la cuenta y el instrumento antes de desconectarse",
+        "body": "El trabajo offline comienza con una preparación online: usuarios, permisos, formulario publicado y asignación al profesional. Revise el acceso en cada tablet y confirme que el material necesario queda disponible. Una nueva cuenta no puede asumir que tendrá descargado todo el operativo. Defina quién prepara los dispositivos y cómo se valida una sustitución de equipo. Si el formulario cambia, acuerde cómo se actualizan las asignaciones antes de la jornada y cómo se interpretan respuestas capturadas con versiones anteriores."
+      },
+      {
+        "title": "Diferencie GPS de los servicios de mapas",
+        "body": "Un receptor compatible puede capturar coordenadas sin datos móviles, pero la disponibilidad de un mapa base o un servicio externo es otra capacidad. No espere que toda consulta en línea funcione por el hecho de que el formulario sí permite guardar respuestas. Pruebe las ubicaciones y capas que requiera el operativo y documente qué necesita conexión. La precisión también depende del dispositivo y del entorno: una tablet con GPS no equivale a un equipo topográfico ni asegura siempre el mismo resultado."
+      },
+      {
+        "title": "Pruebe con la cantidad de evidencias prevista",
+        "body": "Una encuesta sencilla con una foto no reproduce necesariamente un instrumento largo con varias evidencias. Prepare un caso representativo, capture sin red, cierre la aplicación y compruebe el registro al volver a abrir. Después recupere internet y confirme recepción desde coordinación. Observe el tiempo de transferencia, espacio utilizado y pasos que generan dudas. Ajuste el número y propósito de archivos antes de ampliar la operación. Una práctica completa en los equipos reales es parte de la puesta en marcha."
+      },
+      {
+        "title": "Defina puntos de sincronización y responsables",
+        "body": "La captura puede continuar sin señal, pero el equipo necesita un procedimiento para entregar datos. Acuerde horarios o puntos de conexión y una revisión de pendientes por profesional. Distinga lo guardado localmente, lo recibido y lo revisado. Si un sector tiene pocos registros en el servidor, compruebe si existen capturas pendientes antes de concluir que no hubo trabajo. El cierre debe confirmar la información y las evidencias desde coordinación, no depender únicamente del conteo que aparece en el dispositivo."
+      },
+      {
+        "title": "Cuide los datos durante toda la jornada",
+        "body": "El dispositivo conserva material de trabajo mientras no se completa el envío. Defina custodia, recuperación y reporte de incidentes según las reglas de la organización. Antes de reinstalar la aplicación, borrar datos o devolver una tablet, verifique que no queden registros pendientes. Prepare instrucciones simples para problemas de permisos, almacenamiento o conexión y un contacto de soporte. El acceso offline aporta continuidad cuando se acompaña de esas rutinas; no elimina la responsabilidad de conservar y verificar la información del proyecto."
+      },
+      {
+        "title": "Acepte el flujo con una comprobación central",
+        "body": "Una prueba de aceptación debe terminar con la respuesta visible para coordinación, evidencias accesibles según permisos y una exportación interpretable. Incluya una situación que necesite revisión para que el equipo aprenda también el ciclo de observaciones. Documente el dispositivo utilizado y el resultado, sin trasladar automáticamente esa conclusión a cualquier modelo de tablet. Si el cliente requiere operar varios días desconectado, utilice una prueba representativa de ese volumen y duración. Los detalles se ajustan al proyecto para que capacitación, soporte y cierre cubran el procedimiento que realmente utilizarán los profesionales."
       }
     ],
     "benefits": [
@@ -150,7 +248,7 @@
     "faqs": [
       {
         "question": "¿Necesito internet para diligenciar una encuesta?",
-        "answer": "No. Se necesita conexión para la preparación inicial de la cuenta y las asignaciones, pero los formularios descargados pueden diligenciarse sin internet."
+        "answer": "Se necesita conexión para preparar la cuenta, descargar formularios y asignaciones y comprobar el acceso. Los formularios disponibles localmente pueden diligenciarse sin internet. Pruebe el flujo completo en los dispositivos que utilizará su equipo antes de iniciar el operativo."
       },
       {
         "question": "¿Qué pasa si cierro la aplicación sin conexión?",
@@ -163,6 +261,20 @@
       {
         "question": "¿La aplicación está disponible para Android?",
         "answer": "Sí. Control G cuenta con una aplicación Android basada en Capacitor y también ofrece acceso web adaptable para los perfiles administrativos."
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "GPS sin internet: cómo preparar la captura",
+        "path": "/blog/gps-sin-internet-encuestas-georreferenciadas"
+      },
+      {
+        "title": "Planificar 1.000 encuestas",
+        "path": "/blog/plan-operativo-mil-encuestas-bolivar"
+      },
+      {
+        "title": "Levantamiento en campo",
+        "path": "/levantamiento-informacion-campo"
       }
     ]
   },
@@ -194,6 +306,30 @@
       {
         "title": "Seguimiento y control de calidad",
         "body": "La oficina consulta respuestas sincronizadas, identifica pendientes y revisa evidencias desde un panel central. Los roles separan la administración, coordinación, revisión y recolección."
+      },
+      {
+        "title": "Aclare qué unidad recorre el profesional",
+        "body": "Un listado de hogares, establecimientos, activos o beneficiarios requiere reglas distintas de identificación. Defina qué se considera una visita y cómo se relaciona con una unidad que puede recibir varios contactos. Mantenga identificadores estables y un procedimiento para duplicados, traslados y unidades no encontradas. Si el trabajo usa una muestra, conserve los criterios de selección y sustitución que aprobó el responsable metodológico. El formulario debe permitir registrar las situaciones reales sin forzar al equipo a inventar una respuesta para continuar."
+      },
+      {
+        "title": "Organice el territorio con códigos y referencias",
+        "body": "Prepare un catálogo de país, niveles administrativos y sectores operativos que tenga sentido para el cliente. Un barrio, una colonia, una vereda y una zona de servicio pueden cumplir funciones distintas; no los convierta en equivalentes por una etiqueta. Revise fuente y fecha de las capas y conserve código y nombre. Si necesita límites específicos, confirme quién los aprueba y cómo se manejarán puntos en los bordes. Esa preparación evita consolidaciones manuales basadas en variantes de nombres escritos durante la entrevista."
+      },
+      {
+        "title": "Capacite en instrumento y aplicación",
+        "body": "La persona de campo necesita comprender qué pregunta, cómo aplica las opciones y cómo utiliza el dispositivo. Prepare práctica de consentimiento, no respuesta, evidencia y excepciones junto con apertura de asignaciones, guardado y sincronización. Una capacitación centrada solamente en botones no resuelve interpretaciones distintas de una pregunta. Realice un caso completo con los profesionales, revise las dudas y deje una guía breve de jornada. Incluya un contacto que pueda resolver incidencias sin cambiar silenciosamente las reglas del operativo."
+      },
+      {
+        "title": "Mida la capacidad con un piloto",
+        "body": "El número de entrevistas diarias depende de duración, accesos, traslados, evidencias y revisión. Use tiempos observados en un piloto en lugar de prometer una producción fija para cualquier territorio. Pruebe condiciones con y sin conexión y revise el archivo exportado con la persona que analizará la información. Si el cuestionario o las evidencias hacen inviable la jornada, ajuste el diseño antes de ampliar la captura. Defina también una reserva de tiempo para observaciones y visitas que no se completan en el primer intento."
+      },
+      {
+        "title": "Cierre el operativo con una base verificable",
+        "body": "Acorde una fecha de corte y qué estados se incluyen en resultados. Revise que cada dispositivo haya entregado sus pendientes y que las observaciones necesarias estén resueltas. Compare conteos entre tablas, mapas e informe y explique los registros que no tienen ubicación. Prepare diccionario, catálogos y criterios de exclusión para que el destinatario pueda reconstruir el análisis. La implementación se cotiza según formularios, usuarios, tablets, duración, capacitación y soporte; el personal, transporte y análisis adicional deben figurar expresamente en el alcance."
+      },
+      {
+        "title": "Use IA como ayuda para preparar el instrumento",
+        "body": "Puede explorar preguntas, organizar secciones o revisar lenguaje con asistencia de inteligencia artificial antes de configurar el formulario. Entregue a esa herramienta el objetivo, población, territorio y duración deseada, usando ejemplos ficticios en lugar de información personal real. El responsable debe revisar conceptos, opciones y posibles sesgos y aprobar una versión probada con la población. Después se configura el instrumento en el constructor de Control G y se valida con el equipo de campo. Esta preparación asistida no significa que exista una generación automática interna ni que la IA certifique la validez metodológica del estudio. Conserve la fecha y el responsable de la aprobación para mantener trazabilidad durante la operación."
       }
     ],
     "benefits": [
@@ -220,6 +356,20 @@
       {
         "question": "¿Sirve en zonas rurales dispersas?",
         "answer": "Sí. El diseño offline-first permite continuar el levantamiento sin cobertura y sincronizar después, una necesidad frecuente en áreas rurales y territorios con conectividad inestable."
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Encuestas para empresas",
+        "path": "/encuestas-para-empresas"
+      },
+      {
+        "title": "Encuestas para ONG",
+        "path": "/encuestas-para-ong"
+      },
+      {
+        "title": "Cómo diseñar preguntas claras",
+        "path": "/blog/disenar-encuestas-sin-sesgos"
       }
     ]
   },
@@ -251,6 +401,30 @@
       {
         "title": "Tecnología preparada para condiciones reales",
         "body": "La aplicación Android sigue operando en áreas sin internet, mientras la plataforma web permite administrar y revisar la operación. Cuando existe conectividad, la información se centraliza para seguimiento institucional."
+      },
+      {
+        "title": "Configuración desde la necesidad institucional",
+        "body": "Defina programa, población, unidades y territorios antes de construir el instrumento. La misma entidad puede necesitar caracterización de hogares, registro de beneficiarios, encuestas o inspecciones, con reglas diferentes para cada caso. Acorde quién aprueba variables, formularios y cambios y qué roles recibirán las asignaciones. El entorno multi-entidad facilita organizar acceso y datos, pero el proyecto debe explicar sus propios responsables y objetivos. Una demostración privada con registros ficticios permite revisar ese flujo sin exponer información de las personas atendidas."
+      },
+      {
+        "title": "Catálogos coherentes para municipio y sector",
+        "body": "Prepare códigos administrativos y las subdivisiones operativas necesarias para consolidar. Para Colombia puede consultar las referencias territoriales del DANE; en otros países debe validar los catálogos y términos correspondientes. Un código o una capa de referencia no implica aval de la entidad que lo publica. Revise fecha, fuente y reglas de uso y mantenga barrios, veredas o sectores de intervención como niveles explícitos cuando no sean parte del catálogo principal. Esa claridad facilita comparar reportes de diferentes equipos y periodos."
+      },
+      {
+        "title": "Revisión institucional con observaciones",
+        "body": "Acorde criterios para aceptar, devolver o aclarar respuestas y evidencias. Las observaciones de coordinación deben indicar qué variable o condición requiere revisión para que el profesional pueda actuar. Separe captura terminada en tablet de información ya sincronizada y revisada. Durante un operativo con conectividad variable, el avance central puede tardar en reflejar algunas jornadas. Mantenga un procedimiento para revisar pendientes y evitar tanto el cierre con datos sin recibir como la devolución injustificada de registros que todavía no completan su transferencia."
+      },
+      {
+        "title": "Datos para mapas y análisis posteriores",
+        "body": "La georreferenciación permite explorar distribución, sectores y capas en el mapa territorial. Use filtros y vistas según la pregunta, sin interpretar concentración como cobertura de toda una población. Defina las metas del operativo y documente el sistema de referencia de las salidas geográficas. Si la entidad utiliza ArcGIS u otro GIS, acuerde un intercambio por archivos o una conexión configurada con destino y permisos. El alcance debe especificar quién valida geometrías, campos y actualizaciones para conservar la calidad del dato compartido."
+      },
+      {
+        "title": "Implementación y entrega para el equipo",
+        "body": "Prepare una prueba con el formulario real, usuarios de coordinación y profesionales, y las tablets previstas. Incluya instalación, permisos, captura offline, evidencias, sincronización, observaciones y exportación. Defina sesiones de capacitación, acompañamiento, vigencia del acceso y entregables en la propuesta. Si la actividad requiere viajes, encuestadores o informes especializados, indique esas tareas y sus responsables. Antes de devolver dispositivos o cerrar accesos, confirme recepción completa y prepare la base con diccionario, fecha de corte y las limitaciones del levantamiento."
+      },
+      {
+        "title": "Adapte la demostración al proceso que va a contratar",
+        "body": "En una evaluación institucional, utilice un formulario y roles representativos de la operación prevista. Solicite que un profesional capture, coordinación revise y el responsable de datos compruebe la exportación. Si hay un GIS corporativo, incluya una muestra de la capa y del formato de destino. La demostración debe distinguir funciones disponibles, configuración del proyecto y tareas que necesitan un alcance específico. Defina qué será una entrega aceptada y qué condiciones debe reproducir el piloto en tablets. Una lista de funcionalidades ayuda a comparar, pero el ciclo completo permite comprobar si la solución encaja con el trabajo del equipo."
       }
     ],
     "benefits": [
@@ -277,6 +451,569 @@
       {
         "question": "¿Se puede solicitar una demostración para un proceso contractual?",
         "answer": "Sí. Por WhatsApp puede describir el alcance, número de usuarios, territorios y formularios. Con esa información se prepara una demostración enfocada en el caso de uso."
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Caracterización en Colombia",
+        "path": "/caracterizacion-colombia"
+      },
+      {
+        "title": "Interoperabilidad con ArcGIS",
+        "path": "/integracion-arcgis"
+      },
+      {
+        "title": "Gobierno de datos de campo",
+        "path": "/blog/gobierno-datos-encuestas-campo"
+      }
+    ]
+  },
+  {
+    "path": "/encuestas-con-inteligencia-artificial",
+    "title": "Encuestas con inteligencia artificial | Control G",
+    "description": "Prepare cuestionarios con IA y revisión humana. Configure encuestas en Control G, recolecte datos offline y analice resultados por territorio.",
+    "eyebrow": "Del borrador asistido al formulario aprobado",
+    "heading": "Encuestas con inteligencia artificial y criterio humano",
+    "lead": "Use inteligencia artificial para explorar preguntas, ordenar secciones y revisar el lenguaje del cuestionario. Convierta la versión aprobada en un formulario de Control G para trabajar con equipos de campo, GPS y captura offline.",
+    "keywords": [
+      "encuestas con inteligencia artificial",
+      "crear encuestas con IA",
+      "cuestionarios con inteligencia artificial",
+      "formularios IA revisión humana",
+      "encuestas IA Colombia"
+    ],
+    "whatsappMessage": "Hola, quiero preparar una encuesta con asistencia de IA, validarla con mi equipo y configurarla en Control G. Mi proyecto es en: ",
+    "sections": [
+      {
+        "title": "Qué aporta la IA al diseño del cuestionario",
+        "body": "Un borrador asistido por IA puede proponer dimensiones, preguntas abiertas o cerradas y opciones de respuesta a partir del objetivo del estudio. También puede ayudar a detectar términos técnicos, repeticiones y preguntas demasiado largas. Es una ayuda de preparación: el responsable metodológico decide qué medir, qué variables son necesarias y qué redacción entiende la población. La cantidad de preguntas debe responder al objetivo y al tiempo de entrevista disponible."
+      },
+      {
+        "title": "Una instrucción útil empieza por el problema",
+        "body": "Describa a quién se entrevistará, dónde, para qué decisión se usarán los resultados y qué información ya existe. Añada duración esperada, modo presencial, idioma y restricciones. Por ejemplo: preparar un diagnóstico de acceso a servicios en hogares de un barrio, con consentimiento, preguntas comprensibles y periodos de referencia explícitos. Solicite que cada pregunta incluya objetivo, tipo de respuesta y alternativas. Evite introducir datos personales reales en herramientas externas de IA sin una autorización y configuración adecuadas."
+      },
+      {
+        "title": "Validación humana antes de publicar",
+        "body": "Revise preguntas dobles, supuestos, escalas desequilibradas y opciones que se solapan. Distinga entre no sabe, no aplica y prefiere no responder cuando el instrumento lo requiera. Realice entrevistas piloto para comprobar comprensión y duración. Pruebe también los campos obligatorios y el recorrido entre secciones. Conserve una versión aprobada con fecha y responsable; una respuesta convincente de la IA no demuestra que el cuestionario mida correctamente."
+      },
+      {
+        "title": "Configure el instrumento en Control G",
+        "body": "Lleve el cuestionario aprobado al constructor visual, organice páginas y configure los tipos de campo disponibles. Defina validaciones, evidencias y permisos, publique la versión correspondiente y asigne el formulario a los profesionales. Este flujo utiliza la IA en la preparación y la revisión del instrumento; no describe un botón generativo interno de Control G. La configuración concreta del formulario se valida durante la implementación y el piloto."
+      },
+      {
+        "title": "Capture offline y revise resultados",
+        "body": "El equipo prepara sus cuentas y formularios con conexión. Después puede diligenciar las asignaciones disponibles, guardar respuestas y evidencias sin señal y sincronizar al recuperar internet. La coordinación revisa la información recibida, las observaciones y los avances. Si el proyecto incluye GPS, el mapa territorial aporta contexto para interpretar la distribución de las visitas. El análisis debe considerar cómo se seleccionaron las personas y qué zonas quedaron pendientes."
+      },
+      {
+        "title": "Para empresas, entidades y organizaciones",
+        "body": "Una empresa puede preparar un diagnóstico de clientes o proveedores; una corporación, una caracterización comunitaria; una ONG, un instrumento de línea base; una entidad pública, una visita de servicios. En todos los casos conviene separar el objetivo de investigación de las tareas de digitación. En la demostración revisamos su instrumento, países, evidencias y entregables para definir un alcance realista y un flujo de aprobación."
+      },
+      {
+        "title": "Documente cómo se construyó y quién lo aprobó",
+        "body": "Conserve el objetivo del cuestionario, la versión revisada y la fecha de aprobación. Si utilizó IA para explorar preguntas, registre qué decisiones tomó el equipo y qué cambió después del piloto. No necesita presentar cada borrador como entregable, pero sí poder explicar por qué las variables y opciones actuales corresponden al estudio. Cuando el instrumento cambie, revise los efectos sobre formularios descargados y respuestas anteriores. Ese control ayuda a interpretar resultados y evita comparar como equivalentes preguntas que cambiaron de significado durante la operación."
+      },
+      {
+        "title": "Evalúe la solución con un caso completo",
+        "body": "Para una demostración útil, lleve un cuestionario o describa una decisión real que necesite sustentar. Revise qué campos requiere, quién lo aprobará, cuántos profesionales participarán y cómo se entregarán los resultados. Pruebe el formulario desde una cuenta de campo y después desde coordinación, incluida una respuesta offline con evidencia. Acuerde qué parte del trabajo consiste en preparación asistida, configuración, capacitación o análisis adicional. Así la IA se utiliza donde aporta y el alcance comercial coincide con el flujo que su organización necesita operar."
+      }
+    ],
+    "benefits": [
+      "Borradores orientados al objetivo del estudio",
+      "Revisión del lenguaje y alternativas",
+      "Aprobación humana y prueba piloto",
+      "Constructor visual para el instrumento validado",
+      "Aplicación Android con captura offline",
+      "Resultados, evidencias y mapa territorial"
+    ],
+    "faqs": [
+      {
+        "question": "¿Control G genera encuestas automáticamente dentro de la plataforma?",
+        "answer": "El alcance descrito aquí es preparar el cuestionario con asistencia de IA, revisarlo y configurar el instrumento aprobado en Control G. No se ofrece como una función generativa interna automática. La demostración permite acordar qué parte requiere configuración o acompañamiento."
+      },
+      {
+        "question": "¿Una encuesta creada con IA es metodológicamente válida?",
+        "answer": "La IA no acredita por sí sola la validez del cuestionario. Se necesitan revisión humana, definición de variables, prueba con la población y un diseño de selección acorde con el uso de los resultados."
+      },
+      {
+        "question": "¿La inteligencia artificial necesita internet en campo?",
+        "answer": "La preparación asistida se realiza antes de publicar el instrumento. Una vez descargado el formulario en la aplicación, la captura puede continuar sin conexión; no necesita consultar un modelo de IA para registrar cada respuesta."
+      },
+      {
+        "question": "¿Puedo usar un cuestionario que ya tenemos?",
+        "answer": "Sí. Puede partir de un instrumento aprobado por su organización. Se revisan sus secciones, tipos de campo y validaciones para configurarlo y probarlo en Control G sin sustituir la responsabilidad metodológica del equipo."
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Guía para preparar encuestas con IA",
+        "path": "/blog/crear-encuestas-ia-validacion-humana"
+      },
+      {
+        "title": "Diseño de preguntas sin sesgos",
+        "path": "/blog/disenar-encuestas-sin-sesgos"
+      },
+      {
+        "title": "Captura offline",
+        "path": "/encuestas-offline"
+      }
+    ]
+  },
+  {
+    "path": "/encuestas-georreferenciadas",
+    "title": "Encuestas georreferenciadas y GPS offline | Control G",
+    "description": "Recolecte encuestas con GPS, fotos y evidencias. Visualice puntos, capas, calor y cobertura territorial; capture offline y sincronice después.",
+    "eyebrow": "Cada visita con contexto territorial",
+    "heading": "Encuestas georreferenciadas para entender su territorio",
+    "lead": "Relacione respuestas y evidencias con la ubicación capturada en campo. Control G combina formularios offline y un mapa territorial con filtros, puntos, capas, agrupaciones, calor y cobertura.",
+    "keywords": [
+      "encuestas georreferenciadas",
+      "encuestas con GPS",
+      "georreferenciación sin internet",
+      "levantamiento georreferenciado",
+      "mapa de encuestas Colombia",
+      "capas GIS encuestas"
+    ],
+    "whatsappMessage": "Hola, necesito encuestas georreferenciadas con GPS y operación offline. Quiero una demostración del mapa de Control G.",
+    "sections": [
+      {
+        "title": "Qué es una encuesta georreferenciada",
+        "body": "Es un registro de información asociado a una ubicación geográfica. Puede vincular una visita a un hogar, establecimiento, infraestructura o punto de atención. La coordenada aporta contexto espacial, pero debe interpretarse junto con la pregunta, fecha, responsable y calidad de la captura. Para comparar barrios o municipios también se necesita un catálogo territorial consistente; una dirección escrita y una coordenada resuelven necesidades diferentes y conviene conservarlas de forma ordenada."
+      },
+      {
+        "title": "GPS sin internet: preparación y límites",
+        "body": "Un dispositivo compatible puede obtener posición por satélite sin una conexión de datos. El resultado depende del receptor, los permisos, la visibilidad del cielo y las condiciones del entorno. La disponibilidad del mapa base es otro asunto: un servicio de mapas en línea puede necesitar conectividad aunque la coordenada se capture. En el piloto compruebe el GPS con modo avión y ubicación habilitada, incluidos los sectores urbanos o rurales más exigentes."
+      },
+      {
+        "title": "Mapa territorial con herramientas de exploración",
+        "body": "Después de sincronizar, los usuarios autorizados pueden consultar los registros geográficos y las capas del proyecto. Use filtros para revisar formulario, periodo, estado o dimensiones disponibles y amplíe el mapa a pantalla completa para explorar el territorio. Las vistas de puntos, agrupaciones y calor ayudan a observar patrones de captura; la cobertura debe relacionarse con las metas definidas. Cada vista responde una pregunta diferente y el informe debe indicar cuál se utilizó."
+      },
+      {
+        "title": "Capas para delimitar y contextualizar",
+        "body": "Incorpore geometrías compatibles para representar zonas, límites operativos, equipamientos o recorridos que formen parte del proyecto. Revise fuente, fecha, sistema de coordenadas y permisos antes de cargar una capa. Los polígonos de trabajo no siempre equivalen a límites administrativos oficiales. Mantenga nombres y códigos estables para relacionar formularios, metas y resultados, y acuerde quién puede modificar las capas durante el operativo."
+      },
+      {
+        "title": "Información que se puede revisar y compartir",
+        "body": "Exporte puntos y capas mediante formatos geográficos compatibles y prepare salidas para su equipo GIS. Los resultados tabulares pueden analizarse junto con la ubicación usando identificadores consistentes. Antes de compartir, determine si se necesitan posiciones exactas o información agregada. Una foto del mapa puede servir para una presentación, pero no reemplaza la base de datos, el diccionario de variables ni la descripción de los filtros del informe."
+      },
+      {
+        "title": "Pruebe con sus tablets y su formulario",
+        "body": "La demostración debe incluir una visita con buena recepción GPS, otra con recepción limitada y una captura autorizada sin coordenada cuando el proyecto lo permita. Complete el guardado offline, cierre y reapertura de la aplicación, sincronización y consulta por coordinación. Ese ensayo permite acordar criterios de calidad, excepciones y capacitación. No se promete una precisión fija ni topográfica a partir de un celular o una tablet."
+      },
+      {
+        "title": "Prepare criterios de aceptación de ubicación",
+        "body": "Acorde con coordinación qué hacer si no se obtiene una posición, si el punto queda fuera del sector o si varias visitas comparten coordenadas. Esas situaciones necesitan contexto y no una decisión automática sobre la validez de toda la entrevista. Determine si la posición representa el domicilio, el lugar de encuentro o un activo inspeccionado. Añada instrucciones al instrumento y pruebe las excepciones. La revisión territorial debe combinar ubicación, periodo, unidad y evidencias para producir observaciones que el profesional pueda resolver."
+      },
+      {
+        "title": "Compare y comunique con referencias claras",
+        "body": "Antes de comunicar un avance, indique qué se cuenta y contra qué referencia se compara. Una meta de encuestas por barrio mide cumplimiento operativo y no necesariamente porcentaje de habitantes caracterizados. En cada informe conserve fecha de corte, filtros y cantidad de registros sin ubicación para explicar qué se ve en el mapa. Prepare salidas con detalle apropiado para cada destinatario y compruebe que coordenadas exactas o atributos no permitan revelar información que no necesita compartir. Los mapas aportan claridad cuando conservan esas definiciones."
+      }
+    ],
+    "benefits": [
+      "GPS vinculado al formulario y sus evidencias",
+      "Captura offline en dispositivos preparados",
+      "Mapa interno con pantalla completa",
+      "Capas, puntos, agrupaciones y calor",
+      "Cobertura según las metas del proyecto",
+      "Exportación para análisis geográfico"
+    ],
+    "faqs": [
+      {
+        "question": "¿La georreferenciación funciona sin internet?",
+        "answer": "La captura de coordenadas puede funcionar sin datos móviles en dispositivos compatibles, con ubicación y permisos activos. La descarga inicial, sincronización y servicios cartográficos en línea requieren conexión. Valide el comportamiento en las tablets que utilizará."
+      },
+      {
+        "question": "¿Qué precisión tiene el GPS?",
+        "answer": "Depende del dispositivo, la señal satelital y el entorno. Edificios, vegetación y espacios interiores pueden afectar el resultado. Control G no convierte un GPS de consumo en un levantamiento topográfico ni garantiza una precisión fija."
+      },
+      {
+        "question": "¿Un mapa de calor muestra la cobertura del estudio?",
+        "answer": "No necesariamente. El calor representa concentración de puntos según la configuración. Para evaluar cobertura se necesitan metas, unidades de referencia y criterios de avance por zona. Ambas vistas deben interpretarse por separado."
+      },
+      {
+        "question": "¿Puedo guardar una encuesta sin coordenadas?",
+        "answer": "El proyecto debe definir si la ubicación es obligatoria o si se permite registrar una excepción. Esa regla se configura y prueba con el instrumento para no perder una entrevista válida cuando el GPS no esté disponible."
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Guía de GPS offline",
+        "path": "/blog/gps-sin-internet-encuestas-georreferenciadas"
+      },
+      {
+        "title": "Calor, grupos y cobertura",
+        "path": "/blog/mapa-calor-cobertura-territorial-diferencias"
+      },
+      {
+        "title": "Integración y exportación ArcGIS",
+        "path": "/integracion-arcgis"
+      }
+    ]
+  },
+  {
+    "path": "/integracion-arcgis",
+    "title": "Control G y ArcGIS: capas y exportación GIS",
+    "description": "Lleve datos de campo a su flujo GIS. Revise GeoJSON, KML, KMZ, Shapefile, GeoPackage y conexiones ArcGIS según el alcance de su proyecto.",
+    "eyebrow": "Interoperabilidad territorial con un flujo definido",
+    "heading": "Datos de campo preparados para su operación GIS y ArcGIS",
+    "lead": "Conecte el levantamiento de información con su equipo geográfico. Prepare capas, revise sistemas de coordenadas e intercambie datos mediante formatos compatibles; configure las conexiones a servicios según su proyecto.",
+    "keywords": [
+      "integración ArcGIS encuestas",
+      "encuestas GIS",
+      "exportar encuestas ArcGIS",
+      "capas GIS datos campo",
+      "importar KML KMZ Shapefile",
+      "GeoJSON encuestas georreferenciadas"
+    ],
+    "whatsappMessage": "Hola, queremos integrar datos de campo de Control G con nuestro GIS o ArcGIS. Necesitamos revisar formatos, capas, permisos y el flujo de actualización.",
+    "sections": [
+      {
+        "title": "Del formulario a una capa útil",
+        "body": "La integración comienza por definir qué representa cada registro: un hogar, una visita, un activo o una observación. Asigne un identificador estable, conserve fecha y estado de revisión y seleccione qué atributos necesita el análisis. Una coordenada por sí sola no resuelve el modelo de información. Si una misma unidad recibe varias visitas, decida si la salida contendrá eventos separados o una tabla de seguimiento relacionada con la geometría principal."
+      },
+      {
+        "title": "GeoJSON, CSV y GeoPackage para intercambiar",
+        "body": "Control G incorpora exportaciones territoriales que permiten continuar el análisis en herramientas GIS. El formato debe elegirse de acuerdo con la información, el volumen y el destino. Un CSV con latitud y longitud puede servir para una tabla de puntos; GeoJSON reúne geometría y atributos; GeoPackage permite trabajar con un contenedor geográfico. Compruebe los campos efectivamente incluidos en cada salida: una exportación territorial no equivale a entregar todas las respuestas ni archivos adjuntos."
+      },
+      {
+        "title": "KML, KMZ y Shapefile: comprobar antes de cargar",
+        "body": "Los archivos recibidos de terceros pueden contener estilos, varias geometrías, codificaciones o proyecciones que requieran preparación. En una demostración técnica revisamos una muestra real y confirmamos el tipo de importación o conversión disponible para ese archivo. Un Shapefile requiere sus componentes asociados y puede limitar los nombres de campos. Evite cambiar simplemente la extensión del archivo: la conversión debe conservar correctamente geometrías y atributos."
+      },
+      {
+        "title": "Conexiones ArcGIS con destino y permisos",
+        "body": "Una integración con servicios ArcGIS necesita identificar la organización, la URL del servicio, las capas de destino y el mecanismo de autenticación. También requiere acordar nombres y tipos de campos, identificadores, permisos de lectura o escritura y frecuencia de actualización. La disponibilidad depende del servicio y de las licencias del cliente. Tener puntos en Control G no implica que se publiquen automáticamente en ArcGIS sin configurar y validar ese flujo."
+      },
+      {
+        "title": "Coordenadas, límites y control de calidad",
+        "body": "Verifique orden de ejes, proyección, extensión geográfica y geometrías antes de usar los datos para decisiones. Las exportaciones territoriales WGS84 deben interpretarse con su sistema de referencia y metadatos. Pruebe ubicaciones conocidas y compare conteos antes y después de la conversión. Documente errores, registros sin coordenadas y modificaciones. Un mapa que visualmente parece correcto todavía puede tener atributos incompletos o uniones equivocadas."
+      },
+      {
+        "title": "Entregables y responsabilidades claras",
+        "body": "Defina si el proyecto termina con archivos descargables, una carga inicial o una sincronización recurrente. Establezca quién administra credenciales, quién valida el servicio y quién atiende cambios de esquema. Prepare una salida geográfica y una tabular con diccionario y fecha de corte. Para compartir resultados, seleccione atributos y nivel de precisión adecuados; las evidencias personales pueden requerir permisos y canales distintos de los utilizados para publicar capas territoriales."
+      },
+      {
+        "title": "Pruebe una actualización y una corrección",
+        "body": "Una carga inicial correcta no demuestra que el ciclo de actualización esté resuelto. Pruebe una nueva respuesta, la corrección de una existente y una situación en que el servicio de destino no está disponible. Compare conteos e identificadores y acuerde cómo evitar duplicados o información desactualizada. Conserve la diferencia entre estado del formulario y estado de la entrega al GIS. Si el proceso incluye reintentos, defina quién revisa los errores y qué evidencia confirma que la capa de destino recibió la información prevista."
+      },
+      {
+        "title": "Separe la captura de la publicación institucional",
+        "body": "Los profesionales pueden levantar información offline aunque una integración externa requiera conexión para enviar o actualizar. Explique esa secuencia al equipo y establezca un corte para publicación si los resultados deben pasar por revisión. Una base operativa puede contener borradores o respuestas con observaciones que todavía no deben aparecer en una capa institucional. Defina estados incluidos y responsable de aprobación. La documentación del flujo debe indicar destino, referencia espacial, campos, periodicidad y tratamiento de excepciones para que otra persona pueda administrarlo al terminar la implementación."
+      }
+    ],
+    "benefits": [
+      "Mapa territorial y capas del proyecto",
+      "Salidas geográficas con referencia documentada",
+      "Exportaciones para trabajo con ArcGIS y QGIS",
+      "Revisión de archivos y geometrías de entrada",
+      "Conexiones configuradas según servicio y permisos",
+      "Piloto con validación de conteos y ubicaciones"
+    ],
+    "faqs": [
+      {
+        "question": "¿Las capas quedan publicadas en ArcGIS automáticamente?",
+        "answer": "No sin configurar el destino. Se necesitan servicio, permisos, autenticación, esquema y pruebas. Puede acordarse un flujo por archivos o una conexión configurada, dependiendo del proyecto y la infraestructura disponible."
+      },
+      {
+        "question": "¿Control G sustituye ArcGIS?",
+        "answer": "Control G organiza formularios, captura offline y revisión territorial. ArcGIS ofrece herramientas geoespaciales más amplias. Pueden complementarse mediante intercambio de datos y conexiones definidas."
+      },
+      {
+        "question": "¿Se pueden importar archivos de cualquier tipo GIS?",
+        "answer": "La compatibilidad debe comprobarse con una muestra y el flujo habilitado. GeoJSON, KML, KMZ, Shapefile y GeoPackage tienen estructuras y limitaciones diferentes; algunos archivos necesitan conversión o preparación técnica."
+      },
+      {
+        "question": "¿Las exportaciones incluyen fotografías y datos personales?",
+        "answer": "Depende de la salida. Las exportaciones territoriales pueden limitar atributos para evitar entregar respuestas personales. Defina por separado el acceso a tablas, evidencias y geometrías y compruebe el contenido antes de compartir."
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Flujo de encuestas a ArcGIS",
+        "path": "/blog/encuestas-arcgis-geojson-shapefile"
+      },
+      {
+        "title": "Encuestas georreferenciadas",
+        "path": "/encuestas-georreferenciadas"
+      },
+      {
+        "title": "Control G y Survey123",
+        "path": "/blog/control-g-vs-arcgis-survey123"
+      }
+    ]
+  },
+  {
+    "path": "/encuestas-para-empresas",
+    "title": "Encuestas de campo para empresas | Control G",
+    "description": "Digitalice caracterizaciones, visitas, inspecciones y encuestas empresariales con formularios offline, evidencias, GPS y seguimiento territorial.",
+    "eyebrow": "Información operativa para decisiones empresariales",
+    "heading": "Encuestas y caracterización de campo para empresas",
+    "lead": "Organice levantamientos de información de clientes, establecimientos, proveedores o comunidades. Su equipo captura desde Android y la coordinación revisa avances, evidencias y resultados en una plataforma central.",
+    "keywords": [
+      "encuestas para empresas",
+      "software encuestas empresariales",
+      "caracterización de clientes",
+      "encuestas corporaciones",
+      "inspecciones offline",
+      "levantamiento información empresas Colombia"
+    ],
+    "whatsappMessage": "Hola, represento una empresa o corporación. Buscamos Control G para un levantamiento de información con formularios, evidencias y seguimiento.",
+    "sections": [
+      {
+        "title": "Un instrumento por decisión de negocio",
+        "body": "Antes de digitalizar preguntas, identifique qué decisión necesita tomar la empresa y cuál es la unidad del registro. Una visita comercial, una inspección a proveedor y un diagnóstico comunitario requieren variables y controles diferentes. El constructor permite organizar instrumentos con secciones, campos y evidencias. Reduzca las preguntas que no aporten una salida concreta y acuerde qué información debe conservarse para revisión y seguimiento."
+      },
+      {
+        "title": "Operaciones presenciales con conectividad variable",
+        "body": "En plantas, establecimientos, rutas de distribución o zonas rurales no siempre existe una red estable. Prepare las tablets y asignaciones antes de la jornada para continuar la captura offline. Establezca un punto y horario de sincronización y verifique los registros pendientes. El procedimiento debe incluir pérdida de conexión, reinicio del equipo y reintento de envío; el equipo de coordinación necesita distinguir una visita terminada localmente de una respuesta ya recibida."
+      },
+      {
+        "title": "Equipos y responsabilidades por organización",
+        "body": "Configure el entorno de la empresa y asigne a coordinación, apoyo y profesionales las funciones necesarias. Cada persona debe usar su cuenta para conservar trazabilidad. Distribuya formularios por responsabilidad y territorio, revise altas y bajas de usuarios y acuerde quién aprueba cambios del cuestionario. Si participan contratistas o varias unidades de negocio, defina la separación de datos y el nivel de acceso antes del inicio."
+      },
+      {
+        "title": "Evidencias y contexto geográfico",
+        "body": "Añada fotos, firma, archivos o ubicación cuando aporten a la finalidad de la visita. El mapa territorial ayuda a revisar dónde se levantó información y qué zonas requieren atención. Una ubicación no prueba por sí sola que una entrevista sea completa; combínela con estado, fecha y evidencias pertinentes. Determine si la ubicación exacta se necesita en los informes que circularán fuera del equipo operativo."
+      },
+      {
+        "title": "Seguimiento que permita actuar",
+        "body": "Revise respuestas recibidas, observaciones y avances por los filtros disponibles. Use la analítica para identificar pendientes y preparar cortes para operaciones, gestión social o dirección. Antes de comparar periodos, confirme que las preguntas y las unidades de análisis sean equivalentes. Las exportaciones facilitan continuar el análisis con el equipo de datos. Los indicadores corporativos especializados o integraciones a sistemas internos requieren definir fuentes, responsables y alcance."
+      },
+      {
+        "title": "Implementación con un piloto representativo",
+        "body": "Prepare un grupo de prueba con usuarios y tablets del cliente, un formulario real y condiciones similares a las del trabajo. Incluya captura sin señal, sincronización, revisión y exportación. Mida duración y carga de evidencias para ajustar el procedimiento. La propuesta puede contemplar configuración, instalación, capacitación y acompañamiento; cantidades, tiempos y entregables se acuerdan para evitar que una prueba sencilla se convierta en un desarrollo abierto sin límites."
+      },
+      {
+        "title": "Delimite el proyecto y las unidades de seguimiento",
+        "body": "Una sede puede recibir varias visitas y un proveedor puede tener varios establecimientos. Documente cómo se relacionan esas unidades y qué identificador conservará la operación antes de medir cumplimiento o resultados. Si el proyecto parte de un listado, acuerde qué hacer con unidades no encontradas, cerradas o trasladadas. El dato puede ser relevante aunque no se complete una entrevista. Distinga esas situaciones de errores de captura para que el seguimiento comercial, técnico o social no dependa de interpretaciones distintas de cada profesional."
+      },
+      {
+        "title": "Prepare una salida útil para operaciones y dirección",
+        "body": "Acorde las tablas, mapas y cortes que utilizarán los responsables y compruebe una exportación durante el piloto. Añada diccionario de variables, identificación de unidades y explicación de ausentes o excluidos. Si dirección necesita un resumen, defina qué detalle debe omitirse y qué información quedará para revisión operativa. Una gráfica atractiva no sustituye una base con significado claro. La propuesta debe precisar formularios, número de usuarios y dispositivos, vigencia, sesiones de formación, soporte y tareas adicionales para que el alcance permita comparar opciones."
+      }
+    ],
+    "benefits": [
+      "Caracterización de clientes, proveedores o establecimientos",
+      "Instrumentos para visitas e inspecciones",
+      "Captura offline en tablets Android",
+      "Evidencias y ubicación cuando se requieran",
+      "Asignación de formularios y revisión por equipo",
+      "Exportaciones y seguimiento territorial"
+    ],
+    "faqs": [
+      {
+        "question": "¿Sirve para empresas privadas y corporaciones?",
+        "answer": "Sí. Control G puede configurarse para organizaciones privadas que necesitan recolectar información presencial, coordinar personal y revisar resultados de visitas, encuestas o diagnósticos territoriales."
+      },
+      {
+        "question": "¿Se puede adaptar un formulario existente?",
+        "answer": "Sí. Se revisa el cuestionario, los tipos de campo y las evidencias para configurar un instrumento ajustado al proceso. Las funciones especializadas deben validarse en una demostración y un piloto."
+      },
+      {
+        "question": "¿Incluye personal que haga las encuestas?",
+        "answer": "La plataforma y la implementación se cotizan según el alcance. El suministro de encuestadores, equipos y logística debe definirse explícitamente; no se presume incluido en el acceso al sistema."
+      },
+      {
+        "question": "¿Podemos conectarlo con nuestros sistemas?",
+        "answer": "Se debe revisar la fuente, el destino, los permisos y los requisitos técnicos. Las exportaciones pueden resolver un intercambio por archivos; una integración recurrente requiere un alcance y pruebas específicos."
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Cómo caracterizar clientes y establecimientos",
+        "path": "/blog/caracterizacion-empresas-clientes-establecimientos"
+      },
+      {
+        "title": "Preparación de encuestas con IA",
+        "path": "/encuestas-con-inteligencia-artificial"
+      },
+      {
+        "title": "Levantamiento en campo",
+        "path": "/levantamiento-informacion-campo"
+      }
+    ]
+  },
+  {
+    "path": "/encuestas-para-ong",
+    "title": "Encuestas offline para ONG y fundaciones | Control G",
+    "description": "Caracterice beneficiarios y apoye líneas base y seguimiento con formularios offline, evidencias, GPS y revisión de datos para ONG y fundaciones.",
+    "eyebrow": "Datos útiles para programas e intervenciones",
+    "heading": "Encuestas offline para ONG, fundaciones y organizaciones",
+    "lead": "Prepare instrumentos para caracterizar comunidades, registrar hogares y seguir intervenciones. Coordine equipos de campo y consolide información con o sin conectividad, con acceso separado por organización.",
+    "keywords": [
+      "encuestas para ONG",
+      "software fundaciones",
+      "caracterización beneficiarios",
+      "línea base offline",
+      "monitoreo evaluación encuestas",
+      "encuestas organizaciones sociales"
+    ],
+    "whatsappMessage": "Hola, represento una ONG o fundación. Necesitamos caracterización, línea base o seguimiento con captura offline. Quiero revisar Control G.",
+    "sections": [
+      {
+        "title": "De la pregunta del programa al dato necesario",
+        "body": "Una línea base, una caracterización de beneficiarios y una encuesta de satisfacción responden preguntas diferentes. Defina el propósito y la población antes de configurar el instrumento. Vincule cada variable con una decisión o indicador y retire información que no se utilizará. El equipo metodológico conserva la responsabilidad sobre definiciones, selección de participantes y criterios de interpretación; el software ayuda a ejecutar y organizar ese diseño."
+      },
+      {
+        "title": "Hogares, personas y visitas sin confundir unidades",
+        "body": "Si la intervención trabaja con familias, acuerde qué identifica al hogar y qué se registra por integrante. Separe la ficha de referencia de las visitas o momentos de seguimiento cuando corresponda. Evite convertir cada nueva visita en una nueva familia o interpretar varias respuestas como beneficiarios únicos. Documente cómo se manejan cambios de composición, registros repetidos y personas que participan en más de una actividad."
+      },
+      {
+        "title": "Trabajo offline con preparación previa",
+        "body": "Prepare cuentas, formularios y asignaciones mientras haya internet. En terreno, los profesionales pueden guardar respuestas y evidencias en el dispositivo y sincronizarlas después. Programe puntos de conexión y un responsable de revisar pendientes para no dejar información fuera del cierre. Pruebe con el equipo las situaciones más difíciles: entrevistas largas, fotos, ubicación limitada y varias jornadas sin acceso estable a la red."
+      },
+      {
+        "title": "Consentimiento y evidencias proporcionadas",
+        "body": "Explique a las personas qué información se solicita, para qué se usará y quién puede acceder. No convierta fotos, ubicación exacta o documentos en requisitos automáticos si no son necesarios. Diseñe alternativas ante una negativa o un fallo técnico. Para trabajar con poblaciones que requieren cuidados particulares, revise el protocolo institucional y los requisitos aplicables con el responsable del programa antes de publicar formularios."
+      },
+      {
+        "title": "Seguimiento territorial y revisión de calidad",
+        "body": "La coordinación puede consultar respuestas sincronizadas, revisar evidencias y devolver observaciones. El mapa permite explorar ubicaciones y capas del proyecto sin confundir concentración de visitas con resultados del programa. Use cortes comparables para observar avance por zona y registre la fecha de extracción. Una base operativa no demuestra por sí sola impacto causal; las conclusiones deben corresponder al diseño de evaluación que adoptó la organización."
+      },
+      {
+        "title": "Entregas para equipos y financiadores",
+        "body": "Acorde desde el inicio qué tablas, mapas e informes estándar se necesitan y qué salidas requieren elaboración adicional. Prepare un diccionario de variables, códigos de territorio y reglas de corte. Antes de compartir un archivo, retire identificadores que no sean necesarios y verifique los permisos del destinatario. En la puesta en marcha revisamos el formulario, las jornadas, dispositivos, capacitación y soporte para definir un flujo sostenible."
+      },
+      {
+        "title": "Defina capacidad y acompañamiento del equipo",
+        "body": "El tiempo por entrevista depende del instrumento, evidencias, desplazamientos y condiciones de acceso. Mida esos tiempos con profesionales del proyecto antes de establecer metas diarias. La capacitación debe incluir el propósito de las variables, trato de excepciones y un ciclo offline completo, además de navegación en la app. Acorde quién resolverá dudas de campo y quién puede aprobar cambios del cuestionario. El soporte técnico y la supervisión metodológica tienen responsabilidades diferentes que conviene identificar para que los problemas lleguen a la persona adecuada."
+      },
+      {
+        "title": "Prepare el cierre antes de la última jornada",
+        "body": "Defina desde el inicio qué estados formarán parte de la entrega y qué se necesita conservar después. Antes de devolver tablets o cerrar cuentas, confirme que no queden respuestas o archivos pendientes de sincronización. Resuelva observaciones y compare conteos de base e informe. Documente territorios visitados, cambios del instrumento, no respuesta y restricciones que afecten la interpretación. Una organización podrá reutilizar mejor los resultados si recibe el diccionario, las reglas de corte y una explicación del método, además de los archivos descargados de la plataforma."
+      }
+    ],
+    "benefits": [
+      "Instrumentos para caracterización y seguimiento",
+      "Registro de hogares y familias cuando corresponda",
+      "Aplicación Android para trabajo sin señal",
+      "Observaciones y revisión por coordinación",
+      "Mapa y análisis de distribución territorial",
+      "Exportaciones para reportes del programa"
+    ],
+    "faqs": [
+      {
+        "question": "¿Se puede utilizar para líneas base y seguimiento?",
+        "answer": "Sí, configurando instrumentos y momentos coherentes con el programa. La comparabilidad de resultados depende de mantener definiciones, identificar las unidades y documentar los cambios entre mediciones."
+      },
+      {
+        "question": "¿La plataforma realiza evaluación de impacto automáticamente?",
+        "answer": "No. Organiza la recolección y el seguimiento de datos. Una evaluación de impacto requiere un diseño metodológico específico y un análisis que permita sustentar ese tipo de conclusión."
+      },
+      {
+        "question": "¿Funciona con comunidades sin cobertura?",
+        "answer": "Los formularios preparados en el dispositivo pueden diligenciarse offline. La cuenta, descarga de asignaciones y sincronización requieren conectividad en momentos definidos del operativo."
+      },
+      {
+        "question": "¿Podemos entregar información a un financiador?",
+        "answer": "Sí, mediante las salidas y permisos acordados. Revise qué datos necesita el destinatario y prepare versiones agregadas o sin identificadores cuando los datos personales no sean necesarios."
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Monitoreo y seguimiento para ONG",
+        "path": "/blog/ong-linea-base-monitoreo-offline"
+      },
+      {
+        "title": "Gobierno de datos",
+        "path": "/blog/gobierno-datos-encuestas-campo"
+      },
+      {
+        "title": "Caracterización social",
+        "path": "/software-caracterizacion-social"
+      }
+    ]
+  },
+  {
+    "path": "/caracterizacion-colombia",
+    "title": "Caracterización y encuestas en Colombia | Control G",
+    "description": "Organice caracterizaciones y encuestas de campo en Colombia: barrios, municipios, veredas, GPS, captura offline y seguimiento institucional.",
+    "eyebrow": "Colombia: del barrio a la ruralidad dispersa",
+    "heading": "Caracterización y encuestas de campo en Colombia",
+    "lead": "Digitalice levantamientos de información en barrios, veredas, corregimientos y municipios. Control G reúne formularios, equipos, evidencias y mapas para entidades públicas, empresas, corporaciones y ONG.",
+    "keywords": [
+      "caracterización Colombia",
+      "encuestas Colombia",
+      "software caracterización Colombia",
+      "encuestas Bolívar",
+      "caracterización barrios",
+      "encuestas municipios sin internet"
+    ],
+    "whatsappMessage": "Hola, necesito un proyecto de caracterización o encuestas en Colombia. Territorio: __. Cantidad estimada de encuestas: __. Quiero una demostración de Control G.",
+    "sections": [
+      {
+        "title": "Un catálogo territorial que sirva para consolidar",
+        "body": "Defina departamento, municipio y las subdivisiones operativas del proyecto. En Colombia, los códigos DIVIPOLA del DANE ayudan a identificar entidades territoriales y centros poblados de forma consistente. Los barrios, veredas o sectores de trabajo pueden necesitar catálogos adicionales validados por la organización. Conserve código y nombre por separado y evite que cada encuestador escriba variantes distintas; esa preparación facilita agrupar y relacionar resultados."
+      },
+      {
+        "title": "Caracterización para distintos sectores",
+        "body": "Una alcaldía puede requerir información sobre servicios, una empresa un diagnóstico de establecimientos y una fundación una línea base comunitaria. Aunque comparten captura en campo, cambian las poblaciones, variables, criterios de revisión y entregables. Configure el instrumento y los roles para el caso real. Las preguntas sobre personas, hogares y viviendas deben indicar su unidad para no consolidar como equivalentes respuestas que representan cosas distintas."
+      },
+      {
+        "title": "Operativos urbanos y rurales sin conexión permanente",
+        "body": "No suponga la misma conectividad en una cabecera y una zona rural dispersa. Prepare equipos, cuentas y formularios antes del desplazamiento, programe sincronización y revise pendientes por dispositivo. En Bolívar, como en cualquier departamento, el plan debe considerar acceso, transporte, horarios y condiciones que confirme el equipo local. El funcionamiento offline permite continuar capturando, pero no elimina la planificación logística ni la necesidad de conectarse para entregar los datos."
+      },
+      {
+        "title": "GPS y capas para revisar el territorio",
+        "body": "Relacione respuestas con ubicaciones autorizadas y consulte la distribución en el mapa territorial. Las capas ayudan a contextualizar zonas, equipamientos y límites del proyecto; revise su fuente y fecha antes de utilizarlas. Exporte salidas compatibles para que el equipo geográfico continúe el análisis en herramientas GIS. Un mapa de calor no acredita que se cubrieron todas las viviendas y la precisión del GPS depende del dispositivo y las condiciones de captura."
+      },
+      {
+        "title": "Implementación, capacitación y prueba piloto",
+        "body": "La puesta en marcha debe contemplar adaptación del formulario, usuarios, permisos, instalación, práctica en tablets y un ciclo completo de revisión. Pruebe entrevistas online y offline, fotos, ubicación no disponible y reintentos de sincronización. Valide la exportación con quien recibirá la información. El número de entrevistas del piloto se acuerda según la diversidad del instrumento y del territorio, no como una cifra que garantice el éxito del operativo."
+      },
+      {
+        "title": "Defina los resultados y el cierre",
+        "body": "Antes de iniciar, acuerde qué significa una encuesta aceptada y cómo se tratarán rechazos, incompletos, duplicados y observaciones. Distinga capturas locales de respuestas recibidas y revisadas. El informe debe indicar cobertura alcanzada, fecha de corte y limitaciones de selección. La propuesta de Control G se construye con número de formularios, encuestas, profesionales, tablets, duración, desplazamientos y acompañamiento; una visita de campo y el uso del sistema son componentes que deben quedar explícitos."
+      },
+      {
+        "title": "Ajuste el instrumento al contexto y al informante",
+        "body": "El mismo tema puede requerir preguntas diferentes si se entrevista a una persona, un hogar, un establecimiento o una comunidad. Use periodos y términos comprensibles y defina quién puede responder. Si requiere variables de un instrumento existente, revise su propósito antes de copiarlas a otro contexto. Un borrador asistido por IA puede ayudar a explorar redacción, pero necesita revisión humana y prueba con la población. La tecnología debe conservar el significado aprobado y no obligar a elegir opciones que no describen una situación válida."
+      },
+      {
+        "title": "Prepare entregas que puedan verificarse",
+        "body": "Un cierre útil combina base, diccionario, catálogos, fecha de corte y explicación de límites. Si hay mapas, indique qué unidades representan, qué filtros se aplicaron y cuántas respuestas quedaron sin ubicación. Si hay comparaciones por municipio, use referencias coherentes y distinga metas operativas de indicadores poblacionales. Defina qué información se entrega al cliente, qué acceso conservará el equipo y cómo se atenderán correcciones. Esa preparación permite aprovechar los datos después del trabajo de campo y facilita que otra persona pueda revisar de dónde salieron las conclusiones."
+      }
+    ],
+    "benefits": [
+      "Formularios para caracterización y encuestas",
+      "Territorios y catálogos ajustados al proyecto",
+      "Captura offline y sincronización posterior",
+      "Coordinación y profesionales con asignaciones",
+      "GPS, mapas y salidas GIS compatibles",
+      "Implementación y capacitación según alcance"
+    ],
+    "faqs": [
+      {
+        "question": "¿Sirve para encuestas en Bolívar y Cartagena?",
+        "answer": "Sí. Puede configurarse para operativos en Bolívar, Cartagena y otros territorios de Colombia. El alcance debe definir barrios, municipios o zonas rurales, los equipos y el procedimiento de sincronización."
+      },
+      {
+        "question": "¿Los formularios ya vienen aprobados por el DANE?",
+        "answer": "No. Cada organización define y aprueba su instrumento. Utilizar códigos territoriales o consultar fuentes del DANE no implica que el DANE avale el cuestionario, el software o las conclusiones del estudio."
+      },
+      {
+        "question": "¿Mil encuestas representan a todo un departamento?",
+        "answer": "La cantidad por sí sola no determina representatividad. Importan población objetivo, marco de selección, diseño muestral, distribución, no respuesta y otros supuestos metodológicos. Un levantamiento operativo no debe presentarse como representativo sin ese sustento."
+      },
+      {
+        "question": "¿Cómo se cotiza una implementación?",
+        "answer": "Se revisan cantidad y complejidad de formularios, usuarios, dispositivos, encuestas, tiempo de uso, instalación, capacitación, soporte y logística. Escríbanos por WhatsApp con el objetivo y el territorio para preparar una propuesta."
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Plan de 1.000 encuestas en Bolívar",
+        "path": "/blog/plan-operativo-mil-encuestas-bolivar"
+      },
+      {
+        "title": "Software de caracterización social",
+        "path": "/software-caracterizacion-social"
+      },
+      {
+        "title": "Encuestas para empresas",
+        "path": "/encuestas-para-empresas"
+      },
+      {
+        "title": "Encuestas para entidades públicas",
+        "path": "/software-entidades-gobierno"
       }
     ]
   }

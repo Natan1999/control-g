@@ -1,157 +1,63 @@
 import { Link, useLocation } from 'react-router-dom'
-import { ArrowRight, CheckCircle2, ChevronRight, FileCheck2, MapPin, ShieldCheck, WifiOff } from 'lucide-react'
+import { ArrowRight, Check, ChevronRight, ClipboardCheck, Globe2, MessageCircle } from 'lucide-react'
 import { LeadFunnel } from '@/components/marketing/LeadFunnel'
 import { StickyWhatsApp, WhatsAppCta } from '@/components/marketing/WhatsAppCta'
 import { PublicHeader } from '@/components/marketing/PublicHeader'
 import { PublicFooter } from '@/components/marketing/PublicFooter'
 import { CORE_SEO_PAGES, COUNTRY_SEO_PAGES, getSeoPage } from '@/lib/marketing'
-
-const ICONS = [WifiOff, FileCheck2, MapPin, ShieldCheck, CheckCircle2, ChevronRight]
+import '@/components/marketing/public-marketing.css'
+import NotFoundPage from '@/pages/landing/NotFoundPage'
 
 export default function SolutionPage({ path }: { path?: string }) {
   const location = useLocation()
   const page = getSeoPage(path || location.pathname)
-  if (!page) return null
+  if (!page) return <NotFoundPage />
 
-  const relatedPages = CORE_SEO_PAGES.filter(item => item.path !== '/' && item.path !== page.path)
+  const portuguese = page.countryCode === 'BR'
+  const relatedPages = CORE_SEO_PAGES.filter(item => item.path !== '/' && item.path !== page.path).slice(0, 4)
+  const topic = page.path.slice(1)
 
   return (
-    <div className="min-h-screen bg-white text-slate-900">
-      <PublicHeader message={page.whatsappMessage} placement={`cabecera-${page.path.slice(1)}`} />
-
+    <div className="cg-marketing cg-solution-page" lang={page.locale || 'es-CO'}>
+      <PublicHeader message={page.whatsappMessage} placement={`cabecera-${topic}`} />
       <main id="main-content" tabIndex={-1}>
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#102d3e] via-[#1B3A4B] to-[#2C6E8A] px-5 py-20 text-white sm:py-28">
-          <div className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-teal-300/10 blur-3xl" />
-          <div className="relative mx-auto max-w-5xl">
-            <nav aria-label="Migas de pan" className="mb-8 flex items-center gap-2 text-xs font-semibold text-white/55">
-              <Link to="/" className="hover:text-white">Inicio</Link>
-              <ChevronRight size={13} aria-hidden="true" />
-              <span>{page.eyebrow}</span>
-            </nav>
-            <span className="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-teal-200">{page.eyebrow}</span>
-            <h1 className="mt-6 max-w-4xl text-4xl font-black leading-[1.08] sm:text-5xl lg:text-6xl">{page.heading}</h1>
-            <p className="mt-6 max-w-3xl text-lg leading-relaxed text-white/75 sm:text-xl">{page.lead}</p>
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <WhatsAppCta
-                message={page.whatsappMessage}
-                placement={`hero-${page.path.slice(1)}`}
-                className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-7 font-black text-white shadow-xl shadow-black/15 transition hover:-translate-y-0.5 hover:bg-[#20bd5a]"
-              >
-                Solicitar demostración
-                <ArrowRight size={18} aria-hidden="true" />
-              </WhatsAppCta>
-              <a href="#como-funciona" className="inline-flex min-h-14 items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-7 font-bold text-white transition hover:bg-white/15">Conocer cómo funciona</a>
-            </div>
-          </div>
-        </section>
-
-        <section className="border-b border-slate-100 bg-slate-50 px-5 py-8">
-          <div className="mx-auto grid max-w-5xl grid-cols-2 gap-4 text-center sm:grid-cols-4">
-            {[['100%', 'captura offline'], ['Android', 'celulares y tabletas'], ['4 roles', 'operación controlada'], ['1 plataforma', 'campo y oficina']].map(([value, label]) => (
-              <div key={label}>
-                <div className="text-xl font-black text-[#1B3A4B]">{value}</div>
-                <div className="mt-1 text-xs text-slate-500">{label}</div>
+        <section className="cg-solution-hero" aria-labelledby="cg-solution-title">
+          <div className="cg-container">
+            <nav aria-label={portuguese ? 'Navegação estrutural' : 'Migas de pan'} className="cg-breadcrumb"><Link to="/">{portuguese ? 'Início' : 'Inicio'}</Link><ChevronRight size={13} aria-hidden="true" /><span>{page.eyebrow}</span></nav>
+            <div className="cg-solution-hero-grid">
+              <div>
+                <h1 id="cg-solution-title">{page.heading}</h1>
+                <p className="cg-solution-lead">{page.lead}</p>
+                <div className="cg-hero-actions"><WhatsAppCta message={page.whatsappMessage} placement={`hero-${topic}`} className="cg-button cg-button-whatsapp">{portuguese ? 'Solicitar uma demonstração' : 'Solicitar una demostración'}<ArrowRight size={18} aria-hidden="true" /></WhatsAppCta><a href="#como-funciona" className="cg-text-link">{portuguese ? 'Conhecer a solução' : 'Conocer la solución'}</a></div>
               </div>
-            ))}
-          </div>
-        </section>
-
-        <section id="como-funciona" className="px-5 py-20 sm:py-24">
-          <div className="mx-auto max-w-6xl">
-            <div className="max-w-3xl">
-              <span className="text-xs font-black uppercase tracking-[0.18em] text-[#3D7B9E]">Del formulario a la decisión</span>
-              <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">Una operación de campo ordenada de principio a fin</h2>
-            </div>
-            <div className="mt-12 grid gap-5 md:grid-cols-3">
-              {page.sections.map((section, index) => (
-                <article key={section.title} className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#1B3A4B]/10 font-black text-[#1B3A4B]">{index + 1}</span>
-                  <h3 className="mt-5 text-xl font-black text-slate-900">{section.title}</h3>
-                  <p className="mt-3 text-sm leading-7 text-slate-600">{section.body}</p>
-                </article>
-              ))}
+              <aside className="cg-solution-summary" aria-label={portuguese ? 'Resumo da solução' : 'Resumen de la solución'}><ClipboardCheck size={28} strokeWidth={1.4} aria-hidden="true" /><h2>{portuguese ? 'Uma operação preparada para o campo.' : 'Una operación preparada para el territorio.'}</h2><ul>{page.benefits.slice(0, 3).map(benefit => <li key={benefit}><Check size={16} aria-hidden="true" />{benefit}</li>)}</ul><p>{portuguese ? 'Revisamos seu instrumento, a preparação dos dispositivos e o acompanhamento necessário.' : 'Revisamos su instrumento, la preparación de dispositivos y el acompañamiento que necesita.'}</p></aside>
             </div>
           </div>
         </section>
 
-        <section className="bg-[#f3f8fa] px-5 py-20 sm:py-24">
-          <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
-            <div>
-              <span className="text-xs font-black uppercase tracking-[0.18em] text-green-700">Capacidades principales</span>
-              <h2 className="mt-3 text-3xl font-black text-slate-900 sm:text-4xl">Configure la plataforma según su proyecto</h2>
-              <p className="mt-4 text-base leading-7 text-slate-600">No obligamos a su entidad a trabajar con un cuestionario genérico. El flujo se configura según sus instrumentos, roles, territorios y necesidades de verificación.</p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {page.benefits.map((benefit, index) => {
-                const Icon = ICONS[index % ICONS.length]
-                return (
-                  <div key={benefit} className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-sm font-bold text-slate-800">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-green-100 text-green-700"><Icon size={17} aria-hidden="true" /></span>
-                    {benefit}
-                  </div>
-                )
-              })}
-            </div>
+        <section id="como-funciona" className="cg-section cg-solution-detail" aria-labelledby="cg-detail-title">
+          <div className="cg-container">
+            <div className="cg-solution-detail-heading"><h2 id="cg-detail-title">{portuguese ? 'Do questionário à informação que sua equipe precisa.' : 'Del cuestionario a la información que su equipo necesita.'}</h2><p>{portuguese ? 'Conheça o alcance da solução e os pontos que definimos antes de iniciar o trabalho de campo.' : 'Conozca el alcance de la solución y los puntos que definimos antes de iniciar el trabajo de campo.'}</p></div>
+            <div className="cg-solution-sections">{page.sections.map(section => <article key={section.title}><h3>{section.title}</h3><p>{section.body}</p></article>)}</div>
           </div>
         </section>
 
-        <section className="px-5 py-20 sm:py-24">
-          <div className="mx-auto max-w-5xl">
-            <LeadFunnel source={page.path.slice(1)} />
-          </div>
+        <section className="cg-section cg-solution-capabilities" aria-labelledby="cg-capabilities-title">
+          <div className="cg-container cg-solution-benefit-grid"><div><h2 id="cg-capabilities-title">{portuguese ? 'Defina a operação a partir do seu projeto.' : 'Configure la operación a partir de su proyecto.'}</h2><p>{portuguese ? 'Formulários, equipes, territórios e revisão de informações fazem parte do mesmo fluxo de trabalho. A configuração e a capacitação são definidas conforme o alcance contratado.' : 'Formularios, equipos, territorios y revisión de información forman parte del mismo flujo de trabajo. La configuración y la capacitación se definen según el alcance contratado.'}</p><WhatsAppCta message={page.whatsappMessage} placement={`alcance-${topic}`} className="cg-text-link">{portuguese ? 'Conversar sobre meu projeto' : 'Conversar sobre mi proyecto'}<ArrowRight size={17} aria-hidden="true" /></WhatsAppCta></div><ul className="cg-solution-benefits">{page.benefits.map(benefit => <li key={benefit}><Check size={17} aria-hidden="true" /><span>{benefit}</span></li>)}</ul></div>
         </section>
 
-        <section className="border-y border-slate-100 bg-slate-50 px-5 py-20">
-          <div className="mx-auto max-w-4xl">
-            <div className="text-center">
-              <span className="text-xs font-black uppercase tracking-[0.18em] text-[#3D7B9E]">Preguntas frecuentes</span>
-              <h2 className="mt-3 text-3xl font-black text-slate-900">Respuestas para evaluar Control G</h2>
-            </div>
-            <div className="mt-10 space-y-4">
-              {page.faqs.map(faq => (
-                <details key={faq.question} className="group rounded-2xl border border-slate-200 bg-white p-5 open:shadow-sm">
-                  <summary className="cursor-pointer list-none pr-8 font-black text-slate-900 marker:hidden">{faq.question}</summary>
-                  <p className="mt-3 text-sm leading-7 text-slate-600">{faq.answer}</p>
-                </details>
-              ))}
-            </div>
-          </div>
-        </section>
+        {page.relatedLinks?.length ? <section className="cg-section cg-solution-resources" aria-labelledby="cg-resources-title"><div className="cg-container"><div className="cg-section-heading"><h2 id="cg-resources-title">{portuguese ? 'Recursos para preparar o próximo passo.' : 'Recursos para preparar el siguiente paso.'}</h2><p>{portuguese ? 'Aprofunde o tema com guias operacionais, critérios de seleção e soluções relacionadas.' : 'Profundice en el tema con guías operativas, criterios de selección y soluciones relacionadas.'}</p></div><nav className="cg-resource-links" aria-label={portuguese ? 'Guias e soluções relacionadas' : 'Guías y soluciones relacionadas'}>{page.relatedLinks.map(item => <Link key={item.path} to={item.path}><span>{item.title}</span><ArrowRight size={18} aria-hidden="true" /></Link>)}</nav></div></section> : null}
 
-        <section className="px-5 py-16">
-          <div className="mx-auto max-w-6xl">
-            <h2 className="text-2xl font-black text-slate-900">Explore otras soluciones de Control G</h2>
-            <div className="mt-6 grid gap-4 md:grid-cols-3">
-              {relatedPages.map(item => (
-                <Link key={item.path} to={item.path} className="group rounded-2xl border border-slate-200 p-5 transition hover:border-[#3D7B9E] hover:shadow-sm">
-                  <span className="text-xs font-black uppercase tracking-wide text-[#3D7B9E]">{item.eyebrow}</span>
-                  <h3 className="mt-2 font-black text-slate-900 group-hover:text-[#2C6E8A]">{item.heading}</h3>
-                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-green-700">Ver solución <ArrowRight size={15} aria-hidden="true" /></span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
+        <section className="cg-section cg-solution-contact" aria-label={portuguese ? 'Demonstração da solução' : 'Demostración de la solución'}><div className="cg-container"><div className="cg-solution-contact-heading"><MessageCircle size={27} strokeWidth={1.5} aria-hidden="true" /><div><h2>{portuguese ? 'Vamos revisar sua operação.' : 'Revisemos su operación.'}</h2><p>{portuguese ? 'Conte-nos sobre a organização, o território e o tamanho da equipe para preparar uma demonstração pertinente.' : 'Cuéntenos sobre la organización, el territorio y el tamaño del equipo para preparar una demostración pertinente.'}</p></div></div><div className="cg-funnel-wrapper"><LeadFunnel source={topic} /></div></div></section>
 
-        {(page.path === '/encuestas-offline' || page.countryCode) && (
-          <section className="border-t border-slate-100 bg-slate-50 px-5 py-16" aria-labelledby="countries-title">
-            <div className="mx-auto max-w-6xl">
-              <h2 id="countries-title" className="text-2xl font-black text-slate-900">Control G para operaciones en Latinoamérica</h2>
-              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">Consulte la configuración territorial y el enfoque de encuestas offline para cada país.</p>
-              <nav className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5" aria-label="Soluciones por país">
-                {COUNTRY_SEO_PAGES.map(countryPage => (
-                  <Link key={countryPage.path} to={countryPage.path} className={`min-h-11 border px-3 py-3 text-sm font-bold transition ${countryPage.path === page.path ? 'border-[#1B3A4B] bg-[#1B3A4B] text-white' : 'border-slate-200 bg-white text-slate-700 hover:border-[#3D7B9E]'}`}>
-                    {countryPage.heading.replace(/^Encuestas y caracterización offline en |^Pesquisas e caracterização offline no /, '')}
-                  </Link>
-                ))}
-              </nav>
-            </div>
-          </section>
-        )}
+        <section className="cg-section cg-faq-section" aria-labelledby="cg-solution-faq-title"><div className="cg-container cg-faq-grid"><div><h2 id="cg-solution-faq-title">{portuguese ? 'Antes de começar.' : 'Antes de comenzar.'}</h2><p>{portuguese ? 'Respostas para avaliar a solução e preparar o trabalho em campo.' : 'Respuestas para evaluar la solución y preparar el trabajo de campo.'}</p></div><div className="cg-faq-list">{page.faqs.map(faq => <details key={faq.question}><summary>{faq.question}<span aria-hidden="true">+</span></summary><p>{faq.answer}</p></details>)}</div></div></section>
+
+        <section className="cg-section cg-solution-other" aria-labelledby="cg-other-solutions-title"><div className="cg-container"><div className="cg-section-heading"><h2 id="cg-other-solutions-title">{portuguese ? 'Explore outras soluções do Control G.' : 'Explore otras soluciones de Control G.'}</h2><p>{portuguese ? 'Encontre a abordagem adequada para seus formulários, evidências e análise territorial.' : 'Encuentre el enfoque adecuado para sus formularios, evidencias y análisis territorial.'}</p></div><nav className="cg-other-solutions" aria-label={portuguese ? 'Outras soluções' : 'Otras soluciones'}>{relatedPages.map(item => <Link key={item.path} to={item.path}><h3>{item.heading}</h3><ArrowRight size={18} aria-hidden="true" /></Link>)}</nav></div></section>
+
+        {(page.path === '/encuestas-offline' || page.countryCode) ? <section className="cg-section cg-country-section" aria-labelledby="countries-title"><div className="cg-container"><div className="cg-country-heading"><Globe2 size={29} strokeWidth={1.5} aria-hidden="true" /><div><h2 id="countries-title">{portuguese ? 'Operações de campo na América Latina.' : 'Operaciones de campo en Latinoamérica.'}</h2><p>{portuguese ? 'Consulte o enfoque territorial para cada país.' : 'Consulte el enfoque territorial para cada país.'}</p></div></div><nav className="cg-country-links" aria-label="Soluciones por país">{COUNTRY_SEO_PAGES.map(countryPage => <Link key={countryPage.path} to={countryPage.path} aria-current={countryPage.path === page.path ? 'page' : undefined}>{countryPage.heading.replace(/^Encuestas y caracterización offline en |^Pesquisas e caracterização offline no /, '')}</Link>)}</nav></div></section> : null}
+        {page.sources?.length ? <section className="cg-section" aria-labelledby="cg-country-sources"><div className="cg-container"><h2 id="cg-country-sources">{portuguese ? 'Referências para preparar o território' : 'Referencias para preparar el territorio'}</h2><p className="mt-3 text-sm leading-6 text-slate-600">{portuguese ? 'Fontes públicas para consultar divisões e catálogos. Sua inclusão não implica parceria nem integração automática.' : 'Fuentes públicas para consultar divisiones y catálogos. Citarlas no implica alianza ni integración automática.'}</p><ul className="mt-5 space-y-3">{page.sources.map(source => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-[#087E8B] underline underline-offset-4">{source.publisher}: {source.title}</a></li>)}</ul></div></section> : null}
       </main>
-
       <PublicFooter />
-
       <StickyWhatsApp message={page.whatsappMessage} />
     </div>
   )

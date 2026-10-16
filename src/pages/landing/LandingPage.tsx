@@ -1,496 +1,201 @@
 import { Link } from 'react-router-dom'
 import {
-  Wifi, WifiOff, BarChart2, FileText, Users, MapPin,
-  Camera, PenLine, ArrowRight, CheckCircle2, Shield,
-  Smartphone, Globe, ChevronRight,
+  ArrowRight, Building2, Camera, Check, ClipboardCheck, FileText,
+  Globe2, Layers3, MapPin, ShieldCheck, Smartphone, Sparkles, UsersRound, WifiOff,
 } from 'lucide-react'
 import { LeadFunnel } from '@/components/marketing/LeadFunnel'
 import { StickyWhatsApp, WhatsAppCta } from '@/components/marketing/WhatsAppCta'
 import { PublicHeader } from '@/components/marketing/PublicHeader'
 import { PublicFooter } from '@/components/marketing/PublicFooter'
-import { CORE_SEO_PAGES, getSeoPage } from '@/lib/marketing'
+import { TerritoryPreview } from '@/components/marketing/TerritoryPreview'
+import { getSeoPage } from '@/lib/marketing'
+import '@/components/marketing/public-marketing.css'
 
 const LANDING_SEO = getSeoPage('/')!
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
-
-const FEATURES = [
-  {
-    icon: WifiOff,
-    color: '#27AE60',
-    title: '100% Offline',
-    desc: 'Los profesionales trabajan sin internet. Los datos se sincronizan automáticamente al reconectar.',
-  },
-  {
-    icon: FileText,
-    color: '#3D7B9E',
-    title: 'Form Builder Visual',
-    desc: 'Diseña cualquier formulario sin programar. Arrastra campos, configura validaciones y publica en segundos.',
-  },
-  {
-    icon: BarChart2,
-    color: '#E67E22',
-    title: 'Analítica en Tiempo Real',
-    desc: 'Dashboards con avance por municipio, profesional y actividad. Métricas actualizadas al instante.',
-  },
-  {
-    icon: Camera,
-    color: '#8E44AD',
-    title: 'Captura Multimedia',
-    desc: 'Fotos, videos, firmas digitales y geolocalización directamente desde el celular en campo.',
-  },
-  {
-    icon: MapPin,
-    color: '#E74C3C',
-    title: 'Cobertura DIVIPOLA',
-    desc: 'Base oficial de 1.123 municipios de Colombia integrada. Georreferenciación con códigos DANE.',
-  },
-  {
-    icon: FileText,
-    color: '#1B3A4B',
-    title: 'Informes PDF',
-    desc: 'Genera informes profesionales con fotos, firmas y estadísticas con un solo clic.',
-  },
+const SOLUTIONS = [
+  { icon: UsersRound, title: 'Caracterización social y de hogares', description: 'Conozca las condiciones, necesidades y prioridades de una comunidad con instrumentos propios.', path: '/software-caracterizacion-social' },
+  { icon: WifiOff, title: 'Encuestas sin internet', description: 'Lleve el cuestionario a barrios, veredas y zonas con conectividad intermitente.', path: '/encuestas-offline' },
+  { icon: MapPin, title: 'Encuestas georreferenciadas', description: 'Relacione respuestas y evidencias con su ubicación para analizar el territorio.', path: '/encuestas-georreferenciadas' },
+  { icon: Sparkles, title: 'Cuestionarios con apoyo de IA', description: 'Prepare el instrumento con asistencia de inteligencia artificial y revisión humana.', path: '/encuestas-con-inteligencia-artificial' },
 ]
 
-const ROLES = [
-  {
-    role: 'Administrador',
-    tag: 'DRAN Digital',
-    color: '#1B3A4B',
-    items: ['Crea entidades cliente', 'Configura coordinadores', 'Vista global de todas las operaciones'],
-  },
-  {
-    role: 'Coordinador',
-    tag: 'Líder operativo',
-    color: '#3D7B9E',
-    items: ['Diseña formularios personalizados', 'Gestiona equipo y municipios', 'Monitorea avance en tiempo real'],
-  },
-  {
-    role: 'Apoyo Administrativo',
-    tag: 'Control de calidad',
-    color: '#27AE60',
-    items: ['Revisa datos de campo', 'Valida consistencia', 'Envía observaciones a profesionales'],
-  },
-  {
-    role: 'Profesional de Campo',
-    tag: 'En terreno',
-    color: '#E67E22',
-    items: ['App mobile-first', 'Trabaja sin internet', 'Sincronización automática'],
-  },
+const CAPABILITIES = [
+  { icon: FileText, title: 'Formularios a su medida', text: 'Organice preguntas, selecciones, validaciones, páginas y grupos repetitivos según el operativo.' },
+  { icon: Camera, title: 'Evidencias con contexto', text: 'Reúna fotografías, firmas capturadas y ubicación junto a las respuestas de cada visita.' },
+  { icon: ClipboardCheck, title: 'Revisión y seguimiento', text: 'Asigne formularios, revise registros y envíe observaciones al profesional que los capturó.' },
+  { icon: ShieldCheck, title: 'Información por entidad', text: 'Trabaje con usuarios, roles y permisos para organizar el acceso a cada operación.' },
 ]
 
-const USE_CASES = [
-  { emoji: '🏛️', title: 'Secretarías de Gobierno', desc: 'Caracterización de familias con enfoque diferencial' },
-  { emoji: '🏘️', title: 'ONG y Fundaciones', desc: 'Censos de vivienda e inventarios comunitarios' },
-  { emoji: '⚡', title: 'Servicios Públicos', desc: 'Inventario de medidores y diagnósticos técnicos' },
-  { emoji: '🌐', title: 'Conectividad Digital', desc: 'Diagnóstico de brecha digital en hogares rurales' },
-  { emoji: '🌿', title: 'Gestión Ambiental', desc: 'Evaluación de infraestructura y condiciones de riesgo' },
-  { emoji: '🗳️', title: 'Gestión Política', desc: 'Mapeo de líderes sociales y bases comunitarias' },
+const AUDIENCES = [
+  { title: 'Entidades públicas', text: 'Caracterizaciones, seguimiento de programas y diagnósticos en municipios y departamentos.', path: '/caracterizacion-colombia', label: 'Caracterización en Colombia' },
+  { title: 'Empresas y corporaciones', text: 'Visitas técnicas, encuestas de servicio, inventarios y levantamiento de información de sus operaciones.', path: '/encuestas-para-empresas', label: 'Soluciones para empresas' },
+  { title: 'ONG, fundaciones y organizaciones', text: 'Líneas de base, identificación de necesidades y seguimiento de hogares y beneficiarios.', path: '/encuestas-para-ong', label: 'Soluciones para organizaciones' },
 ]
 
-// ─── Component ────────────────────────────────────────────────────────────────
+const GUIDES = [
+  { path: '/blog/software-caracterizacion-social-colombia', image: '/blog/gestion-publica-territorial.jpg', title: 'Cómo organizar una caracterización social en Colombia', text: 'Qué revisar en el instrumento, el equipo y la gestión de la información.', topic: 'Caracterización' },
+  { path: '/blog/encuestas-offline-zonas-rurales', image: '/blog/encuestas-offline-rural.jpg', title: 'Encuestas en zonas rurales: prepare su operación offline', text: 'Un recorrido práctico desde la preparación de dispositivos hasta la sincronización.', topic: 'Trabajo de campo' },
+  { path: '/blog/control-g-vs-arcgis-survey123', image: '/blog/comparativas-software-campo.jpg', title: 'Control G y ArcGIS Survey123: qué comparar antes de elegir', text: 'Alcance, conectividad e integración para un proyecto de datos de campo.', topic: 'Herramientas GIS' },
+]
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans">
-      <PublicHeader message={LANDING_SEO.whatsappMessage} placement="cabecera-inicio" fixed />
-
+    <div className="cg-marketing">
+      <PublicHeader message={LANDING_SEO.whatsappMessage} placement="cabecera-inicio" />
       <main id="main-content" tabIndex={-1}>
-
-      {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section
-        className="pt-28 pb-24 px-5 text-center relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #1B3A4B 0%, #0d2535 60%, #1B3A4B 100%)' }}
-      >
-        {/* Background blobs */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-white/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
-
-        <div className="relative max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-white/80 text-xs font-semibold uppercase tracking-widest mb-8">
-            <Globe size={12} />
-            controlg.co — Software de recolección de datos offline
-          </div>
-
-          <h1 className="text-white text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-6">
-            Datos de campo,<br />
-            <span style={{ color: '#4ECDC4' }}>sin límites de conectividad</span>
-          </h1>
-
-          <p className="text-white/70 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-            Control G es la plataforma que las entidades colombianas necesitan para gestionar operaciones
-            de campo con formularios personalizados, trabajo 100% offline y sincronización automática.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <WhatsAppCta
-              message={LANDING_SEO.whatsappMessage}
-              placement="hero-inicio"
-              className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl text-white font-bold text-base transition-transform hover:scale-105 shadow-lg bg-[#25D366]"
-            >
-              Solicitar demostración
-              <ArrowRight size={18} />
-            </WhatsAppCta>
-            <a
-              href="#features"
-              className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl bg-white/10 border border-white/20 text-white font-semibold text-base hover:bg-white/20 transition-colors"
-            >
-              Ver funcionalidades
-            </a>
-          </div>
-
-          {/* Stats */}
-          <div className="mt-16 grid grid-cols-3 gap-4 sm:gap-8 max-w-xl mx-auto">
-            {[
-              { n: '4', label: 'Roles de usuario' },
-              { n: '1.123', label: 'Municipios DANE' },
-              { n: '100%', label: 'Funciona offline' },
-            ].map(s => (
-              <div key={s.label} className="text-center">
-                <div className="text-white text-2xl sm:text-3xl font-black">{s.n}</div>
-                <div className="text-white/50 text-xs mt-1">{s.label}</div>
+        <section className="cg-hero" aria-labelledby="cg-hero-title">
+          <div className="cg-container cg-hero-grid">
+            <div className="cg-hero-copy">
+              <p className="cg-location"><span aria-hidden="true" /> Desde Colombia, para el territorio latinoamericano</p>
+              <h1 id="cg-hero-title">{LANDING_SEO.heading}</h1>
+              <p className="cg-hero-lead">{LANDING_SEO.lead}</p>
+              <div className="cg-hero-actions">
+                <WhatsAppCta message={LANDING_SEO.whatsappMessage} placement="hero-inicio" className="cg-button cg-button-whatsapp">
+                  Solicitar una demostración <ArrowRight size={18} aria-hidden="true" />
+                </WhatsAppCta>
+                <a href="#como-funciona" className="cg-text-link">Conocer cómo funciona</a>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── SEARCH-INTENT SOLUTIONS ─────────────────────────────────────── */}
-      <section id="soluciones" className="py-20 px-5 bg-slate-50 border-y border-slate-100">
-        <div className="max-w-6xl mx-auto">
-          <div className="max-w-3xl">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#3D7B9E' }}>Soluciones por necesidad</span>
-            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mt-2">Tecnología para caracterizar, encuestar y trabajar en territorio</h2>
-            <p className="text-gray-600 mt-4 leading-relaxed">
-              Control G se configura según el instrumento, la entidad y el territorio. Explore cómo resolvemos los principales operativos de información de gobiernos y organizaciones.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-5 mt-10">
-            {CORE_SEO_PAGES.filter(page => page.path !== '/').map(page => (
-              <Link
-                key={page.path}
-                to={page.path}
-                className="group p-6 rounded-2xl border border-slate-200 bg-white hover:border-[#3D7B9E] hover:shadow-md transition-all"
-              >
-                <span className="text-xs font-black uppercase tracking-widest text-[#3D7B9E]">{page.eyebrow}</span>
-                <h3 className="text-xl font-black text-slate-900 mt-2 group-hover:text-[#2C6E8A]">{page.heading}</h3>
-                <p className="text-sm text-slate-600 mt-3 leading-relaxed">{page.lead}</p>
-                <span className="inline-flex items-center gap-1.5 mt-5 text-sm font-bold text-green-700">Conocer la solución <ArrowRight size={15} /></span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── OFFLINE BANNER ───────────────────────────────────────────────── */}
-      <section className="py-10 px-5" style={{ background: '#F0FDF4' }}>
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
-          <div className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: '#27AE60' }}>
-            <WifiOff size={26} className="text-white" />
-          </div>
-          <div>
-            <h2 className="font-black text-xl text-gray-900">Diseñada para zonas rurales sin internet</h2>
-            <p className="text-gray-600 mt-1 text-sm leading-relaxed max-w-2xl">
-              Los profesionales de campo descargan sus tareas al iniciar sesión. Luego trabajan días o semanas
-              sin conexión. Cuando hay señal, todo se sincroniza automáticamente con la nube, con fotos, firmas
-              y geolocalización incluidas.
-            </p>
-          </div>
-          <div className="flex items-center gap-2 bg-green-100 border border-green-200 rounded-xl px-4 py-2 flex-shrink-0">
-            <Wifi size={16} className="text-green-600" />
-            <span className="text-green-700 font-bold text-sm whitespace-nowrap">Auto-sync activo</span>
-          </div>
-        </div>
-      </section>
-
-      {/* ── COMMERCIAL FUNNEL ───────────────────────────────────────────── */}
-      <section className="py-20 px-5 bg-white">
-        <div className="max-w-5xl mx-auto">
-          <LeadFunnel source="pagina-principal" />
-        </div>
-      </section>
-
-      {/* ── FAQ ─────────────────────────────────────────────────────────── */}
-      <section className="py-20 px-5 bg-slate-50 border-y border-slate-100">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-10">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#3D7B9E' }}>Preguntas frecuentes</span>
-            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mt-2">Lo que una entidad necesita saber</h2>
-          </div>
-          <div className="space-y-4">
-            {LANDING_SEO.faqs.map(faq => (
-              <details key={faq.question} className="rounded-2xl border border-slate-200 bg-white p-5 open:shadow-sm">
-                <summary className="cursor-pointer list-none font-black text-slate-900 pr-8">{faq.question}</summary>
-                <p className="text-sm text-slate-600 leading-7 mt-3">{faq.answer}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── FEATURES ─────────────────────────────────────────────────────── */}
-      <section id="features" className="py-20 px-5 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#3D7B9E' }}>Funcionalidades</span>
-            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mt-2">Todo lo que tu equipo necesita</h2>
-            <p className="text-gray-500 mt-3 max-w-xl mx-auto text-sm leading-relaxed">
-              Una sola plataforma para diseñar formularios, recolectar datos en campo y generar informes.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {FEATURES.map(f => (
-              <div key={f.title} className="p-6 rounded-2xl border border-gray-100 hover:shadow-md transition-shadow group">
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                  style={{ background: f.color + '18' }}
-                >
-                  <f.icon size={22} style={{ color: f.color }} />
-                </div>
-                <h3 className="font-bold text-gray-900 mb-1.5">{f.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── FORM BUILDER HIGHLIGHT ───────────────────────────────────────── */}
-      <section className="py-20 px-5" style={{ background: 'linear-gradient(135deg, #1B3A4B 0%, #2C6E8A 100%)' }}>
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-white/50">Form Builder</span>
-            <h2 className="text-3xl sm:text-4xl font-black text-white mt-2 mb-5 leading-tight">
-              Cualquier formulario,<br />sin programar
-            </h2>
-            <p className="text-white/70 text-sm leading-relaxed mb-7">
-              El Coordinador arrastra y suelta 17 tipos de campo — texto, selección múltiple,
-              fotografía, firma digital, geolocalización, grupos repetitivos y más.
-              Configura validaciones, lógica condicional y páginas. Publica en segundos.
-            </p>
-            <ul className="space-y-2.5">
-              {[
-                'Campos con lógica condicional',
-                'Grupos repetitivos (hasta 20 miembros)',
-                'Captura de foto, video y firma',
-                'Vista previa mobile antes de publicar',
-                'Funciona sin internet en el dispositivo',
-              ].map(item => (
-                <li key={item} className="flex items-center gap-2.5 text-white/80 text-sm">
-                  <CheckCircle2 size={16} style={{ color: '#4ECDC4' }} />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Mock form builder UI */}
-          <div className="bg-white/10 backdrop-blur rounded-2xl border border-white/20 p-5 space-y-3">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-white font-bold text-sm">Form Builder</span>
-              <span className="bg-green-400/20 text-green-300 text-xs px-2.5 py-1 rounded-full font-semibold">Publicado</span>
+              <ul className="cg-hero-assurances" aria-label="Plataformas y alcance">
+                <li><Smartphone size={17} aria-hidden="true" /> Aplicación Android y web</li>
+                <li><WifiOff size={17} aria-hidden="true" /> Captura offline</li>
+                <li><MapPin size={17} aria-hidden="true" /> Datos georreferenciados</li>
+              </ul>
             </div>
-            {[
-              { label: 'Nombre completo', type: 'Texto corto', req: true },
-              { label: 'Municipio de residencia', type: 'DIVIPOLA', req: true },
-              { label: 'Miembros del hogar', type: 'Grupo repetitivo × 20', req: true },
-              { label: 'Foto de evidencia', type: 'Fotografía × 3', req: false },
-              { label: 'Firma del beneficiario', type: 'Firma digital', req: true },
-            ].map(field => (
-              <div key={field.label} className="bg-white/10 rounded-xl px-4 py-2.5 flex items-center justify-between">
-                <div>
-                  <div className="text-white text-xs font-semibold">
-                    {field.label} {field.req && <span className="text-red-400">*</span>}
-                  </div>
-                  <div className="text-white/40 text-[10px] mt-0.5">{field.type}</div>
-                </div>
-                <ChevronRight size={14} className="text-white/30" />
-              </div>
-            ))}
+            <TerritoryPreview />
           </div>
-        </div>
-      </section>
-
-      {/* ── ROLES ────────────────────────────────────────────────────────── */}
-      <section id="roles" className="py-20 px-5 bg-gray-50">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#3D7B9E' }}>Roles</span>
-            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mt-2">Un ecosistema de 4 roles</h2>
-            <p className="text-gray-500 mt-3 text-sm max-w-xl mx-auto leading-relaxed">
-              Cada actor tiene su panel y permisos. Todos conectados en la misma plataforma.
-            </p>
+          <div className="cg-container cg-hero-footnote">
+            <p>De la visita en campo a la decisión: formularios, evidencias y territorio en una misma operación.</p>
+            <a href="#soluciones">Explore las soluciones <ArrowRight size={17} aria-hidden="true" /></a>
           </div>
+        </section>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {ROLES.map(r => (
-              <div key={r.role} className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md transition-shadow">
-                <div
-                  className="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full mb-4"
-                  style={{ background: r.color + '18', color: r.color }}
-                >
-                  <Shield size={11} />
-                  {r.tag}
-                </div>
-                <h3 className="font-black text-gray-900 mb-3">{r.role}</h3>
-                <ul className="space-y-2">
-                  {r.items.map(item => (
-                    <li key={item} className="flex items-start gap-2 text-gray-500 text-xs leading-relaxed">
-                      <CheckCircle2 size={13} className="mt-0.5 flex-shrink-0" style={{ color: r.color }} />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── USE CASES ────────────────────────────────────────────────────── */}
-      <section id="casos" className="py-20 px-5 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#3D7B9E' }}>Casos de Uso</span>
-            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mt-2">Adaptable a cualquier entidad</h2>
-            <p className="text-gray-500 mt-3 text-sm max-w-xl mx-auto leading-relaxed">
-              Desde secretarías de gobierno hasta operadores de servicios públicos.
-              Control G se adapta porque tú diseñas los formularios.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {USE_CASES.map(uc => (
-              <div key={uc.title} className="flex items-start gap-4 p-5 rounded-2xl border border-gray-100 hover:border-[#1B3A4B]/20 hover:shadow-sm transition-all">
-                <span className="text-2xl flex-shrink-0">{uc.emoji}</span>
-                <div>
-                  <h3 className="font-bold text-gray-900 text-sm">{uc.title}</h3>
-                  <p className="text-gray-500 text-xs mt-0.5 leading-relaxed">{uc.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── MOBILE SECTION ───────────────────────────────────────────────── */}
-      <section className="py-20 px-5 bg-gray-50">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-          <div className="order-2 md:order-1">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#27AE60' }}>App Móvil</span>
-            <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mt-2 mb-5 leading-tight">
-              Diseñada para el celular<br />del profesional en campo
-            </h2>
-            <p className="text-gray-600 text-sm leading-relaxed mb-7">
-              Interfaz mobile-first con navegación por barra inferior al estilo WhatsApp.
-              Fuentes grandes, alto contraste para uso al sol, campos táctiles de al menos 48px.
-              Funciona como APK en Android y PWA en cualquier dispositivo.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              {[
-                { icon: Smartphone, label: 'APK Android' },
-                { icon: Globe, label: 'PWA' },
-                { icon: WifiOff, label: 'Offline first' },
-                { icon: Users, label: 'Multi-rol' },
-              ].map(b => (
-                <div
-                  key={b.label}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border"
-                  style={{ borderColor: '#1B3A4B33', color: '#1B3A4B' }}
-                >
-                  <b.icon size={13} />
-                  {b.label}
-                </div>
+        <section id="soluciones" className="cg-section cg-solutions" aria-labelledby="cg-solutions-title">
+          <div className="cg-container">
+            <div className="cg-section-heading">
+              <h2 id="cg-solutions-title">La información que necesita, desde donde ocurre.</h2>
+              <p>Una plataforma para caracterizar comunidades, hacer encuestas y conocer lo que pasa en campo. Configure el instrumento y organice a su equipo alrededor del proyecto.</p>
+            </div>
+            <div className="cg-solution-grid">
+              {SOLUTIONS.map(solution => (
+                <Link key={solution.path} to={solution.path} className="cg-solution-link">
+                  <solution.icon size={25} strokeWidth={1.65} aria-hidden="true" />
+                  <h3>{solution.title}</h3>
+                  <p>{solution.description}</p>
+                  <span>Explorar solución <ArrowRight size={17} aria-hidden="true" /></span>
+                </Link>
               ))}
             </div>
           </div>
+        </section>
 
-          <div className="order-1 md:order-2 flex justify-center">
-            {/* Phone mockup */}
-            <div className="w-56 bg-white rounded-[2rem] shadow-2xl border-4 border-gray-200 overflow-hidden">
-              <div className="h-5 bg-gray-200 flex items-center justify-center">
-                <div className="w-14 h-1 bg-gray-400 rounded-full" />
-              </div>
-              <div style={{ background: '#1B3A4B' }} className="px-4 py-3">
-                <div className="text-white text-xs font-bold">Control G</div>
-                <div className="flex items-center gap-1 mt-0.5">
-                  <div className="w-2 h-2 bg-green-400 rounded-full" />
-                  <span className="text-white/60 text-[9px]">Sincronizado</span>
-                </div>
-              </div>
-              <div className="px-3 py-3 space-y-2">
-                {['Familia García López', 'Familia Martínez Díaz', 'Familia Rodríguez P.'].map((name, i) => (
-                  <div key={name} className="bg-gray-50 rounded-xl p-2.5">
-                    <div className="text-gray-800 text-[10px] font-semibold">{name}</div>
-                    <div className="flex gap-1 mt-1">
-                      {['Ex', 'M1', 'M2', 'M3', 'EP'].map((m, j) => (
-                        <div
-                          key={m}
-                          className={`w-5 h-5 rounded text-[8px] font-bold flex items-center justify-center ${
-                            j <= i ? 'text-white' : 'bg-gray-200 text-gray-400'
-                          }`}
-                          style={j <= i ? { background: '#27AE60' } : {}}
-                        >
-                          {m}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="border-t border-gray-100 flex">
-                {['🏠', '👥', '📷', '📄', '👤'].map((icon, i) => (
-                  <div
-                    key={i}
-                    className={`flex-1 py-2 flex items-center justify-center text-sm ${
-                      i === 2 ? 'text-white rounded-full mx-1' : ''
-                    }`}
-                    style={i === 2 ? { background: '#1B3A4B' } : {}}
-                  >
-                    {icon}
+        <section id="como-funciona" className="cg-section cg-process-section" aria-labelledby="cg-process-title">
+          <div className="cg-container">
+            <div className="cg-section-heading">
+              <h2 id="cg-process-title">Su operación sigue, aunque se pierda la señal.</h2>
+              <p>Prepare la cuenta y los formularios con conexión antes de salir. Después, el equipo puede capturar información y guardarla en el dispositivo hasta recuperar internet.</p>
+            </div>
+            <ol className="cg-process">
+              <li>
+                <span className="cg-step-number" aria-hidden="true">1</span>
+                <h3>Prepare y asigne</h3>
+                <p>Configure el formulario, los territorios y los profesionales. Inicie sesión y descargue las asignaciones en cada dispositivo.</p>
+                <span className="cg-process-state">Con conexión antes de salir</span>
+              </li>
+              <li>
+                <span className="cg-step-number" aria-hidden="true">2</span>
+                <h3>Capture en campo</h3>
+                <p>Diligencie respuestas, registre evidencias y solicite la ubicación GPS disponible, incluso sin datos móviles.</p>
+                <span className="cg-process-state"><WifiOff size={15} aria-hidden="true" /> Los registros quedan en el dispositivo</span>
+              </li>
+              <li>
+                <span className="cg-step-number" aria-hidden="true">3</span>
+                <h3>Sincronice y analice</h3>
+                <p>Al recuperar internet, sincronice la información para revisarla en los paneles, el mapa y las exportaciones del proyecto.</p>
+                <span className="cg-process-state">Información disponible para coordinación</span>
+              </li>
+            </ol>
+            <p className="cg-operational-note"><MapPin size={17} aria-hidden="true" /> La ubicación depende de los permisos, la señal y la precisión del dispositivo. La visualización de mapas base requiere conectividad o preparación previa compatible.</p>
+          </div>
+        </section>
+
+        <section id="features" className="cg-section" aria-labelledby="cg-instrument-title">
+          <div className="cg-container cg-instrument-grid">
+            <div className="cg-instrument-copy">
+              <h2 id="cg-instrument-title">El formulario se adapta al proyecto. El equipo sabe qué hacer.</h2>
+              <p>Una caracterización de hogares necesita preguntas distintas a una visita técnica. Construya sus formularios y asigne a cada profesional los instrumentos que le corresponden.</p>
+              <div className="cg-capabilities">
+                {CAPABILITIES.map(item => (
+                  <div key={item.title} className="cg-capability">
+                    <item.icon size={22} strokeWidth={1.65} aria-hidden="true" />
+                    <div><h3>{item.title}</h3><p>{item.text}</p></div>
                   </div>
                 ))}
               </div>
             </div>
+            <figure className="cg-form-preview">
+              <figcaption><FileText size={18} aria-hidden="true" /><span>Caracterización del hogar</span><span className="cg-example-label">Ejemplo ilustrativo</span></figcaption>
+              <div className="cg-form-preview-body">
+                <div className="cg-form-progress"><span /> <span /> <span /></div>
+                <p className="cg-form-section-name">Condiciones y necesidades del hogar</p>
+                <div className="cg-preview-field"><span>Municipio o territorio</span><div>Seleccione una opción <span aria-hidden="true">⌄</span></div></div>
+                <div className="cg-preview-field"><span>¿Qué servicios tiene la vivienda?</span><ul><li><span className="cg-preview-check"><Check size={12} aria-hidden="true" /></span> Acueducto</li><li><span className="cg-preview-check"><Check size={12} aria-hidden="true" /></span> Energía eléctrica</li><li><span className="cg-preview-check cg-preview-check-empty" /> Alcantarillado</li></ul></div>
+                <div className="cg-preview-evidence"><span><Camera size={19} aria-hidden="true" /> Fotografía</span><span><MapPin size={19} aria-hidden="true" /> Ubicación GPS</span></div>
+                <p className="cg-preview-save"><ShieldCheck size={16} aria-hidden="true" /> Respuestas y evidencias en el mismo registro</p>
+              </div>
+            </figure>
           </div>
-        </div>
-      </section>
+          <div className="cg-container">
+            <div className="cg-ai-callout">
+              <Sparkles size={29} strokeWidth={1.5} aria-hidden="true" />
+              <div><h3>De una idea a un cuestionario mejor estructurado.</h3><p>Prepare su cuestionario con apoyo de IA y publíquelo con revisión humana. Podemos acompañarle para definir preguntas, opciones y validaciones antes de configurar el formulario.</p></div>
+              <Link to="/encuestas-con-inteligencia-artificial" className="cg-text-link">Conocer el enfoque <ArrowRight size={17} aria-hidden="true" /></Link>
+            </div>
+          </div>
+        </section>
 
-      {/* ── CTA ──────────────────────────────────────────────────────────── */}
-      <section
-        className="py-20 px-5 text-center"
-        style={{ background: 'linear-gradient(135deg, #1B3A4B 0%, #2C6E8A 100%)' }}
-      >
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-black text-white mb-4 leading-tight">
-            ¿Listo para digitalizar<br />tu operación de campo?
-          </h2>
-          <p className="text-white/60 text-sm mb-8 leading-relaxed">
-            Accede a tu plataforma o contacta a DRAN Digital para crear tu entidad.
-          </p>
-          <WhatsAppCta
-            message={LANDING_SEO.whatsappMessage}
-            placement="cta-final-inicio"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl text-white font-bold text-base hover:opacity-90 transition-opacity shadow-lg bg-[#25D366]"
-          >
-            Hablar con un asesor
-            <ArrowRight size={18} />
-          </WhatsAppCta>
-          <p className="text-white/30 text-xs mt-6">
-            controlg.co · DRAN Digital S.A.S. · Colombia y Latinoamérica
-          </p>
-        </div>
-      </section>
+        <section className="cg-section cg-territory-section" aria-labelledby="cg-territory-title">
+          <div className="cg-container cg-territory-grid">
+            <div className="cg-territory-heading"><Layers3 size={34} strokeWidth={1.3} aria-hidden="true" /><h2 id="cg-territory-title">De respuestas dispersas a una lectura del territorio.</h2></div>
+            <div>
+              <p>Después de sincronizar, ubique los registros georreferenciados en un mapa territorial. Explore puntos, capas, filtros, agrupaciones, calor y cobertura para entender dónde se ha trabajado y qué zonas requieren atención.</p>
+              <ul className="cg-territory-list"><li>Mapa con vista ampliada y herramientas de análisis.</li><li>Capas y archivos geográficos según el formato y alcance del proyecto.</li><li>Información exportable para continuar el análisis en herramientas GIS.</li></ul>
+              <p className="cg-territory-clarification">El intercambio con ArcGIS se define según los formatos, las licencias, los servicios y los permisos disponibles. Revisamos la conexión y configuración necesarias para cada caso.</p>
+              <Link to="/integracion-arcgis" className="cg-text-link">Explorar GIS y ArcGIS <ArrowRight size={17} aria-hidden="true" /></Link>
+            </div>
+          </div>
+        </section>
 
+        <section id="casos" className="cg-section cg-audiences" aria-labelledby="cg-audiences-title">
+          <div className="cg-container">
+            <div className="cg-section-heading"><h2 id="cg-audiences-title">Para organizaciones que necesitan conocer su territorio.</h2><p>Desde Colombia y para Latinoamérica, configuramos la operación según su organización, su cuestionario y el lugar donde trabaja.</p></div>
+            <div className="cg-audience-grid">
+              {AUDIENCES.map(item => <article key={item.path}><Building2 size={25} strokeWidth={1.5} aria-hidden="true" /><h3>{item.title}</h3><p>{item.text}</p><Link to={item.path} className="cg-text-link">{item.label} <ArrowRight size={16} aria-hidden="true" /></Link></article>)}
+            </div>
+            <div className="cg-latam-line"><Globe2 size={22} aria-hidden="true" /><p><strong>Una operación adaptada al país.</strong> Defina territorios, departamentos o estados, municipios y equipos según el alcance de su proyecto.</p><Link to="/encuestas-offline/colombia" className="cg-text-link">Empezar en Colombia <ArrowRight size={16} aria-hidden="true" /></Link></div>
+          </div>
+        </section>
+
+        <section className="cg-section cg-guides-section" aria-labelledby="cg-guides-title">
+          <div className="cg-container">
+            <div className="cg-section-heading cg-heading-with-link"><div><h2 id="cg-guides-title">Mejores decisiones antes de salir a campo.</h2><p>Guías para preparar formularios, comparar herramientas y organizar el levantamiento de información.</p></div><Link to="/blog" className="cg-text-link">Explorar todas las guías <ArrowRight size={17} aria-hidden="true" /></Link></div>
+            <div className="cg-guides-grid">
+              {GUIDES.map(guide => <article key={guide.path}><Link to={guide.path} className="cg-guide-image" tabIndex={-1} aria-hidden="true"><img src={guide.image} width="640" height="400" alt="" loading="lazy" decoding="async" /></Link><div className="cg-guide-content"><p className="cg-guide-topic">{guide.topic}</p><h3><Link to={guide.path}>{guide.title}</Link></h3><p>{guide.text}</p><Link to={guide.path} className="cg-text-link">Leer la guía <ArrowRight size={16} aria-hidden="true" /></Link></div></article>)}
+            </div>
+          </div>
+        </section>
+
+        <section className="cg-section cg-contact-section" aria-label="Demostración y asesoría de Control G">
+          <div className="cg-container cg-contact-intro"><div><p className="cg-provider">Control G, una plataforma de DRAN Digital</p><h2>Conversemos sobre su próxima operación.</h2><p>Cuéntenos qué necesita conocer, dónde hará el levantamiento y cuántas personas trabajarán en campo. Revisamos el formulario, la preparación de dispositivos, la capacitación y el acompañamiento que requiere.</p></div><div className="cg-contact-points"><span><Check size={18} aria-hidden="true" /> Demostración según su caso de uso</span><span><Check size={18} aria-hidden="true" /> Alcance y propuesta antes de iniciar</span><span><Check size={18} aria-hidden="true" /> Atención directa por WhatsApp</span></div></div>
+          <div className="cg-container cg-funnel-wrapper"><LeadFunnel source="pagina-principal" /></div>
+        </section>
+
+        <section className="cg-section cg-faq-section" aria-labelledby="cg-faq-title">
+          <div className="cg-container cg-faq-grid"><div><h2 id="cg-faq-title">Antes de comenzar.</h2><p>Resolvemos las preguntas que ayudan a preparar una operación de información en campo.</p></div><div className="cg-faq-list">{LANDING_SEO.faqs.map(faq => <details key={faq.question}><summary>{faq.question}<span aria-hidden="true">+</span></summary><p>{faq.answer}</p></details>)}</div></div>
+        </section>
       </main>
-
-      {/* ── FOOTER ───────────────────────────────────────────────────────── */}
       <PublicFooter />
-
       <StickyWhatsApp message={LANDING_SEO.whatsappMessage} />
-
     </div>
   )
 }

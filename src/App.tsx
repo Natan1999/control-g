@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { Capacitor } from '@capacitor/core'
 import { useAuthStore } from '@/stores/authStore'
 import type { UserRole } from '@/types'
@@ -12,9 +12,11 @@ import SolutionPage from '@/pages/landing/SolutionPage'
 import { MarketingSeo } from '@/components/marketing/MarketingSeo'
 import { MfaGate } from '@/components/auth/MfaGate'
 import { SkipLink } from '@/components/a11y/SkipLink'
+import { CORE_SEO_PAGES, getSeoPage } from '@/lib/marketing'
+import NotFoundPage from '@/pages/landing/NotFoundPage'
 
-const BlogIndexPage = lazy(() => import('@/pages/blog/BlogIndexPage'))
-const BlogPostPage = lazy(() => import('@/pages/blog/BlogPostPage'))
+import BlogIndexPage from '@/pages/blog/BlogIndexPage'
+import BlogPostPage from '@/pages/blog/BlogPostPage'
 
 // Layout
 import { Sidebar } from '@/components/layout/Sidebar'
@@ -85,7 +87,8 @@ function FieldLayout({ children }: { children: React.ReactNode }) {
 export default function App() {
   const { user, restore } = useAuthStore()
   const [ready, setReady] = useState(false)
-  const unauthenticatedEntry = Capacitor.isNativePlatform() ? '/login' : '/'
+  const { pathname } = useLocation()
+  const publicMarketingRoute = !Capacitor.isNativePlatform() && (Boolean(getSeoPage(pathname)) || /^\/blog(?:\/|$)/.test(pathname))
 
   useSync()
 
@@ -93,7 +96,7 @@ export default function App() {
     restore().finally(() => setReady(true))
   }, [restore])
 
-  if (!ready) {
+  if (!ready && !publicMarketingRoute) {
     return (
       <div className="min-h-screen flex items-center justify-center relative overflow-hidden"
            style={{ background: '#1B3A4B' }}>
@@ -128,10 +131,7 @@ export default function App() {
       <Route path="/restablecer-contrasena" element={<PasswordRecoveryPage mode="update" />} />
 
       {/* Public search-intent pages. Each route has unique content and metadata. */}
-      <Route path="/software-caracterizacion-social" element={<SolutionPage path="/software-caracterizacion-social" />} />
-      <Route path="/encuestas-offline" element={<SolutionPage path="/encuestas-offline" />} />
-      <Route path="/levantamiento-informacion-campo" element={<SolutionPage path="/levantamiento-informacion-campo" />} />
-      <Route path="/software-entidades-gobierno" element={<SolutionPage path="/software-entidades-gobierno" />} />
+      {CORE_SEO_PAGES.filter(page => page.path !== '/').map(page => <Route key={page.path} path={page.path} element={<SolutionPage path={page.path} />} />)}
       <Route path="/encuestas-offline/:countrySlug" element={<SolutionPage />} />
       <Route path="/blog" element={<BlogIndexPage />} />
       <Route path="/blog/:slug" element={<BlogPostPage />} />
@@ -224,13 +224,11 @@ export default function App() {
 
       {/* The website keeps its landing page; the installed APK opens at login. */}
       <Route path="/" element={
-        user
-          ? <Navigate to={defaultRoutes[user.role as UserRole]} replace />
-          : Capacitor.isNativePlatform()
-            ? <Navigate to="/login" replace />
-            : <LandingPage />
+        Capacitor.isNativePlatform()
+          ? <Navigate to={user ? defaultRoutes[user.role as UserRole] : '/login'} replace />
+          : <LandingPage />
       } />
-      <Route path="*" element={<Navigate to={user ? defaultRoutes[user.role as UserRole] : unauthenticatedEntry} replace />} />
+      <Route path="*" element={<NotFoundPage />} />
       </Routes>
       </Suspense>
     </>

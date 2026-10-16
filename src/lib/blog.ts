@@ -35,13 +35,14 @@ export interface BlogPost {
   image?: string
   imageAlt?: string
   status?: 'draft' | 'published' | 'archived'
+  relatedLinks?: Array<{ title: string; path: string }>
 }
 
 export const BLOG_POSTS = blogPostsData as BlogPost[]
 
 export const BLOG_META = {
-  title: 'Blog de encuestas offline y trabajo de campo | Control G',
-  description: 'Guías y comparaciones profesionales sobre caracterización social, encuestas offline y levantamiento de información en Latinoamérica.',
+  title: 'Blog de encuestas, caracterización y GIS | Control G',
+  description: 'Guías sobre encuestas offline, diseño con IA, caracterización, GPS y GIS para empresas, entidades públicas y ONG de Colombia y Latinoamérica.',
   whatsappMessage: 'Hola, llegué desde el blog de Control G. Quiero orientación para un proyecto de recolección de información en campo.',
 }
 
@@ -84,6 +85,7 @@ export function normalizeBlogRow(row: Record<string, any>): BlogPost {
     image: row.image_url,
     imageAlt: row.image_alt,
     status: row.status,
+    relatedLinks: row.related_links || [],
   }
 }
 
@@ -106,7 +108,7 @@ const organization = {
   logo: { '@type': 'ImageObject', url: `${SITE_URL}/pwa-512x512.png` },
 }
 
-export function buildBlogIndexStructuredData() {
+export function buildBlogIndexStructuredData(posts: BlogPost[] = BLOG_POSTS) {
   return {
     '@context': 'https://schema.org',
     '@graph': [
@@ -119,7 +121,7 @@ export function buildBlogIndexStructuredData() {
         description: BLOG_META.description,
         inLanguage: 'es',
         publisher: { '@id': `${SITE_URL}/#organization` },
-        blogPost: BLOG_POSTS.map(post => ({ '@id': `${SITE_URL}/blog/${post.slug}#article` })),
+        blogPost: posts.map(post => ({ '@id': `${SITE_URL}/blog/${post.slug}#article` })),
       },
       {
         '@type': 'BreadcrumbList',

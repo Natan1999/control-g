@@ -49,8 +49,13 @@ test('el login y las rutas públicas ofrecen recuperación completa por Supabase
   assert.match(coordinator, /validateSecurePassword/)
   assert.match(professional, /await updatePassword/)
   assert.doesNotMatch(professional, /disponible próximamente/)
-  assert.match(vercel, /"source": "\/recuperar-contrasena"[\s\S]*?"X-Robots-Tag"[\s\S]*?"noindex/)
-  assert.match(vercel, /"source": "\/restablecer-contrasena"[\s\S]*?"Cache-Control"[\s\S]*?"no-store/)
+  const routes = JSON.parse(vercel).routes
+  for (const path of ['/recuperar-contrasena', '/restablecer-contrasena']) {
+    const headers = Object.assign({}, ...routes.filter(route => route.src && route.continue && new RegExp(route.src).test(path)).map(route => route.headers))
+    assert.match(headers['X-Robots-Tag'], /noindex/)
+    assert.match(headers['Cache-Control'], /no-store/)
+    assert.ok(routes.some(route => route.dest === '/index.html' && new RegExp(route.src).test(path)))
+  }
 })
 
 test('la recuperación operativa del superadministrador no imprime ni persiste la clave temporal', async () => {

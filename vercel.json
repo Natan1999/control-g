@@ -1,122 +1,139 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/**/*.mjs": { "maxDuration": 60 }
+    "api/marketing.mjs": {
+      "maxDuration": 60,
+      "includeFiles": "{.server/**,dist/marketing-shell.html,dist/seo-blog-snapshot.json}"
+    },
+    "api/**/*.mjs": {
+      "maxDuration": 60
+    }
   },
   "crons": [
-    { "path": "/api/maintenance/snapshots", "schedule": "15 3 * * *" },
-    { "path": "/api/maintenance/arcgis", "schedule": "35 3 * * *" }
+    {
+      "path": "/api/maintenance/snapshots",
+      "schedule": "15 3 * * *"
+    },
+    {
+      "path": "/api/maintenance/arcgis",
+      "schedule": "35 3 * * *"
+    }
   ],
-  "redirects": [
-    { "source": "/demo", "destination": "/login", "permanent": false }
-  ],
-  "rewrites": [
-    { "source": "/software-caracterizacion-social", "destination": "/software-caracterizacion-social/index.html" },
-    { "source": "/encuestas-offline", "destination": "/encuestas-offline/index.html" },
-    { "source": "/encuestas-offline/:country", "destination": "/encuestas-offline/:country/index.html" },
-    { "source": "/levantamiento-informacion-campo", "destination": "/levantamiento-informacion-campo/index.html" },
-    { "source": "/software-entidades-gobierno", "destination": "/software-entidades-gobierno/index.html" },
-    { "source": "/blog", "destination": "/blog/index.html" },
-    { "source": "/blog/:slug", "destination": "/blog/:slug/index.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
-  ],
-  "headers": [
+  "routes": [
     {
-      "source": "/api/health",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store, max-age=0" },
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
-      ]
+      "src": "/(.*)",
+      "headers": {
+        "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Permissions-Policy": "camera=(self), geolocation=(self), microphone=(self)",
+        "Content-Security-Policy": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://www.controlg.co https://controlg2.dran.cloud wss://controlg2.dran.cloud https://geoportal.dane.gov.co https://api-colombia.com https://*.arcgis.com https://*.arcgisonline.com https://*.esri.com; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests"
+      },
+      "continue": true
     },
     {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(self), geolocation=(self), microphone=(self)" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://www.controlg.co https://controlg2.dran.cloud wss://controlg2.dran.cloud https://geoportal.dane.gov.co https://api-colombia.com https://*.arcgis.com https://*.arcgisonline.com https://*.esri.com; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests" }
-      ]
+      "src": "^/api/health$",
+      "headers": {
+        "Cache-Control": "no-store, max-age=0",
+        "X-Robots-Tag": "noindex, nofollow, noarchive"
+      },
+      "continue": true
     },
     {
-      "source": "/login",
-      "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
-      ]
+      "src": "^/(login|recuperar-contrasena|restablecer-contrasena|admin|coord|apoyo|field)(?:/.*)?$",
+      "headers": {
+        "X-Robots-Tag": "noindex, nofollow, noarchive"
+      },
+      "continue": true
     },
     {
-      "source": "/recuperar-contrasena",
-      "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
-        { "key": "Cache-Control", "value": "no-store, max-age=0" }
-      ]
+      "src": "^/(recuperar-contrasena|restablecer-contrasena|index\\.html|sw\\.js|seo-manifest\\.json)$",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Vercel-CDN-Cache-Control": "no-store",
+        "Pragma": "no-cache",
+        "Expires": "0"
+      },
+      "continue": true
     },
     {
-      "source": "/restablecer-contrasena",
-      "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
-        { "key": "Cache-Control", "value": "no-store, max-age=0" }
-      ]
+      "src": "^/assets/(.*)$",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      },
+      "continue": true
     },
     {
-      "source": "/admin/(.*)",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+      "src": "^/manifest\\.webmanifest$",
+      "headers": {
+        "Cache-Control": "no-cache"
+      },
+      "continue": true
     },
     {
-      "source": "/admin",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+      "src": "^/demo/?$",
+      "headers": {
+        "Location": "/login"
+      },
+      "status": 307
     },
     {
-      "source": "/coord/(.*)",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+      "src": "^/blog/index\\.html$",
+      "headers": {
+        "Location": "/blog"
+      },
+      "status": 308
     },
     {
-      "source": "/coord",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+      "src": "^/blog/([a-z0-9]+(?:-[a-z0-9]+)*)/index\\.html$",
+      "headers": {
+        "Location": "/blog/$1"
+      },
+      "status": 308
     },
     {
-      "source": "/apoyo/(.*)",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+      "src": "^/(sitemap\\.xml|rss\\.xml|llms(?:-full)?\\.txt|blog-catalog\\.json)$",
+      "dest": "/api/marketing?path=/$1"
     },
     {
-      "source": "/apoyo",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+      "src": "^/blog/?$",
+      "dest": "/api/marketing?path=/blog"
     },
     {
-      "source": "/field/(.*)",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+      "src": "^/blog/([a-z0-9]+(?:-[a-z0-9]+)*)/?$",
+      "dest": "/api/marketing?path=/blog/$1"
     },
     {
-      "source": "/field",
-      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+      "src": "^/(software-caracterizacion-social|encuestas-offline|levantamiento-informacion-campo|software-entidades-gobierno|encuestas-con-inteligencia-artificial|encuestas-georreferenciadas|integracion-arcgis|encuestas-para-empresas|encuestas-para-ong|caracterizacion-colombia)/?$",
+      "dest": "/$1/index.html"
     },
     {
-      "source": "/index.html",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
-        { "key": "Pragma",        "value": "no-cache" },
-        { "key": "Expires",       "value": "0" }
-      ]
+      "src": "^/encuestas-offline/(argentina|bolivia|brasil|chile|colombia|costa-rica|cuba|republica-dominicana|ecuador|el-salvador|guatemala|honduras|mexico|nicaragua|panama|paraguay|peru|puerto-rico|uruguay|venezuela)/?$",
+      "dest": "/encuestas-offline/$1/index.html"
     },
     {
-      "source": "/sw.js",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
-        { "key": "Pragma",        "value": "no-cache" },
-        { "key": "Expires",       "value": "0" }
-      ]
+      "src": "^/(marketing-shell\\.html|seo-blog-snapshot\\.json)$",
+      "dest": "/404.html",
+      "status": 404,
+      "headers": {
+        "X-Robots-Tag": "noindex, follow, noarchive"
+      }
     },
     {
-      "source": "/assets/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
+      "handle": "filesystem"
     },
     {
-      "source": "/manifest.webmanifest",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache" }
-      ]
+      "src": "^/(login|recuperar-contrasena|restablecer-contrasena|admin|coord|apoyo|field)(?:/.*)?$",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/404.html",
+      "status": 404,
+      "headers": {
+        "X-Robots-Tag": "noindex, follow, noarchive"
+      }
     }
   ]
 }

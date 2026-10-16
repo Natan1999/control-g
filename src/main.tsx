@@ -7,6 +7,7 @@ import App from './App'
 import './index.css'
 import { AppErrorBoundary } from '@/components/monitoring/AppErrorBoundary'
 import { initializeClientMonitoring } from '@/lib/monitoring'
+import { BlogSnapshotProvider, readBlogSnapshot } from '@/components/marketing/BlogSnapshot'
 
 // Resolve the native entry before React renders. This prevents even a single
 // landing-page frame if the Android WebView starts at the bundled root URL.
@@ -32,7 +33,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <AppErrorBoundary>
-          <App />
+          <BlogSnapshotProvider value={readBlogSnapshot()}><App /></BlogSnapshotProvider>
         </AppErrorBoundary>
       </BrowserRouter>
     </QueryClientProvider>

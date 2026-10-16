@@ -1,35 +1,259 @@
 # Control G
 
-Control G es una plataforma de DRAN Digital para caracterizaciones, encuestas y levantamiento de información en campo. Está dirigida a alcaldías, gobernaciones, entidades públicas, operadores, ONG y organizaciones de Colombia y Latinoamérica.
+> Software de caracterización, encuestas y levantamiento de información para empresas, corporaciones, entidades públicas y ONG de Colombia y Latinoamérica. Desarrollado por DRAN Digital.
 
-## Capacidades
+## Funcionamiento verificado
 
-- Formularios configurables sin programación.
-- Aplicación Android y plataforma web.
-- Captura de respuestas, fotografías, firmas y geolocalización sin internet.
-- Sincronización de registros cuando vuelve la conexión.
-- Gestión multi-entidad y permisos por roles.
-- Seguimiento, revisión y consolidación de información territorial.
+- Formularios configurables, asignaciones y revisión por roles.
+- Captura Android sin internet después de iniciar sesión y descargar el paquete de trabajo; sincronización al recuperar conexión.
+- Fotos, audio, firma manuscrita y ubicación GPS según permisos y señal disponible.
+- Mapa territorial, capas GeoJSON, calor, grupos y cobertura.
+- Exportación GIS e integración ArcGIS con conexión, mapeo y autorización previos.
+- La IA puede apoyar la preparación del cuestionario; la plataforma auditada no incluye un generador IA integrado.
+- La precisión GPS depende del dispositivo y el entorno; no es una medición topográfica certificada.
 
-## Páginas principales
+## Contacto
 
-- https://www.controlg.co/
-- https://www.controlg.co/software-caracterizacion-social
-- https://www.controlg.co/encuestas-offline
-- https://www.controlg.co/levantamiento-informacion-campo
-- https://www.controlg.co/software-entidades-gobierno
-- https://www.controlg.co/blog
+WhatsApp comercial: +57 300 901 0300. Cotización según alcance, equipo, capacitación y soporte.
 
-## Centro editorial
+## Caracterización y encuestas que avanzan sin internet
 
-El blog de Control G publica guías profesionales sobre caracterización social, encuestas offline y trabajo de campo en Colombia y Latinoamérica. También ofrece comparaciones neutrales con fuentes oficiales de cada plataforma analizada.
+https://www.controlg.co/
 
-- https://www.controlg.co/blog/software-caracterizacion-social-colombia
-- https://www.controlg.co/blog/encuestas-offline-zonas-rurales
-- https://www.controlg.co/blog/elegir-software-entidades-publicas-latinoamerica
-- https://www.controlg.co/blog/control-g-vs-kobotoolbox
-- https://www.controlg.co/blog/control-g-vs-odk
+Diseñe formularios, asigne equipos y recolecte datos, fotos, firmas y ubicación desde Android. Al recuperar conexión, sincronice para revisar resultados y analizar su territorio. Para empresas, entidades públicas, corporaciones y ONG.
 
-## Contacto comercial
+## Software de caracterización social para entidades y territorios
 
-WhatsApp: +57 300 901 0300
+https://www.controlg.co/software-caracterizacion-social
+
+Convierta instrumentos de caracterización en formularios digitales y consolide información de hogares, comunidades y grupos poblacionales. Para entidades públicas, empresas con gestión social, corporaciones, fundaciones y ONG.
+
+## Encuestas sin internet para equipos que trabajan en campo
+
+https://www.controlg.co/encuestas-offline
+
+Recolecte información desde celulares y tabletas Android aunque no haya cobertura. Control G guarda las respuestas localmente y las envía de forma controlada cuando el dispositivo vuelve a conectarse.
+
+## Levantamiento de información en campo con control y evidencia
+
+https://www.controlg.co/levantamiento-informacion-campo
+
+Planee operativos territoriales, distribuya instrumentos al personal y reciba información lista para revisión. Desde censos comunitarios hasta visitas técnicas y diagnósticos de cobertura.
+
+## Software para entidades de gobierno que trabajan en territorio
+
+https://www.controlg.co/software-entidades-gobierno
+
+Centralice formularios, equipos, municipios y evidencias en una plataforma configurable. Control G ayuda a alcaldías, gobernaciones y operadores a ejecutar levantamientos con o sin conectividad.
+
+## Encuestas con inteligencia artificial y criterio humano
+
+https://www.controlg.co/encuestas-con-inteligencia-artificial
+
+Use inteligencia artificial para explorar preguntas, ordenar secciones y revisar el lenguaje del cuestionario. Convierta la versión aprobada en un formulario de Control G para trabajar con equipos de campo, GPS y captura offline.
+
+## Encuestas georreferenciadas para entender su territorio
+
+https://www.controlg.co/encuestas-georreferenciadas
+
+Relacione respuestas y evidencias con la ubicación capturada en campo. Control G combina formularios offline y un mapa territorial con filtros, puntos, capas, agrupaciones, calor y cobertura.
+
+## Datos de campo preparados para su operación GIS y ArcGIS
+
+https://www.controlg.co/integracion-arcgis
+
+Conecte el levantamiento de información con su equipo geográfico. Prepare capas, revise sistemas de coordenadas e intercambie datos mediante formatos compatibles; configure las conexiones a servicios según su proyecto.
+
+## Encuestas y caracterización de campo para empresas
+
+https://www.controlg.co/encuestas-para-empresas
+
+Organice levantamientos de información de clientes, establecimientos, proveedores o comunidades. Su equipo captura desde Android y la coordinación revisa avances, evidencias y resultados en una plataforma central.
+
+## Encuestas offline para ONG, fundaciones y organizaciones
+
+https://www.controlg.co/encuestas-para-ong
+
+Prepare instrumentos para caracterizar comunidades, registrar hogares y seguir intervenciones. Coordine equipos de campo y consolide información con o sin conectividad, con acceso separado por organización.
+
+## Caracterización y encuestas de campo en Colombia
+
+https://www.controlg.co/caracterizacion-colombia
+
+Digitalice levantamientos de información en barrios, veredas, corregimientos y municipios. Control G reúne formularios, equipos, evidencias y mapas para entidades públicas, empresas, corporaciones y ONG.
+
+## Encuestas y caracterización offline en Argentina
+
+https://www.controlg.co/encuestas-offline/argentina
+
+Configure relevamientos y encuestas de campo en Argentina con referencias territoriales que respeten la jurisdicción del proyecto. Separe sedes, hogares y visitas, prepare tablets offline y acuerde el corte que utilizará coordinación.
+
+## Encuestas y caracterización offline en Bolivia
+
+https://www.controlg.co/encuestas-offline/bolivia
+
+Prepare caracterizaciones en Bolivia distinguiendo departamento, municipio, comunidad y zona operativa. Organice instrumentos y visitas con responsables definidos y pruebe el guardado offline y la entrega posterior de evidencias.
+
+## Pesquisas e caracterização offline no Brasil
+
+https://www.controlg.co/encuestas-offline/brasil
+
+Prepare pesquisas e caracterização de campo no Brasil com formulários offline, equipes e referências territoriais consistentes. Relacione respostas, evidências e localização ao objetivo do projeto e valide a experiência de coleta nos dispositivos previstos.
+
+## Encuestas y caracterización offline en Chile
+
+https://www.controlg.co/encuestas-offline/chile
+
+Organice encuestas en terreno en Chile por región, comuna y sectores definidos para el proyecto. Relacione formularios, profesionales y metas con una cartografía documentada y valide el flujo offline en las tablets del equipo.
+
+## Encuestas y caracterización offline en Colombia
+
+https://www.controlg.co/encuestas-offline/colombia
+
+Prepare caracterizaciones y encuestas en barrios, veredas y corregimientos de Colombia con formularios offline, equipos asignados y revisión territorial. Organice códigos de departamento y municipio, evidencias y puntos de sincronización según el operativo.
+
+## Encuestas y caracterización offline en Costa Rica
+
+https://www.controlg.co/encuestas-offline/costa-rica
+
+Prepare encuestas en Costa Rica con provincia, cantón, distrito y referencias locales coherentes. Configure preguntas y evidencias según el objetivo y pruebe la captura offline antes de distribuir el operativo a todo el equipo.
+
+## Encuestas y caracterización offline en Cuba
+
+https://www.controlg.co/encuestas-offline/cuba
+
+Prepare un proyecto de encuestas en Cuba con instrumentos, cuentas y dispositivos revisados antes de la jornada. Defina sectores, responsables y momentos de entrega para que la captura offline termine en datos recibidos y verificables.
+
+## Encuestas y caracterización offline en República Dominicana
+
+https://www.controlg.co/encuestas-offline/republica-dominicana
+
+Organice encuestas en República Dominicana relacionando provincias, Distrito Nacional, municipios y zonas de trabajo. Defina unidades y códigos antes de capturar para que las respuestas offline puedan revisarse y consolidarse con claridad.
+
+## Encuestas y caracterización offline en Ecuador
+
+https://www.controlg.co/encuestas-offline/ecuador
+
+Prepare censos operativos, diagnósticos y encuestas en Ecuador con provincia, cantón, parroquia y sectores definidos. Organice instrumentos y equipos para capturar sin señal y revisar respuestas georreferenciadas después de sincronizar.
+
+## Encuestas y caracterización offline en El Salvador
+
+https://www.controlg.co/encuestas-offline/el-salvador
+
+Configure encuestas en El Salvador con un catálogo que distinga municipios, distritos y sectores del proyecto. Prepare usuarios y formularios offline y establezca cómo se recibirán evidencias y observaciones desde coordinación.
+
+## Encuestas y caracterización offline en Guatemala
+
+https://www.controlg.co/encuestas-offline/guatemala
+
+Organice levantamientos en colonias, comunidades y lugares poblados de Guatemala con catálogos claros y captura offline. Prepare el instrumento, las referencias locales y el flujo de revisión con coordinación antes de salir.
+
+## Encuestas y caracterización offline en Honduras
+
+https://www.controlg.co/encuestas-offline/honduras
+
+Prepare levantamientos en Honduras con referencias de departamento, municipio y comunidad que el equipo pueda reconocer. Organice aldeas, caseríos o sectores según la fuente aprobada y valide la captura offline en sus dispositivos.
+
+## Encuestas y caracterización offline en México
+
+https://www.controlg.co/encuestas-offline/mexico
+
+Organice encuestas en localidades, colonias y zonas de trabajo de México sin depender de señal durante cada entrevista. Prepare claves territoriales, instrumentos y equipos para revisar respuestas, evidencias y avance desde coordinación.
+
+## Encuestas y caracterización offline en Nicaragua
+
+https://www.controlg.co/encuestas-offline/nicaragua
+
+Prepare caracterizaciones en Nicaragua con códigos territoriales, instrumentos y responsabilidades definidos. Si participan zonas y equipos distintos, acuerde un procedimiento común de captura offline, entrega de pendientes y revisión.
+
+## Encuestas y caracterización offline en Panamá
+
+https://www.controlg.co/encuestas-offline/panama
+
+Prepare encuestas en Panamá con referencias de provincia, comarca, distrito y corregimiento según el proyecto. Configure formularios, equipos y evidencias para capturar offline y entregar información con su contexto territorial.
+
+## Encuestas y caracterización offline en Paraguay
+
+https://www.controlg.co/encuestas-offline/paraguay
+
+Configure encuestas en Paraguay con departamentos, distritos y sectores del proyecto identificados. Prepare el instrumento y la selección territorial para que las visitas offline puedan consolidarse sin depender de nombres escritos de distintas formas.
+
+## Encuestas y caracterización offline en Perú
+
+https://www.controlg.co/encuestas-offline/peru
+
+Prepare encuestas y caracterizaciones en Perú con referencias de departamento, provincia, distrito y centro poblado. Configure instrumentos, profesionales y sincronización para distinguir los datos de cada visita y su contexto territorial.
+
+## Encuestas y caracterización offline en Puerto Rico
+
+https://www.controlg.co/encuestas-offline/puerto-rico
+
+Prepare encuestas en Puerto Rico con municipios, barrios y referencias de comunidad definidos para el estudio. Distinga lugar de entrevista y residencia y valide la captura offline con las tablets y evidencias del proyecto.
+
+## Encuestas y caracterización offline en Uruguay
+
+https://www.controlg.co/encuestas-offline/uruguay
+
+Prepare relevamientos en Uruguay conservando departamento, localidad y las zonas de intervención que necesite el proyecto. Organice formularios y responsables para capturar offline y entregar datos con referencias territoriales interpretables.
+
+## Encuestas y caracterización offline en Venezuela
+
+https://www.controlg.co/encuestas-offline/venezuela
+
+Prepare un levantamiento en Venezuela con catálogo territorial aprobado, formularios y evidencias ajustados al objetivo. Defina quién captura, quién revisa y cuándo se entregan los registros conservados offline en cada dispositivo.
+
+# Guías y recursos
+
+- [Caracterización empresarial: clientes y establecimientos](https://www.controlg.co/blog/caracterizacion-empresas-clientes-establecimientos): Organice una caracterización de clientes, proveedores o establecimientos con objetivos claros, formularios, equipos de campo y revisión de datos.
+
+- [Cómo crear encuestas con IA y validación humana](https://www.controlg.co/blog/crear-encuestas-ia-validacion-humana): Prepare cuestionarios con inteligencia artificial, revise sesgos, pruebe las preguntas y configure una encuesta de campo con Control G.
+
+- [Cómo diseñar encuestas claras y reducir sesgos](https://www.controlg.co/blog/disenar-encuestas-sin-sesgos): Revise preguntas dobles, lenguaje, opciones, periodos, escalas y selección antes de publicar una encuesta digital o iniciar trabajo de campo.
+
+- [Cómo planear 1.000 encuestas de campo en Bolívar](https://www.controlg.co/blog/plan-operativo-mil-encuestas-bolivar): Plan operativo para 1.000 encuestas en Bolívar: territorios, formulario, tablets, capacitación, captura offline, revisión y cierre de resultados.
+
+- [De las encuestas a ArcGIS: GeoJSON, capas y Shapefile](https://www.controlg.co/blog/encuestas-arcgis-geojson-shapefile): Defina un flujo verificable para llevar datos de campo a ArcGIS: identificadores, coordenadas, formatos, permisos y controles de calidad.
+
+- [Encuestas en colonias de Guatemala: guía de campo offline](https://www.controlg.co/blog/encuestas-colonias-guatemala-offline): Prepare encuestas en colonias y comunidades de Guatemala con catálogos territoriales, GPS, formularios offline y revisión por coordinación.
+
+- [Encuestas en México y Perú: catálogos territoriales](https://www.controlg.co/blog/catalogos-territoriales-mexico-peru-encuestas): Adapte catálogos de estado, municipio, localidad, departamento, provincia y distrito para consolidar encuestas de campo en México y Perú.
+
+- [Fotos y firmas sin internet: evidencias de campo](https://www.controlg.co/blog/evidencias-fotos-firmas-sin-internet): Prepare fotografías, firmas, archivos y GPS para un formulario offline, con instrucciones, manejo de excepciones y verificación de sincronización.
+
+- [Gobierno de datos para encuestas y caracterizaciones](https://www.controlg.co/blog/gobierno-datos-encuestas-campo): Defina responsables, permisos, versiones, calidad, exportaciones y cierre para gestionar datos de campo desde la captura hasta el informe.
+
+- [GPS sin internet para encuestas: preparación y precisión](https://www.controlg.co/blog/gps-sin-internet-encuestas-georreferenciadas): Diferencie GPS, mapa y sincronización. Prepare tablets para encuestas georreferenciadas offline y defina criterios de calidad de ubicación.
+
+- [Línea base y monitoreo offline para ONG y fundaciones](https://www.controlg.co/blog/ong-linea-base-monitoreo-offline): Prepare instrumentos de línea base y seguimiento para ONG: indicadores, familias, captura offline, calidad, consentimiento y entregas responsables.
+
+- [Mapa de calor, grupos y cobertura: cómo interpretarlos](https://www.controlg.co/blog/mapa-calor-cobertura-territorial-diferencias): Distinga concentración de capturas, agrupaciones y cumplimiento de metas para leer correctamente un mapa territorial de encuestas.
+
+- [Caracterización social rural en Perú con formularios offline](https://www.controlg.co/blog/caracterizacion-social-rural-peru): Cómo planear caracterizaciones rurales en Perú con formularios offline, evidencias, equipos territoriales y sincronización segura.
+
+- [Censos y diagnósticos territoriales offline en Ecuador](https://www.controlg.co/blog/censos-territoriales-offline-ecuador): Guía para censos, diagnósticos y visitas territoriales en Ecuador con formularios sin internet, GPS y evidencias.
+
+- [Cómo elegir software de campo para gobierno en Latinoamérica](https://www.controlg.co/blog/elegir-software-entidades-publicas-latinoamerica): Lista de criterios para seleccionar software de campo para alcaldías, municipios, gobernaciones y entidades públicas de Latinoamérica.
+
+- [Control G vs ArcGIS Survey123 para datos de campo](https://www.controlg.co/blog/control-g-vs-arcgis-survey123): Compare Control G y ArcGIS Survey123 en captura offline, mapas, formularios, roles y proyectos de caracterización territorial.
+
+- [Control G vs Fulcrum: captura offline y GIS en campo](https://www.controlg.co/blog/control-g-vs-fulcrum): Compare Control G y Fulcrum para datos offline, mapas, inspecciones, activos, caracterización social y gestión de equipos territoriales.
+
+- [Control G vs Jotform Mobile Forms: guía comparativa](https://www.controlg.co/blog/control-g-vs-jotform-mobile-forms): Compare Control G y Jotform Mobile Forms para formularios offline, GPS, firmas, asignaciones, integraciones y equipos institucionales.
+
+- [Control G vs KoboToolbox: comparación para trabajo de campo](https://www.controlg.co/blog/control-g-vs-kobotoolbox): Compare Control G y KoboToolbox para encuestas offline, caracterización social, formularios, asignaciones y seguimiento de equipos de campo.
+
+- [Control G vs ODK: ¿qué plataforma offline elegir?](https://www.controlg.co/blog/control-g-vs-odk): Comparación profesional entre Control G y ODK para formularios offline, servidores, roles, evidencias y levantamientos institucionales.
+
+- [Control G vs QuestionPro para encuestas de campo offline](https://www.controlg.co/blog/control-g-vs-questionpro): Compare Control G y QuestionPro en encuestas offline, análisis, auditoría, multimedia, asignaciones y caracterización institucional.
+
+- [Control G vs SurveyMonkey Anywhere: encuestas offline](https://www.controlg.co/blog/control-g-vs-surveymonkey-anywhere): Comparación entre Control G y SurveyMonkey Anywhere para encuestas sin internet, modo kiosco, equipos territoriales y seguimiento institucional.
+
+- [Control G vs Typeform: formularios online u offline](https://www.controlg.co/blog/control-g-vs-typeform): Compare Control G y Typeform para formularios, experiencia de respuesta, encuestas sin internet y operaciones de campo.
+
+- [Encuestas en terreno en Chile y Argentina: modo offline](https://www.controlg.co/blog/encuestas-terreno-chile-argentina): Criterios para ejecutar encuestas de terreno en Chile y Argentina con formularios offline, equipos móviles y sincronización posterior.
+
+- [Encuestas offline en zonas rurales: guía operativa](https://www.controlg.co/blog/encuestas-offline-zonas-rurales): Aprenda a planear encuestas offline en zonas rurales, preparar dispositivos, proteger borradores y sincronizar evidencias sin perder datos.
+
+- [Levantamiento de información en campo en México](https://www.controlg.co/blog/levantamiento-informacion-campo-mexico): Guía para digitalizar censos, visitas y levantamientos de información en municipios y comunidades de México con captura offline.
+
+- [Software de caracterización social en Colombia: guía 2026](https://www.controlg.co/blog/software-caracterizacion-social-colombia): Guía para elegir software de caracterización social en Colombia con formularios offline, enfoque territorial, evidencias y control de equipos.

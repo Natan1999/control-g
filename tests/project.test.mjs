@@ -55,7 +55,7 @@ test('el APK abre en login y la web conserva la landing', async () => {
   const apkBuild = await read('scripts/build-apk.sh')
   const vite = await read('vite.config.ts')
   assert.match(source, /Capacitor\.isNativePlatform\(\)/)
-  assert.match(source, /\? <Navigate to="\/login" replace \/>/)
+  assert.match(source, /Capacitor\.isNativePlatform\(\)[\s\S]*?\? <Navigate to=\{user \? defaultRoutes\[user.role as UserRole\] : '\/login'\} replace \/>/)
   assert.match(source, /: <LandingPage \/>/)
   assert.match(main, /window\.history\.replaceState\(null, '', '\/login'\)/)
   assert.match(activity, /bridge\.getLocalUrl\(\) \+ LOGIN_PATH/)
@@ -163,8 +163,11 @@ test('el cluster SEO regional cubre los 20 países con páginas estáticas y emb
   assert.match(marketing, /WHATSAPP_NUMBER = '573009010300'/)
   assert.match(app, /encuestas-offline\/:countrySlug/)
   assert.match(solution, /Soluciones por país/)
-  assert.match(generator, /country-landing-profiles\.json/)
-  assert.match(vercel, /encuestas-offline\/:country/)
+  assert.match(generator, /renderer\.SEO_PAGES/)
+  for (const profile of profiles) {
+    const countryRoute = JSON.parse(vercel).routes.find(route => route.dest === '/encuestas-offline/$1/index.html')
+    assert.ok(new RegExp(countryRoute.src).test(`/encuestas-offline/${profile.slug}`))
+  }
 })
 
 test('el blog SEO tiene contenido profesional, rutas estáticas y datos estructurados', async () => {
@@ -187,7 +190,8 @@ test('el blog SEO tiene contenido profesional, rutas estáticas y datos estructu
   assert.match(app, /path="\/blog"/)
   assert.match(app, /path="\/blog\/:slug"/)
   assert.match(seo, /buildBlogStructuredData/)
-  assert.match(generator, /BlogPosting/)
+  assert.match(await read('src/lib/blog.ts'), /BlogPosting/)
+  assert.match(await read('src/entry-marketing.tsx'), /buildBlogStructuredData/)
   assert.match(generator, /rss\.xml/)
   assert.match(index, /google-site-verification/)
 })
@@ -212,7 +216,8 @@ test('la navegación pública es coherente y el blog se administra desde Supabas
   assert.equal((landing.match(/Blog profesional/g) || []).length, 0, 'La cabecera no debe duplicar enlaces del blog')
   assert.match(blogIndex, /blogCover\(post\)/)
   assert.match(blogPost, /blogCover\(post\)/)
-  assert.match(generator, /absoluteBlogCover/)
+  assert.match(generator, /renderMarketingRoute/)
+  assert.match(await read('src/entry-marketing.tsx'), /blogCover/)
   assert.match(app, /path="blog\/new"/)
   assert.match(app, /path="blog\/edit\/:id"/)
   assert.match(sidebar, /Blog y SEO/)

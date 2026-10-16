@@ -1,0 +1,75 @@
+name: Control G SEO quality and discovery
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '15 13 * * 1' # Lunes a las 08:15 de Colombia.
+  workflow_dispatch:
+    inputs:
+      notify_indexnow:
+        description: Notificar a IndexNow las URLs de la revisión main publicada
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: control-g-seo-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Validate editorial content and generated HTML
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SOURCE_REVISION: ${{ github.sha }}
+    steps:
+      - name: Checkout revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, verified official ref
+      - name: Use Node.js 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4, verified official ref
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Run meaningful regression checks
+        run: npm test
+      - name: Build web and public SEO documents
+        run: npm run build
+      - name: Check generated SEO
+        run: npm run seo:check
+
+  production:
+    name: Check production and notify published changes
+    needs: quality
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout audited revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, verified official ref
+      - name: Use Node.js 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4, verified official ref
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Reject notifications from a branch other than main
+        if: github.event_name == 'workflow_dispatch' && inputs.notify_indexnow && github.ref != 'refs/heads/main'
+        run: |
+          echo 'La notificación debe ejecutarse desde main y coincidir con la revisión pública.'
+          exit 1
+      - name: Wait for the matching public release and notify IndexNow
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.notify_indexnow))
+        env:
+          EXPECTED_REVISION: ${{ github.sha }}
+        run: node scripts/submit-indexnow.mjs --submit --revision "$EXPECTED_REVISION"
+      - name: Audit live public pages
+        run: npm run seo:probe

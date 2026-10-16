@@ -1,22 +1,1010 @@
 [
-  { "code": "AR", "name": "Argentina", "slug": "argentina", "locale": "es-AR", "admin1": "provincias", "admin2": "municipios y departamentos", "institutions": "provincias, municipios y organismos públicos" },
-  { "code": "BO", "name": "Bolivia", "slug": "bolivia", "locale": "es-BO", "admin1": "departamentos", "admin2": "municipios", "institutions": "gobiernos departamentales y municipales" },
-  { "code": "BR", "name": "Brasil", "slug": "brasil", "locale": "pt-BR", "admin1": "estados", "admin2": "municípios", "institutions": "estados, municípios e organizações públicas" },
-  { "code": "CL", "name": "Chile", "slug": "chile", "locale": "es-CL", "admin1": "regiones", "admin2": "comunas", "institutions": "gobiernos regionales, municipalidades y servicios públicos" },
-  { "code": "CO", "name": "Colombia", "slug": "colombia", "locale": "es-CO", "admin1": "departamentos", "admin2": "municipios", "institutions": "gobernaciones, alcaldías y entidades públicas" },
-  { "code": "CR", "name": "Costa Rica", "slug": "costa-rica", "locale": "es-CR", "admin1": "provincias", "admin2": "cantones", "institutions": "municipalidades e instituciones públicas" },
-  { "code": "CU", "name": "Cuba", "slug": "cuba", "locale": "es-CU", "admin1": "provincias", "admin2": "municipios", "institutions": "entidades territoriales y organizaciones públicas" },
-  { "code": "DO", "name": "República Dominicana", "slug": "republica-dominicana", "locale": "es-DO", "admin1": "provincias", "admin2": "municipios", "institutions": "ayuntamientos e instituciones públicas" },
-  { "code": "EC", "name": "Ecuador", "slug": "ecuador", "locale": "es-EC", "admin1": "provincias", "admin2": "cantones", "institutions": "gobiernos autónomos descentralizados y entidades públicas" },
-  { "code": "SV", "name": "El Salvador", "slug": "el-salvador", "locale": "es-SV", "admin1": "departamentos", "admin2": "municipios y distritos", "institutions": "municipalidades e instituciones públicas" },
-  { "code": "GT", "name": "Guatemala", "slug": "guatemala", "locale": "es-GT", "admin1": "departamentos", "admin2": "municipios", "institutions": "municipalidades y entidades públicas" },
-  { "code": "HN", "name": "Honduras", "slug": "honduras", "locale": "es-HN", "admin1": "departamentos", "admin2": "municipios", "institutions": "municipalidades e instituciones públicas" },
-  { "code": "MX", "name": "México", "slug": "mexico", "locale": "es-MX", "admin1": "estados", "admin2": "municipios y alcaldías", "institutions": "gobiernos estatales, municipios y dependencias públicas" },
-  { "code": "NI", "name": "Nicaragua", "slug": "nicaragua", "locale": "es-NI", "admin1": "departamentos y regiones", "admin2": "municipios", "institutions": "alcaldías e instituciones públicas" },
-  { "code": "PA", "name": "Panamá", "slug": "panama", "locale": "es-PA", "admin1": "provincias y comarcas", "admin2": "distritos", "institutions": "municipios e instituciones públicas" },
-  { "code": "PY", "name": "Paraguay", "slug": "paraguay", "locale": "es-PY", "admin1": "departamentos", "admin2": "distritos", "institutions": "gobernaciones, municipalidades y entidades públicas" },
-  { "code": "PE", "name": "Perú", "slug": "peru", "locale": "es-PE", "admin1": "departamentos y regiones", "admin2": "provincias y distritos", "institutions": "gobiernos regionales, municipalidades y entidades públicas" },
-  { "code": "PR", "name": "Puerto Rico", "slug": "puerto-rico", "locale": "es-PR", "admin1": "regiones", "admin2": "municipios", "institutions": "municipios y agencias públicas" },
-  { "code": "UY", "name": "Uruguay", "slug": "uruguay", "locale": "es-UY", "admin1": "departamentos", "admin2": "municipios", "institutions": "intendencias, municipios y organismos públicos" },
-  { "code": "VE", "name": "Venezuela", "slug": "venezuela", "locale": "es-VE", "admin1": "estados", "admin2": "municipios", "institutions": "gobernaciones, alcaldías y organizaciones públicas" }
+  {
+    "code": "AR",
+    "name": "Argentina",
+    "slug": "argentina",
+    "locale": "es-AR",
+    "admin1": "provincias y Ciudad Autónoma de Buenos Aires",
+    "admin2": "municipios y unidades locales",
+    "institutions": "empresas, provincias, municipios y organizaciones",
+    "lead": "Configure relevamientos y encuestas de campo en Argentina con referencias territoriales que respeten la jurisdicción del proyecto. Separe sedes, hogares y visitas, prepare tablets offline y acuerde el corte que utilizará coordinación.",
+    "operationalSections": [
+      {
+        "title": "Partidos, departamentos y municipios con su definición",
+        "body": "El visor del IGN diferencia unidades territoriales y contempla provincias, CABA, departamentos o partidos y gobiernos locales. Revise qué nivel corresponde al informe y qué fuente lo define; no utilice «departamento» como etiqueta universal de una base nacional. Conserve el identificador y la versión del catálogo. Si el cliente organiza rutas comerciales o sectores sociales propios, manténgalos separados del territorio de referencia."
+      },
+      {
+        "title": "Relevamientos de establecimientos y varias sedes",
+        "body": "Para un proyecto empresarial, distinga la organización, sus establecimientos y cada visita. El mismo nombre comercial puede aparecer en varias direcciones y una sede puede recibir varias entrevistas. Prepare un listado con claves y situaciones de cierre, traslado o ausencia de informante. Configure evidencias que ayuden a reconocer la unidad y pruebe la exportación con quien consolidará los datos."
+      },
+      {
+        "title": "Un cierre coordinado entre jurisdicciones",
+        "body": "Acorde horarios de entrega, responsables de observaciones y reglas comunes de revisión cuando participen varios equipos. El formulario puede capturarse offline después de su preparación, pero el corte central solo incluye lo recibido. Revise pendientes por dispositivo y documente si una pregunta o una asignación cambió. Entregue diccionario y códigos para que las diferencias territoriales no desaparezcan detrás de una tabla uniforme."
+      }
+    ],
+    "localFaq": {
+      "question": "¿Podemos usar departamento como campo común para toda Argentina?",
+      "answer": "Revise primero la jurisdicción y el nivel que necesita. Conserve las unidades y códigos de la fuente territorial y documente cómo relacionará provincias, CABA, partidos, departamentos o gobiernos locales según el estudio."
+    },
+    "sources": [
+      {
+        "title": "Visor de unidades territoriales",
+        "publisher": "Instituto Geográfico Nacional de Argentina",
+        "url": "https://www.ign.gob.ar/ut/"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Encuestas en terreno en Chile y Argentina",
+        "path": "/blog/encuestas-terreno-chile-argentina"
+      },
+      {
+        "title": "Encuestas para empresas",
+        "path": "/encuestas-para-empresas"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "BO",
+    "name": "Bolivia",
+    "slug": "bolivia",
+    "locale": "es-BO",
+    "admin1": "departamentos",
+    "admin2": "municipios",
+    "institutions": "empresas, gobiernos departamentales, municipios y organizaciones",
+    "lead": "Prepare caracterizaciones en Bolivia distinguiendo departamento, municipio, comunidad y zona operativa. Organice instrumentos y visitas con responsables definidos y pruebe el guardado offline y la entrega posterior de evidencias.",
+    "operationalSections": [
+      {
+        "title": "Cartografía estadística y catastro cumplen funciones distintas",
+        "body": "El INE diferencia la cartografía catastral municipal de la cartografía estadística preparada para sus operaciones. Antes de usar una capa para delimitar asignaciones, documente fuente y propósito y confirme que sea apropiada para el proyecto. No presente un sector de encuesta como delimitación predial ni use una referencia estadística para resolver una controversia de límites. Mantenga las áreas propias como clasificación operativa."
+      },
+      {
+        "title": "Comunidad y unidad familiar antes del formulario",
+        "body": "Defina cómo se identificará la comunidad y qué representa cada respuesta: vivienda, hogar, integrante o visita. Revise lenguaje, persona informante y tratamiento de cambios de composición con el responsable del estudio. Si requiere distintas versiones del instrumento, pruebe que conserven el significado. Un código estable permite relacionar seguimiento sin crear otra familia cada vez que se realiza una visita."
+      },
+      {
+        "title": "Piloto geográfico y evidencias proporcionadas",
+        "body": "Incluya ubicación, fotografías o firma solo con una finalidad definida y una ruta de excepción. Pruebe las tablets en condiciones representativas y registre limitaciones del GPS. Prepare formularios y permisos con conexión y complete el ciclo offline, reapertura y recepción por coordinación. Para exportar al GIS del cliente, confirme referencia espacial, identificadores y estados incluidos antes de producir el informe."
+      }
+    ],
+    "localFaq": {
+      "question": "¿Una capa estadística sirve para delimitar un predio?",
+      "answer": "No debe asumirse. Revise propósito, fuente, escala y metodología. Un proyecto de caracterización puede utilizar referencias territoriales sin que estas sustituyan una delimitación técnica o catastral."
+    },
+    "sources": [
+      {
+        "title": "Catastro y cartografía estadística",
+        "publisher": "INE Bolivia",
+        "url": "https://www.ine.gob.bo/index.php/catastros-son-informacion-referencial-para-construir-las-areas-de-trabajo-para-la-actualizacion-cartografica-estadistica/"
+      },
+      {
+        "title": "Población y referencias territoriales",
+        "publisher": "INE Bolivia",
+        "url": "https://www.ine.gob.bo/index.php/estadisticas-sociales/poblacion-censo/"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Caracterización social",
+        "path": "/software-caracterizacion-social"
+      },
+      {
+        "title": "Intercambio con GIS",
+        "path": "/integracion-arcgis"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "BR",
+    "name": "Brasil",
+    "slug": "brasil",
+    "locale": "pt-BR",
+    "admin1": "estados e Distrito Federal",
+    "admin2": "municípios",
+    "institutions": "empresas, órgãos públicos e organizações sociais",
+    "lead": "Prepare pesquisas e caracterização de campo no Brasil com formulários offline, equipes e referências territoriais consistentes. Relacione respostas, evidências e localização ao objetivo do projeto e valide a experiência de coleta nos dispositivos previstos.",
+    "operationalSections": [
+      {
+        "title": "Códigos do IBGE e unidades do projeto",
+        "body": "O IBGE publica malhas territoriais e setores censitários com códigos e documentação. Preserve a versão da base, os identificadores e o significado de cada unidade antes de combinar mapas e respostas. Bairro, setor censitário e área operacional não devem ser tratados como equivalentes sem análise. Se o projeto criar uma divisão própria, mantenha-a como classificação explícita. Isso permite consolidar sem depender apenas de nomes e explicar qual referência foi usada em cada relatório."
+      },
+      {
+        "title": "Formulário em português e definições de coleta",
+        "body": "Revise termos, opções, moeda e períodos de referência com a equipe responsável pelo instrumento. Defina se cada resposta representa pessoa, domicílio, estabelecimento ou visita. Um texto traduzido não garante a mesma compreensão: teste casos comuns e exceções com os profissionais. Na demonstração, confirme a configuração do formulário e a experiência disponível para cada perfil, sem presumir que toda adaptação de interface ou integração já está incluída. O responsável aprova a versão que será usada em campo."
+      },
+      {
+        "title": "GPS offline e sincronização são etapas distintas",
+        "body": "Prepare conta, permissões e atribuições com conexão. Depois teste a coleta sem rede, o armazenamento após fechar o aplicativo e a sincronização quando a internet voltar. A posição depende do dispositivo e das condições de recepção; o mapa base pode precisar de conexão mesmo com coordenadas disponíveis. Defina critérios para localização ausente e pontos de entrega dos registros. A coordenação deve confirmar respostas e evidências recebidas, não apenas o número concluído em cada tablet."
+      },
+      {
+        "title": "Intercâmbio GIS com referência documentada",
+        "body": "Para combinar os dados com malhas e serviços, verifique sistema de referência, ordem das coordenadas e atributos necessários. Teste uma exportação em seu ambiente ArcGIS ou QGIS e compare contagens e locais conhecidos. Publicar ou atualizar um serviço exige destino, esquema, autenticação e permissões configurados. Um mapa de calor mostra concentração conforme sua configuração; cobertura exige meta ou referência definida. Cada entrega deve indicar filtros, data de corte e limites para interpretar o território."
+      }
+    ],
+    "localFaq": {
+      "question": "O setor censitário pode ser usado como se fosse um bairro?",
+      "answer": "Não presuma equivalência. Confira definições e versão da base do IBGE e documente a relação utilizada pelo projeto. Áreas de trabalho próprias devem permanecer identificadas como unidades operacionais."
+    },
+    "sources": [
+      {
+        "title": "Malhas territoriais",
+        "publisher": "IBGE",
+        "url": "https://www.ibge.gov.br/geociencias/organizacao-do-territorio/malhas-territoriais/15774-malhas.html"
+      },
+      {
+        "title": "Malhas de setores censitários",
+        "publisher": "IBGE",
+        "url": "https://www.ibge.gov.br/geociencias/organizacao-do-territorio/estrutura-territorial/26565-malhas-de-setores-censitarios-divisoes-intramunicipais.html"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Guia em espanhol: dados de campo e ArcGIS",
+        "path": "/blog/encuestas-arcgis-geojson-shapefile"
+      },
+      {
+        "title": "Guia em espanhol: GPS sem internet",
+        "path": "/blog/gps-sin-internet-encuestas-georreferenciadas"
+      },
+      {
+        "title": "Solução para empresas, em espanhol",
+        "path": "/encuestas-para-empresas"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "CL",
+    "name": "Chile",
+    "slug": "chile",
+    "locale": "es-CL",
+    "admin1": "regiones",
+    "admin2": "comunas",
+    "institutions": "empresas, municipalidades, gobiernos regionales y organizaciones",
+    "lead": "Organice encuestas en terreno en Chile por región, comuna y sectores definidos para el proyecto. Relacione formularios, profesionales y metas con una cartografía documentada y valide el flujo offline en las tablets del equipo.",
+    "operationalSections": [
+      {
+        "title": "Comuna, localidad y sector de trabajo",
+        "body": "Los geodatos del INE ofrecen cartografía y documentación para comprender la referencia utilizada. Mantenga región, comuna y las subdivisiones necesarias sin confundir una localidad con toda la comuna. Si un equipo utiliza sectores propios, asigne códigos y fuente. Antes de cruzar respuestas con una capa, revise fecha y definición de la unidad, especialmente cuando compare resultados de distintos periodos."
+      },
+      {
+        "title": "Cuestionarios para encuestas en terreno",
+        "body": "Pruebe vocabulario y opciones con profesionales que aplicarán el instrumento y personas similares a la población. Defina periodos, unidad de respuesta y reglas ante rechazo o ausencia de informante. Si el proyecto incluye inspecciones o establecimientos, separe observación técnica de respuesta declarada. Una revisión humana debe aprobar la versión antes de que se descargue en los dispositivos."
+      },
+      {
+        "title": "Metas y lectura del mapa por comuna",
+        "body": "Para comparar avance, indique si cuenta respuestas capturadas, recibidas o aceptadas y cuál es la meta. Una comuna con más puntos puede tener más jornadas o unidades asignadas. Use calor para explorar concentración y tablas para verificar resultados. Al cierre compruebe pendientes de sincronización y entregue filtros, fecha de corte y registros sin ubicación junto con las exportaciones del proyecto."
+      }
+    ],
+    "localFaq": {
+      "question": "¿Podemos comparar comunas solo por cantidad de puntos?",
+      "answer": "No basta para evaluar cobertura o rendimiento. Debe conocer unidades asignadas, jornadas, filtros, estado de revisión y la referencia utilizada para comparar el avance de cada territorio."
+    },
+    "sources": [
+      {
+        "title": "Geodatos abiertos",
+        "publisher": "Instituto Nacional de Estadísticas de Chile",
+        "url": "https://www.ine.gob.cl/herramientas/portal-de-mapas/geodatos-abiertos"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Encuestas en terreno",
+        "path": "/blog/encuestas-terreno-chile-argentina"
+      },
+      {
+        "title": "Calor y cobertura territorial",
+        "path": "/blog/mapa-calor-cobertura-territorial-diferencias"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "CO",
+    "name": "Colombia",
+    "slug": "colombia",
+    "locale": "es-CO",
+    "admin1": "departamentos",
+    "admin2": "municipios",
+    "institutions": "empresas, gobernaciones, alcaldías, corporaciones y ONG",
+    "lead": "Prepare caracterizaciones y encuestas en barrios, veredas y corregimientos de Colombia con formularios offline, equipos asignados y revisión territorial. Organice códigos de departamento y municipio, evidencias y puntos de sincronización según el operativo.",
+    "operationalSections": [
+      {
+        "title": "DIVIPOLA y sectores del proyecto",
+        "body": "Use los códigos DIVIPOLA del DANE para relacionar departamentos, municipios y centros poblados cuando correspondan al estudio. Mantenga aparte los barrios, veredas o sectores definidos por el proyecto y conserve su código interno, nombre y fuente. Un catálogo local no debe presentarse como oficial por aparecer en un mapa. Si el operativo modifica una zona, documente la fecha y qué versión utilizará el informe. Esa separación permite consolidar sin depender de nombres escritos de distintas maneras."
+      },
+      {
+        "title": "Barrios de Cartagena y trabajo rural en Bolívar",
+        "body": "Un ejemplo de implementación puede combinar entrevistas en barrios de Cartagena y sectores rurales de Bolívar. Defina unidades, accesos y jornadas con el equipo local antes de establecer metas. Prepare las tablets y asignaciones con conexión y programe la entrega de pendientes al volver a un punto con internet. El piloto debe incluir una captura con GPS, una excepción autorizada sin posición y una evidencia. Es un escenario de demostración, no una afirmación de cobertura ni un caso de cliente."
+      },
+      {
+        "title": "De las respuestas a las capas GIS",
+        "body": "Revise qué representa cada punto: entrevista, vivienda, establecimiento o visita. Compare respuestas recibidas y respuestas localizadas antes de interpretar el mapa. Para cruzar con cartografía del DANE u otra fuente, conserve fecha, referencia espacial y código territorial. Las salidas compatibles pueden continuar en ArcGIS o QGIS; una publicación recurrente necesita destino y permisos configurados. No interprete calor como cobertura poblacional: una meta de encuestas por sector mide una cosa diferente del total de habitantes caracterizados."
+      },
+      {
+        "title": "Un alcance para empresas, entidades públicas y ONG",
+        "body": "Configure el instrumento para la decisión real de la organización: caracterización, inspección, diagnóstico o seguimiento. Acorde quién aprueba preguntas, qué evidencias se piden y qué recibirá coordinación. La implementación debe definir formularios, profesionales, tablets, capacitación, duración y soporte. El personal de encuesta, transporte e informes especializados requieren un alcance explícito. Al cerrar, confirme que no queden registros locales y entregue diccionario, fecha de corte y límites de interpretación junto con los archivos acordados."
+      }
+    ],
+    "localFaq": {
+      "question": "¿Mil encuestas en Bolívar representan a todo el departamento?",
+      "answer": "La cantidad no determina por sí sola representatividad. Deben definirse población, selección, distribución y tratamiento de no respuesta. Si el objetivo es operativo, el informe debe describir a quiénes y dónde se entrevistó sin ampliar la conclusión sin sustento."
+    },
+    "sources": [
+      {
+        "title": "Geovisor de codificación DIVIPOLA",
+        "publisher": "DANE",
+        "url": "https://geoportal.dane.gov.co/geovisores/territorio/consulta-divipola-division-politico-administrativa-de-colombia/"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Caracterización en Colombia",
+        "path": "/caracterizacion-colombia"
+      },
+      {
+        "title": "Plan de 1.000 encuestas en Bolívar",
+        "path": "/blog/plan-operativo-mil-encuestas-bolivar"
+      },
+      {
+        "title": "Encuestas georreferenciadas",
+        "path": "/encuestas-georreferenciadas"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "CR",
+    "name": "Costa Rica",
+    "slug": "costa-rica",
+    "locale": "es-CR",
+    "admin1": "provincias",
+    "admin2": "cantones",
+    "institutions": "empresas, municipalidades, instituciones públicas y organizaciones",
+    "lead": "Prepare encuestas en Costa Rica con provincia, cantón, distrito y referencias locales coherentes. Configure preguntas y evidencias según el objetivo y pruebe la captura offline antes de distribuir el operativo a todo el equipo.",
+    "operationalSections": [
+      {
+        "title": "Distrito y localidad dentro del catálogo",
+        "body": "La consulta territorial del INEC permite buscar por provincia, cantón, distrito o localidad. Conserve la relación entre niveles y la fecha de la fuente. No dependa solo del texto de una dirección o nombre de localidad para consolidar. Prepare una selección que el profesional pueda utilizar en tablet y un mecanismo de excepción si la referencia no aparece en el listado aprobado."
+      },
+      {
+        "title": "Servicios, establecimientos o hogares",
+        "body": "Un diagnóstico municipal y una visita empresarial pueden compartir ubicación y evidencias, pero necesitan unidades diferentes. Defina si el registro describe un servicio, establecimiento, persona u hogar y qué decisión sustentará. Si hay varias visitas, mantenga la relación con la unidad original. Acorde qué preguntas son obligatorias y cómo registrar no aplica sin forzar datos que no correspondan."
+      },
+      {
+        "title": "Lectura territorial con referencias compatibles",
+        "body": "Compruebe la referencia espacial de las capas y de los puntos antes de combinarlos. El mapa puede apoyar revisión de zonas y distribución de visitas; para cobertura se necesitan metas o denominadores. Complete un piloto offline con sincronización y exportación y confirme que la coordinación pueda revisar el resultado. Los archivos finales deben conservar fecha, filtros y significado de los códigos usados."
+      }
+    ],
+    "localFaq": {
+      "question": "¿Debemos guardar cantón y distrito por separado?",
+      "answer": "Sí cuando ambos niveles sean necesarios para el estudio. Utilice un catálogo con relación entre niveles y conserve códigos y nombres para evitar ambigüedad en consolidación y análisis."
+    },
+    "sources": [
+      {
+        "title": "Consulta de división territorial nacional",
+        "publisher": "INEC Costa Rica",
+        "url": "https://sistemas.inec.cr/sitiosen/sitiosen/FrmGeografico.aspx"
+      },
+      {
+        "title": "Geoportal estadístico",
+        "publisher": "INEC Costa Rica",
+        "url": "https://geoportal.inec.go.cr/"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Encuestas georreferenciadas",
+        "path": "/encuestas-georreferenciadas"
+      },
+      {
+        "title": "Gobierno de datos",
+        "path": "/blog/gobierno-datos-encuestas-campo"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "CU",
+    "name": "Cuba",
+    "slug": "cuba",
+    "locale": "es-CU",
+    "admin1": "provincias",
+    "admin2": "municipios",
+    "institutions": "empresas, entidades territoriales y organizaciones",
+    "lead": "Prepare un proyecto de encuestas en Cuba con instrumentos, cuentas y dispositivos revisados antes de la jornada. Defina sectores, responsables y momentos de entrega para que la captura offline termine en datos recibidos y verificables.",
+    "operationalSections": [
+      {
+        "title": "Un catálogo aprobado por el proyecto",
+        "body": "Acuerde con la organización la lista territorial que utilizará y conserve su fuente y fecha. Mantenga provincia, municipio y sectores de trabajo con identificadores separados según el alcance validado. Si la organización usa referencias propias, descríbalas como operativas. No prometa una carga completa de cualquier catálogo sin revisar antes el archivo, sus campos y su compatibilidad con el formulario."
+      },
+      {
+        "title": "Preparación y sincronización por jornadas",
+        "body": "Para un proyecto que prevé periodos sin conectividad, prepare asignaciones y permisos con anticipación y defina dónde se revisará la entrega. El piloto debe reproducir la cantidad prevista de entrevistas y evidencias en el dispositivo. Compruebe reapertura y posterior recepción por coordinación. Evite que el cierre dependa de una sola persona o de equipos con pendientes sin identificar."
+      },
+      {
+        "title": "Versiones estables durante la captura",
+        "body": "Acorde cómo se actualizarán formularios y catálogos si los profesionales trabajan con asignaciones descargadas. Documente cambios y revise si afectan datos anteriores. Defina un corte para informes y exportaciones y compruebe que todos entiendan qué respuestas incluye. La demostración debe confirmar disponibilidad del servicio, dispositivos y alcance de implementación para el caso concreto antes de comprometer una operación."
+      }
+    ],
+    "localFaq": {
+      "question": "¿Se puede iniciar un operativo sin preparar las cuentas y formularios?",
+      "answer": "La preparación inicial requiere conexión y validación de acceso. Antes de salir, compruebe los dispositivos y el material disponible localmente y pruebe la recepción posterior en las condiciones del proyecto."
+    },
+    "sources": [],
+    "relatedLinks": [
+      {
+        "title": "Preparación de encuestas offline",
+        "path": "/encuestas-offline"
+      },
+      {
+        "title": "Evidencias y sincronización",
+        "path": "/blog/evidencias-fotos-firmas-sin-internet"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "DO",
+    "name": "República Dominicana",
+    "slug": "republica-dominicana",
+    "locale": "es-DO",
+    "admin1": "provincias y Distrito Nacional",
+    "admin2": "municipios y distritos municipales",
+    "institutions": "empresas, ayuntamientos, instituciones y organizaciones",
+    "lead": "Organice encuestas en República Dominicana relacionando provincias, Distrito Nacional, municipios y zonas de trabajo. Defina unidades y códigos antes de capturar para que las respuestas offline puedan revisarse y consolidarse con claridad.",
+    "operationalSections": [
+      {
+        "title": "Provincia y Distrito Nacional con la referencia adecuada",
+        "body": "La división territorial publicada por la ONE permite revisar códigos y niveles para el estudio. Mantenga el año de la fuente y no agrupe por coincidencia de nombres. Diferencie municipio, distrito municipal y sector operativo cuando sean necesarios. Si el cliente utiliza barrios o parajes propios, documente su relación sin presentarlos como una actualización oficial del catálogo."
+      },
+      {
+        "title": "Lugar de entrevista y residencia son datos diferentes",
+        "body": "Un proyecto puede entrevistar en hogares, establecimientos o puntos de atención. Defina qué representa el GPS y qué territorio describe cada pregunta. Una persona atendida fuera de su residencia no debe aparecer automáticamente como residente del lugar de entrevista. Prepare instrucciones y un ejemplo durante la capacitación para que el equipo conserve ambos significados."
+      },
+      {
+        "title": "Entregas con corte y estado definidos",
+        "body": "El coordinador debe distinguir capturas locales, recibidas y revisadas. Prepare horarios de sincronización y un procedimiento para evidencias pendientes. Al exportar, conserve fecha de corte, filtros y catálogo utilizado. Si compara zonas, indique si el indicador mide cumplimiento de una meta o condiciones de una población. El mapa ayuda a explorar, pero no reemplaza la definición del denominador."
+      }
+    ],
+    "localFaq": {
+      "question": "¿Municipio y distrito municipal pueden compartir el mismo campo sin aclaración?",
+      "answer": "Conviene conservar el nivel y código correspondiente de la fuente utilizada. Un agrupamiento del proyecto debe documentarse para evitar que nombres similares o niveles distintos se interpreten como la misma unidad."
+    },
+    "sources": [
+      {
+        "title": "División territorial 2021",
+        "publisher": "Oficina Nacional de Estadística",
+        "url": "https://www.one.gob.do/publicaciones/2021/division-territorial-2021/"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Mapa de calor y cobertura",
+        "path": "/blog/mapa-calor-cobertura-territorial-diferencias"
+      },
+      {
+        "title": "Encuestas para empresas",
+        "path": "/encuestas-para-empresas"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "EC",
+    "name": "Ecuador",
+    "slug": "ecuador",
+    "locale": "es-EC",
+    "admin1": "provincias",
+    "admin2": "cantones",
+    "institutions": "empresas, gobiernos autónomos descentralizados y organizaciones",
+    "lead": "Prepare censos operativos, diagnósticos y encuestas en Ecuador con provincia, cantón, parroquia y sectores definidos. Organice instrumentos y equipos para capturar sin señal y revisar respuestas georreferenciadas después de sincronizar.",
+    "operationalSections": [
+      {
+        "title": "Catálogo de provincia, cantón y parroquia",
+        "body": "El INEC publica referencias y cartografía para organizar información territorial. Revise la versión de la clasificación geográfica que usará y conserve códigos, niveles y fuente. Si el operativo distingue parroquias urbanas y rurales, defina la selección y pruebe nombres similares. Una zona creada para distribuir encuestas debe permanecer identificada como sector del proyecto y no sustituir silenciosamente la referencia administrativa."
+      },
+      {
+        "title": "Diagnóstico e inventario requieren unidades distintas",
+        "body": "Si un GAD, empresa u organización necesita combinar hogares, equipamientos y servicios, prepare instrumentos o identificadores que preserven cada unidad. Una visita a un equipamiento no equivale a una respuesta de hogar. Relacione eventos de seguimiento sin duplicar unidades. Revise qué evidencia es pertinente para cada caso y si una ubicación ausente puede registrarse como excepción autorizada."
+      },
+      {
+        "title": "Capas y datos con una referencia comprobada",
+        "body": "Pruebe una muestra de cartografía y de exportación en el ambiente GIS del cliente. Compruebe conteos, ubicación conocida y campos incluidos antes de compartir resultados. La conexión a un servicio necesita configuración de destino y permisos; el trabajo offline de campo no implica actualizarlo sin conexión. El informe debe incluir fecha de corte y explicar respuestas que no pueden ubicarse en el mapa."
+      }
+    ],
+    "localFaq": {
+      "question": "¿Podemos utilizar sectores propios además de cantones y parroquias?",
+      "answer": "Sí, como unidades operativas explícitas, con códigos y relación documentada. Conserve la fuente territorial de referencia para que los informes puedan distinguir la división del proyecto de la clasificación utilizada."
+    },
+    "sources": [
+      {
+        "title": "Cartografía digital",
+        "publisher": "INEC Ecuador",
+        "url": "https://aplicaciones3.ecuadorencifras.gob.ec/sbi-war/paginas/cartografia_2.xhtml"
+      },
+      {
+        "title": "Marco geoestadístico 2022",
+        "publisher": "INEC Ecuador",
+        "url": "https://idgn.ecuadorencifras.gob.ec/server/rest/services/Hosted/Marco_Geoestadistico_2022/FeatureServer"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Diagnósticos territoriales en Ecuador",
+        "path": "/blog/censos-territoriales-offline-ecuador"
+      },
+      {
+        "title": "Interoperabilidad con ArcGIS",
+        "path": "/integracion-arcgis"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "SV",
+    "name": "El Salvador",
+    "slug": "el-salvador",
+    "locale": "es-SV",
+    "admin1": "departamentos",
+    "admin2": "municipios y distritos",
+    "institutions": "empresas, municipalidades, instituciones y organizaciones",
+    "lead": "Configure encuestas en El Salvador con un catálogo que distinga municipios, distritos y sectores del proyecto. Prepare usuarios y formularios offline y establezca cómo se recibirán evidencias y observaciones desde coordinación.",
+    "operationalSections": [
+      {
+        "title": "No mezcle catálogos municipales de distintas fechas",
+        "body": "Antes de cargar un listado, revise qué versión utiliza el cliente y cómo representa municipios y distritos. El geoportal del BCR y su cartografía censal ofrecen referencias para documentar la fuente. Si debe relacionar una base anterior con otra, prepare una tabla de correspondencia revisada y conserve ambas claves. No resuelva cambios territoriales únicamente buscando nombres parecidos."
+      },
+      {
+        "title": "Colonias y segmentos de visita",
+        "body": "Defina sectores reconocibles para el personal y cómo se relacionan con el distrito. Si la asignación usa colonias o segmentos propios, mantenga código y responsable de aprobación. Pruebe qué hacer ante un lugar fuera del listado y una entrevista en borde de sector. El formulario debe permitir registrar esa situación para revisión en vez de obligar a elegir una opción incorrecta."
+      },
+      {
+        "title": "Identificación del equipo y revisión",
+        "body": "Acorde cómo presenta el profesional el proyecto y cómo una persona puede verificar a quién entrega información. Utilice cuentas individuales y formularios asignados. En el piloto, revise una captura offline, una sincronización y una devolución con observación concreta. Confirme que el corte de resultados diferencie pendientes de conectividad y respuestas revisadas para no cerrar con registros fuera de la entrega."
+      }
+    ],
+    "localFaq": {
+      "question": "¿Podemos reutilizar una lista municipal antigua sin revisión?",
+      "answer": "Debe revisar versión y niveles y preparar correspondencias si el proyecto necesita relacionar catálogos diferentes. Conservar la fecha y claves evita agrupar incorrectamente municipios, distritos y sectores operativos."
+    },
+    "sources": [
+      {
+        "title": "Geoportal estadístico",
+        "publisher": "Banco Central de Reserva de El Salvador",
+        "url": "https://geoportal.bcr.gob.sv/"
+      },
+      {
+        "title": "Cartografía censal",
+        "publisher": "Oficina Nacional de Estadística y Censos",
+        "url": "https://onec.bcr.gob.sv/servicios/cartografia-censal/"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Levantamiento en campo",
+        "path": "/levantamiento-informacion-campo"
+      },
+      {
+        "title": "Gobierno de datos",
+        "path": "/blog/gobierno-datos-encuestas-campo"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "GT",
+    "name": "Guatemala",
+    "slug": "guatemala",
+    "locale": "es-GT",
+    "admin1": "departamentos",
+    "admin2": "municipios",
+    "institutions": "empresas, municipalidades, fundaciones y organizaciones sociales",
+    "lead": "Organice levantamientos en colonias, comunidades y lugares poblados de Guatemala con catálogos claros y captura offline. Prepare el instrumento, las referencias locales y el flujo de revisión con coordinación antes de salir.",
+    "operationalSections": [
+      {
+        "title": "Nombre local y lugar poblado no siempre coinciden",
+        "body": "El INE publica información del censo 2018 a nivel de lugar poblado y advierte que algunos nombres de autoidentificación pueden diferir de los oficiales. Mantenga la fuente y fecha del listado y relacione las colonias o comunidades del operativo con departamento y municipio. No fuerce una equivalencia por coincidencia de texto. Prepare un código interno para referencias propias y un procedimiento de revisión si el profesional no encuentra la opción correcta."
+      },
+      {
+        "title": "Sectores reconocibles para el equipo",
+        "body": "Defina límites operativos y puntos de referencia con el responsable local. Una capa, croquis o listado puede ayudar, siempre que el equipo comprenda qué representa y qué versión se utiliza. Acorde qué hacer en bordes de sector y lugares no incluidos. Si el cuestionario requiere otros idiomas o formas de dirección, revise la redacción con personas preparadas y pruebe comprensión. El software conserva una configuración; el proyecto debe asegurar que esa configuración tenga sentido en terreno."
+      },
+      {
+        "title": "Entrevistas y evidencias sin conexión permanente",
+        "body": "Prepare las cuentas y formularios con acceso a internet. En el piloto complete entrevistas offline, registre una evidencia autorizada y compruebe el guardado después de cerrar la aplicación. Si necesita GPS, pruebe precisión y excepciones en los dispositivos previstos y no prometa un resultado fijo en cualquier entorno. Programe sincronización y verifique desde coordinación que respuestas y archivos llegaron antes de cerrar una jornada o devolver una tablet."
+      },
+      {
+        "title": "Resultados que conserven su referencia territorial",
+        "body": "El informe debe explicar qué sectores fueron visitados, qué registros se incluyeron y cuántos carecen de coordenadas. La concentración de capturas en el mapa no demuestra por sí sola cobertura de toda la comunidad. Al combinar con cartografía pública, documente diferencias de fecha y definición. Una demostración privada con colonias ficticias permite evaluar roles y visualización antes de usar información real; el piloto del cliente confirma su instrumento, catálogos y entregables."
+      }
+    ],
+    "localFaq": {
+      "question": "¿Una colonia del proyecto se puede tratar como un lugar poblado oficial?",
+      "answer": "Solo después de revisar la fuente y su relación territorial. Mantenga referencias locales y oficiales diferenciadas y documente cualquier equivalencia que el proyecto utilice en sus asignaciones o informes."
+    },
+    "sources": [
+      {
+        "title": "Información censal a nivel de lugar poblado",
+        "publisher": "INE Guatemala",
+        "url": "https://www.ine.gob.gt/2024/02/20/informacion-del-xii-censo-nacional-de-poblacion-y-vii-de-vivienda-2018-a-nivel-de-lugar-poblado/"
+      },
+      {
+        "title": "Cartografía",
+        "publisher": "INE Guatemala",
+        "url": "https://www.ine.gob.gt/publicaciones/cartografia/"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Encuestas en colonias de Guatemala",
+        "path": "/blog/encuestas-colonias-guatemala-offline"
+      },
+      {
+        "title": "Encuestas para ONG",
+        "path": "/encuestas-para-ong"
+      },
+      {
+        "title": "GPS sin internet",
+        "path": "/blog/gps-sin-internet-encuestas-georreferenciadas"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "HN",
+    "name": "Honduras",
+    "slug": "honduras",
+    "locale": "es-HN",
+    "admin1": "departamentos",
+    "admin2": "municipios",
+    "institutions": "empresas, municipalidades, fundaciones e instituciones",
+    "lead": "Prepare levantamientos en Honduras con referencias de departamento, municipio y comunidad que el equipo pueda reconocer. Organice aldeas, caseríos o sectores según la fuente aprobada y valide la captura offline en sus dispositivos.",
+    "operationalSections": [
+      {
+        "title": "Aldea y caserío con fuente y versión",
+        "body": "La biblioteca del INE contiene materiales censales con desagregaciones por aldeas y caseríos. Si usa esos listados, compruebe año, cobertura y correspondencia con el catálogo del proyecto; una publicación histórica no acredita por sí sola la situación actual. Conserve código, nombre y municipio y una opción para excepciones. Evite que cada profesional cree variantes para el mismo lugar."
+      },
+      {
+        "title": "Visitas a hogares y referentes comunitarios",
+        "body": "Defina si la entrevista caracteriza a un hogar, a una persona o recoge la apreciación de un referente sobre la comunidad. No consolide esas respuestas como si provinieran de la misma unidad. Prepare instrucciones sobre quién puede responder y cómo se registra una visita no completada. Si el proyecto tiene seguimiento, mantenga la relación con la unidad sin crear otra familia por evento."
+      },
+      {
+        "title": "Jornada y sincronización acordadas con el equipo",
+        "body": "Planifique accesos y puntos de conexión con quienes conocen el operativo. Prepare cuentas y formularios antes de desplazarse y pruebe el ciclo completo con fotos y GPS si se requieren. Un corte de oficina debe indicar si hay datos pendientes en tablets. Antes de entregar resultados, revise observaciones y compare conteos de respuestas y evidencias recibidas."
+      }
+    ],
+    "localFaq": {
+      "question": "¿Un catálogo histórico del INE puede cargarse como si fuera actual?",
+      "answer": "No sin revisar año, propósito y correspondencia con el alcance presente. Documente la fuente y valide con el responsable del proyecto las referencias necesarias para las asignaciones y el informe."
+    },
+    "sources": [
+      {
+        "title": "Biblioteca de censos y materiales por aldeas",
+        "publisher": "INE Honduras",
+        "url": "https://repositorio.ine.gob.hn/browse/subject?scope=4d12b9c7-2159-435f-a344-f1ff7c7be461&value=Aldeas"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Encuestas para ONG",
+        "path": "/encuestas-para-ong"
+      },
+      {
+        "title": "Preparación de evidencias offline",
+        "path": "/blog/evidencias-fotos-firmas-sin-internet"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "MX",
+    "name": "México",
+    "slug": "mexico",
+    "locale": "es-MX",
+    "admin1": "estados",
+    "admin2": "municipios y alcaldías",
+    "institutions": "empresas, gobiernos estatales, municipios, organizaciones y ONG",
+    "lead": "Organice encuestas en localidades, colonias y zonas de trabajo de México sin depender de señal durante cada entrevista. Prepare claves territoriales, instrumentos y equipos para revisar respuestas, evidencias y avance desde coordinación.",
+    "operationalSections": [
+      {
+        "title": "Claves INEGI y referencias de colonia",
+        "body": "El catálogo del INEGI permite consultar claves de áreas geoestadísticas estatales, municipales y localidades. Conserve clave, nombre y fecha del catálogo. Si el operativo necesita colonia o manzana, defina ese nivel y su fuente en vez de usarlo como sinónimo de localidad. En formularios de campo, una referencia conocida por el entrevistado puede ser útil sin sustituir el código necesario para consolidar. Pruebe nombres repetidos y casos de ubicación no encontrada antes de publicar."
+      },
+      {
+        "title": "Sede, establecimiento y visita comercial",
+        "body": "Una empresa puede levantar información de establecimientos, proveedores o puntos de servicio en varios municipios. Distinga la unidad que caracteriza de la visita: un establecimiento puede recibir varios contactos. Si parte de un listado, acuerde cómo registrar cierre, traslado o ausencia de informante. Configure evidencias proporcionadas al objetivo y no convierta cada nueva entrevista en un cliente distinto. El piloto debe terminar con una exportación que el equipo empresarial pueda relacionar con sus identificadores."
+      },
+      {
+        "title": "Catálogos y formulario disponibles en tablet",
+        "body": "Compruebe que el profesional pueda abrir sus asignaciones y buscar el territorio mientras está desconectado. Un catálogo amplio necesita una experiencia de selección que funcione en pantalla, sin forzar a escribir variantes de nombres. Use casos ficticios de localidad, colonia y referencia de dirección durante la capacitación. Confirme permisos de cámara y ubicación y el guardado después de cerrar la app. El resultado se entrega cuando la respuesta y sus evidencias llegan a coordinación, no solo al terminar la entrevista."
+      },
+      {
+        "title": "Consolidación entre entidades federativas",
+        "body": "Si el proyecto agrupa varias entidades, mantenga códigos e identificadores estables y un diccionario de variables. Adapte moneda, teléfono y periodos de referencia al instrumento aprobado. Compare zonas con las mismas reglas de inclusión y distinga metas operativas de tasas poblacionales. Para intercambiar con GIS, revise referencia espacial y atributos, y valide la conexión externa cuando forme parte del alcance. La configuración regional debe preservar el contexto de cada unidad, no limitarse a cambiar el nombre del país."
+      }
+    ],
+    "localFaq": {
+      "question": "¿La colonia reemplaza la clave de localidad en la base?",
+      "answer": "No debe asumirse. Son referencias que necesitan definición y fuente. Mantenga los campos y códigos adecuados al estudio y documente su relación para no consolidar como equivalentes lugares o niveles diferentes."
+    },
+    "sources": [
+      {
+        "title": "Catálogo único de claves geoestadísticas",
+        "publisher": "INEGI",
+        "url": "https://www.inegi.org.mx/app/ageeml/default.html"
+      },
+      {
+        "title": "Servicio web del catálogo único",
+        "publisher": "INEGI",
+        "url": "https://www.inegi.org.mx/servicios/catalogounico.html"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Levantamiento de información en México",
+        "path": "/blog/levantamiento-informacion-campo-mexico"
+      },
+      {
+        "title": "Catálogos de México y Perú",
+        "path": "/blog/catalogos-territoriales-mexico-peru-encuestas"
+      },
+      {
+        "title": "Encuestas para empresas",
+        "path": "/encuestas-para-empresas"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "NI",
+    "name": "Nicaragua",
+    "slug": "nicaragua",
+    "locale": "es-NI",
+    "admin1": "departamentos y regiones",
+    "admin2": "municipios",
+    "institutions": "empresas, alcaldías, instituciones y organizaciones sociales",
+    "lead": "Prepare caracterizaciones en Nicaragua con códigos territoriales, instrumentos y responsabilidades definidos. Si participan zonas y equipos distintos, acuerde un procedimiento común de captura offline, entrega de pendientes y revisión.",
+    "operationalSections": [
+      {
+        "title": "Una referencia territorial con año identificado",
+        "body": "INIDE publica caracterizaciones y tabulados municipales de distintas operaciones. Seleccione la fuente adecuada al estudio y conserve su año. Si incorpora departamentos, regiones y municipios del listado del cliente, documente las relaciones sin suponer que cualquier tabla histórica sirve como catálogo vigente. Mantenga los sectores de intervención separados de la referencia y una ruta para resolver lugares no encontrados."
+      },
+      {
+        "title": "Coordinación entre instrumentos y equipos",
+        "body": "Una ONG puede utilizar una ficha inicial y un seguimiento, mientras una empresa aplica visitas a establecimientos. Identifique cada unidad y evento y asigne los formularios al personal correspondiente. Si el operativo requiere distintos idiomas o instrucciones locales, revise comprensión con personas preparadas. No cambie variables entre equipos sin registrar cómo afectará la consolidación."
+      },
+      {
+        "title": "Entrega de registros sin perder la referencia",
+        "body": "Complete una prueba con formularios descargados, evidencias, cierre de la app y sincronización posterior. Revise desde coordinación que los códigos territoriales y archivos correspondan a la respuesta. Establezca un cierre por dispositivo antes de devolverlo. El informe debe explicar fecha, estado de revisión y cobertura efectivamente alcanzada, sin extrapolar un levantamiento operativo a toda la población."
+      }
+    ],
+    "localFaq": {
+      "question": "¿Podemos unir información municipal de operaciones diferentes?",
+      "answer": "Solo después de revisar fechas, definiciones, códigos y unidades. Las correspondencias deben documentarse y los resultados no se vuelven comparables únicamente porque comparten un nombre de municipio."
+    },
+    "sources": [
+      {
+        "title": "Caracterizaciones municipales",
+        "publisher": "INIDE Nicaragua",
+        "url": "https://www.inide.gob.ni/docu/censos2005/caracterizaciones.html"
+      },
+      {
+        "title": "Consulta de tabulados por municipio",
+        "publisher": "INIDE Nicaragua",
+        "url": "https://www.inide.gob.ni/docu/Cenagro/mapaMunicipios.htm"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Caracterización social",
+        "path": "/software-caracterizacion-social"
+      },
+      {
+        "title": "Línea base para ONG",
+        "path": "/blog/ong-linea-base-monitoreo-offline"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "PA",
+    "name": "Panamá",
+    "slug": "panama",
+    "locale": "es-PA",
+    "admin1": "provincias y comarcas",
+    "admin2": "distritos",
+    "institutions": "empresas, municipios, instituciones y organizaciones",
+    "lead": "Prepare encuestas en Panamá con referencias de provincia, comarca, distrito y corregimiento según el proyecto. Configure formularios, equipos y evidencias para capturar offline y entregar información con su contexto territorial.",
+    "operationalSections": [
+      {
+        "title": "Distritos y corregimientos con versión comprobada",
+        "body": "El Instituto Geográfico Nacional Tommy Guardia publica límites político-administrativos y el INEC ofrece mapas por distrito y corregimiento. Revise fecha, nivel y referencia de cada archivo antes de usarlo. Mantenga los códigos del proyecto y las correspondencias con la fuente. Si un sector operativo atraviesa varias unidades, descríbalo como asignación de trabajo y no como modificación de los límites."
+      },
+      {
+        "title": "Una entrevista no siempre ocurre en el domicilio",
+        "body": "En jornadas de atención o levantamientos sobre servicios, la posición del dispositivo puede representar el punto de encuentro. Registre aparte la referencia territorial que describe a la persona u hogar cuando sea necesaria. Pruebe ese caso en el formulario y la exportación para que el mapa no se interprete como distribución de residencias sin sustento."
+      },
+      {
+        "title": "Cartografía y entregables para revisión institucional",
+        "body": "Valide una muestra de capas y puntos con el equipo GIS antes de ampliar la captura. Defina qué atributos se comparten y cuáles quedan para revisión individual. Complete el flujo offline y sincronización con los dispositivos previstos y registre limitaciones. Al cerrar, indique los filtros y fecha de corte, y compruebe que ninguna tablet conserve registros fuera de la entrega."
+      }
+    ],
+    "localFaq": {
+      "question": "¿Basta con indicar el distrito para un informe por corregimiento?",
+      "answer": "No si el informe necesita ese nivel. Prepare el catálogo y la relación entre unidades, conserve códigos y valide el dato durante el piloto en vez de intentar reconstruirlo después solo con direcciones libres."
+    },
+    "sources": [
+      {
+        "title": "División político-administrativa 2025",
+        "publisher": "Instituto Geográfico Nacional Tommy Guardia",
+        "url": "https://ignpanama.anati.gob.pa/index.php/25-cdepartamento/cdepartamentocartografia/268-division-politica-administrativa"
+      },
+      {
+        "title": "Mapas provinciales por distrito y corregimiento",
+        "publisher": "INEC Panamá",
+        "url": "https://www.inec.gob.pa/mapa/Default2.aspx?ID_IDIOMA=1&ID_PROVINCIA=8&ID_TIPO=5"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Encuestas georreferenciadas",
+        "path": "/encuestas-georreferenciadas"
+      },
+      {
+        "title": "Flujo GIS y ArcGIS",
+        "path": "/blog/encuestas-arcgis-geojson-shapefile"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "PY",
+    "name": "Paraguay",
+    "slug": "paraguay",
+    "locale": "es-PY",
+    "admin1": "departamentos",
+    "admin2": "distritos",
+    "institutions": "empresas, gobernaciones, municipalidades y organizaciones",
+    "lead": "Configure encuestas en Paraguay con departamentos, distritos y sectores del proyecto identificados. Prepare el instrumento y la selección territorial para que las visitas offline puedan consolidarse sin depender de nombres escritos de distintas formas.",
+    "operationalSections": [
+      {
+        "title": "Distrito, capital y zona propia del operativo",
+        "body": "El atlas del INE ofrece una referencia cartográfica departamental y distrital que debe utilizarse con su año de publicación. Revise el catálogo vigente del proyecto y cómo identifica Asunción antes de consolidar. No transforme una fuente histórica en una afirmación sobre todos los límites actuales. Para barrios o sectores propios, conserve códigos internos y su relación con las unidades que necesita el informe."
+      },
+      {
+        "title": "Preguntas comprensibles y persona informante",
+        "body": "Acorde el idioma y los términos apropiados para la población y pruebe su comprensión con el equipo local. Si necesita varias versiones del instrumento, verifique que preguntas y opciones mantengan significado. Defina quién responde por el hogar y cómo se registra una visita incompleta. La capacitación debe cubrir interpretación y trato de excepciones, además del uso de la tablet."
+      },
+      {
+        "title": "Seguimiento de metas y calidad",
+        "body": "Distribuya formularios por profesional y revise respuestas recibidas y observaciones. Si compara distritos, defina qué se cuenta y cuál es la meta; una mayor cantidad de puntos no demuestra mayor cobertura poblacional. Pruebe sincronización y exportación antes de iniciar y confirme pendientes por dispositivo al cerrar. El informe debe conservar catálogos, filtros y límites para poder interpretarse después."
+      }
+    ],
+    "localFaq": {
+      "question": "¿Podemos reutilizar una capa distrital sin conocer su fecha?",
+      "answer": "Conviene identificar fuente y año y comprobar su correspondencia con el alcance actual. Las diferencias deben documentarse antes de relacionar respuestas, asignaciones y metas con la cartografía."
+    },
+    "sources": [
+      {
+        "title": "Atlas cartográfico del Paraguay 2012",
+        "publisher": "INE Paraguay",
+        "url": "https://www.ine.gov.py/resumen/35/atlas-cartografico-del-paraguay-2012"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Diseño de preguntas claras",
+        "path": "/blog/disenar-encuestas-sin-sesgos"
+      },
+      {
+        "title": "Mapa de calor y cobertura",
+        "path": "/blog/mapa-calor-cobertura-territorial-diferencias"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "PE",
+    "name": "Perú",
+    "slug": "peru",
+    "locale": "es-PE",
+    "admin1": "departamentos y regiones",
+    "admin2": "provincias y distritos",
+    "institutions": "empresas, gobiernos regionales, municipalidades y organizaciones sociales",
+    "lead": "Prepare encuestas y caracterizaciones en Perú con referencias de departamento, provincia, distrito y centro poblado. Configure instrumentos, profesionales y sincronización para distinguir los datos de cada visita y su contexto territorial.",
+    "operationalSections": [
+      {
+        "title": "Identifique distrito y centro poblado con su fuente",
+        "body": "El INEI ofrece un sistema de consulta con información geográfica, demográfica y social de centros poblados. Al preparar el catálogo del proyecto, conserve la relación con departamento, provincia y distrito y revise la versión de la fuente. El nombre por sí solo no siempre permite identificar un lugar. Si necesita sectores de intervención propios, añádalos como clasificación operativa sin reemplazar los códigos de referencia. Pruebe la selección en tablet con nombres repetidos y lugares que requieran una excepción."
+      },
+      {
+        "title": "Viviendas, hogares y visitas de seguimiento",
+        "body": "Una caracterización puede necesitar información de vivienda, de hogar y de integrantes, pero cada nivel debe quedar definido. Si se vuelve a visitar una familia, relacione la observación con su unidad y fecha para no contar otra familia automáticamente. Acorde quién responde y cómo se manejan cambios de composición o ausencia de informante. La configuración del instrumento debe incluir esas reglas antes del trabajo, especialmente si varias personas del equipo intervienen sobre el mismo territorio."
+      },
+      {
+        "title": "Preparación offline en el equipo real",
+        "body": "Pruebe el cuestionario con los profesionales y tablets previstos, incluyendo evidencias y GPS cuando sean necesarios. La recepción de coordenadas y la disponibilidad de mapas son capacidades diferentes: compruébelas por separado. Prepare formularios y permisos con internet y defina momentos de sincronización durante la jornada. La revisión debe distinguir captura local, recepción y aceptación. Así el coordinador puede interpretar un corte sin confundir conectividad pendiente con ausencia de trabajo."
+      },
+      {
+        "title": "Cortes comparables para programas y empresas",
+        "body": "Antes de comparar distritos o centros poblados, confirme que el instrumento, población y reglas de inclusión sean equivalentes. Una visita de seguimiento y una entrevista inicial no necesariamente tienen el mismo denominador. Prepare diccionario, códigos y fecha de corte y documente cambios del formulario. Si el cliente necesita capas para ArcGIS u otro GIS, valide campos, referencia y destino con su equipo geográfico. Los archivos y los informes deben describir el alcance realmente levantado."
+      }
+    ],
+    "localFaq": {
+      "question": "¿Se pueden usar nombres de centros poblados sin códigos?",
+      "answer": "Es preferible conservar código, nombre y relación territorial cuando exista un catálogo apropiado. Los nombres repetidos o variantes dificultan unir información; cualquier clasificación propia debe quedar documentada con su fuente."
+    },
+    "sources": [
+      {
+        "title": "Sistemas de consulta: centros poblados",
+        "publisher": "INEI",
+        "url": "https://www.inei.gob.pe/sistemas-consulta/"
+      },
+      {
+        "title": "Infraestructura de datos espaciales",
+        "publisher": "INEI",
+        "url": "https://ide.inei.gob.pe/"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Caracterización social rural en Perú",
+        "path": "/blog/caracterizacion-social-rural-peru"
+      },
+      {
+        "title": "Catálogos de México y Perú",
+        "path": "/blog/catalogos-territoriales-mexico-peru-encuestas"
+      },
+      {
+        "title": "Encuestas para ONG",
+        "path": "/encuestas-para-ong"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "PR",
+    "name": "Puerto Rico",
+    "slug": "puerto-rico",
+    "locale": "es-PR",
+    "admin1": "municipios",
+    "admin2": "barrios y sectores de trabajo",
+    "institutions": "empresas, municipios, agencias y organizaciones",
+    "lead": "Prepare encuestas en Puerto Rico con municipios, barrios y referencias de comunidad definidos para el estudio. Distinga lugar de entrevista y residencia y valide la captura offline con las tablets y evidencias del proyecto.",
+    "operationalSections": [
+      {
+        "title": "Municipio y barrio con referencia documentada",
+        "body": "El State Data Center de Puerto Rico explica los niveles de geografía censal y la relación de barrios con municipios. Use esa documentación para definir el catálogo y conserve fecha y códigos. Una urbanización, un sector operativo o una referencia postal puede ser útil para localizar una visita, pero no debe reemplazar automáticamente el barrio del registro."
+      },
+      {
+        "title": "Dirección y GPS describen cosas diferentes",
+        "body": "Una entrevista puede realizarse en un punto de atención y referirse a un hogar ubicado en otro lugar. Defina qué guarda el campo GPS y qué dirección se solicita. Pruebe ejemplos con barrios y referencias conocidas por el equipo. Si una respuesta no tiene coordenadas, aplique el procedimiento de excepción aprobado sin inferir una ubicación exacta a partir de un nombre."
+      },
+      {
+        "title": "Equipos y entregas para la organización",
+        "body": "Configure cuentas individuales y asignaciones, adapte periodos y formatos del instrumento y confirme qué necesita cada perfil. La preparación inicial y la sincronización requieren conexión; el formulario disponible localmente puede capturarse offline. Verifique recepción de evidencias y prepare salidas con detalle apropiado para coordinación o difusión. No incluya posiciones exactas de hogares en una entrega que solo requiere resultados agregados."
+      }
+    ],
+    "localFaq": {
+      "question": "¿Una urbanización o dirección postal equivale al barrio del catálogo?",
+      "answer": "No debe asumirse. Mantenga las referencias necesarias como campos distintos y documente su relación con municipio y barrio. La validación debe utilizar la fuente y propósito del catálogo territorial seleccionado."
+    },
+    "sources": [
+      {
+        "title": "Geografía censal de Puerto Rico",
+        "publisher": "Instituto de Estadísticas de Puerto Rico, State Data Center",
+        "url": "https://www.censo.estadisticas.pr/censo2020/geografia-censal"
+      },
+      {
+        "title": "Puerto Rico: geografía de referencia",
+        "publisher": "U.S. Census Bureau",
+        "url": "https://www.census.gov/geographies/reference-files/2010/geo/state-local-geo-guides-2010/puerto-rico.html"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Encuestas para organizaciones",
+        "path": "/encuestas-para-ong"
+      },
+      {
+        "title": "GPS sin internet",
+        "path": "/blog/gps-sin-internet-encuestas-georreferenciadas"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "UY",
+    "name": "Uruguay",
+    "slug": "uruguay",
+    "locale": "es-UY",
+    "admin1": "departamentos",
+    "admin2": "municipios",
+    "institutions": "empresas, intendencias, municipios y organizaciones",
+    "lead": "Prepare relevamientos en Uruguay conservando departamento, localidad y las zonas de intervención que necesite el proyecto. Organice formularios y responsables para capturar offline y entregar datos con referencias territoriales interpretables.",
+    "operationalSections": [
+      {
+        "title": "El código local debe conservar su contexto",
+        "body": "El IGM indica que los códigos de centros poblados o localidades censales deben acompañarse del código de departamento para evitar ambigüedades. Mantenga esa relación en la base y la exportación. Distinga localidad, municipio y sector del proyecto según la fuente utilizada y revise su año. No dependa únicamente del nombre visible para unir registros de distintas zonas."
+      },
+      {
+        "title": "Relevamiento social o de establecimientos",
+        "body": "Un proyecto puede describir hogares, servicios o unidades empresariales. Acorde qué representa cada respuesta y cómo se registran visitas repetidas sin multiplicar unidades. Pruebe preguntas, periodos y opciones con el equipo antes de publicar. Si usa un instrumento previo, documente qué cambia y cómo afectará comparaciones futuras."
+      },
+      {
+        "title": "Datos listos para seguimiento y análisis",
+        "body": "Establezca cuándo sincroniza cada profesional y qué estados forman parte del corte. Revise observaciones y pendientes antes de devolver dispositivos. Para comparar zonas, indique unidad, meta y filtros, y no use calor como sustituto de cobertura. Las salidas deben conservar diccionario, código de departamento y referencia espacial para que otra persona pueda reconstruir el análisis."
+      }
+    ],
+    "localFaq": {
+      "question": "¿Es suficiente exportar el código de localidad sin departamento?",
+      "answer": "El IGM recomienda conservar también el departamento para evitar ambigüedad en los códigos de centros poblados y localidades. Revise además la fuente y versión específica utilizada por su proyecto."
+    },
+    "sources": [
+      {
+        "title": "Códigos de centros poblados",
+        "publisher": "Instituto Geográfico Militar de Uruguay",
+        "url": "https://igm.gub.uy/geoportal/codigos-centros-poblados/"
+      },
+      {
+        "title": "Cartografía y tablas de departamentos",
+        "publisher": "Instituto Nacional de Estadística de Uruguay",
+        "url": "https://www.gub.uy/instituto-nacional-estadistica/datos-y-estadisticas/estadisticas/cartografia-tablas-departamentos"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Caracterización social",
+        "path": "/software-caracterizacion-social"
+      },
+      {
+        "title": "Encuestas para empresas",
+        "path": "/encuestas-para-empresas"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  },
+  {
+    "code": "VE",
+    "name": "Venezuela",
+    "slug": "venezuela",
+    "locale": "es-VE",
+    "admin1": "estados",
+    "admin2": "municipios",
+    "institutions": "empresas, gobernaciones, alcaldías y organizaciones",
+    "lead": "Prepare un levantamiento en Venezuela con catálogo territorial aprobado, formularios y evidencias ajustados al objetivo. Defina quién captura, quién revisa y cuándo se entregan los registros conservados offline en cada dispositivo.",
+    "operationalSections": [
+      {
+        "title": "Identificadores compartidos por todo el equipo",
+        "body": "Acorde el listado de estados, municipios y sectores que utilizará el proyecto y documente fuente y fecha. Si recibe archivos de distintas organizaciones, revise correspondencias antes de unirlos. Un nombre repetido o una variante de escritura no debe crear otra unidad automáticamente. Mantenga códigos internos para clasificaciones propias y un responsable que resuelva excepciones durante el operativo."
+      },
+      {
+        "title": "Caracterización e inspecciones con evidencias pertinentes",
+        "body": "Una visita a hogares, establecimientos o servicios requiere unidades y criterios de revisión diferentes. Defina cada variable y qué aporta la fotografía, firma o ubicación solicitada. Prepare alternativas ante negativa o falta de GPS según las reglas aprobadas. Si utiliza IA para preparar preguntas, revise el instrumento con personas del contexto y pruebe su comprensión antes de publicarlo."
+      },
+      {
+        "title": "Prueba completa antes de ampliar la operación",
+        "body": "Confirme acceso, dispositivos y formularios con un caso representativo y cuentas de campo. Capture offline, cierre y vuelva a abrir la app y después verifique recepción desde coordinación. Compruebe exportación, diccionario y observaciones antes de comprometer todo el operativo. El alcance debe definir soporte, duración, responsables y disponibilidad del servicio para el caso concreto, y el cierre debe reconciliar todos los pendientes."
+      }
+    ],
+    "localFaq": {
+      "question": "¿La demostración confirma cualquier dispositivo y condición de trabajo?",
+      "answer": "No. Debe realizar un piloto con las tablets, instrumento, evidencias y condiciones previstas. Esa prueba permite validar el flujo y acordar límites y acompañamiento antes del despliegue completo."
+    },
+    "sources": [],
+    "relatedLinks": [
+      {
+        "title": "Encuestas offline",
+        "path": "/encuestas-offline"
+      },
+      {
+        "title": "Preparación asistida por IA",
+        "path": "/encuestas-con-inteligencia-artificial"
+      }
+    ],
+    "updatedAt": "2026-10-15"
+  }
 ]
