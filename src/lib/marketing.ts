@@ -1,5 +1,6 @@
 import seoPagesData from '@/config/seo-pages.json'
 import countryLandingProfiles from '@/config/country-landing-profiles.json'
+import { trackConsentedMarketingEvent } from '@/lib/marketing-analytics'
 
 export const SITE_URL = 'https://www.controlg.co'
 export const WHATSAPP_NUMBER = '573009010300'
@@ -138,6 +139,7 @@ export function trackMarketingEvent(eventName: string, data: Record<string, stri
   const target = window as Window & { dataLayer?: Array<Record<string, string>> }
   target.dataLayer = target.dataLayer || []
   target.dataLayer.push(event)
+  trackConsentedMarketingEvent(eventName, data)
 }
 
 export function buildStructuredData(page: SeoPage) {

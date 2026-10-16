@@ -72,6 +72,16 @@ El destino comercial es **+57 300 901 0300**. La portada, páginas de solución,
 
 Un evento en `dataLayer` solo se convierte en métrica persistente cuando hay un colector o herramienta configurada y verificada. No declarar ventas ni retorno de inversión a partir de clics. El seguimiento comercial puede comenzar con un registro manual controlado; debe vincular oportunidades al origen sin enviar respuestas de encuestas ni información personal de beneficiarios a analítica de marketing.
 
+### Configuración de medición del lanzamiento
+
+Con autorización explícita se creó la propiedad GA4 **Control G** (`559291034`) dentro de la cuenta **Nathan SEO**, separada del sitio Menteclara. Flujo web: **Control G · Sitio público**, URL `https://www.controlg.co`, identificador público `G-HKVP1WSCYP`. País y zona horaria de reporte: Colombia, America/Bogota; moneda COP. Los detalles de clasificación del asistente se configuraron como tecnología y equipo pequeño, un supuesto administrativo editable que no representa una verificación del número de empleados.
+
+La variable pública `VITE_GA4_MEASUREMENT_ID` se configura solo para producción. La aplicación no carga la etiqueta hasta que el visitante permite la medición; puede rechazarla o cambiar su preferencia. La medición mejorada del flujo está desactivada: no se recolectan automáticamente formularios, búsquedas, videos ni cambios de historial. Los eventos manuales son `page_view`, `whatsapp_lead` y `whatsapp_funnel_complete`; los dos últimos representan clics de contacto, no conversaciones recibidas ni contratos.
+
+Las URLs se envían con su ruta canónica, sin parámetros ni fragmentos; el referente se limita al origen. Se excluyen APK, entornos de desarrollo, login y paneles privados. No se envían usuarios autenticados, respuestas, nombres de beneficiarios ni campos libres a Analytics. La personalización publicitaria y Google Signals se mantienen desactivados por configuración de la etiqueta. Esta configuración técnica no sustituye la revisión de los avisos y responsabilidades de privacidad de DRAN Digital.
+
+Evidencia de publicación inicial: revisión `b03d9332211391963b2dfb446bc27dadf2322413` en main y Vercel; 103 pruebas de regresión correctas, auditoría local y de producción de 59 URLs sin errores ni avisos, y sonda de plataforma/Supabase operativa. Google Search Console confirmó el sitemap con estado **Success** y **59 páginas descubiertas** el 15 de octubre de 2026; aceptó la solicitud de rastreo de `/encuestas-con-inteligencia-artificial`. IndexNow recibió las 59 URLs con HTTP 202, validación de propiedad pendiente. Estos resultados no significan que las 59 páginas ya estén indexadas ni posicionadas. La integración de medición se valida y publica en una revisión posterior.
+
 ## Descubrimiento e indexación
 
 El sitemap contiene únicamente URLs públicas, canónicas y publicadas. La compilación debe generar HTML significativo, metadatos y datos estructurados coherentes con el contenido visible. Las rutas privadas y páginas de acceso quedan fuera del sitemap y se excluyen de resultados. Una ruta pública desconocida debe responder 404 real.

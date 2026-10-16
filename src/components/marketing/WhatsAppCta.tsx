@@ -17,7 +17,6 @@ export function WhatsAppCta({ message, placement, children, className = '' }: Wh
       rel="noopener noreferrer"
       onClick={() => trackMarketingEvent('whatsapp_lead', { placement })}
       className={className}
-      aria-label={`${typeof children === 'string' ? children : 'Contactar'} por WhatsApp`}
     >
       {children ?? (
         <>

@@ -10,6 +10,7 @@ import PasswordRecoveryPage from '@/pages/auth/PasswordRecoveryPage'
 import LandingPage from '@/pages/landing/LandingPage'
 import SolutionPage from '@/pages/landing/SolutionPage'
 import { MarketingSeo } from '@/components/marketing/MarketingSeo'
+import { MarketingAnalytics } from '@/components/marketing/MarketingAnalytics'
 import { MfaGate } from '@/components/auth/MfaGate'
 import { SkipLink } from '@/components/a11y/SkipLink'
 import { CORE_SEO_PAGES, getSeoPage } from '@/lib/marketing'
@@ -122,6 +123,7 @@ export default function App() {
   return (
     <>
       <MarketingSeo />
+      <MarketingAnalytics />
       <SkipLink />
       <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background text-sm font-semibold text-muted-foreground">Cargando Control G…</div>}>
       <Routes>
