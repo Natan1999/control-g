@@ -1,16 +1,25 @@
 # Control G
 
-> Software de caracterización, encuestas y levantamiento de información para empresas, corporaciones, entidades públicas y ONG de Colombia y Latinoamérica. Desarrollado por DRAN Digital.
+> Software de caracterización, encuestas y levantamiento de información para empresas, corporaciones, entidades públicas y ONG. Prioridad: Colombia; cobertura: Latinoamérica. Desarrollado por DRAN Digital.
 
 ## Funcionamiento verificado
 
 - Formularios configurables, asignaciones y revisión por roles.
+- Asistente integrado para generar borradores, convertir cuestionarios pegados y pedir mejoras o traducciones con Gemini u OpenAI, según proveedor conectado y cuota disponible.
+- La generación requiere internet y una cuenta de coordinación o superadministración. Solo se envía la solicitud y, al mejorar, la definición del cuestionario: no las respuestas de campo.
+- La propuesta se revisa, simula y edita antes de guardar. La IA no publica ni asigna instrumentos automáticamente ni certifica validez metodológica.
 - Captura Android sin internet después de iniciar sesión y descargar el paquete de trabajo; sincronización al recuperar conexión.
 - Fotos, audio, firma manuscrita y ubicación GPS según permisos y señal disponible.
 - Mapa territorial, capas GeoJSON, calor, grupos y cobertura.
 - Exportación GIS e integración ArcGIS con conexión, mapeo y autorización previos.
-- La IA puede apoyar la preparación del cuestionario; la plataforma auditada no incluye un generador IA integrado.
 - La precisión GPS depende del dispositivo y el entorno; no es una medición topográfica certificada.
+
+## Documentos públicos
+
+- [Mapa del sitio](https://www.controlg.co/sitemap.html)
+- [Sitemap XML](https://www.controlg.co/sitemap.xml)
+- [Robots](https://www.controlg.co/robots.txt)
+- [Guías y recursos](https://www.controlg.co/blog)
 
 ## Contacto
 
@@ -48,7 +57,7 @@ Sí. Primero prepare la cuenta, descargue los formularios asignados y pruebe los
 
 ### ¿Cómo se utiliza inteligencia artificial para las encuestas?
 
-La IA puede ayudar a preparar un borrador de preguntas y opciones que un responsable debe revisar, probar y aprobar. El formulario aprobado se configura en el constructor de Control G. Este flujo no implica un generador automático integrado ni una validación metodológica automática.
+El constructor incluye un asistente para generar borradores desde una descripción, convertir cuestionarios pegados y pedir mejoras o traducciones. Coordinación y superadministración eligen un proveedor conectado, revisan la vista previa e incorporan la propuesta al editor. Generar requiere internet y cuota del proveedor; la aprobación metodológica sigue siendo humana.
 
 ### ¿Los datos se pueden llevar a ArcGIS?
 
@@ -218,7 +227,7 @@ Acorde una fecha de corte y qué estados se incluyen en resultados. Revise que c
 
 ### Use IA como ayuda para preparar el instrumento
 
-Puede explorar preguntas, organizar secciones o revisar lenguaje con asistencia de inteligencia artificial antes de configurar el formulario. Entregue a esa herramienta el objetivo, población, territorio y duración deseada, usando ejemplos ficticios en lugar de información personal real. El responsable debe revisar conceptos, opciones y posibles sesgos y aprobar una versión probada con la población. Después se configura el instrumento en el constructor de Control G y se valida con el equipo de campo. Esta preparación asistida no significa que exista una generación automática interna ni que la IA certifique la validez metodológica del estudio. Conserve la fecha y el responsable de la aprobación para mantener trazabilidad durante la operación.
+El asistente integrado del constructor permite explorar preguntas, organizar secciones, convertir un cuestionario pegado o pedir mejoras y traducciones. Describa objetivo, población, territorio e idioma usando ejemplos ficticios, sin respuestas reales ni información confidencial. Elija entre los proveedores conectados por el administrador; generar necesita internet y cuota disponible. La propuesta aparece como borrador con secciones, tipos de campo, opciones y advertencias. Puede simularla y agregar sus secciones al instrumento actual o reemplazarlo con confirmación. Después debe editar, guardar y completar el proceso de revisión y publicación. La IA no certifica validez metodológica. Conserve fecha y responsable de la aprobación y pruebe el instrumento con la población antes de comenzar.
 
 ### ¿Qué tipos de levantamiento permite Control G?
 
@@ -298,7 +307,7 @@ Sí. Por WhatsApp puede describir el alcance, número de usuarios, territorios y
 
 https://www.controlg.co/encuestas-con-inteligencia-artificial
 
-Use inteligencia artificial para explorar preguntas, ordenar secciones y revisar el lenguaje del cuestionario. Convierta la versión aprobada en un formulario de Control G para trabajar con equipos de campo, GPS y captura offline.
+Describa su objetivo y genere un borrador dentro del constructor de Control G. Convierta cuestionarios pegados, pida mejoras o traducciones, revise la propuesta y prepare formularios para equipos de campo en Colombia y Latinoamérica.
 
 ### Qué aporta la IA al diseño del cuestionario
 
@@ -314,7 +323,7 @@ Revise preguntas dobles, supuestos, escalas desequilibradas y opciones que se so
 
 ### Configure el instrumento en Control G
 
-Lleve el cuestionario aprobado al constructor visual, organice páginas y configure los tipos de campo disponibles. Defina validaciones, evidencias y permisos, publique la versión correspondiente y asigne el formulario a los profesionales. Este flujo utiliza la IA en la preparación y la revisión del instrumento; no describe un botón generativo interno de Control G. La configuración concreta del formulario se valida durante la implementación y el piloto.
+Abra Crear con IA desde una cuenta de coordinación o superadministración. Describa el instrumento o pegue las preguntas, seleccione país, idioma y número aproximado de preguntas, y confirme que no contiene datos personales reales. Elija un proveedor conectado con cuota disponible: Gemini u OpenAI. Revise secciones, tipos de campo, opciones y advertencias; pruebe la propuesta y pida una nueva versión si necesita cambios. Incorpórela al constructor para editarla y guardarla. La generación requiere conexión y nunca publica ni asigna el formulario por sí sola: debe completar la revisión y aprobación antes del trabajo de campo.
 
 ### Capture offline y revise resultados
 
@@ -334,7 +343,7 @@ Para una demostración útil, lleve un cuestionario o describa una decisión rea
 
 ### ¿Control G genera encuestas automáticamente dentro de la plataforma?
 
-El alcance descrito aquí es preparar el cuestionario con asistencia de IA, revisarlo y configurar el instrumento aprobado en Control G. No se ofrece como una función generativa interna automática. La demostración permite acordar qué parte requiere configuración o acompañamiento.
+Sí. El botón Crear con IA del constructor genera un borrador a partir de una descripción o cuestionario pegado. También permite pedir mejoras o traducciones. Requiere una cuenta autorizada, conexión y cuota en un proveedor configurado. Usted revisa la propuesta y decide si la incorpora al editor; no se publica ni asigna automáticamente.
 
 ### ¿Una encuesta creada con IA es metodológicamente válida?
 
@@ -1698,7 +1707,7 @@ U.S. Census Bureau: https://www.census.gov/about/policies/quality/standards/appe
 
 https://www.controlg.co/blog/crear-encuestas-ia-validacion-humana
 
-Publicado: 2026-10-15. Actualizado: 2026-10-15. Autor: equipo editorial Control G, DRAN Digital.
+Publicado: 2026-10-15. Actualizado: 2026-10-16. Autor: equipo editorial Control G, DRAN Digital.
 
 Crear una encuesta con inteligencia artificial consiste en utilizar un modelo para proponer y revisar un borrador de preguntas. Ese borrador necesita decisiones humanas sobre variables, población, lenguaje y análisis. Después se configura en una herramienta de captura y se prueba en las condiciones reales del operativo.
 
@@ -1732,7 +1741,7 @@ Registre cambios con una razón concreta: separar una pregunta doble, aclarar un
 
 Con el instrumento revisado, organice las secciones en el constructor, seleccione campos disponibles y configure las validaciones. Decida qué datos son obligatorios y qué excepciones necesita registrar el profesional. Añada fotografías, firma o GPS solo cuando tengan una función definida. Publique una versión aprobada y asigne el instrumento al equipo correspondiente.
 
-El flujo aquí descrito utiliza la IA durante la preparación y el constructor de Control G para configurar el formulario. No implica una función generativa automática interna. Antes de iniciar la recolección, confirme lo que el equipo verá en sus tablets, los permisos y la disponibilidad local del formulario.
+El constructor de Control G incluye Crear con IA para cuentas de coordinación y superadministración. Puede describir el objetivo, pegar un cuestionario o pedir mejoras y traducciones, con un proveedor conectado y cuota disponible. La propuesta muestra secciones, preguntas y advertencias, permite simulación y solo se incorpora al editor por decisión del usuario. No publica ni asigna automáticamente. Antes de recolectar, apruebe la versión y confirme lo que el equipo verá en sus tablets, los permisos y la disponibilidad local del formulario.
 
 ### 6. Cierre el piloto con datos revisables
 

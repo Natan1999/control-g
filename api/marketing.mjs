@@ -1,9 +1,9 @@
 import { readFile } from 'node:fs/promises'
 import { basename, join } from 'node:path'
 import { fetchPublicBlog, mergePublicPosts } from '../scripts/lib/public-blog.mjs'
-import { buildLlms, buildRss, buildSitemap, renderMarketingDocument } from '../scripts/lib/marketing-html.mjs'
+import { buildLlms, buildRss, buildSitemap, buildSitemapHtml, renderMarketingDocument } from '../scripts/lib/marketing-html.mjs'
 
-const PUBLIC_DOCUMENTS = new Set(['/sitemap.xml', '/rss.xml', '/llms.txt', '/llms-full.txt', '/blog-catalog.json'])
+const PUBLIC_DOCUMENTS = new Set(['/sitemap.xml', '/sitemap.html', '/rss.xml', '/llms.txt', '/llms-full.txt', '/blog-catalog.json'])
 const PRIVATE_PREFIX = /^\/(?:api|admin|coord|apoyo|field|login|demo|recuperar-contrasena|restablecer-contrasena)(?:\/|$)/
 const CACHE_TTL_MS = 30_000
 
@@ -107,6 +107,7 @@ export function createMarketingHandler({
       const posts = mergePublicPosts(renderer.BLOG_POSTS, catalog.posts)
       const responseOptions = { source: catalog.source }
       if (path === '/sitemap.xml') return reply(req, res, 200, buildSitemap(renderer.SEO_PAGES, posts), 'application/xml', responseOptions)
+      if (path === '/sitemap.html') return reply(req, res, 200, buildSitemapHtml(renderer.SEO_PAGES, posts), 'text/html', { ...responseOptions, noindex: true })
       if (path === '/rss.xml') return reply(req, res, 200, buildRss(posts), 'application/rss+xml', responseOptions)
       if (path === '/llms.txt' || path === '/llms-full.txt') {
         return reply(req, res, 200, buildLlms(renderer.SEO_PAGES, posts, path === '/llms-full.txt'), 'text/plain', responseOptions)

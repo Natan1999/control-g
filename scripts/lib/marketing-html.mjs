@@ -48,7 +48,15 @@ export function buildSitemap(pages, posts) {
     ...posts.map(post => ({ path: `/blog/${post.slug}`, updated: post.updatedAt })),
   ]
   const validDate = value => /^\d{4}-\d{2}-\d{2}$/.test(value || '')
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${rows.map(row => `  <url><loc>${SITE_URL}${escapeHtml(row.path)}</loc>${validDate(row.updated) ? `<lastmod>${row.updated}</lastmod>` : ''}</url>`).join('\n')}\n</urlset>\n`
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${rows.map(row => `  <url><loc>${SITE_URL}${escapeHtml(row.path)}</loc>${validDate(row.updated) ? `<lastmod>${row.updated}</lastmod>` : ''}</url>`).join('\n')}\n</urlset>\n`
+}
+
+export function buildSitemapHtml(pages, posts) {
+  const list = items => `<ul>${items.map(item => `<li><a href="${SITE_URL}${escapeHtml(item.path)}">${escapeHtml(item.label)}</a></li>`).join('')}</ul>`
+  const solutions = pages.filter(page => !page.countryCode).map(page => ({ path: page.path, label: page.heading }))
+  const countries = pages.filter(page => page.countryCode).map(page => ({ path: page.path, label: page.heading }))
+  const articles = [{ path: '/blog', label: 'Todas las guías y recursos' }, ...posts.map(post => ({ path: `/blog/${post.slug}`, label: post.title }))]
+  return `<!doctype html><html lang="es-CO"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, follow"><title>Mapa del sitio | Control G</title><style>body{margin:0;background:#f4f8fa;color:#132b36;font:16px/1.7 system-ui,sans-serif}main{max-width:980px;margin:auto;padding:clamp(20px,5vw,64px)}a{color:#086776;overflow-wrap:anywhere}nav{display:flex;flex-wrap:wrap;gap:20px}h1{font-size:clamp(30px,5vw,48px);line-height:1.15}h2{margin-top:38px}li{margin:10px 0}.label{color:#526976}ul{padding-left:22px}</style></head><body><main><nav aria-label="Documentos públicos"><a href="/">Control G</a><a href="/sitemap.xml">Sitemap XML</a><a href="/robots.txt">Robots</a><a href="/llms.txt">Información para IA</a></nav><h1>Mapa del sitio</h1><p class="label">${publicPagePaths(pages, posts).length} páginas públicas de encuestas, caracterización y operación de campo. Prioridad comercial: Colombia; cobertura: Latinoamérica. Este índice no muestra paneles privados ni respuestas de formularios.</p><h2>Plataforma y soluciones</h2>${list(solutions)}<h2>Países de Latinoamérica</h2>${list(countries)}<h2>Guías y artículos</h2>${list(articles)}</main></body></html>`
 }
 
 export function buildRss(posts) {
@@ -56,7 +64,34 @@ export function buildRss(posts) {
 }
 
 export function buildLlms(pages, posts, full = false) {
-  const opening = '# Control G\n\n> Software de caracterización, encuestas y levantamiento de información para empresas, corporaciones, entidades públicas y ONG de Colombia y Latinoamérica. Desarrollado por DRAN Digital.\n\n## Funcionamiento verificado\n\n- Formularios configurables, asignaciones y revisión por roles.\n- Captura Android sin internet después de iniciar sesión y descargar el paquete de trabajo; sincronización al recuperar conexión.\n- Fotos, audio, firma manuscrita y ubicación GPS según permisos y señal disponible.\n- Mapa territorial, capas GeoJSON, calor, grupos y cobertura.\n- Exportación GIS e integración ArcGIS con conexión, mapeo y autorización previos.\n- La IA puede apoyar la preparación del cuestionario; la plataforma auditada no incluye un generador IA integrado.\n- La precisión GPS depende del dispositivo y el entorno; no es una medición topográfica certificada.\n\n## Contacto\n\nWhatsApp comercial: +57 300 901 0300. Cotización según alcance, equipo, capacitación y soporte.\n\n'
+  const opening = `# Control G
+
+> Software de caracterización, encuestas y levantamiento de información para empresas, corporaciones, entidades públicas y ONG. Prioridad: Colombia; cobertura: Latinoamérica. Desarrollado por DRAN Digital.
+
+## Funcionamiento verificado
+
+- Formularios configurables, asignaciones y revisión por roles.
+- Asistente integrado para generar borradores, convertir cuestionarios pegados y pedir mejoras o traducciones con Gemini u OpenAI, según proveedor conectado y cuota disponible.
+- La generación requiere internet y una cuenta de coordinación o superadministración. Solo se envía la solicitud y, al mejorar, la definición del cuestionario: no las respuestas de campo.
+- La propuesta se revisa, simula y edita antes de guardar. La IA no publica ni asigna instrumentos automáticamente ni certifica validez metodológica.
+- Captura Android sin internet después de iniciar sesión y descargar el paquete de trabajo; sincronización al recuperar conexión.
+- Fotos, audio, firma manuscrita y ubicación GPS según permisos y señal disponible.
+- Mapa territorial, capas GeoJSON, calor, grupos y cobertura.
+- Exportación GIS e integración ArcGIS con conexión, mapeo y autorización previos.
+- La precisión GPS depende del dispositivo y el entorno; no es una medición topográfica certificada.
+
+## Documentos públicos
+
+- [Mapa del sitio](https://www.controlg.co/sitemap.html)
+- [Sitemap XML](https://www.controlg.co/sitemap.xml)
+- [Robots](https://www.controlg.co/robots.txt)
+- [Guías y recursos](https://www.controlg.co/blog)
+
+## Contacto
+
+WhatsApp comercial: +57 300 901 0300. Cotización según alcance, equipo, capacitación y soporte.
+
+`
   const pageText = pages.map(page => `## ${page.heading}\n\n${SITE_URL}${page.path}\n\n${page.lead}${full ? `\n\n${page.sections.map(section => `### ${section.title}\n\n${section.body}`).join('\n\n')}\n\n${page.faqs.map(faq => `### ${faq.question}\n\n${faq.answer}`).join('\n\n')}` : ''}`).join('\n\n')
   const articleText = posts.map(post => full ? `## ${post.title}\n\n${SITE_URL}/blog/${post.slug}\n\nPublicado: ${post.publishedAt}. Actualizado: ${post.updatedAt}. Autor: equipo editorial Control G, DRAN Digital.\n\n${post.intro.join('\n\n')}\n\n${post.sections.map(section => `### ${section.title}\n\n${section.paragraphs.join('\n\n')}${section.bullets?.length ? `\n\n${section.bullets.map(item => `- ${item}`).join('\n')}` : ''}`).join('\n\n')}\n\n${post.sources.map(source => `${source.publisher}: ${source.url}`).join('\n')}` : `- [${post.title}](${SITE_URL}/blog/${post.slug}): ${post.description}`).join('\n\n')
   return `${opening}${pageText}\n\n# Guías y recursos\n\n${articleText}`.trimEnd() + '\n'

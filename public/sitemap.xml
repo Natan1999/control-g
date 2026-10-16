@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://www.controlg.co/</loc></url>
   <url><loc>https://www.controlg.co/software-caracterizacion-social</loc></url>
@@ -31,9 +32,9 @@
   <url><loc>https://www.controlg.co/encuestas-offline/puerto-rico</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://www.controlg.co/encuestas-offline/uruguay</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://www.controlg.co/encuestas-offline/venezuela</loc><lastmod>2026-10-15</lastmod></url>
-  <url><loc>https://www.controlg.co/blog</loc><lastmod>2026-10-15</lastmod></url>
+  <url><loc>https://www.controlg.co/blog</loc><lastmod>2026-10-16</lastmod></url>
   <url><loc>https://www.controlg.co/blog/caracterizacion-empresas-clientes-establecimientos</loc><lastmod>2026-10-15</lastmod></url>
-  <url><loc>https://www.controlg.co/blog/crear-encuestas-ia-validacion-humana</loc><lastmod>2026-10-15</lastmod></url>
+  <url><loc>https://www.controlg.co/blog/crear-encuestas-ia-validacion-humana</loc><lastmod>2026-10-16</lastmod></url>
   <url><loc>https://www.controlg.co/blog/disenar-encuestas-sin-sesgos</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://www.controlg.co/blog/plan-operativo-mil-encuestas-bolivar</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://www.controlg.co/blog/encuestas-arcgis-geojson-shapefile</loc><lastmod>2026-10-15</lastmod></url>

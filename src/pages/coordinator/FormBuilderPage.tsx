@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react'
 import { 
   Plus, Save, Eye, Hash, Type, AlignLeft, Calendar, Clock, 
   ChevronDown, CheckSquare, List, Radio as RadioIcon, 
@@ -6,7 +6,7 @@ import {
   FileText, Phone, Mail, Trash2, Settings2, GripVertical,
   ChevronRight, ChevronLeft, Layout, Globe, X, BookOpen, MapPinned, ShieldCheck, AlertTriangle, Share2,
   Send, CheckCircle2, RotateCcw, Rocket, LockKeyhole,
-  DollarSign, Table2, Mic
+  DollarSign, Table2, Mic, Sparkles
 } from 'lucide-react'
 import { motion, Reorder, AnimatePresence } from 'framer-motion'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -20,6 +20,9 @@ import { LATAM_COUNTRIES } from '@/config/countries'
 import FormRenderer from '@/components/forms/FormRenderer'
 import { analyzeFormQuality, buildFormPrivacyChecklist, formQualityScore } from '@/lib/form-quality'
 import { estimateFormOfflineFootprint, formatFormBytes } from '@/lib/form-runtime'
+import type { AiFormDraft } from '../../../shared/ai-form.mjs'
+
+const AiFormAssistant = lazy(() => import('@/components/forms/AiFormAssistant'))
 
 const COLORS = {
   primary: '#0038A8',   // Royal Blue
@@ -107,6 +110,7 @@ export default function FormBuilderPage() {
   const [preview, setPreview] = useState(false)
   const [toast, setToast] = useState('')
   const [showTemplates, setShowTemplates] = useState(false)
+  const [showAiAssistant, setShowAiAssistant] = useState(false)
   const [editingLocale, setEditingLocale] = useState('')
   const [workingFormId, setWorkingFormId] = useState<string | null>(id || null)
   const [changeId, setChangeId] = useState<string | null>(null)
@@ -301,6 +305,22 @@ export default function FormBuilderPage() {
     window.setTimeout(() => setToast(''), 3500)
   }
 
+  const applyAiDraft = (draft: AiFormDraft, strategy: 'replace' | 'append') => {
+    if (editorReadOnly) return
+    const existingPages = (form.pages || []).filter(page => page.fields.length > 0)
+    if (strategy === 'replace' && existingPages.length && !window.confirm('La propuesta IA reemplazará las preguntas del editor. La versión publicada no cambia hasta aprobar y publicar una nueva versión. ¿Continuar?')) return
+    setForm(previous => ({
+      ...previous,
+      ...(strategy === 'replace' || !existingPages.length ? { title: draft.title, description: draft.description } : {}),
+      pages: strategy === 'append' ? [...existingPages, ...draft.pages] : draft.pages,
+    }))
+    setActivePageIdx(strategy === 'append' ? existingPages.length : 0)
+    setSelectedFieldId(null)
+    setShowAiAssistant(false)
+    setPreview(false)
+    setToast('Propuesta IA incorporada al editor. Revísala y guarda el borrador; no se publicó ni se asignó automáticamente.')
+  }
+
   const editorialErrorMessage = (error: unknown) => {
     const message = error instanceof Error ? error.message : String(error || '')
     const messages: Record<string, string> = {
@@ -419,6 +439,15 @@ export default function FormBuilderPage() {
                 ))}
               </select>
             )}
+            <button
+              type="button"
+              onClick={() => setShowAiAssistant(true)}
+              disabled={editorReadOnly || saving}
+              aria-label="Crear o mejorar formulario con inteligencia artificial"
+              className="flex h-10 w-10 items-center justify-center gap-2 rounded-xl bg-[#E9F1F3] text-xs font-bold text-[#123B50] disabled:opacity-50 sm:w-auto sm:px-3 sm:py-2"
+            >
+              <Sparkles size={18} aria-hidden="true" /><span className="hidden sm:inline">Crear con IA</span>
+            </button>
             <button
               type="button"
               onClick={() => setShowTemplates(true)}
@@ -1094,6 +1123,8 @@ export default function FormBuilderPage() {
           )}
         </AnimatePresence>
       </div>
+
+      {showAiAssistant && !editorReadOnly ? <Suspense fallback={<p role="status" className="fixed bottom-6 left-6 z-[95] rounded-xl bg-white p-4 shadow-xl">Abriendo asistente de IA…</p>}><AiFormAssistant entityId={selectedEntityId} countryCode={entityCountryCode} currentForm={form} onClose={() => setShowAiAssistant(false)} onApply={applyAiDraft} /></Suspense> : null}
 
       {showTemplates && (
         <div className="fixed inset-0 z-[90] flex items-end justify-center bg-slate-950/60 p-0 sm:items-center sm:p-6" role="presentation">

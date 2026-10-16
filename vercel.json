@@ -93,7 +93,12 @@
       "status": 308
     },
     {
-      "src": "^/(sitemap\\.xml|rss\\.xml|llms(?:-full)?\\.txt|blog-catalog\\.json)$",
+      "src": "^/robot\\.txt$",
+      "headers": { "Location": "/robots.txt" },
+      "status": 308
+    },
+    {
+      "src": "^/(sitemap\\.(?:xml|html)|rss\\.xml|llms(?:-full)?\\.txt|blog-catalog\\.json)$",
       "dest": "/api/marketing?path=/$1"
     },
     {

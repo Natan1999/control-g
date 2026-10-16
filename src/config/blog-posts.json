@@ -1342,7 +1342,7 @@
     "category": "Diseño de encuestas",
     "country": "Colombia y Latinoamérica",
     "publishedAt": "2026-10-15",
-    "updatedAt": "2026-10-15",
+    "updatedAt": "2026-10-16",
     "readingMinutes": 7,
     "keywords": [
       "crear encuestas con IA",
@@ -1390,7 +1390,7 @@
         "title": "5. Configure y apruebe el formulario en Control G",
         "paragraphs": [
           "Con el instrumento revisado, organice las secciones en el constructor, seleccione campos disponibles y configure las validaciones. Decida qué datos son obligatorios y qué excepciones necesita registrar el profesional. Añada fotografías, firma o GPS solo cuando tengan una función definida. Publique una versión aprobada y asigne el instrumento al equipo correspondiente.",
-          "El flujo aquí descrito utiliza la IA durante la preparación y el constructor de Control G para configurar el formulario. No implica una función generativa automática interna. Antes de iniciar la recolección, confirme lo que el equipo verá en sus tablets, los permisos y la disponibilidad local del formulario."
+          "El constructor de Control G incluye Crear con IA para cuentas de coordinación y superadministración. Puede describir el objetivo, pegar un cuestionario o pedir mejoras y traducciones, con un proveedor conectado y cuota disponible. La propuesta muestra secciones, preguntas y advertencias, permite simulación y solo se incorpora al editor por decisión del usuario. No publica ni asigna automáticamente. Antes de recolectar, apruebe la versión y confirme lo que el equipo verá en sus tablets, los permisos y la disponibilidad local del formulario."
         ]
       },
       {

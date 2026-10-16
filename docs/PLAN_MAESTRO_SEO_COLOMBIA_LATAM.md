@@ -160,6 +160,20 @@ La instrumentación de marketing necesita un colector configurado antes de repor
 
 ## Comandos de operación
 
+### Actualización técnica: 16 de octubre de 2026
+
+Se corrigió una interferencia de la PWA: su navegación offline podía devolver la aplicación en lugar de `sitemap.xml`. El trabajador excluye ahora XML, TXT, XSL, JSON, API y el índice legible. La actualización no borra IndexedDB ni las respuestas pendientes. El XML anuncia `/sitemap.xsl`; `/sitemap.html` ofrece un índice sin JavaScript, enlazado desde el pie público y con `noindex, follow`. `robot.txt` redirige a `robots.txt`. Sitemap, RSS y documentos LLM conservan la misma proyección pública del CMS, sin paneles, borradores ni respuestas privadas. Se mantienen canonical, metadatos sociales y datos estructurados del renderizado real; la sonda comprueba también los dos índices legibles.
+
+El constructor incorpora **Crear con IA** para coordinación y superadministración: generación desde objetivo, conversión de preguntas pegadas, mejoras y traducción de la definición seleccionada. Admite país de Latinoamérica, español/portugués/inglés, 3–40 preguntas aproximadas, vista previa, simulación y elección entre agregar secciones o reemplazar. Se exige confirmación de privacidad y revisión humana; incorporar no guarda, aprueba, publica ni asigna. El ciclo editorial existente sigue siendo obligatorio. No se envían respuestas de campo ni adjuntos a los proveedores desde este asistente.
+
+Gemini quedó conectado en el servidor y generó un instrumento sintético correctamente, con el proyecto Google «Control G» en nivel gratuito y sin activar facturación. OpenAI quedó conectado, pero la prueba real informó `credit_balance_exhausted`: requiere que el titular habilite saldo en su cuenta API antes de utilizarlo. Gemini aparece primero; no existen reintentos ni cambio de proveedor automáticos. Las credenciales son secretos de producción en Vercel, nunca variables `VITE_`, código público o APK. El estado «conectado» significa clave configurada, no garantía de saldo o disponibilidad.
+
+La migración aditiva `202610150001_ai_form_quota.sql` está aplicada en «supabase Control G» de Dokploy, sin reinicios ni modificaciones a otros servicios. Reserva cuotas compartidas y atómicas: plataforma 200/día y 20/minuto, entidad 100/día y 10/minuto, usuario 20/día y 3/minuto. El día se calcula en UTC. Cuenta intentos, incluso si el proveedor falla después; no es un límite monetario ni sustituye los presupuestos del proveedor. La tabla no almacena prompts, respuestas ni claves y no admite escritura directa desde clientes. Si la reserva falla, el endpoint no llama a la IA. Un segundo limitador por instancia acota concurrencia y ráfagas. Para desactivar, usar una migración futura que revoque la ejecución de la función y retirar el acceso UI; conservar los contadores para auditoría. No editar ni eliminar migraciones ya aplicadas.
+
+Verificación: suite automatizada de API/esquemas/privacidad/autorización, compilación TypeScript y ESLint; prueba SQL transaccional de coordinación, bloqueo por ráfaga, aislamiento por entidad y rechazo de profesionales, con `AI_CHECK_OK` y cero reservas tras `ROLLBACK`. El asistente real se probó visualmente en un entorno local aislado con transporte sintético, incluidos consentimiento, simulación, revisión, incorporación y conservación del borrador ante cuota agotada. A 390 px no hubo desbordamiento horizontal. No se realizó un recorrido autenticado completo en producción: el usuario prefirió pruebas automáticas y no inició una sesión de aplicación para esta validación. No confundir la prueba local con una encuesta creada en una entidad real.
+
+La creación con IA necesita internet. Esta entrega no cambia la captura offline de instrumentos ya aprobados, publicados, asignados y descargados, y no genera una nueva APK. El posicionamiento y las citas en buscadores requieren rastreo, contenido útil y seguimiento; estos cambios no garantizan el primer puesto.
+
 ```sh
 npm test
 npm run build

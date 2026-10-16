@@ -33,6 +33,13 @@ export default defineConfig({
       },
       workbox: {
         importScripts: ['sw-privacy-cleanup.js'],
+        // A navigation to a machine-readable document must reach the server,
+        // not the offline SPA shell (which renders a misleading 404 or blank UI).
+        navigateFallbackDenylist: [
+          /^\/api(?:\/|$)/,
+          /\.(?:xml|txt|xsl|json|webmanifest|apk|pdf)$/i,
+          /^\/sitemap\.html$/,
+        ],
         // Cache app shell (HTML, JS, CSS)
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         // Runtime caching strategies

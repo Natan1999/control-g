@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { checkSeoBuild, inspectHtml, mapConcurrent } from '../scripts/seo-check.mjs'
 import { fetchSeoDocument, normalizedProbeOrigin, probeSeo } from '../scripts/seo-probe.mjs'
-import { buildLlms, buildRss, buildSitemap, renderMarketingDocument } from '../scripts/lib/marketing-html.mjs'
+import { buildLlms, buildRss, buildSitemap, buildSitemapHtml, renderMarketingDocument } from '../scripts/lib/marketing-html.mjs'
 
 const origin = 'https://www.controlg.co'
 const pages = [{ path: '/', heading: 'Control G', lead: 'Encuestas', sections: [], faqs: [] }]
@@ -18,6 +18,7 @@ function fixture() {
     ['/seo-manifest.json', JSON.stringify({ site: origin, sourceRevision: 'a'.repeat(40), pages: paths, articles: 1 })],
     ['/index.html', makeHtml('/')], ['/blog/index.html', makeHtml('/blog')], ['/blog/guia/index.html', makeHtml('/blog/guia')],
     ['/sitemap.xml', buildSitemap(pages, posts)], ['/rss.xml', buildRss(posts)],
+    ['/sitemap.html', buildSitemapHtml(pages, posts)], ['/sitemap.xsl', '<xsl:stylesheet version="1.0"></xsl:stylesheet>'],
     ['/llms.txt', buildLlms(pages, posts)], ['/llms-full.txt', buildLlms(pages, posts, true)],
     ['/robots.txt', `User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml`],
     ['/404.html', renderMarketingDocument(shell, '<main><h1>Página no encontrada</h1></main>', null)],
@@ -76,8 +77,8 @@ function mockFetch({ soft404 = false, privateNoindex = true, corruptCatalog = fa
     const file = paths.includes(path) ? (path === '/' ? '/index.html' : `${path}/index.html`) : path
     const body = files.get(file)
     if (body === undefined) return new Response('', { status: 404 })
-    const type = path.endsWith('.json') ? 'application/json' : path.endsWith('.xml') ? 'application/xml' : path.endsWith('.txt') ? 'text/plain' : 'text/html'
-    return new Response(options.method === 'HEAD' ? '' : path === '/blog-catalog.json' && corruptCatalog ? '{"posts":[{"created_by":"internal"}]}' : body, { headers: { 'content-type': type, ...(path === '/blog-catalog.json' ? { 'x-robots-tag': 'noindex' } : {}) } })
+    const type = path.endsWith('.json') ? 'application/json' : /\.(xml|xsl)$/.test(path) ? 'application/xml' : path.endsWith('.txt') ? 'text/plain' : 'text/html'
+    return new Response(options.method === 'HEAD' ? '' : path === '/blog-catalog.json' && corruptCatalog ? '{"posts":[{"created_by":"internal"}]}' : body, { headers: { 'content-type': type, ...(['/blog-catalog.json', '/sitemap.html'].includes(path) ? { 'x-robots-tag': 'noindex' } : {}) } })
   }
 }
 

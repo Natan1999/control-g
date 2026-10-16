@@ -94,6 +94,34 @@ test('HEAD conserva estado metadatos y longitud sin devolver cuerpo', async () =
   assert.equal(head.body, undefined)
 })
 
+test('el sitemap XML tiene presentación y su versión HTML muestra el mismo inventario sin datos privados', async () => {
+  const handler = makeHandler()
+  const xml = await request(handler, '/sitemap.xml')
+  const html = await request(handler, '/sitemap.html')
+  assert.match(xml.body, /xml-stylesheet type="text\/xsl" href="\/sitemap.xsl"/)
+  assert.equal(html.statusCode, 200)
+  assert.equal(html.headers['content-type'], 'text/html; charset=utf-8')
+  assert.match(html.headers['x-robots-tag'], /noindex, follow/)
+  assert.match(html.body, /Mapa del sitio/)
+  assert.match(html.body, /3 páginas públicas/)
+  for (const path of ['/', '/blog', '/blog/guia-local']) assert.ok(html.body.includes(`href="https://www.controlg.co${path}"`))
+  assert.doesNotMatch(html.body, /user_id|entity_id|access_token/)
+})
+
+test('la PWA excluye los documentos de descubrimiento del fallback HTML', async () => {
+  const config = await readFile('vite.config.ts', 'utf8')
+  assert.match(config, /navigateFallbackDenylist:/)
+  assert.match(config, /xml\|txt\|xsl\|json\|webmanifest\|apk\|pdf/)
+  assert.match(config, /sitemap\\\.html/)
+  const xsl = await readFile('public/sitemap.xsl', 'utf8')
+  assert.match(xsl, /http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0.9/)
+  assert.match(xsl, /xsl:for-each select="s:urlset\/s:url"/)
+  assert.match(xsl, /sitemap\.html/)
+  const robots = await readFile('public/robots.txt', 'utf8')
+  for (const agent of ['Googlebot', 'Bingbot', 'OAI-SearchBot', 'PerplexityBot', 'Claude-SearchBot']) assert.ok(robots.includes(`User-agent: ${agent}`))
+  for (const route of ['/api/', '/admin', '/coord', '/apoyo', '/field']) assert.ok(robots.includes(`Disallow: ${route}`))
+})
+
 test('crear editar y archivar contenido CMS actualiza HTML y descubrimiento sin redeploy', async () => {
   let now = 0
   let remote = [post('guia-cms', 'Versión uno')]

@@ -1,9 +1,20 @@
 User-agent: *
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: PerplexityBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
 Allow: /
+Disallow: /api/
 Disallow: /login
+Disallow: /recuperar-contrasena
+Disallow: /restablecer-contrasena
 Disallow: /admin
 Disallow: /coord
 Disallow: /apoyo
 Disallow: /field
+Disallow: /demo
 
 Sitemap: https://www.controlg.co/sitemap.xml

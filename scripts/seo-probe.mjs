@@ -71,7 +71,8 @@ export async function probeSeo({ baseUrl = process.env.SEO_BASE_URL || SITE_ORIG
     if (/noindex|\bnone\b/i.test(response.headers.get('x-robots-tag') || '')) report.errors.push({ path, code: 'PUBLIC_NOINDEX_HEADER', message: 'La cabecera HTTP excluye una página pública.' })
     if (path === '/') for (const href of result.facts.stylesheets) { try { const target = new URL(href, SITE_ORIGIN); if (target.origin === SITE_ORIGIN) assets.add(target.pathname) } catch {} }
   }
-  const extraPaths = ['/rss.xml', '/llms.txt', '/llms-full.txt', '/robots.txt', '/blog-catalog.json', '/seo-probe-pagina-inexistente', '/blog/seo-probe-articulo-inexistente', '/login', '/recuperar-contrasena', '/restablecer-contrasena', '/admin', '/coord', '/apoyo', '/field', ...assets]
+  if (!sitemapResponse.body.includes('href="/sitemap.xsl"')) report.errors.push({ path: '/sitemap.xml', code: 'SITEMAP_STYLESHEET', message: 'El sitemap no anuncia su presentación legible.' })
+  const extraPaths = ['/sitemap.html', '/sitemap.xsl', '/rss.xml', '/llms.txt', '/llms-full.txt', '/robots.txt', '/blog-catalog.json', '/seo-probe-pagina-inexistente', '/blog/seo-probe-articulo-inexistente', '/login', '/recuperar-contrasena', '/restablecer-contrasena', '/admin', '/coord', '/apoyo', '/field', ...assets]
   const extras = await mapConcurrent(extraPaths, async path => ({ path, response: await get(path, /^\/(?:login|recuperar|restablecer|admin|coord|apoyo|field)/.test(path) || assets.has(path) ? 'HEAD' : 'GET') }), 6)
   const documents = new Map(extras.map(item => [item.path, item.response]))
   for (const { path, response } of extras) {
@@ -82,9 +83,10 @@ export async function probeSeo({ baseUrl = process.env.SEO_BASE_URL || SITE_ORIG
       continue
     }
     if (response.status !== 200) report.errors.push({ path, code: 'DOCUMENT_STATUS', message: `El documento público responde HTTP ${response.status}.` })
-    const expectedType = path === '/rss.xml' ? /xml/i : /\.(?:txt)$/.test(path) ? /text\/plain/i : path.endsWith('.json') ? /application\/json/i : null
+    const expectedType = /\.(?:xml|xsl)$/.test(path) ? /xml/i : /\.(?:txt)$/.test(path) ? /text\/plain/i : path.endsWith('.json') ? /application\/json/i : path === '/sitemap.html' ? /text\/html/i : null
     if (expectedType && !expectedType.test(response.headers.get('content-type') || '')) report.errors.push({ path, code: 'DOCUMENT_TYPE', message: 'El documento no utiliza su tipo de contenido público esperado.' })
     if (/^\/(?:login|recuperar|restablecer|admin|coord|apoyo|field)/.test(path) && !/noindex/i.test(response.headers.get('x-robots-tag') || '')) report.errors.push({ path, code: 'PRIVATE_NOINDEX', message: 'La ruta de acceso o privada no tiene cabecera noindex.' })
+    if (path === '/sitemap.html' && (!/noindex/i.test(response.headers.get('x-robots-tag') || '') || !response.body.includes('/sitemap.xml'))) report.errors.push({ path, code: 'SITEMAP_HTML', message: 'El índice legible debe enlazar el XML y permanecer noindex.' })
   }
   if (['/rss.xml', '/llms.txt', '/llms-full.txt'].every(path => documents.get(path)?.status === 200)) report.errors.push(...checkDiscoveryDocuments({ sitemap: sitemapResponse.body, rss: documents.get('/rss.xml').body, llms: documents.get('/llms.txt').body, llmsFull: documents.get('/llms-full.txt').body, paths }))
   const robots = documents.get('/robots.txt')

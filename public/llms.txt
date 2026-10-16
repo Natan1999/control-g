@@ -1,16 +1,25 @@
 # Control G
 
-> Software de caracterización, encuestas y levantamiento de información para empresas, corporaciones, entidades públicas y ONG de Colombia y Latinoamérica. Desarrollado por DRAN Digital.
+> Software de caracterización, encuestas y levantamiento de información para empresas, corporaciones, entidades públicas y ONG. Prioridad: Colombia; cobertura: Latinoamérica. Desarrollado por DRAN Digital.
 
 ## Funcionamiento verificado
 
 - Formularios configurables, asignaciones y revisión por roles.
+- Asistente integrado para generar borradores, convertir cuestionarios pegados y pedir mejoras o traducciones con Gemini u OpenAI, según proveedor conectado y cuota disponible.
+- La generación requiere internet y una cuenta de coordinación o superadministración. Solo se envía la solicitud y, al mejorar, la definición del cuestionario: no las respuestas de campo.
+- La propuesta se revisa, simula y edita antes de guardar. La IA no publica ni asigna instrumentos automáticamente ni certifica validez metodológica.
 - Captura Android sin internet después de iniciar sesión y descargar el paquete de trabajo; sincronización al recuperar conexión.
 - Fotos, audio, firma manuscrita y ubicación GPS según permisos y señal disponible.
 - Mapa territorial, capas GeoJSON, calor, grupos y cobertura.
 - Exportación GIS e integración ArcGIS con conexión, mapeo y autorización previos.
-- La IA puede apoyar la preparación del cuestionario; la plataforma auditada no incluye un generador IA integrado.
 - La precisión GPS depende del dispositivo y el entorno; no es una medición topográfica certificada.
+
+## Documentos públicos
+
+- [Mapa del sitio](https://www.controlg.co/sitemap.html)
+- [Sitemap XML](https://www.controlg.co/sitemap.xml)
+- [Robots](https://www.controlg.co/robots.txt)
+- [Guías y recursos](https://www.controlg.co/blog)
 
 ## Contacto
 
@@ -50,7 +59,7 @@ Centralice formularios, equipos, municipios y evidencias en una plataforma confi
 
 https://www.controlg.co/encuestas-con-inteligencia-artificial
 
-Use inteligencia artificial para explorar preguntas, ordenar secciones y revisar el lenguaje del cuestionario. Convierta la versión aprobada en un formulario de Control G para trabajar con equipos de campo, GPS y captura offline.
+Describa su objetivo y genere un borrador dentro del constructor de Control G. Convierta cuestionarios pegados, pida mejoras o traducciones, revise la propuesta y prepare formularios para equipos de campo en Colombia y Latinoamérica.
 
 ## Encuestas georreferenciadas para entender su territorio
 
