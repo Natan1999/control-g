@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { basename, join } from 'node:path'
 import { fetchPublicBlog, mergePublicPosts } from '../scripts/lib/public-blog.mjs'
 import { buildLlms, buildRss, buildSitemap, renderMarketingDocument } from '../scripts/lib/marketing-html.mjs'
 
@@ -119,8 +119,13 @@ export function createMarketingHandler({
       const markup = await renderer.renderMarketingRoute(path, posts)
       const document = renderMarketingDocument(shell, markup, metadata, catalog.posts)
       return reply(req, res, metadata ? 200 : 404, document, 'text/html', responseOptions)
-    } catch {
-      logger.error?.('CONTROL_G_PUBLIC_MARKETING_RENDER_UNAVAILABLE')
+    } catch (error) {
+      // Diagnostic identifiers only: no request body, env, URL queries or stack.
+      logger.error?.('CONTROL_G_PUBLIC_MARKETING_RENDER_UNAVAILABLE', {
+        code: error?.code || error?.name || 'UNKNOWN',
+        file: typeof error?.path === 'string' ? basename(error.path) : undefined,
+        module: typeof error?.url === 'string' && error.url.startsWith('file:') ? basename(new URL(error.url).pathname) : undefined,
+      })
       return serviceUnavailable(req, res)
     }
   }
