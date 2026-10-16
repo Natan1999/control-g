@@ -1,4 +1,5 @@
 import blogPostsData from '@/config/blog-posts.json'
+import editorialExpansion from '@/config/blog-editorial-20261016.json'
 import { SITE_URL } from '@/lib/marketing'
 
 export interface BlogParagraphSection {
@@ -34,11 +35,12 @@ export interface BlogPost {
   sources: Array<{ title: string; publisher: string; url: string }>
   image?: string
   imageAlt?: string
+  imageCaption?: string
   status?: 'draft' | 'published' | 'archived'
   relatedLinks?: Array<{ title: string; path: string }>
 }
 
-export const BLOG_POSTS = blogPostsData as BlogPost[]
+export const BLOG_POSTS = [...blogPostsData, ...editorialExpansion] as BlogPost[]
 
 export const BLOG_META = {
   title: 'Blog de encuestas, caracterización y GIS | Control G',
@@ -94,9 +96,10 @@ export function formatBlogDate(value: string) {
 }
 
 export function relatedBlogPosts(post: BlogPost, limit = 3) {
+  const editorialLinks = new Set(post.relatedLinks?.map(item => item.path) || [])
   return BLOG_POSTS
     .filter(candidate => candidate.slug !== post.slug)
-    .sort((a, b) => Number(b.category === post.category) - Number(a.category === post.category) || Number(b.country === post.country) - Number(a.country === post.country))
+    .sort((a, b) => Number(editorialLinks.has(`/blog/${b.slug}`)) - Number(editorialLinks.has(`/blog/${a.slug}`)) || Number(b.category === post.category) - Number(a.category === post.category) || b.updatedAt.localeCompare(a.updatedAt) || a.title.localeCompare(b.title))
     .slice(0, limit)
 }
 

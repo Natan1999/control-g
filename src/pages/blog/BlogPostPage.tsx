@@ -29,7 +29,7 @@ export default function BlogPostPage() {
                 <p className="!mt-6 max-w-3xl text-base leading-8 text-[#4D6470] sm:text-lg">{post.description}</p>
                 <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] leading-6 text-[#4D6470]"><span className="font-semibold">Equipo editorial Control G</span><time dateTime={post.updatedAt}>Actualizado {formatBlogDate(post.updatedAt)}</time><span className="inline-flex items-center gap-1.5"><Clock3 size={14} aria-hidden="true" />{post.readingMinutes} min</span><span className="inline-flex items-center gap-1.5"><MapPin size={14} aria-hidden="true" />{post.country}</span></div>
               </div>
-              <figure className="overflow-hidden rounded-lg border border-[#CFDFE6] bg-[#E5EEF2]"><img src={blogCover(post)} alt={blogCoverAlt(post)} className="aspect-[3/2] h-full w-full object-cover" width="1440" height="960" loading="eager" decoding="async" /><figcaption className="sr-only">{blogCoverAlt(post)}</figcaption></figure>
+              <figure className="overflow-hidden rounded-lg border border-[#CFDFE6] bg-[#E5EEF2]"><img src={blogCover(post)} alt={blogCoverAlt(post)} className="aspect-[3/2] w-full object-cover" width="1536" height="1024" loading="eager" decoding="async" /><figcaption className={post.imageCaption ? 'bg-white px-4 py-3 text-[11px] leading-5 text-[#4D6470]' : 'sr-only'}>{post.imageCaption || blogCoverAlt(post)}</figcaption></figure>
             </div>
           </header>
 

@@ -831,8 +831,11 @@
     "category": "Caracterización social",
     "country": "Colombia",
     "publishedAt": "2026-08-24",
-    "updatedAt": "2026-08-24",
-    "readingMinutes": 11,
+    "updatedAt": "2026-10-16",
+    "readingMinutes": 6,
+    "image": "/blog/software-caracterizacion-control-g.jpg",
+    "imageAlt": "Ilustración de coordinadores preparando una caracterización con una tablet y un mapa",
+    "imageCaption": "Ilustración editorial generada con IA. No representa una entidad o un cliente real.",
     "keywords": [
       "software caracterización social Colombia",
       "caracterización socioeconómica",
@@ -879,6 +882,34 @@
           "Solicite una demostración con su formulario real. Una presentación genérica no revela cómo se comportan grupos familiares, fotografías grandes o reglas complejas. Exija una prueba offline y una sincronización ante su equipo.",
           "Compare costo total: configuración, soporte, capacitación, infraestructura, administración de dispositivos y exportación. El precio de una licencia aislada no representa todo el esfuerzo del proyecto."
         ]
+      },
+      {
+        "title": "Qué debe incluir el contrato de implementación",
+        "paragraphs": [
+          "Defina quién entrega y valida el instrumento, cuántos profesionales utilizarán el sistema, qué territorios cubrirán y cuál es la ventana del operativo. Aclare el tratamiento de respuestas parciales, fotografías y ampliaciones de equipo. Licencia, instalación en tablets, capacitación y soporte son componentes distintos y conviene describirlos por separado.",
+          "Pida entregables verificables: cuentas con permisos correctos, formulario revisado, dispositivos preparados, piloto documentado y un protocolo de soporte. No asuma que el proveedor del software incluye encuestadores, desplazamientos, diseño de muestra o revisión jurídica. Si necesita esos servicios, incorpórelos expresamente al alcance."
+        ]
+      },
+      {
+        "title": "Cómo usar la IA sin publicar un instrumento sin revisar",
+        "paragraphs": [
+          "El asistente integrado de Control G permite describir un objetivo, convertir preguntas pegadas y solicitar mejoras o traducciones. Envíe solo la definición del instrumento: no listas de beneficiarios, respuestas reales ni información confidencial. La generación necesita conexión y depende del proveedor configurado y de su cuota disponible.",
+          "La propuesta se previsualiza, se simula y se incorpora al constructor para editarla. No se guarda, aprueba, publica ni asigna automáticamente. Mantenga el piloto y la revisión humana: la redacción generada puede contener sesgos, opciones incompletas o variables innecesarias, y no resuelve el diseño estadístico ni acredita cumplimiento legal."
+        ]
+      },
+      {
+        "title": "Una prueba de aceptación que también revise la llegada del dato",
+        "paragraphs": [
+          "Configure dos profesionales con asignaciones diferentes y confirme que ninguno accede a instrumentos ajenos. En modo avión complete una respuesta y deje otra como borrador, cierre la aplicación y vuelva a abrirla. Luego recupere conexión y compruebe el envío, sin borrar almacenamiento local para resolver pendientes.",
+          "El piloto termina cuando coordinación encuentra y revisa los registros, no cuando aparece un aviso de sincronización. Registre pendientes, versión del formulario y resultado de cada caso. Si cambia el cuestionario durante la prueba, repita las rutas afectadas. Este protocolo es una propuesta operativa, no una garantía de que cualquier dispositivo o configuración funcionará sin validación previa."
+        ]
+      },
+      {
+        "title": "Resultados territoriales con definiciones y límites",
+        "paragraphs": [
+          "Decida si cada indicador se refiere a hogares, personas o visitas y conserve esa unidad en tablas y mapas. Una familia con varios integrantes no debe convertirse en varios hogares al consolidar. Documente valores faltantes, preguntas con salto y versión de las opciones para que la entrega pueda interpretarse.",
+          "La visualización de capas, puntos o calor ayuda a explorar el levantamiento, pero no demuestra cobertura total ni representatividad. Para trabajar con ArcGIS u otro GIS, pruebe coordenadas y campos de una exportación antes de aceptar la entrega. Acuerde qué información se compartirá de forma agregada y quién podrá acceder al detalle autorizado."
+        ]
       }
     ],
     "comparison": [],
@@ -886,18 +917,27 @@
     "faqs": [
       {
         "question": "¿Qué debe incluir una caracterización social digital?",
-        "answer": "Variables del instrumento, identificación territorial, validaciones, trazabilidad, evidencias autorizadas y un flujo de revisión y consolidación."
+        "answer": "Un propósito y una población definidos, variables justificadas, identificación territorial pertinente, validaciones, trazabilidad y un flujo de revisión. Si incluye evidencias, explique su necesidad y acceso. La entrega debe permitir interpretar opciones, registros incompletos y versiones del instrumento, no solo descargar una tabla sin contexto."
       },
       {
         "question": "¿Se necesita internet durante cada visita?",
-        "answer": "No si la plataforma es offline-first. Los usuarios y formularios deben prepararse antes; las respuestas se sincronizan después."
+        "answer": "La captura en Android puede realizarse sin señal después de preparar la cuenta y descargar los formularios asignados. La sincronización, la generación con IA y las conexiones a servicios externos requieren internet. Pruebe el ciclo completo con sus tablets antes de iniciar el operativo, incluidos cierre de aplicación y recuperación de borradores."
       },
       {
         "question": "¿Sirve para diferentes entidades?",
-        "answer": "Control G separa organizaciones, formularios, usuarios y datos para configurar proyectos de distintas entidades."
+        "answer": "Control G organiza formularios, usuarios y datos por entidad. Cada implementación necesita definir permisos, territorio, instrumentos y responsables. Verifique el aislamiento y las asignaciones durante el piloto; compartir una infraestructura no debe permitir que un profesional vea formularios o respuestas de otra organización."
       }
     ],
-    "sources": []
+    "sources": [
+      {"title": "Plan de recolección de información", "publisher": "DANE", "url": "https://www.dane.gov.co/files/sen/lineamientos/Guia-elaboracion-de-un-plan-de-recoleccion.pdf"},
+      {"title": "Caracterización de usuarios y partes interesadas", "publisher": "MinCIT", "url": "https://www.mincit.gov.co/servicio-ciudadano/caracterizacion-de-usuarios-y-partes-interesadas"}
+    ],
+    "relatedLinks": [
+      {"title": "Probar una plataforma para caracterización", "path": "/blog/plataforma-caracterizacion-como-elegir"},
+      {"title": "Modelo de ficha de caracterización familiar", "path": "/blog/ficha-caracterizacion-familiar-ejemplo"},
+      {"title": "Qué es caracterización poblacional", "path": "/blog/que-es-caracterizacion-poblacional"},
+      {"title": "Control G para caracterización social", "path": "/software-caracterizacion-social"}
+    ]
   },
   {
     "slug": "encuestas-offline-zonas-rurales",

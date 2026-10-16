@@ -1,0 +1,321 @@
+{
+  "date": "2026-10-16",
+  "marketPriority": [
+    "Colombia",
+    "Latinoamérica"
+  ],
+  "goal": "Contenido original de utilidad para responsables de caracterización, encuestas y levantamiento de información; conversión por WhatsApp +573009010300.",
+  "limits": [
+    "No se estimaron volúmenes ni dificultad de palabras clave sin datos.",
+    "No se garantizan posiciones, indexación ni citas de IA.",
+    "No se publican casos o resultados reales inventados.",
+    "Artículos nuevos se publican como base versionada; los artículos creados desde CMS conservan su flujo actual."
+  ],
+  "pillars": [
+    "Caracterización y elección de plataforma",
+    "Cuestionarios y diseño de encuestas",
+    "Diagnóstico y participación ciudadana",
+    "Empresas y análisis de datos"
+  ],
+  "editingPasses": [
+    "Intención y no canibalización",
+    "Estructura y utilidad del ejemplo",
+    "Evidencia y límites del producto",
+    "Claridad, gramática y precisión",
+    "Título, metadatos, imágenes y enlaces"
+  ],
+  "topics": [
+    {
+      "slug": "plataforma-caracterizacion-como-elegir",
+      "keyword": "plataforma para caracterización",
+      "stage": "Decisión",
+      "informationGain": "Protocolo de aceptación reproducible en lugar de una lista genérica de funciones.",
+      "headlineOptions": [
+        "Plataforma de caracterización",
+        "Elegir una plataforma de caracterización",
+        "Pruebas para una plataforma de caracterización",
+        "Software o plataforma de caracterización",
+        "Evaluar una plataforma con su formulario",
+        "Cómo probar una caracterización offline",
+        "Lista para comparar plataformas de campo",
+        "Plataforma de caracterización para entidades",
+        "De la demo al piloto de caracterización",
+        "Qué exigir a una plataforma de campo"
+      ],
+      "selection": "Título final en src/config/blog-editorial-20261016.json; una sola URL por intención."
+    },
+    {
+      "slug": "que-es-caracterizacion-poblacional",
+      "keyword": "caracterización poblacional",
+      "stage": "Descubrimiento",
+      "informationGain": "Aclara unidades y límites con un ejemplo sintético local.",
+      "headlineOptions": [
+        "Qué es caracterización poblacional",
+        "Caracterización poblacional y encuesta",
+        "Cómo describir una población",
+        "Definir una caracterización social",
+        "Variables para una caracterización",
+        "Caracterización y diagnóstico: diferencias",
+        "De la pregunta al perfil poblacional",
+        "Qué significa caracterizar una comunidad",
+        "Caracterización: población y propósito",
+        "Ejemplo de caracterización poblacional"
+      ],
+      "selection": "Título final en src/config/blog-editorial-20261016.json; una sola URL por intención."
+    },
+    {
+      "slug": "ficha-caracterizacion-familiar-ejemplo",
+      "keyword": "ficha de caracterización familiar",
+      "stage": "Implementación",
+      "informationGain": "Plantilla de bloques y preguntas que separa hogar, vivienda e integrante.",
+      "headlineOptions": [
+        "Ficha de caracterización familiar",
+        "Ejemplo de ficha para hogares",
+        "Modelo de caracterización familiar",
+        "Qué preguntar a un hogar",
+        "Campos de una ficha familiar",
+        "Formulario para caracterizar familias",
+        "Cómo diseñar una ficha de hogar",
+        "Plantilla de caracterización de hogares",
+        "Hogar y vivienda en el formulario",
+        "Ficha familiar preparada para campo"
+      ],
+      "selection": "Título final en src/config/blog-editorial-20261016.json; una sola URL por intención."
+    },
+    {
+      "slug": "diagnostico-comunitario-participativo",
+      "keyword": "diagnóstico comunitario",
+      "stage": "Implementación",
+      "informationGain": "Cada etapa produce una evidencia y una matriz de acciones.",
+      "headlineOptions": [
+        "Diagnóstico comunitario paso a paso",
+        "Cómo hacer un diagnóstico participativo",
+        "Ejemplo de diagnóstico comunitario",
+        "Del formulario al diagnóstico territorial",
+        "Encuestas para diagnóstico comunitario",
+        "Planear un diagnóstico de comunidad",
+        "Problemas y recursos de un territorio",
+        "Diagnóstico comunitario con participación",
+        "Qué entregar en un diagnóstico",
+        "Método para escuchar a una comunidad"
+      ],
+      "selection": "Título final en src/config/blog-editorial-20261016.json; una sola URL por intención."
+    },
+    {
+      "slug": "consulta-ciudadana-digital",
+      "keyword": "consulta ciudadana digital",
+      "stage": "Consideración",
+      "informationGain": "Distingue escucha de mecanismos oficiales y aclara el alcance offline.",
+      "headlineOptions": [
+        "Cómo organizar una consulta ciudadana",
+        "Consulta ciudadana digital",
+        "Consulta de opinión con trabajo de campo",
+        "Plataforma de consulta ciudadana",
+        "Pulso ciudadano: diseño y límites",
+        "Preguntas para una consulta ciudadana",
+        "Escucha ciudadana con encuestas",
+        "Participación digital y presencial",
+        "Qué medir en una consulta ciudadana",
+        "Del diálogo a la devolución de resultados"
+      ],
+      "selection": "Título final en src/config/blog-editorial-20261016.json; una sola URL por intención."
+    },
+    {
+      "slug": "encuesta-sondeo-cuestionario-diferencias",
+      "keyword": "encuesta y sondeo diferencias",
+      "stage": "Descubrimiento",
+      "informationGain": "Glosario aplicado con decisiones de método y ejemplos de alcance.",
+      "headlineOptions": [
+        "Encuesta y sondeo: diferencias",
+        "Encuesta, sondeo y cuestionario",
+        "Qué es un cuestionario",
+        "Elegir entre encuesta y sondeo",
+        "Consulta y estudio de opinión",
+        "Cómo nombrar un levantamiento de información",
+        "Del cuestionario al estudio de opinión",
+        "Cuándo usar un sondeo",
+        "Indagación, consulta y encuesta",
+        "Qué puede concluir una encuesta"
+      ],
+      "selection": "Título final en src/config/blog-editorial-20261016.json; una sola URL por intención."
+    },
+    {
+      "slug": "perfil-poblacional-indicadores-territoriales",
+      "keyword": "perfil poblacional",
+      "stage": "Implementación",
+      "informationGain": "Ficha de indicador con numerador, denominador y límites del mapa.",
+      "headlineOptions": [
+        "Perfil poblacional con indicadores",
+        "Cómo construir un perfil poblacional",
+        "Perfil territorial y caracterización",
+        "Indicadores para describir una población",
+        "De las respuestas al perfil poblacional",
+        "Analizar características de una población",
+        "Qué contiene un perfil de población",
+        "Mapas e indicadores poblacionales",
+        "Perfil poblacional sin etiquetas permanentes",
+        "Cómo presentar un perfil territorial"
+      ],
+      "selection": "Título final en src/config/blog-editorial-20261016.json; una sola URL por intención."
+    },
+    {
+      "slug": "encuesta-servicios-publicos-ejemplo",
+      "keyword": "encuesta servicios públicos",
+      "stage": "Implementación",
+      "informationGain": "Preguntas concretas que separan acceso, continuidad y evaluación técnica.",
+      "headlineOptions": [
+        "Encuesta de servicios públicos",
+        "Preguntas sobre agua y energía",
+        "Ejemplo de encuesta de servicios",
+        "Diagnóstico de acceso a servicios",
+        "Formulario de agua y saneamiento",
+        "Medir experiencia con servicios públicos",
+        "Cómo preguntar por continuidad de agua",
+        "Caracterización de servicios del hogar",
+        "Encuesta de servicios en campo",
+        "Acceso y calidad reportada en encuestas"
+      ],
+      "selection": "Título final en src/config/blog-editorial-20261016.json; una sola URL por intención."
+    },
+    {
+      "slug": "caracterizacion-jovenes-formulario",
+      "keyword": "caracterización de jóvenes",
+      "stage": "Implementación",
+      "informationGain": "Base para programas de adultos, con límites de menores y sin selección automatizada.",
+      "headlineOptions": [
+        "Caracterización de jóvenes",
+        "Formulario de caracterización juvenil",
+        "Qué preguntar a jóvenes adultos",
+        "Diagnóstico de formación para jóvenes",
+        "Intereses y barreras de participación",
+        "Encuesta para programas de formación",
+        "Perfil de participantes jóvenes",
+        "Caracterización juvenil con datos mínimos",
+        "Cómo planear una caracterización de jóvenes",
+        "Del interés al diseño del programa"
+      ],
+      "selection": "Título final en src/config/blog-editorial-20261016.json; una sola URL por intención."
+    },
+    {
+      "slug": "encuesta-percepcion-ciudadana",
+      "keyword": "encuesta de percepción ciudadana",
+      "stage": "Consideración",
+      "informationGain": "Separa percepción, experiencia y desempeño con protocolo de comparación.",
+      "headlineOptions": [
+        "Encuesta de percepción ciudadana",
+        "Cómo medir percepción ciudadana",
+        "Preguntas de satisfacción ciudadana",
+        "Percepción y experiencia con servicios",
+        "Estudio de opinión sobre atención",
+        "Pulso ciudadano con método",
+        "Diseñar escalas de percepción",
+        "Cómo comparar percepción en el tiempo",
+        "Escuchar la experiencia ciudadana",
+        "Preguntas para evaluar atención pública"
+      ],
+      "selection": "Título final en src/config/blog-editorial-20261016.json; una sola URL por intención."
+    },
+    {
+      "slug": "encuestas-investigacion-mercados-campo",
+      "keyword": "encuestas investigación de mercados",
+      "stage": "Consideración",
+      "informationGain": "Diseño de selección por punto y horario, separado de venta y paneles.",
+      "headlineOptions": [
+        "Encuestas de mercado en campo",
+        "Investigación de mercados presencial",
+        "Cómo encuestar en puntos físicos",
+        "Diseñar una encuesta de mercado",
+        "Escuchar compradores con método",
+        "Encuestas para empresas en territorio",
+        "Operativo de investigación de mercados",
+        "Captura offline para investigación de mercados",
+        "Del objetivo comercial al cuestionario",
+        "Estudio de consumidores con entrevistas"
+      ],
+      "selection": "Título final en src/config/blog-editorial-20261016.json; una sola URL por intención."
+    },
+    {
+      "slug": "encuesta-satisfaccion-clientes-offline",
+      "keyword": "encuesta satisfacción clientes",
+      "stage": "Implementación",
+      "informationGain": "Cuestionario y ejemplo aritmético con base explícita, sin inflar satisfacción.",
+      "headlineOptions": [
+        "Encuesta de satisfacción sin internet",
+        "Preguntas de satisfacción de clientes",
+        "Medir experiencia en puntos de atención",
+        "Cuestionario de atención al cliente",
+        "Encuestas presenciales de satisfacción",
+        "Satisfacción del cliente con tablets",
+        "Cómo analizar una escala de satisfacción",
+        "Captura offline de experiencia de clientes",
+        "Encuesta breve para puntos de servicio",
+        "De la valoración a una mejora concreta"
+      ],
+      "selection": "Título final en src/config/blog-editorial-20261016.json; una sola URL por intención."
+    },
+    {
+      "slug": "identificar-necesidades-comunidad",
+      "keyword": "identificar necesidades de una comunidad",
+      "stage": "Implementación",
+      "informationGain": "Matriz explicable que distingue frecuencia, gravedad y viabilidad.",
+      "headlineOptions": [
+        "Identificar necesidades de una comunidad",
+        "Priorizar necesidades comunitarias",
+        "Preguntas sobre necesidades del barrio",
+        "Del problema a una prioridad comunitaria",
+        "Matriz de necesidades y acciones",
+        "Escuchar necesidades con evidencia",
+        "Cómo priorizar problemas de una comunidad",
+        "Necesidades, recursos y decisiones",
+        "Encuestas para identificar necesidades",
+        "Priorizar sin confundir menciones y gravedad"
+      ],
+      "selection": "Título final en src/config/blog-editorial-20261016.json; una sola URL por intención."
+    },
+    {
+      "slug": "analizar-resultados-encuestas",
+      "keyword": "cómo analizar resultados de encuestas",
+      "stage": "Implementación",
+      "informationGain": "Secuencia reproducible de archivo original, depuración, bases y reporte.",
+      "headlineOptions": [
+        "Analizar resultados de encuestas",
+        "Cómo clasificar respuestas de encuestas",
+        "Del dato sincronizado al informe",
+        "Análisis de cuestionarios paso a paso",
+        "Porcentajes y bases en encuestas",
+        "Qué hacer con respuestas incompletas",
+        "Analizar preguntas de selección múltiple",
+        "Clasificar comentarios sin perder contexto",
+        "Informe de resultados de una encuesta",
+        "Revisar datos antes de graficar"
+      ],
+      "selection": "Título final en src/config/blog-editorial-20261016.json; una sola URL por intención."
+    }
+  ],
+  "images": {
+    "mode": "Herramienta image_gen integrada. Originales conservados; conversión JPEG para web, sin usar API de pago externa.",
+    "directory": "public/blog",
+    "prompts": [
+      {
+        "file": "software-caracterizacion-control-g.jpg",
+        "prompt": "Use case: photorealistic-natural. Asset type: professional editorial blog cover, landscape 3:2. Create an original, tasteful realistic photograph-style illustration of two adult Colombian field-operations coordinators at a bright modern municipal project office, planning a characterization survey on a rugged tablet next to an abstract paper neighborhood map. Screen seen obliquely with anonymous non-legible form shapes, no personal data. Navy and teal restrained institutional colors, natural daylight, believable hands and devices, candid documentary composition, no branding, no words, no watermark. Not an actual customer or endorsement, no uniforms or government seals. Main subject near center to survive cropped blog thumbnails."
+      },
+      {
+        "file": "diagnostico-comunitario-colombia.jpg",
+        "prompt": "Use case: photorealistic-natural. Asset type: landscape 3:2 editorial blog cover. Original realistic photograph-style illustration of a small group of diverse adult Colombian residents and a field professional holding a tablet during a respectful community diagnostic conversation in a shaded neighborhood courtyard in the Colombian Caribbean, modest colorful architecture, greenery, natural daylight, comfortable casual professional attire, balanced composition and authentic everyday dignity. All adults, no vulnerable-person stereotypes, no fake government marks, no company logos, no readable screen, no names, no text or watermark. Teal/navy subtle accent colors. This is an illustrative scene, not a real case study."
+      },
+      {
+        "file": "caracterizacion-hogares-formulario.jpg",
+        "prompt": "Use case: photorealistic-natural. Asset type: landscape 3:2 editorial blog cover. Original high-end documentary-style illustrative photograph of an adult field technician seated at a clean simple household porch in Colombia speaking respectfully with two adult residents. A tablet held naturally shows indistinct anonymous questionnaire shapes. Warm daylight, plants, authentic Caribbean domestic context, friendly but serious professional interaction, restrained navy and muted green color accents. No minors, no personal papers, no readable data, no signatures on display, no politician, no logos, no uniforms, no text or watermark. Centered composition suitable for website crop. Clearly an illustration, no claim of real customers."
+      },
+      {
+        "file": "consulta-ciudadana-participativa.jpg",
+        "prompt": "Use case: photorealistic-natural. Asset type: landscape 3:2 blog editorial cover. Original sophisticated documentary-style illustrative photograph of an adult community participation workshop in a contemporary Latin American community center. Four adult participants collaboratively point to an abstract large neighborhood map and unlabelled color cards on a table, a facilitator has a tablet. Include women and men of varied adult ages with realistic hands and faces. Daylight, calm teal/navy and warm cream aesthetic, thoughtful professional composition centered on collaboration and map. No election material, no ballots, no government seals, no identifiable data, no words, logos or watermark. Not a real client testimonial."
+      },
+      {
+        "file": "encuestas-clientes-empresas-colombia.jpg",
+        "prompt": "Use case: photorealistic-natural. Asset type: landscape 3:2 professional blog cover. Original premium realistic illustrative photograph of an adult field researcher with a tablet politely interviewing an adult customer at a bright independent small service business reception in a Colombian city. Genuine everyday scene, clean counter, plants, softly blurred urban background, natural sunlight, muted teal and navy accents, balanced central subjects, credible tablet and anatomically correct hands. No banking or medical setting, no transaction details, no uniforms, no real brand or trademark, no readable questionnaire, no text or watermark. No implication this is an actual Control G client."
+      }
+    ]
+  }
+}

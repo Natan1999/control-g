@@ -13,8 +13,8 @@ export default function BlogIndexPage() {
   const { posts } = usePublishedBlogPosts()
   const categories = useMemo(() => ['Todos', ...new Set(posts.map(post => post.category))], [posts])
   const filteredPosts = category === 'Todos' ? posts : posts.filter(post => post.category === category)
-  const featured = filteredPosts.find(post => post.slug === 'crear-encuestas-ia-validacion-humana')
-    ?? filteredPosts.find(post => post.slug === 'software-caracterizacion-social-colombia')
+  const featured = filteredPosts.find(post => post.slug === 'software-caracterizacion-social-colombia')
+    ?? filteredPosts.find(post => post.slug === 'crear-encuestas-ia-validacion-humana')
     ?? filteredPosts[0]
   const visiblePosts = filteredPosts.filter(post => post.slug !== featured?.slug)
   const lastUpdated = posts.reduce((latest, post) => post.updatedAt > latest ? post.updatedAt : latest, '')

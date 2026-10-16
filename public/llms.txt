@@ -213,6 +213,34 @@ Prepare un levantamiento en Venezuela con catálogo territorial aprobado, formul
 
 # Guías y recursos
 
+- [Caracterización de jóvenes: formulario y planificación](https://www.controlg.co/blog/caracterizacion-jovenes-formulario): Diseñe una caracterización de jóvenes con preguntas sobre formación, acceso y disponibilidad, minimización de datos y una prueba de campo offline.
+
+- [Caracterización poblacional: qué es y cómo hacerla](https://www.controlg.co/blog/que-es-caracterizacion-poblacional): Qué es una caracterización poblacional, qué variables incluir y cómo diferenciarla de una encuesta, un censo y un diagnóstico comunitario.
+
+- [Cómo analizar resultados de encuestas paso a paso](https://www.controlg.co/blog/analizar-resultados-encuestas): Aprenda a revisar, clasificar y analizar respuestas de encuestas con denominadores claros, datos faltantes, cruces y un informe que explique sus límites.
+
+- [Cómo identificar y priorizar necesidades de una comunidad](https://www.controlg.co/blog/identificar-necesidades-comunidad): Identifique necesidades comunitarias con preguntas claras, evidencia territorial y criterios de priorización que no confundan frecuencia con gravedad.
+
+- [Consulta ciudadana digital: diseño y trabajo de campo](https://www.controlg.co/blog/consulta-ciudadana-digital): Organice una consulta ciudadana con preguntas neutrales, captura presencial sin internet, participación inclusiva y devolución de resultados.
+
+- [Diagnóstico comunitario: pasos y ejemplo práctico](https://www.controlg.co/blog/diagnostico-comunitario-participativo): Cómo realizar un diagnóstico comunitario participativo con encuestas, observaciones, recursos del territorio y una matriz de problemas y acciones.
+
+- [Encuesta de percepción ciudadana: preguntas y análisis](https://www.controlg.co/blog/encuesta-percepcion-ciudadana): Diseñe una encuesta de percepción ciudadana sobre atención y servicios, con escalas equilibradas, periodo claro y resultados interpretados sin exageraciones.
+
+- [Encuesta de satisfacción de clientes sin internet](https://www.controlg.co/blog/encuesta-satisfaccion-clientes-offline): Prepare una encuesta de satisfacción presencial con preguntas de experiencia, escalas claras y captura offline para empresas y puntos de atención.
+
+- [Encuesta de servicios públicos: preguntas y ejemplo](https://www.controlg.co/blog/encuesta-servicios-publicos-ejemplo): Ejemplo de encuesta sobre agua, energía y saneamiento: preguntas de acceso, continuidad y experiencia para levantamiento de información en campo.
+
+- [Encuesta, sondeo y cuestionario: diferencias y usos](https://www.controlg.co/blog/encuesta-sondeo-cuestionario-diferencias): Distinga encuesta, sondeo, cuestionario y consulta de opinión. Ejemplos para elegir el método de levantamiento y explicar sus resultados con claridad.
+
+- [Encuestas de mercado en campo: diseño y ejecución](https://www.controlg.co/blog/encuestas-investigacion-mercados-campo): Planifique encuestas de investigación de mercados en puntos físicos: población, selección, cuestionario, supervisión y captura offline con revisión.
+
+- [Ficha de caracterización familiar: ejemplo y campos](https://www.controlg.co/blog/ficha-caracterizacion-familiar-ejemplo): Modelo orientativo de ficha de caracterización familiar: secciones, preguntas, grupos del hogar, datos mínimos y preparación para captura offline.
+
+- [Perfil poblacional: indicadores y análisis territorial](https://www.controlg.co/blog/perfil-poblacional-indicadores-territoriales): Construya un perfil poblacional con indicadores claros, denominadores verificables y mapas agregados, sin confundir cobertura con representatividad.
+
+- [Plataforma de caracterización: cómo elegir y probar](https://www.controlg.co/blog/plataforma-caracterizacion-como-elegir): Evalúe una plataforma para caracterización con pruebas de formularios, permisos, captura offline, sincronización y entrega de datos en Colombia.
+
 - [Caracterización empresarial: clientes y establecimientos](https://www.controlg.co/blog/caracterizacion-empresas-clientes-establecimientos): Organice una caracterización de clientes, proveedores o establecimientos con objetivos claros, formularios, equipos de campo y revisión de datos.
 
 - [Cómo crear encuestas con IA y validación humana](https://www.controlg.co/blog/crear-encuestas-ia-validacion-humana): Prepare cuestionarios con inteligencia artificial, revise sesgos, pruebe las preguntas y configure una encuesta de campo con Control G.
