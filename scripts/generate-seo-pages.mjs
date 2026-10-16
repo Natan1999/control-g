@@ -16,7 +16,10 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const dist = join(root,'dist')
 // The public React components serve people, prerender and the live editorial CMS.
 await build({
-  configFile:false, root, plugins:[react()],
+  configFile:false, root, plugins:[react()], publicDir:false,
+  // Ship the renderer's dependencies with it. File tracing an explicitly
+  // included generated module does not reliably include nested package exports.
+  ssr:{noExternal:true},
   resolve:{alias:{'@':join(root,'src')}},
   build:{ssr:join(root,'src/entry-marketing.tsx'),outDir:join(root,'.server'),emptyOutDir:true,minify:false,rollupOptions:{output:{entryFileNames:'marketing.mjs'}}},
 })
