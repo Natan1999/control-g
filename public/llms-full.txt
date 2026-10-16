@@ -2840,5 +2840,3 @@ Defina un protocolo para registros rechazados, duplicados, fotografías incomple
 Solicite una demostración con su formulario real. Una presentación genérica no revela cómo se comportan grupos familiares, fotografías grandes o reglas complejas. Exija una prueba offline y una sincronización ante su equipo.
 
 Compare costo total: configuración, soporte, capacitación, infraestructura, administración de dispositivos y exportación. El precio de una licencia aislada no representa todo el esfuerzo del proyecto.
-
-
