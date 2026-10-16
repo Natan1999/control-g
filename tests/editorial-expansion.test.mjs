@@ -64,3 +64,10 @@ test('la guía principal de software se amplía sin alterar su URL ni fingir una
   assert.ok(guide.sources.length >= 2)
   assert.ok(guide.relatedLinks.some(link => link.path === '/blog/plataforma-caracterizacion-como-elegir'))
 })
+
+test('la navegación editorial no queda atrapada en un catálogo antiguo de la PWA', async () => {
+  const config = await readFile(new URL('../vite.config.ts', import.meta.url), 'utf8')
+  const denylist = config.split('navigateFallbackDenylist: [')[1].split('],')[0]
+  assert.ok(denylist.includes('/^\\/blog(?:\\/|$)/'))
+  assert.equal(denylist.includes('/^\\/field'), false, 'La captura offline privada conserva su fallback')
+})
