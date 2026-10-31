@@ -2,13 +2,17 @@ import { z } from 'zod'
 
 export const AI_FIELD_TYPES = ['text', 'longtext', 'number', 'currency', 'date', 'time', 'select', 'multi_select', 'radio', 'checkbox', 'matrix', 'photo', 'audio', 'signature', 'gps', 'geotrace', 'geoshape', 'municipality', 'repeat_group', 'note', 'file', 'phone', 'email']
 const choices = new Set(['select', 'multi_select', 'radio', 'checkbox', 'matrix'])
+// The offline outbox currently links evidence to top-level answer fields.
+// Keep media outside repeated rows instead of generating a form that could
+// silently serialize a nested Blob as an empty object during synchronization.
+const AI_GROUP_FIELD_TYPES = AI_FIELD_TYPES.filter(type => !['repeat_group', 'photo', 'audio', 'signature', 'file'].includes(type))
 const text = max => z.string().trim().max(max)
 const common = {
   type: z.enum(AI_FIELD_TYPES), label: text(240).min(1), description: text(600), required: z.boolean(),
   options: z.array(text(160).min(1)).max(30), matrixRows: z.array(text(160).min(1)).max(20),
   sensitive: z.boolean(), sensitiveJustification: text(400),
 }
-const leaf = z.object({ ...common, type: z.enum(AI_FIELD_TYPES.filter(type => type !== 'repeat_group')) }).strict()
+const leaf = z.object({ ...common, type: z.enum(AI_GROUP_FIELD_TYPES) }).strict()
 const field = z.object({ ...common, subFields: z.array(leaf).max(15) }).strict()
 export const aiDraftSchema = z.object({
   title: text(180).min(3), description: text(1500),
@@ -27,7 +31,7 @@ export const AI_FORM_JSON_SCHEMA = object({
   title: { type: 'string' }, description: { type: 'string' },
   pages: { type: 'array', items: object({
     title: { type: 'string' }, fields: { type: 'array', items: object({
-      ...commonJson, subFields: { type: 'array', items: object({ ...commonJson, type: { type: 'string', enum: AI_FIELD_TYPES.filter(type => type !== 'repeat_group') } }) },
+      ...commonJson, subFields: { type: 'array', items: object({ ...commonJson, type: { type: 'string', enum: AI_GROUP_FIELD_TYPES } }) },
     }) },
   }) }, warnings: strings,
 })
@@ -72,7 +76,9 @@ export function normalizeAiDraft(raw, { id = () => crypto.randomUUID(), countryC
   return {
     title: draft.title, description: draft.description,
     pages: draft.pages.map(page => ({ id: `ai_page_${id()}`, title: page.title, fields: page.fields.map(normalize) })),
-    warnings: [...draft.warnings, 'Borrador generado con IA: revise redacción, sesgos, opciones, finalidad y consentimiento. No se publica ni asigna automáticamente.'],
+    warnings: [...draft.warnings,
+      ...(draft.pages.some(page => page.fields.some(item => item.type === 'repeat_group')) ? ['Mantenga fotos, firmas, audios y archivos fuera de los grupos repetibles para conservar su vínculo con la captura offline.'] : []),
+      'Borrador generado con IA: revise redacción, sesgos, opciones, finalidad y consentimiento. No se publica ni asigna automáticamente.'],
   }
 }
 
@@ -83,6 +89,7 @@ export function aiFormInstructions(request) {
     `Modo: ${request.mode}. País: ${request.countryCode}. Idioma de todas las preguntas: ${request.language}. Objetivo aproximado: ${request.questionCount} preguntas, máximo 60 campos contando subcampos y notas.`,
     'Organiza hasta 8 secciones cortas. Preguntas claras, neutrales, una idea por pregunta; opciones equilibradas, sin solapamientos y con no aplica o prefiere no responder cuando corresponda.',
     'Usa solo tipos del esquema. options y matrixRows son listas de etiquetas; usa [] cuando no correspondan. subFields solo para repeat_group, sin grupos anidados. No generes fórmulas, HTML, scripts, validaciones regex ni enlaces.',
+    'Las fotos, firmas, audios y archivos deben ser campos independientes fuera de los grupos repetibles; no se admiten como subFields. Si usas grupos, explica esa limitación en warnings.',
     'No agregues identificadores, datos sensibles, GPS, firmas, fotos ni audios por defecto: solo si se necesitan explícitamente. Si se incluyen, marca sensitive=true, required=false y explica su finalidad en sensitiveJustification.',
     'Distingue consentimiento de mera captura de firma; no certifiques cumplimiento legal, precisión GPS ni representatividad estadística. Añade observaciones metodológicas concretas en warnings.',
     'La generación necesita internet. El instrumento, una vez revisado, publicado, asignado y descargado, puede diligenciarse offline con los tipos de campo soportados.',

@@ -50,6 +50,19 @@ test('opciones incompletas, duplicadas, matrices sin filas y grupos vacíos se r
     assert.throws(() => normalizeAiDraft(raw))
   }
 })
+test('la IA conserva evidencia en campos independientes y rechaza medios dentro de grupos repetibles', () => {
+  const fields = AI_FORM_JSON_SCHEMA.properties.pages.items.properties.fields.items
+  for (const type of ['photo', 'audio', 'signature', 'file']) {
+    assert.ok(fields.properties.type.enum.includes(type))
+    assert.ok(!fields.properties.subFields.items.properties.type.enum.includes(type))
+    const raw = draft()
+    raw.pages[0].fields = [question({ type:'repeat_group', options:[], subFields:[question({ type, options:[], subFields:undefined })] })]
+    assert.throws(() => normalizeAiDraft(raw))
+  }
+  const raw = draft()
+  raw.pages[0].fields = [question({ type:'repeat_group', options:[], subFields:[question({type:'text', options:[], subFields:undefined})] })]
+  assert.ok(normalizeAiDraft(raw).warnings.some(warning => /fuera de los grupos repetibles/.test(warning)))
+})
 test('el proveedor OpenAI recibe JSON Schema, store:false, clave en header y ningún secreto en la respuesta', async () => {
   let observed
   const result = await generateAiForm(input(), { env, fetchImpl:async (url,options) => { observed={ url,options,body:JSON.parse(options.body) }; return new Response(JSON.stringify({ status:'completed', output:[{ type:'message', content:[{ type:'output_text', text:JSON.stringify(draft()) }] }] })) } })
