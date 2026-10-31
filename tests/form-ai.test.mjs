@@ -52,15 +52,20 @@ test('opciones incompletas, duplicadas, matrices sin filas y grupos vacíos se r
 })
 test('la IA conserva evidencia en campos independientes y rechaza medios dentro de grupos repetibles', () => {
   const fields = AI_FORM_JSON_SCHEMA.properties.pages.items.properties.fields.items
+  const leaf = type => {
+    const value = question({ type, options:[] })
+    delete value.subFields
+    return value
+  }
   for (const type of ['photo', 'audio', 'signature', 'file']) {
     assert.ok(fields.properties.type.enum.includes(type))
     assert.ok(!fields.properties.subFields.items.properties.type.enum.includes(type))
     const raw = draft()
-    raw.pages[0].fields = [question({ type:'repeat_group', options:[], subFields:[question({ type, options:[], subFields:undefined })] })]
-    assert.throws(() => normalizeAiDraft(raw))
+    raw.pages[0].fields = [question({ type:'repeat_group', options:[], subFields:[leaf(type)] })]
+    assert.throws(() => normalizeAiDraft(raw), error => error.issues?.some(issue => issue.code === 'invalid_enum_value' && issue.path.includes('subFields')))
   }
   const raw = draft()
-  raw.pages[0].fields = [question({ type:'repeat_group', options:[], subFields:[question({type:'text', options:[], subFields:undefined})] })]
+  raw.pages[0].fields = [question({ type:'repeat_group', options:[], subFields:[leaf('text')] })]
   assert.ok(normalizeAiDraft(raw).warnings.some(warning => /fuera de los grupos repetibles/.test(warning)))
 })
 test('el proveedor OpenAI recibe JSON Schema, store:false, clave en header y ningún secreto en la respuesta', async () => {
