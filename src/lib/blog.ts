@@ -1,7 +1,7 @@
 import blogPostsData from '@/config/blog-posts.json'
 import editorialExpansion from '@/config/blog-editorial-20261016.json'
 import businessExpansion from '@/config/blog-business-20261031.json'
-import { SITE_URL } from '@/lib/marketing'
+import { SITE_URL, WEBSITE_ID, ORGANIZATION_ID, EDITORIAL_ID, buildIdentityGraph, buildEditorialNode, buildBreadcrumbNode, buildImageNode } from '@/lib/structured-data'
 
 export interface BlogParagraphSection {
   title: string
@@ -104,36 +104,44 @@ export function relatedBlogPosts(post: BlogPost, limit = 3) {
     .slice(0, limit)
 }
 
-const organization = {
-  '@type': 'Organization',
-  '@id': `${SITE_URL}/#organization`,
-  name: 'Control G by DRAN Digital',
-  url: SITE_URL,
-  logo: { '@type': 'ImageObject', url: `${SITE_URL}/pwa-512x512.png` },
+export function orderedBlogPosts(posts: BlogPost[]) {
+  const featured = posts.find(post => post.slug === 'software-caracterizacion-social-colombia')
+    ?? posts.find(post => post.slug === 'crear-encuestas-ia-validacion-humana')
+    ?? posts[0]
+  return featured ? [featured, ...posts.filter(post => post.slug !== featured.slug)] : []
+}
+
+function buildBlogNode() {
+  return {
+    '@type': 'Blog', '@id': `${SITE_URL}/blog#blog`, url: `${SITE_URL}/blog`,
+    name: BLOG_META.title, description: BLOG_META.description, inLanguage: 'es-CO',
+    publisher: { '@id': ORGANIZATION_ID }, isPartOf: { '@id': WEBSITE_ID },
+    author: { '@id': EDITORIAL_ID },
+  }
 }
 
 export function buildBlogIndexStructuredData(posts: BlogPost[] = BLOG_POSTS) {
+  const canonical = `${SITE_URL}/blog`
   return {
     '@context': 'https://schema.org',
     '@graph': [
-      organization,
+      ...buildIdentityGraph(), buildEditorialNode(), buildBlogNode(),
       {
-        '@type': 'Blog',
-        '@id': `${SITE_URL}/blog#blog`,
-        url: `${SITE_URL}/blog`,
-        name: BLOG_META.title,
-        description: BLOG_META.description,
-        inLanguage: 'es',
-        publisher: { '@id': `${SITE_URL}/#organization` },
-        blogPost: posts.map(post => ({ '@id': `${SITE_URL}/blog/${post.slug}#article` })),
+        '@type': 'CollectionPage', '@id': `${canonical}#webpage`,
+        url: canonical, name: BLOG_META.title, description: BLOG_META.description, inLanguage: 'es-CO',
+        isPartOf: { '@id': WEBSITE_ID }, mainEntity: [{ '@id': `${canonical}#blog` }, { '@id': `${canonical}#articulos` }],
+        publisher: { '@id': ORGANIZATION_ID }, breadcrumb: { '@id': `${canonical}#breadcrumb` },
       },
       {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITE_URL}/` },
-          { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
-        ],
+        '@type': 'ItemList', '@id': `${canonical}#articulos`, name: 'Artículos y guías de Control G',
+        numberOfItems: posts.length,
+        itemListElement: orderedBlogPosts(posts).map((post, index) => ({
+          '@type': 'ListItem', position: index + 1, name: post.title, url: `${SITE_URL}/blog/${post.slug}`,
+        })),
       },
+      buildBreadcrumbNode(canonical, [
+        { name: 'Inicio', url: `${SITE_URL}/` }, { name: 'Guías y recursos', url: canonical },
+      ]),
     ],
   }
 }
@@ -143,41 +151,36 @@ export function buildBlogStructuredData(post: BlogPost) {
   return {
     '@context': 'https://schema.org',
     '@graph': [
-      organization,
+      ...buildIdentityGraph(), buildEditorialNode(), buildBlogNode(),
+      buildImageNode(canonical, blogCover(post), post.imageCaption || blogCoverAlt(post)),
       {
-        '@type': 'BlogPosting',
-        '@id': `${canonical}#article`,
-        headline: post.title,
-        description: post.description,
-        url: canonical,
-        mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
-        image: [blogCover(post).startsWith('http') ? blogCover(post) : `${SITE_URL}${blogCover(post)}`],
-        datePublished: post.publishedAt,
-        dateModified: post.updatedAt,
-        inLanguage: 'es',
-        author: { '@id': `${SITE_URL}/#organization` },
-        publisher: { '@id': `${SITE_URL}/#organization` },
-        articleSection: post.category,
-        keywords: post.keywords.join(', '),
-        about: [post.category, post.country, ...post.keywords],
+        '@type': 'WebPage', '@id': `${canonical}#webpage`, url: canonical,
+        name: post.title, description: post.description, inLanguage: 'es-CO',
+        // The editorial source records calendar dates, not publication times.
+        // WebPage accepts Date. Google's Article date fields expect DateTime;
+        // do not fabricate midnight or a timezone to fill those optional fields.
+        datePublished: post.publishedAt, dateModified: post.updatedAt,
+        isPartOf: { '@id': WEBSITE_ID }, mainEntity: { '@id': `${canonical}#article` },
+        publisher: { '@id': ORGANIZATION_ID }, breadcrumb: { '@id': `${canonical}#breadcrumb` },
+        primaryImageOfPage: { '@id': `${canonical}#primaryimage` },
       },
       {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITE_URL}/` },
-          { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
-          { '@type': 'ListItem', position: 3, name: post.title, item: canonical },
-        ],
+        '@type': 'BlogPosting', '@id': `${canonical}#article`,
+        headline: post.title, description: post.description, url: canonical,
+        mainEntityOfPage: { '@id': `${canonical}#webpage` },
+        isPartOf: { '@id': `${SITE_URL}/blog#blog` },
+        image: { '@id': `${canonical}#primaryimage` },
+        inLanguage: 'es-CO',
+        author: { '@id': EDITORIAL_ID }, publisher: { '@id': ORGANIZATION_ID },
+        articleSection: post.category, keywords: post.keywords.join(', '), isAccessibleForFree: true,
+        about: [{ '@type': 'Thing', name: post.category }],
+        ...(post.sources.length ? { citation: post.sources.map(source => ({ '@type': 'WebPage', name: `${source.publisher}: ${source.title}`, url: source.url })) } : {}),
       },
-      {
-        '@type': 'FAQPage',
-        '@id': `${canonical}#faq`,
-        mainEntity: post.faqs.map(faq => ({
-          '@type': 'Question',
-          name: faq.question,
-          acceptedAnswer: { '@type': 'Answer', text: faq.answer },
-        })),
-      },
+      buildBreadcrumbNode(canonical, [
+        { name: 'Inicio', url: `${SITE_URL}/` },
+        { name: 'Guías y recursos', url: `${SITE_URL}/blog` },
+        { name: post.title, url: canonical },
+      ]),
     ],
   }
 }

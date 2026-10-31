@@ -1,0 +1,682 @@
+{
+  "source": "https://schema.org/version/latest/schemaorg-current-https.jsonld",
+  "retrievedOn": "2026-10-31",
+  "sourceSha256": "0a4b8c4c910fc831ec8695196510973390906a5ee34dc6b862dfec4d21a12f74",
+  "scope": "Subset of official Schema.org classes and properties used by Control G. Update explicitly when adding schema terms.",
+  "types": {
+    "Thing": [],
+    "Organization": [
+      "Thing"
+    ],
+    "ContactPoint": [
+      "StructuredValue"
+    ],
+    "StructuredValue": [
+      "Intangible"
+    ],
+    "Intangible": [
+      "Thing"
+    ],
+    "Country": [
+      "AdministrativeArea"
+    ],
+    "AdministrativeArea": [
+      "Place"
+    ],
+    "Place": [
+      "Thing"
+    ],
+    "WebSite": [
+      "CreativeWork"
+    ],
+    "CreativeWork": [
+      "Thing"
+    ],
+    "WebPage": [
+      "CreativeWork"
+    ],
+    "CollectionPage": [
+      "WebPage"
+    ],
+    "Service": [
+      "Intangible"
+    ],
+    "Blog": [
+      "CreativeWork"
+    ],
+    "BlogPosting": [
+      "SocialMediaPosting"
+    ],
+    "SocialMediaPosting": [
+      "Article"
+    ],
+    "Article": [
+      "CreativeWork"
+    ],
+    "ImageObject": [
+      "MediaObject"
+    ],
+    "MediaObject": [
+      "CreativeWork"
+    ],
+    "BreadcrumbList": [
+      "ItemList"
+    ],
+    "ItemList": [
+      "Intangible"
+    ],
+    "ListItem": [
+      "Intangible"
+    ],
+    "WebApplication": [
+      "SoftwareApplication"
+    ],
+    "SoftwareApplication": [
+      "CreativeWork"
+    ],
+    "MobileApplication": [
+      "SoftwareApplication"
+    ],
+    "Text": [],
+    "URL": [
+      "Text"
+    ],
+    "OfferShippingDetails": [
+      "StructuredValue"
+    ],
+    "Product": [
+      "Thing"
+    ],
+    "ShippingConditions": [
+      "StructuredValue"
+    ],
+    "VisualArtwork": [
+      "CreativeWork"
+    ],
+    "Distance": [
+      "Quantity"
+    ],
+    "Quantity": [],
+    "QuantitativeValue": [
+      "StructuredValue"
+    ],
+    "Person": [
+      "Thing"
+    ],
+    "AudioObject": [
+      "MediaObject"
+    ],
+    "VideoObject": [
+      "MediaObject"
+    ],
+    "Brand": [
+      "Intangible"
+    ],
+    "Certification": [
+      "CreativeWork"
+    ],
+    "TextObject": [
+      "MediaObject"
+    ],
+    "HealthInsurancePlan": [
+      "Intangible"
+    ],
+    "Course": [
+      "CreativeWork",
+      "LearningResource"
+    ],
+    "LearningResource": [
+      "CreativeWork"
+    ],
+    "LodgingBusiness": [
+      "LocalBusiness"
+    ],
+    "LocalBusiness": [
+      "Organization",
+      "Place"
+    ],
+    "ServiceChannel": [
+      "Intangible"
+    ],
+    "TouristAttraction": [
+      "Place"
+    ],
+    "Language": [
+      "Intangible"
+    ],
+    "DeliveryChargeSpecification": [
+      "PriceSpecification"
+    ],
+    "PriceSpecification": [
+      "StructuredValue"
+    ],
+    "Demand": [
+      "Intangible"
+    ],
+    "FinancialIncentive": [
+      "Intangible"
+    ],
+    "Offer": [
+      "Intangible"
+    ],
+    "GeoShape": [
+      "StructuredValue"
+    ],
+    "BroadcastService": [
+      "Service"
+    ],
+    "CommunicateAction": [
+      "InteractAction"
+    ],
+    "InteractAction": [
+      "Action"
+    ],
+    "Action": [
+      "Thing"
+    ],
+    "Event": [
+      "Thing"
+    ],
+    "LinkRole": [
+      "Role"
+    ],
+    "Role": [
+      "Intangible"
+    ],
+    "PronounceableText": [
+      "Text"
+    ],
+    "WriteAction": [
+      "CreateAction"
+    ],
+    "CreateAction": [
+      "Action"
+    ],
+    "GovernmentBenefitsType": [
+      "Enumeration"
+    ],
+    "Enumeration": [
+      "Intangible"
+    ],
+    "EducationalOccupationalProgram": [
+      "Intangible"
+    ],
+    "Invoice": [
+      "Intangible"
+    ],
+    "ParcelDelivery": [
+      "Intangible"
+    ],
+    "Reservation": [
+      "Intangible"
+    ],
+    "Trip": [
+      "Intangible"
+    ],
+    "Rating": [
+      "Intangible"
+    ],
+    "Integer": [
+      "Number"
+    ],
+    "Number": [],
+    "DataFeedItem": [
+      "Intangible"
+    ],
+    "Date": [],
+    "DateTime": [],
+    "DefinedTerm": [
+      "Intangible"
+    ],
+    "Boolean": [],
+    "DefinedTermSet": [
+      "CreativeWork"
+    ],
+    "PropertyValue": [
+      "StructuredValue"
+    ],
+    "OperatingSystem": [
+      "SoftwareApplication"
+    ]
+  },
+  "properties": {
+    "name": {
+      "domains": [
+        "Thing"
+      ],
+      "ranges": [
+        "Text"
+      ]
+    },
+    "alternateName": {
+      "domains": [
+        "Thing"
+      ],
+      "ranges": [
+        "Text"
+      ]
+    },
+    "url": {
+      "domains": [
+        "Thing"
+      ],
+      "ranges": [
+        "URL"
+      ]
+    },
+    "contentUrl": {
+      "domains": [
+        "MediaObject"
+      ],
+      "ranges": [
+        "URL"
+      ]
+    },
+    "width": {
+      "domains": [
+        "MediaObject",
+        "OfferShippingDetails",
+        "Product",
+        "ShippingConditions",
+        "VisualArtwork"
+      ],
+      "ranges": [
+        "Distance",
+        "QuantitativeValue"
+      ]
+    },
+    "height": {
+      "domains": [
+        "MediaObject",
+        "OfferShippingDetails",
+        "Person",
+        "Product",
+        "ShippingConditions",
+        "VisualArtwork"
+      ],
+      "ranges": [
+        "Distance",
+        "QuantitativeValue"
+      ]
+    },
+    "caption": {
+      "domains": [
+        "AudioObject",
+        "ImageObject",
+        "VideoObject"
+      ],
+      "ranges": [
+        "MediaObject",
+        "Text"
+      ]
+    },
+    "logo": {
+      "domains": [
+        "Brand",
+        "Certification",
+        "Organization",
+        "Place",
+        "Product",
+        "Service"
+      ],
+      "ranges": [
+        "ImageObject",
+        "URL"
+      ]
+    },
+    "parentOrganization": {
+      "domains": [
+        "Organization"
+      ],
+      "ranges": [
+        "Organization"
+      ]
+    },
+    "description": {
+      "domains": [
+        "Thing"
+      ],
+      "ranges": [
+        "Text",
+        "TextObject"
+      ]
+    },
+    "contactPoint": {
+      "domains": [
+        "HealthInsurancePlan",
+        "Organization",
+        "Person"
+      ],
+      "ranges": [
+        "ContactPoint"
+      ]
+    },
+    "telephone": {
+      "domains": [
+        "ContactPoint",
+        "Organization",
+        "Person",
+        "Place"
+      ],
+      "ranges": [
+        "Text"
+      ]
+    },
+    "contactType": {
+      "domains": [
+        "ContactPoint"
+      ],
+      "ranges": [
+        "Text"
+      ]
+    },
+    "availableLanguage": {
+      "domains": [
+        "ContactPoint",
+        "Course",
+        "LodgingBusiness",
+        "ServiceChannel",
+        "TouristAttraction"
+      ],
+      "ranges": [
+        "Language",
+        "Text"
+      ]
+    },
+    "areaServed": {
+      "domains": [
+        "ContactPoint",
+        "DeliveryChargeSpecification",
+        "Demand",
+        "FinancialIncentive",
+        "Offer",
+        "Organization",
+        "Service"
+      ],
+      "ranges": [
+        "AdministrativeArea",
+        "GeoShape",
+        "Place",
+        "Text"
+      ]
+    },
+    "inLanguage": {
+      "domains": [
+        "BroadcastService",
+        "CommunicateAction",
+        "CreativeWork",
+        "Event",
+        "LinkRole",
+        "PronounceableText",
+        "WriteAction"
+      ],
+      "ranges": [
+        "Language",
+        "Text"
+      ]
+    },
+    "publisher": {
+      "domains": [
+        "CreativeWork",
+        "FinancialIncentive"
+      ],
+      "ranges": [
+        "Organization",
+        "Person"
+      ]
+    },
+    "serviceType": {
+      "domains": [
+        "Service"
+      ],
+      "ranges": [
+        "GovernmentBenefitsType",
+        "Text"
+      ]
+    },
+    "provider": {
+      "domains": [
+        "Action",
+        "CreativeWork",
+        "EducationalOccupationalProgram",
+        "FinancialIncentive",
+        "Invoice",
+        "OfferShippingDetails",
+        "ParcelDelivery",
+        "Reservation",
+        "Service",
+        "Trip"
+      ],
+      "ranges": [
+        "Organization",
+        "Person"
+      ]
+    },
+    "isPartOf": {
+      "domains": [
+        "CreativeWork"
+      ],
+      "ranges": [
+        "CreativeWork",
+        "URL"
+      ]
+    },
+    "author": {
+      "domains": [
+        "CreativeWork",
+        "Rating"
+      ],
+      "ranges": [
+        "Organization",
+        "Person"
+      ]
+    },
+    "itemListElement": {
+      "domains": [
+        "ItemList"
+      ],
+      "ranges": [
+        "ListItem",
+        "Text",
+        "Thing"
+      ]
+    },
+    "position": {
+      "domains": [
+        "CreativeWork",
+        "ListItem"
+      ],
+      "ranges": [
+        "Integer",
+        "Text"
+      ]
+    },
+    "item": {
+      "domains": [
+        "DataFeedItem",
+        "ListItem"
+      ],
+      "ranges": [
+        "Thing"
+      ]
+    },
+    "mainEntityOfPage": {
+      "domains": [
+        "Thing"
+      ],
+      "ranges": [
+        "CreativeWork",
+        "URL"
+      ]
+    },
+    "image": {
+      "domains": [
+        "Thing"
+      ],
+      "ranges": [
+        "ImageObject",
+        "URL"
+      ]
+    },
+    "datePublished": {
+      "domains": [
+        "Certification",
+        "CreativeWork"
+      ],
+      "ranges": [
+        "Date",
+        "DateTime"
+      ]
+    },
+    "dateModified": {
+      "domains": [
+        "CreativeWork",
+        "DataFeedItem"
+      ],
+      "ranges": [
+        "Date",
+        "DateTime"
+      ]
+    },
+    "articleSection": {
+      "domains": [
+        "Article"
+      ],
+      "ranges": [
+        "Text"
+      ]
+    },
+    "keywords": {
+      "domains": [
+        "CreativeWork",
+        "Event",
+        "Organization",
+        "Place",
+        "Product"
+      ],
+      "ranges": [
+        "DefinedTerm",
+        "Text",
+        "URL"
+      ]
+    },
+    "isAccessibleForFree": {
+      "domains": [
+        "CreativeWork",
+        "Event",
+        "Place"
+      ],
+      "ranges": [
+        "Boolean"
+      ]
+    },
+    "about": {
+      "domains": [
+        "Certification",
+        "CommunicateAction",
+        "CreativeWork",
+        "DefinedTerm",
+        "DefinedTermSet",
+        "Event"
+      ],
+      "ranges": [
+        "Thing"
+      ]
+    },
+    "citation": {
+      "domains": [
+        "CreativeWork"
+      ],
+      "ranges": [
+        "CreativeWork",
+        "Text"
+      ]
+    },
+    "breadcrumb": {
+      "domains": [
+        "WebPage"
+      ],
+      "ranges": [
+        "BreadcrumbList",
+        "Text"
+      ]
+    },
+    "primaryImageOfPage": {
+      "domains": [
+        "WebPage"
+      ],
+      "ranges": [
+        "ImageObject"
+      ]
+    },
+    "spatialCoverage": {
+      "domains": [
+        "CreativeWork"
+      ],
+      "ranges": [
+        "Place"
+      ]
+    },
+    "identifier": {
+      "domains": [
+        "Thing"
+      ],
+      "ranges": [
+        "PropertyValue",
+        "Text",
+        "URL"
+      ]
+    },
+    "numberOfItems": {
+      "domains": [
+        "ItemList"
+      ],
+      "ranges": [
+        "Integer"
+      ]
+    },
+    "mainEntity": {
+      "domains": [
+        "CreativeWork"
+      ],
+      "ranges": [
+        "Thing"
+      ]
+    },
+    "headline": {
+      "domains": [
+        "CreativeWork"
+      ],
+      "ranges": [
+        "Text"
+      ]
+    },
+    "applicationCategory": {
+      "domains": [
+        "SoftwareApplication"
+      ],
+      "ranges": [
+        "Text",
+        "URL"
+      ]
+    },
+    "operatingSystem": {
+      "domains": [
+        "SoftwareApplication"
+      ],
+      "ranges": [
+        "OperatingSystem",
+        "Text"
+      ]
+    },
+    "featureList": {
+      "domains": [
+        "SoftwareApplication"
+      ],
+      "ranges": [
+        "Text",
+        "URL"
+      ]
+    }
+  }
+}

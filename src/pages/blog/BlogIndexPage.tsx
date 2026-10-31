@@ -5,7 +5,8 @@ import { LeadFunnel } from '@/components/marketing/LeadFunnel'
 import { StickyWhatsApp } from '@/components/marketing/WhatsAppCta'
 import { PublicHeader } from '@/components/marketing/PublicHeader'
 import { PublicFooter } from '@/components/marketing/PublicFooter'
-import { BLOG_META, blogCover, formatBlogDate } from '@/lib/blog'
+import { BLOG_META, blogCover, formatBlogDate, orderedBlogPosts } from '@/lib/blog'
+import { EDITORIAL_NAME } from '@/lib/structured-data'
 import { usePublishedBlogPosts } from '@/hooks/useBlogContent'
 
 export default function BlogIndexPage() {
@@ -13,10 +14,7 @@ export default function BlogIndexPage() {
   const { posts } = usePublishedBlogPosts()
   const categories = useMemo(() => ['Todos', ...new Set(posts.map(post => post.category))], [posts])
   const filteredPosts = category === 'Todos' ? posts : posts.filter(post => post.category === category)
-  const featured = filteredPosts.find(post => post.slug === 'software-caracterizacion-social-colombia')
-    ?? filteredPosts.find(post => post.slug === 'crear-encuestas-ia-validacion-humana')
-    ?? filteredPosts[0]
-  const visiblePosts = filteredPosts.filter(post => post.slug !== featured?.slug)
+  const [featured, ...visiblePosts] = orderedBlogPosts(filteredPosts)
   const lastUpdated = posts.reduce((latest, post) => post.updatedAt > latest ? post.updatedAt : latest, '')
 
   return (
@@ -25,6 +23,7 @@ export default function BlogIndexPage() {
       <main id="main-content" tabIndex={-1}>
         <section className="border-b border-[#D8E4E9] bg-[#F4F8FA] py-12 sm:py-16">
           <div className="cg-container">
+            <nav aria-label="Migas de pan" className="mb-6 flex gap-2 text-xs text-[#4D6470]"><Link to="/">Inicio</Link><span aria-hidden="true">›</span><span>Guías y recursos</span></nav>
             <p className="flex items-center gap-2 text-xs font-semibold text-[#087E8B]"><BookOpen size={17} aria-hidden="true" /> Guías y recursos de Control G</p>
             <h1 className="!mt-6 max-w-4xl text-[38px] font-extrabold leading-[1.12] tracking-[-.045em] text-[#123B50] sm:text-5xl lg:text-[58px]">Encuestas, caracterización y decisiones en territorio.</h1>
             <p className="!mt-6 max-w-3xl text-base leading-8 text-[#4D6470] sm:text-lg">Guías y comparaciones para preparar cuestionarios con apoyo de IA, recolectar información sin internet y analizar datos georreferenciados. Para empresas, entidades públicas, corporaciones y ONG de Colombia y Latinoamérica.</p>
@@ -63,6 +62,7 @@ export default function BlogIndexPage() {
             {lastUpdated ? <p className="!mt-10 text-xs leading-6 text-[#4D6470]">Contenido editorial actualizado el <time dateTime={lastUpdated}>{formatBlogDate(lastUpdated)}</time>. Las guías y comparaciones incluyen fuentes para profundizar en cada tema.</p> : null}
           </div>
         </section>
+        <section id="equipo-editorial" className="scroll-mt-28 border-t border-[#D8E4E9] py-10 sm:py-14" aria-labelledby="editorial-heading"><div className="cg-container"><h2 id="editorial-heading" className="text-2xl font-bold text-[#123B50]">{EDITORIAL_NAME}</h2><p className="mt-4 max-w-3xl text-sm leading-7 text-[#4D6470]">El equipo de Control G prepara estas guías sobre diseño de formularios, caracterización y operación de campo. La plataforma es de DRAN Digital S.A.S. Los ejemplos son orientativos; las fuentes y fechas de actualización se indican en cada artículo. Las marcas citadas no implican una relación comercial.</p><p className="mt-3 max-w-3xl text-sm leading-7 text-[#4D6470]">Para aclarar el alcance de una función o comunicar una corrección, utilice el contacto comercial de Control G. Las guías no sustituyen la validación metodológica, técnica o jurídica de su proyecto.</p></div></section>
         <section className="border-t border-[#D8E4E9] bg-[#F4F8FA] py-14 sm:py-16" aria-label="Solicitar una demostración"><div className="cg-container cg-funnel-wrapper !mt-0"><LeadFunnel source="blog" /></div></section>
       </main>
       <PublicFooter />

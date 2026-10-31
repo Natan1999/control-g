@@ -3,7 +3,9 @@ import sectorPagesData from '@/config/seo-sectors-20261031.json'
 import countryLandingProfiles from '@/config/country-landing-profiles.json'
 import { trackConsentedMarketingEvent } from '@/lib/marketing-analytics'
 
-export const SITE_URL = 'https://www.controlg.co'
+import { SITE_URL, WEBSITE_ID, ORGANIZATION_ID, SERVICE_ID, SOFTWARE_ID, buildIdentityGraph, buildServiceNode, buildSoftwareNode, buildBreadcrumbNode, buildImageNode, type SchemaNode } from '@/lib/structured-data'
+
+export { SITE_URL }
 export const WHATSAPP_NUMBER = '573009010300'
 export const WHATSAPP_DISPLAY = '+57 300 901 0300'
 
@@ -149,82 +151,43 @@ export function trackMarketingEvent(eventName: string, data: Record<string, stri
 }
 
 export function buildStructuredData(page: SeoPage) {
-  const canonical = `${SITE_URL}${page.path === '/' ? '/' : page.path}`
-  const graph: Record<string, unknown>[] = [
-    {
-      '@type': 'Organization',
-      '@id': `${SITE_URL}/#organization`,
-      name: 'Control G by DRAN Digital',
-      alternateName: 'Control G',
-      url: SITE_URL,
-      logo: `${SITE_URL}/pwa-512x512.png`,
-      description: 'Plataforma de caracterización, encuestas y levantamiento de información en campo para empresas, entidades públicas y ONG en Colombia y Latinoamérica.',
-      contactPoint: {
-        '@type': 'ContactPoint',
-        telephone: '+57-300-901-0300',
-        contactType: 'sales',
-        availableLanguage: page.countryCode === 'BR' ? ['Portuguese', 'Spanish'] : ['Spanish'],
-        areaServed: [page.countryCode || 'CO', 'LATAM'],
-      },
-      areaServed: [
-        { '@type': 'Country', name: 'Colombia' },
-        { '@type': 'Place', name: 'Latinoamérica' },
-      ],
-    },
-    {
-      '@type': ['WebApplication', 'MobileApplication'],
-      '@id': `${SITE_URL}/#software`,
-      name: 'Control G',
-      url: SITE_URL,
-      applicationCategory: 'BusinessApplication',
-      operatingSystem: 'Web, Android',
-      inLanguage: 'es',
-      description: page.description,
-      featureList: page.benefits,
-      author: { '@id': `${SITE_URL}/#organization` },
-      provider: { '@id': `${SITE_URL}/#organization` },
-      areaServed: [page.countryCode || 'Colombia', 'Latinoamérica'],
-    },
-    {
-      '@type': 'WebPage',
-      '@id': `${canonical}#webpage`,
-      url: canonical,
-      name: page.title,
-      description: page.description,
-      inLanguage: page.locale || 'es-CO',
-      isPartOf: { '@id': `${SITE_URL}/#website` },
-      about: { '@id': `${SITE_URL}/#software` },
-    },
-    {
-      '@type': 'FAQPage',
-      '@id': `${canonical}#faq`,
-      mainEntity: page.faqs.map(faq => ({
-        '@type': 'Question',
-        name: faq.question,
-        acceptedAnswer: { '@type': 'Answer', text: faq.answer },
-      })),
-    },
-  ]
-
-  graph.push({
-    '@type': 'WebSite',
-    '@id': `${SITE_URL}/#website`,
-    url: SITE_URL,
-    name: 'Control G',
-    description: 'Software de caracterización, encuestas y levantamiento de información en campo.',
-    inLanguage: 'es-CO',
-    publisher: { '@id': `${SITE_URL}/#organization` },
-  })
-
+  const canonical = `${SITE_URL}${page.path}`
+  const collection = page.path === '/sectores'
+  const graph: SchemaNode[] = [...buildIdentityGraph(), buildServiceNode()]
+  if (page.path === '/') graph.push(buildSoftwareNode())
+  const webpage: SchemaNode = {
+    '@type': collection ? 'CollectionPage' : 'WebPage',
+    '@id': `${canonical}#webpage`, url: canonical, name: page.title,
+    description: page.description, inLanguage: page.locale || 'es-CO',
+    isPartOf: { '@id': WEBSITE_ID }, publisher: { '@id': ORGANIZATION_ID },
+    about: { '@id': SERVICE_ID }, keywords: page.keywords.join(', '),
+    ...(page.updatedAt ? { dateModified: page.updatedAt } : {}),
+  }
+  if (page.path === '/') webpage.mainEntity = { '@id': SOFTWARE_ID }
   if (page.path !== '/') {
+    webpage.breadcrumb = { '@id': `${canonical}#breadcrumb` }
+    graph.push(buildBreadcrumbNode(canonical, [
+      { name: page.countryCode === 'BR' ? 'Início' : 'Inicio', url: `${SITE_URL}/` },
+      { name: page.eyebrow, url: canonical },
+    ]))
+  }
+  if (page.image) {
+    graph.push(buildImageNode(canonical, page.image, page.imageCaption || page.imageAlt || page.heading))
+    webpage.primaryImageOfPage = { '@id': `${canonical}#primaryimage` }
+  }
+  const country = countryLandingProfiles.find(profile => profile.code === page.countryCode)
+  if (country) webpage.spatialCoverage = { '@type': 'Country', name: country.name, identifier: country.code }
+  if (collection && page.relatedLinks?.length) {
+    const listId = `${canonical}#soluciones`
+    webpage.mainEntity = { '@id': listId }
     graph.push({
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITE_URL}/` },
-        { '@type': 'ListItem', position: 2, name: page.heading, item: canonical },
-      ],
+      '@type': 'ItemList', '@id': listId, name: 'Guías y soluciones relacionadas',
+      numberOfItems: page.relatedLinks.length,
+      itemListElement: page.relatedLinks.map((link, index) => ({
+        '@type': 'ListItem', position: index + 1, name: link.title, url: `${SITE_URL}${link.path}`,
+      })),
     })
   }
-
+  graph.push(webpage)
   return { '@context': 'https://schema.org', '@graph': graph }
 }

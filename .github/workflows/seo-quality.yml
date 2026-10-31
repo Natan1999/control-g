@@ -44,6 +44,8 @@ jobs:
         run: npm run build
       - name: Check generated SEO
         run: npm run seo:check
+      - name: Validate structured data vocabulary and content on every public page
+        run: npm run schema:check
 
   production:
     name: Check production and notify published changes
@@ -73,3 +75,7 @@ jobs:
         run: node scripts/submit-indexnow.mjs --submit --revision "$EXPECTED_REVISION"
       - name: Audit live public pages
         run: npm run seo:probe
+      - name: Validate live structured data and shared identities
+        env:
+          SEO_EXPECTED_REVISION: ${{ github.sha }}
+        run: npm run schema:probe

@@ -134,8 +134,12 @@ test('el sitio tiene páginas SEO indexables y embudos hacia WhatsApp', async ()
 
   assert.match(app, /<MarketingSeo \/>/)
   assert.match(marketing, /WHATSAPP_NUMBER = '573009010300'/)
-  assert.match(marketing, /FAQPage/)
-  assert.match(marketing, /WebApplication/)
+  assert.match(marketing, /buildBreadcrumbNode/)
+  // Google retired FAQ rich results in May 2026; questions remain visible,
+  // while the public graph focuses on supported identities and breadcrumbs.
+  assert.doesNotMatch(marketing, /'@type': 'FAQPage'/)
+  assert.match(marketing, /buildSoftwareNode/)
+  assert.match(await read('src/lib/structured-data.ts'), /WebApplication/)
   assert.match(robots, /Disallow: \/admin/)
   assert.match(generator, /data-seo-static/)
   assert.match(generator, /VITE_NATIVE_BUILD === 'true'/)

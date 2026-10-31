@@ -11,6 +11,8 @@
     "preview": "vite preview",
     "seo:check": "node scripts/seo-check.mjs",
     "seo:probe": "node scripts/seo-probe.mjs",
+    "schema:check": "node scripts/schema-check.mjs",
+    "schema:probe": "node scripts/schema-check.mjs --live",
     "seo:notify": "node scripts/submit-indexnow.mjs",
     "backend:check": "node scripts/check-supabase.mjs",
     "backend:verify": "node scripts/verify-supabase.mjs",

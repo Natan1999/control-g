@@ -6,6 +6,7 @@ import { PublicHeader } from '@/components/marketing/PublicHeader'
 import { PublicFooter } from '@/components/marketing/PublicFooter'
 import { blogCover, blogCoverAlt, formatBlogDate, relatedBlogPosts } from '@/lib/blog'
 import { usePublishedBlogPost } from '@/hooks/useBlogContent'
+import { EDITORIAL_NAME } from '@/lib/structured-data'
 import NotFoundPage from '@/pages/landing/NotFoundPage'
 
 export default function BlogPostPage() {
@@ -23,11 +24,11 @@ export default function BlogPostPage() {
           <header className="border-b border-[#D8E4E9] bg-[#F4F8FA] py-8 sm:py-12 lg:py-14">
             <div className="cg-container grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,.8fr)] lg:items-center lg:gap-14">
               <div>
-                <nav aria-label="Migas de pan" className="flex flex-wrap items-center gap-2 text-[11px] leading-6 text-[#4D6470]"><Link to="/" className="hover:text-[#087E8B]">Inicio</Link><ChevronRight size={12} aria-hidden="true" /><Link to="/blog" className="hover:text-[#087E8B]">Guías y recursos</Link><ChevronRight size={12} aria-hidden="true" /><span>{post.category}</span></nav>
+                <nav aria-label="Migas de pan" className="flex flex-wrap items-center gap-2 text-[11px] leading-6 text-[#4D6470]"><Link to="/" className="hover:text-[#087E8B]">Inicio</Link><ChevronRight size={12} aria-hidden="true" /><Link to="/blog" className="hover:text-[#087E8B]">Guías y recursos</Link><ChevronRight size={12} aria-hidden="true" /><span aria-current="page">{post.title}</span></nav>
                 <p className="!mt-6 text-xs font-semibold text-[#087E8B]">{post.category}</p>
                 <h1 className="!mt-4 text-[36px] font-extrabold leading-[1.14] tracking-[-.04em] text-[#123B50] sm:text-5xl lg:text-[49px]">{post.title}</h1>
                 <p className="!mt-6 max-w-3xl text-base leading-8 text-[#4D6470] sm:text-lg">{post.description}</p>
-                <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] leading-6 text-[#4D6470]"><span className="font-semibold">Equipo editorial Control G</span><time dateTime={post.updatedAt}>Actualizado {formatBlogDate(post.updatedAt)}</time><span className="inline-flex items-center gap-1.5"><Clock3 size={14} aria-hidden="true" />{post.readingMinutes} min</span><span className="inline-flex items-center gap-1.5"><MapPin size={14} aria-hidden="true" />{post.country}</span></div>
+                <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] leading-6 text-[#4D6470]"><a href="/blog#equipo-editorial" rel="author" className="font-semibold underline underline-offset-4">{EDITORIAL_NAME}</a><span>Publicado <time dateTime={post.publishedAt}>{formatBlogDate(post.publishedAt)}</time></span><time dateTime={post.updatedAt}>Actualizado {formatBlogDate(post.updatedAt)}</time><span className="inline-flex items-center gap-1.5"><Clock3 size={14} aria-hidden="true" />{post.readingMinutes} min</span><span className="inline-flex items-center gap-1.5"><MapPin size={14} aria-hidden="true" />{post.country}</span></div>
               </div>
               <figure className="overflow-hidden rounded-lg border border-[#CFDFE6] bg-[#E5EEF2]"><img src={blogCover(post)} alt={blogCoverAlt(post)} className="aspect-[3/2] w-full object-cover" width="1536" height="1024" loading="eager" decoding="async" /><figcaption className={post.imageCaption ? 'bg-white px-4 py-3 text-[11px] leading-5 text-[#4D6470]' : 'sr-only'}>{post.imageCaption || blogCoverAlt(post)}</figcaption></figure>
             </div>
