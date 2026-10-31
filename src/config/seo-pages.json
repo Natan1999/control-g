@@ -1,11 +1,11 @@
 [
   {
     "path": "/",
-    "title": "Control G | Encuestas offline, caracterización y GIS",
-    "description": "Caracterización y encuestas sin internet con GPS, evidencias, mapas GIS y seguimiento. Para empresas, entidades públicas y ONG en Colombia y Latinoamérica.",
+    "title": "Control G | Caracterización con IA y encuestas offline",
+    "description": "Cree formularios con IA y capture datos sin internet. Visitas comerciales, caracterización, fotos y GPS para empresas y entidades de Colombia y LATAM.",
     "eyebrow": "Datos de campo para Colombia y Latinoamérica",
-    "heading": "Caracterización y encuestas que avanzan sin internet",
-    "lead": "Diseñe formularios, asigne equipos y recolecte datos, fotos, firmas y ubicación desde Android. Al recuperar conexión, sincronice para revisar resultados y analizar su territorio. Para empresas, entidades públicas, corporaciones y ONG.",
+    "heading": "Caracterización con IA y captura offline para su equipo",
+    "lead": "Diseñe instrumentos con asistencia de IA y revisión humana. Asigne equipos y recolecte datos, fotos, firmas y ubicación desde Android sin internet. Al recuperar conexión, sincronice para revisar resultados. Para empresas, entidades públicas y ONG en Colombia y Latinoamérica.",
     "keywords": [
       "encuestas offline Colombia",
       "software de caracterización",
@@ -85,8 +85,13 @@
       {
         "title": "Caracterización en Colombia",
         "path": "/caracterizacion-colombia"
+      },
+      {
+        "title": "Sectores y operación comercial",
+        "path": "/sectores"
       }
-    ]
+    ],
+    "updatedAt": "2026-10-31"
   },
   {
     "path": "/software-caracterizacion-social",
@@ -788,6 +793,10 @@
       {
         "title": "Prepare una salida útil para operaciones y dirección",
         "body": "Acorde las tablas, mapas y cortes que utilizarán los responsables y compruebe una exportación durante el piloto. Añada diccionario de variables, identificación de unidades y explicación de ausentes o excluidos. Si dirección necesita un resumen, defina qué detalle debe omitirse y qué información quedará para revisión operativa. Una gráfica atractiva no sustituye una base con significado claro. La propuesta debe precisar formularios, número de usuarios y dispositivos, vigencia, sesiones de formación, soporte y tareas adicionales para que el alcance permita comparar opciones."
+      },
+      {
+        "title": "Visitas comerciales por sector",
+        "body": "Una distribuidora de combustibles, una empresa de alimentos y un prestador de mantenimiento necesitan instrumentos distintos. Defina empresa, sede, visita y evento para conservar su significado. El equipo registra necesidades y solicitudes preliminares offline; la validación comercial ocurre después. Inventario, precios, facturación y despacho requieren sistemas o integraciones adicionales."
       }
     ],
     "benefits": [
@@ -818,18 +827,27 @@
     ],
     "relatedLinks": [
       {
-        "title": "Cómo caracterizar clientes y establecimientos",
-        "path": "/blog/caracterizacion-empresas-clientes-establecimientos"
+        "title": "Sectores y casos de aplicación",
+        "path": "/sectores"
       },
       {
-        "title": "Preparación de encuestas con IA",
-        "path": "/encuestas-con-inteligencia-artificial"
+        "title": "Visitas comerciales sin internet",
+        "path": "/visitas-comerciales-offline"
       },
       {
-        "title": "Levantamiento en campo",
-        "path": "/levantamiento-informacion-campo"
+        "title": "Instrumentos para combustibles",
+        "path": "/formularios-sector-combustibles"
+      },
+      {
+        "title": "Distribución de alimentos",
+        "path": "/formularios-distribuidoras-alimentos"
+      },
+      {
+        "title": "Caracterización de proveedores",
+        "path": "/blog/caracterizacion-proveedores-empresas"
       }
-    ]
+    ],
+    "updatedAt": "2026-10-31"
   },
   {
     "path": "/encuestas-para-ong",

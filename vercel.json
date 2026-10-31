@@ -110,7 +110,7 @@
       "dest": "/api/marketing?path=/blog/$1"
     },
     {
-      "src": "^/(software-caracterizacion-social|encuestas-offline|levantamiento-informacion-campo|software-entidades-gobierno|encuestas-con-inteligencia-artificial|encuestas-georreferenciadas|integracion-arcgis|encuestas-para-empresas|encuestas-para-ong|caracterizacion-colombia)/?$",
+      "src": "^/(software-caracterizacion-social|encuestas-offline|levantamiento-informacion-campo|software-entidades-gobierno|encuestas-con-inteligencia-artificial|encuestas-georreferenciadas|integracion-arcgis|encuestas-para-empresas|encuestas-para-ong|caracterizacion-colombia|sectores|visitas-comerciales-offline|formularios-sector-combustibles|formularios-distribuidoras-alimentos|formularios-preventistas-offline|auditoria-puntos-venta|inspecciones-servicios-publicos|formularios-sector-agropecuario|inspecciones-obras-campo|formularios-logistica-entregas)/?$",
       "dest": "/$1/index.html"
     },
     {

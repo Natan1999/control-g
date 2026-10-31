@@ -1,5 +1,6 @@
 import blogPostsData from '@/config/blog-posts.json'
 import editorialExpansion from '@/config/blog-editorial-20261016.json'
+import businessExpansion from '@/config/blog-business-20261031.json'
 import { SITE_URL } from '@/lib/marketing'
 
 export interface BlogParagraphSection {
@@ -40,7 +41,7 @@ export interface BlogPost {
   relatedLinks?: Array<{ title: string; path: string }>
 }
 
-export const BLOG_POSTS = [...blogPostsData, ...editorialExpansion] as BlogPost[]
+export const BLOG_POSTS = [...blogPostsData, ...editorialExpansion, ...businessExpansion] as BlogPost[]
 
 export const BLOG_META = {
   title: 'Blog de encuestas, caracterización y GIS | Control G',

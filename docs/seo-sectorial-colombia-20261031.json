@@ -1,0 +1,885 @@
+{
+  "date": "2026-10-31",
+  "scope": "SEO de Control G para Colombia, ampliación empresarial sin cambiar captura privada, backend ni APK",
+  "methodology": {
+    "kind": "Investigación cualitativa de SERP, documentación primaria y evidencia propia de producto",
+    "monthlySearchVolume": null,
+    "keywordDifficulty": null,
+    "limitation": "No se utilizó Keyword Planner, Ahrefs ni Semrush. No se inventan volúmenes, dificultad, cuota de mercado ni posiciones de competidores. La prioridad es un juicio editorial, no una métrica de demanda.",
+    "brandPolicy": "Zeuss y Terpel son ejemplos de modelo empresarial investigados públicamente, no clientes declarados ni casos de éxito. No se publica el contacto privado ni cotizaciones."
+  },
+  "baseline": {
+    "source": "Search Console, propiedad sc-domain:controlg.co, consulta UI autorizada",
+    "periodStart": "2026-10-01",
+    "periodEnd": "2026-10-28",
+    "clicks": 50,
+    "impressionsDisplay": "3.72K",
+    "ctrDisplay": "1.3%",
+    "averagePosition": 6.6,
+    "notes": "Datos agregados del informe. Clics no equivalen a leads o ventas. La posición media no significa primer puesto en todas las consultas.",
+    "topPages": [
+      {
+        "path": "/blog/que-es-caracterizacion-poblacional",
+        "clicks": 21,
+        "impressions": 738
+      },
+      {
+        "path": "/blog/identificar-necesidades-comunidad",
+        "clicks": 9,
+        "impressions": 529
+      },
+      {
+        "path": "/blog/diagnostico-comunitario-participativo",
+        "clicks": 7,
+        "impressions": 298
+      },
+      {
+        "path": "/",
+        "clicks": 3,
+        "impressions": 1227
+      },
+      {
+        "path": "/blog/caracterizacion-empresas-clientes-establecimientos",
+        "clicks": 2,
+        "impressions": 47
+      }
+    ]
+  },
+  "pillars": [
+    {
+      "name": "Caracterización e IA revisable",
+      "pages": [
+        "/software-caracterizacion-social",
+        "/encuestas-con-inteligencia-artificial",
+        "/caracterizacion-colombia"
+      ],
+      "purpose": "Conservar tracción social y explicar la separación entre generación online y captura offline."
+    },
+    {
+      "name": "Visitas comerciales y combustibles",
+      "pages": [
+        "/visitas-comerciales-offline",
+        "/formularios-sector-combustibles"
+      ],
+      "purpose": "Motivos, relaciones, cantidades y recepción de visitas."
+    },
+    {
+      "name": "Distribución y punto de venta",
+      "pages": [
+        "/formularios-distribuidoras-alimentos",
+        "/formularios-preventistas-offline",
+        "/auditoria-puntos-venta"
+      ],
+      "purpose": "Solicitud preliminar, censo y observación; no vender ERP implícito."
+    },
+    {
+      "name": "Visitas técnicas y logística",
+      "pages": [
+        "/inspecciones-servicios-publicos",
+        "/inspecciones-obras-campo",
+        "/formularios-logistica-entregas"
+      ],
+      "purpose": "Documentación para revisión, con límites técnicos y contractuales."
+    },
+    {
+      "name": "Agro y acompañamiento rural",
+      "pages": [
+        "/formularios-sector-agropecuario"
+      ],
+      "purpose": "Diferenciar productor, predio y visita en campo."
+    }
+  ],
+  "markets": [
+    {
+      "sector": "Combustibles y lubricantes",
+      "buyer": "Distribuidores mayoristas y equipos comerciales de redes",
+      "keywords": [
+        "visitas comerciales combustibles",
+        "formularios estaciones de servicio",
+        "captura offline petroleras"
+      ],
+      "priority": "Alta",
+      "publishedDestination": "/formularios-sector-combustibles",
+      "boundary": "Información de visitas; surtidores, telemetría y ERP fuera del alcance base"
+    },
+    {
+      "sector": "Estaciones propias y aliadas",
+      "buyer": "Supervisión regional de EDS",
+      "keywords": [
+        "checklist visita estación servicio",
+        "evidencia visita EDS"
+      ],
+      "priority": "Alta",
+      "publishedDestination": "/formularios-sector-combustibles",
+      "boundary": "No certifica inspecciones técnicas"
+    },
+    {
+      "sector": "Alimentos",
+      "buyer": "Distribuidoras y mayoristas",
+      "keywords": [
+        "formularios distribuidoras alimentos",
+        "visitas tiendas offline"
+      ],
+      "priority": "Alta",
+      "publishedDestination": "/formularios-distribuidoras-alimentos",
+      "boundary": "Solicitud preliminar; no certifica inocuidad ni inventario"
+    },
+    {
+      "sector": "Bebidas",
+      "buyer": "Distribución y supervisión de canal tradicional",
+      "keywords": [
+        "captura visitas bebidas",
+        "encuestas tiendas bebidas"
+      ],
+      "priority": "Alta",
+      "publishedDestination": "/formularios-distribuidoras-alimentos",
+      "boundary": "Catálogos y condiciones comerciales requieren definición"
+    },
+    {
+      "sector": "Aseo y consumo masivo",
+      "buyer": "Distribuidores y agencias comerciales",
+      "keywords": [
+        "preventa sin internet",
+        "formulario preventistas"
+      ],
+      "priority": "Alta",
+      "publishedDestination": "/formularios-preventistas-offline",
+      "boundary": "Diferenciar solicitud y transacción aprobada"
+    },
+    {
+      "sector": "Retail y tiendas",
+      "buyer": "Trade marketing e investigación comercial",
+      "keywords": [
+        "auditoría punto de venta",
+        "censo tiendas Colombia"
+      ],
+      "priority": "Alta",
+      "publishedDestination": "/auditoria-puntos-venta",
+      "boundary": "Sin reconocimiento automático de anaquel"
+    },
+    {
+      "sector": "Ferretería y materiales",
+      "buyer": "Mayoristas con vendedores externos",
+      "keywords": [
+        "visitas comerciales ferretería",
+        "solicitud pedido offline"
+      ],
+      "priority": "Media",
+      "publishedDestination": "/formularios-preventistas-offline",
+      "boundary": "Precio, stock y cupo no confirmados por formulario"
+    },
+    {
+      "sector": "Logística y reparto",
+      "buyer": "Operadores y distribuidores",
+      "keywords": [
+        "evidencia entrega sin internet",
+        "formulario novedades entrega"
+      ],
+      "priority": "Alta",
+      "publishedDestination": "/formularios-logistica-entregas",
+      "boundary": "Sin TMS, telemetría continua ni documentos oficiales automáticos"
+    },
+    {
+      "sector": "Acueducto y saneamiento",
+      "buyer": "Prestadores y contratistas",
+      "keywords": [
+        "inspecciones servicios públicos offline",
+        "registro activos campo"
+      ],
+      "priority": "Alta",
+      "publishedDestination": "/inspecciones-servicios-publicos",
+      "boundary": "Separar observación, medición y aprobación"
+    },
+    {
+      "sector": "Energía",
+      "buyer": "Operadores y contratistas de visita",
+      "keywords": [
+        "formularios mantenimiento campo",
+        "evidencia visitas técnicas"
+      ],
+      "priority": "Alta",
+      "publishedDestination": "/inspecciones-servicios-publicos",
+      "boundary": "No interviene equipos ni atiende emergencias"
+    },
+    {
+      "sector": "Telecomunicaciones",
+      "buyer": "Instalación y servicio técnico",
+      "keywords": [
+        "actas visita técnica offline",
+        "formularios técnicos campo"
+      ],
+      "priority": "Media",
+      "publishedDestination": "/inspecciones-servicios-publicos",
+      "boundary": "Órdenes y activos consolidados por adaptar"
+    },
+    {
+      "sector": "Residuos y servicios urbanos",
+      "buyer": "Operadores e interventorías",
+      "keywords": [
+        "registro novedades servicios urbanos",
+        "evidencia recolección"
+      ],
+      "priority": "Media",
+      "publishedDestination": "/inspecciones-servicios-publicos",
+      "boundary": "Sin control de flota ni optimización vial certificada"
+    },
+    {
+      "sector": "Construcción",
+      "buyer": "Constructoras y contratistas",
+      "keywords": [
+        "bitácora obra offline",
+        "evidencia fotográfica obra"
+      ],
+      "priority": "Alta",
+      "publishedDestination": "/inspecciones-obras-campo",
+      "boundary": "Sin APU, programación financiera ni aprobación de cantidades"
+    },
+    {
+      "sector": "Interventoría",
+      "buyer": "Supervisores y consultoras",
+      "keywords": [
+        "formularios interventoría",
+        "registro visitas obra"
+      ],
+      "priority": "Alta",
+      "publishedDestination": "/inspecciones-obras-campo",
+      "boundary": "Requisitos y firma contractual por validar"
+    },
+    {
+      "sector": "Agro y asociaciones",
+      "buyer": "Productores asociados y empresas agropecuarias",
+      "keywords": [
+        "formularios agropecuarios offline",
+        "caracterización productores"
+      ],
+      "priority": "Alta",
+      "publishedDestination": "/formularios-sector-agropecuario",
+      "boundary": "Sin diagnóstico ni recomendaciones agronómicas de IA"
+    },
+    {
+      "sector": "Extensión rural",
+      "buyer": "EPSEA y operadores de acompañamiento",
+      "keywords": [
+        "formulario asistencia técnica agropecuaria",
+        "visitas predios offline"
+      ],
+      "priority": "Alta",
+      "publishedDestination": "/formularios-sector-agropecuario",
+      "boundary": "No es registro oficial automático"
+    },
+    {
+      "sector": "Gobierno local",
+      "buyer": "Alcaldías y gobernaciones",
+      "keywords": [
+        "plataforma caracterización",
+        "software caracterización Colombia"
+      ],
+      "priority": "Alta",
+      "publishedDestination": "/caracterizacion-colombia",
+      "boundary": "Conservar separación entre entidad, formularios y beneficiarios"
+    },
+    {
+      "sector": "ONG y fundaciones",
+      "buyer": "Programas y seguimiento de proyectos",
+      "keywords": [
+        "línea base offline",
+        "caracterización beneficiarios"
+      ],
+      "priority": "Alta",
+      "publishedDestination": "/encuestas-para-ong",
+      "boundary": "Universo y método definidos por proyecto"
+    },
+    {
+      "sector": "Investigación de mercados",
+      "buyer": "Consultoras y universidades",
+      "keywords": [
+        "encuestas mercado campo",
+        "cuestionarios IA"
+      ],
+      "priority": "Alta",
+      "publishedDestination": "/encuestas-para-empresas",
+      "boundary": "Sin prometer representatividad por usar la herramienta"
+    },
+    {
+      "sector": "Gestión social empresarial",
+      "buyer": "Operadores y áreas de sostenibilidad",
+      "keywords": [
+        "diagnóstico comunitario empresas",
+        "caracterización grupos interés"
+      ],
+      "priority": "Alta",
+      "publishedDestination": "/software-caracterizacion-social",
+      "boundary": "Publicar casos y logos solo con autorización"
+    },
+    {
+      "sector": "Compras y proveedores",
+      "buyer": "Empresas con visitas de levantamiento",
+      "keywords": [
+        "caracterización proveedores",
+        "ficha proveedores formulario"
+      ],
+      "priority": "Media",
+      "publishedDestination": "/encuestas-para-empresas",
+      "boundary": "No homologa ni califica riesgo automáticamente"
+    },
+    {
+      "sector": "Mantenimiento industrial",
+      "buyer": "Prestadores con visitas de observación",
+      "keywords": [
+        "formularios inspección industrial offline",
+        "evidencia mantenimiento"
+      ],
+      "priority": "Media",
+      "publishedDestination": "/inspecciones-servicios-publicos",
+      "boundary": "Requiere protocolo técnico y seguridad del sitio"
+    },
+    {
+      "sector": "Consultoría ambiental",
+      "buyer": "Equipos de levantamiento y seguimiento",
+      "keywords": [
+        "formularios ambientales campo",
+        "datos georreferenciados offline"
+      ],
+      "priority": "Media",
+      "publishedDestination": "/encuestas-georreferenciadas",
+      "boundary": "Sin certificaciones ambientales ni mediciones instrumentales implícitas"
+    },
+    {
+      "sector": "Salud comunitaria",
+      "buyer": "Operadores de caracterización no clínica",
+      "keywords": [
+        "encuestas comunitarias offline",
+        "caracterización población"
+      ],
+      "priority": "Condicionada",
+      "publishedDestination": "/software-caracterizacion-social",
+      "boundary": "Evaluación de privacidad; no vender como historia clínica"
+    },
+    {
+      "sector": "Inspección de inmuebles",
+      "buyer": "Operadores de visitas y documentación",
+      "keywords": [
+        "formularios visita inmueble",
+        "evidencia inspección offline"
+      ],
+      "priority": "Condicionada",
+      "publishedDestination": "/encuestas-para-empresas",
+      "boundary": "Sin avalúo certificado ni decisiones automáticas de elegibilidad"
+    }
+  ],
+  "serpSample": [
+    {
+      "query": "software visitas comerciales sin internet Colombia combustibles estaciones servicio",
+      "gap": "Separar visita comercial y operación de surtidores; proponer identificadores y unidades.",
+      "evidence": [
+        "https://zeuss.com.co/negocios-dealers-zeuss/",
+        "https://www.terpel.com/"
+      ]
+    },
+    {
+      "query": "software preventa pedidos sin internet Colombia distribuidoras alimentos",
+      "gap": "Explicar con un instrumento concreto la diferencia entre solicitud y pedido aprobado.",
+      "evidence": [
+        "https://www.persat-latam.com/app-vendedores-consumo-masivo/",
+        "https://www.insitusales.com/es/soluciones/aplicacion-de-ventas-de-campo/pre-ventas/"
+      ]
+    },
+    {
+      "query": "formularios inspecciones campo offline servicios publicos Colombia",
+      "gap": "Activo, orden y visita con evidencia y excepciones; evitar promesas de telemetría.",
+      "evidence": [
+        "https://www.globia.com.co/trabajo-en-campo"
+      ]
+    },
+    {
+      "query": "formularios asistencia tecnica agropecuaria digital offline",
+      "gap": "Productor, predio y visita separados con unidades, fuente y límites de recomendación.",
+      "evidence": [
+        "https://www.adr.gov.co/atencion-y-servicios-a-la-ciudadania/extension-agropecuaria-2/"
+      ]
+    },
+    {
+      "query": "software bitacora obra offline inspecciones Colombia",
+      "gap": "Captura de evidencia separada de aprobación técnica, APU y presupuesto.",
+      "evidence": [
+        "https://www.planora.com.co/control-de-obra",
+        "https://operaciones.colombiacompra.gov.co/tema/supervision-e-interventoria"
+      ]
+    }
+  ],
+  "editorial": [
+    {
+      "path": "/blog/visitas-comerciales-combustibles-offline",
+      "primaryKeyword": "visitas comerciales combustibles",
+      "secondaryKeywords": [
+        "formularios petroleras offline",
+        "clientes mayoristas combustibles",
+        "software campo estaciones Colombia"
+      ],
+      "intent": "Informacional con siguiente paso comercial y plantilla de campos en el texto",
+      "selectedTitle": "Visitas comerciales de combustibles sin internet",
+      "titleCandidates": [
+        "Visitas comerciales de combustibles sin internet",
+        "Guía de visitas comerciales combustibles",
+        "visitas comerciales combustibles: campos y preparación",
+        "visitas comerciales combustibles en Colombia: qué revisar",
+        "Cómo preparar visitas comerciales combustibles",
+        "visitas comerciales combustibles: ejemplo de instrumento",
+        "visitas comerciales combustibles: prueba offline",
+        "visitas comerciales combustibles: errores de interpretación",
+        "visitas comerciales combustibles: criterios de selección",
+        "visitas comerciales combustibles: de la visita a la oficina"
+      ],
+      "informationGain": "El instrumento aporta valor cuando identifica la unidad visitada, conserva el significado de las cantidades y deja claro qué debe validar la oficina después de sincronizar.",
+      "editingPasses": [
+        "Estructura e intención diferenciada",
+        "Claridad y ejemplos ficticios sin datos reales",
+        "Evidencia y límites de capacidades",
+        "Edición de línea y revisión de patrones repetitivos",
+        "Título, descripción, enlaces y CTA"
+      ],
+      "conversion": "/formularios-sector-combustibles"
+    },
+    {
+      "path": "/blog/checklist-visita-estacion-servicio",
+      "primaryKeyword": "checklist visita estacion servicio",
+      "secondaryKeywords": [
+        "formulario EDS",
+        "visita administrativa estacion",
+        "evidencias estaciones servicio"
+      ],
+      "intent": "Informacional con siguiente paso comercial y plantilla de campos en el texto",
+      "selectedTitle": "Checklist de visita a una estación de servicio",
+      "titleCandidates": [
+        "Checklist de visita a una estación de servicio",
+        "Guía de checklist visita estacion servicio",
+        "checklist visita estacion servicio: campos y preparación",
+        "checklist visita estacion servicio en Colombia: qué revisar",
+        "Cómo preparar checklist visita estacion servicio",
+        "checklist visita estacion servicio: ejemplo de instrumento",
+        "checklist visita estacion servicio: prueba offline",
+        "checklist visita estacion servicio: errores de interpretación",
+        "checklist visita estacion servicio: criterios de selección",
+        "checklist visita estacion servicio: de la visita a la oficina"
+      ],
+      "informationGain": "La utilidad del checklist depende de su finalidad y de criterios que el asesor pueda observar. La digitalización conserva el registro, pero no cambia las competencias de quien lo aplica.",
+      "editingPasses": [
+        "Estructura e intención diferenciada",
+        "Claridad y ejemplos ficticios sin datos reales",
+        "Evidencia y límites de capacidades",
+        "Edición de línea y revisión de patrones repetitivos",
+        "Título, descripción, enlaces y CTA"
+      ],
+      "conversion": "/formularios-sector-combustibles"
+    },
+    {
+      "path": "/blog/preventa-sin-internet-solicitudes-pedido",
+      "primaryKeyword": "preventa sin internet",
+      "secondaryKeywords": [
+        "solicitud pedido offline",
+        "formularios preventistas",
+        "toma pedidos sin conexion Colombia"
+      ],
+      "intent": "Informacional con siguiente paso comercial y plantilla de campos en el texto",
+      "selectedTitle": "Preventa sin internet: registrar solicitudes de pedido",
+      "titleCandidates": [
+        "Preventa sin internet: registrar solicitudes de pedido",
+        "Guía de preventa sin internet",
+        "preventa sin internet: campos y preparación",
+        "preventa sin internet en Colombia: qué revisar",
+        "Cómo preparar preventa sin internet",
+        "preventa sin internet: ejemplo de instrumento",
+        "preventa sin internet: prueba offline",
+        "preventa sin internet: errores de interpretación",
+        "preventa sin internet: criterios de selección",
+        "preventa sin internet: de la visita a la oficina"
+      ],
+      "informationGain": "La solicitud preliminar y la transacción comercial necesitan alcances diferentes. La elección correcta empieza por definir qué significa que el asesor termine el registro.",
+      "editingPasses": [
+        "Estructura e intención diferenciada",
+        "Claridad y ejemplos ficticios sin datos reales",
+        "Evidencia y límites de capacidades",
+        "Edición de línea y revisión de patrones repetitivos",
+        "Título, descripción, enlaces y CTA"
+      ],
+      "conversion": "/formularios-preventistas-offline"
+    },
+    {
+      "path": "/blog/censo-tiendas-puntos-venta",
+      "primaryKeyword": "censo tiendas Colombia",
+      "secondaryKeywords": [
+        "censo puntos venta",
+        "caracterizacion canal tradicional",
+        "levantamiento establecimientos offline"
+      ],
+      "intent": "Informacional con siguiente paso comercial y plantilla de campos en el texto",
+      "selectedTitle": "Censo de tiendas y puntos de venta: campos y método",
+      "titleCandidates": [
+        "Censo de tiendas y puntos de venta: campos y método",
+        "Guía de censo tiendas Colombia",
+        "censo tiendas Colombia: campos y preparación",
+        "censo tiendas Colombia en Colombia: qué revisar",
+        "Cómo preparar censo tiendas Colombia",
+        "censo tiendas Colombia: ejemplo de instrumento",
+        "censo tiendas Colombia: prueba offline",
+        "censo tiendas Colombia: errores de interpretación",
+        "censo tiendas Colombia: criterios de selección",
+        "censo tiendas Colombia: de la visita a la oficina"
+      ],
+      "informationGain": "Un censo útil conserva el universo, la definición de establecimiento y las decisiones sobre excepciones. El número de capturas por sí solo no demuestra cobertura completa.",
+      "editingPasses": [
+        "Estructura e intención diferenciada",
+        "Claridad y ejemplos ficticios sin datos reales",
+        "Evidencia y límites de capacidades",
+        "Edición de línea y revisión de patrones repetitivos",
+        "Título, descripción, enlaces y CTA"
+      ],
+      "conversion": "/auditoria-puntos-venta"
+    },
+    {
+      "path": "/blog/distribuidoras-alimentos-datos-campo",
+      "primaryKeyword": "distribuidoras alimentos datos campo",
+      "secondaryKeywords": [
+        "visitas tiendas alimentos",
+        "formularios consumo masivo",
+        "distribucion alimentos offline"
+      ],
+      "intent": "Informacional con siguiente paso comercial y plantilla de campos en el texto",
+      "selectedTitle": "Datos de campo para distribuidoras de alimentos",
+      "titleCandidates": [
+        "Datos de campo para distribuidoras de alimentos",
+        "Guía de distribuidoras alimentos datos campo",
+        "distribuidoras alimentos datos campo: campos y preparación",
+        "distribuidoras alimentos datos campo en Colombia: qué revisar",
+        "Cómo preparar distribuidoras alimentos datos campo",
+        "distribuidoras alimentos datos campo: ejemplo de instrumento",
+        "distribuidoras alimentos datos campo: prueba offline",
+        "distribuidoras alimentos datos campo: errores de interpretación",
+        "distribuidoras alimentos datos campo: criterios de selección",
+        "distribuidoras alimentos datos campo: de la visita a la oficina"
+      ],
+      "informationGain": "Una buena ficha de distribución permite a la oficina entender la visita y validar la solicitud. Cada cantidad necesita presentación y unidad antes de consolidarse.",
+      "editingPasses": [
+        "Estructura e intención diferenciada",
+        "Claridad y ejemplos ficticios sin datos reales",
+        "Evidencia y límites de capacidades",
+        "Edición de línea y revisión de patrones repetitivos",
+        "Título, descripción, enlaces y CTA"
+      ],
+      "conversion": "/formularios-distribuidoras-alimentos"
+    },
+    {
+      "path": "/blog/auditoria-punto-venta-consumo-masivo",
+      "primaryKeyword": "auditoria punto venta",
+      "secondaryKeywords": [
+        "checklist consumo masivo",
+        "formularios trade marketing",
+        "observacion tiendas offline"
+      ],
+      "intent": "Informacional con siguiente paso comercial y plantilla de campos en el texto",
+      "selectedTitle": "Auditoría de punto de venta: checklist de campo",
+      "titleCandidates": [
+        "Auditoría de punto de venta: checklist de campo",
+        "Guía de auditoria punto venta",
+        "auditoria punto venta: campos y preparación",
+        "auditoria punto venta en Colombia: qué revisar",
+        "Cómo preparar auditoria punto venta",
+        "auditoria punto venta: ejemplo de instrumento",
+        "auditoria punto venta: prueba offline",
+        "auditoria punto venta: errores de interpretación",
+        "auditoria punto venta: criterios de selección",
+        "auditoria punto venta: de la visita a la oficina"
+      ],
+      "informationGain": "La auditoría produce datos comparables cuando las preguntas fijan qué se observa, cómo se registra una excepción y qué puede concluirse del resultado.",
+      "editingPasses": [
+        "Estructura e intención diferenciada",
+        "Claridad y ejemplos ficticios sin datos reales",
+        "Evidencia y límites de capacidades",
+        "Edición de línea y revisión de patrones repetitivos",
+        "Título, descripción, enlaces y CTA"
+      ],
+      "conversion": "/auditoria-puntos-venta"
+    },
+    {
+      "path": "/blog/inspecciones-servicios-publicos-offline",
+      "primaryKeyword": "inspecciones servicios publicos offline",
+      "secondaryKeywords": [
+        "formularios activos campo",
+        "visitas mantenimiento sin internet",
+        "captura redes servicios Colombia"
+      ],
+      "intent": "Informacional con siguiente paso comercial y plantilla de campos en el texto",
+      "selectedTitle": "Inspecciones de servicios públicos sin internet",
+      "titleCandidates": [
+        "Inspecciones de servicios públicos sin internet",
+        "Guía de inspecciones servicios publicos offline",
+        "inspecciones servicios publicos offline: campos y preparación",
+        "inspecciones servicios publicos offline en Colombia: qué revisar",
+        "Cómo preparar inspecciones servicios publicos offline",
+        "inspecciones servicios publicos offline: ejemplo de instrumento",
+        "inspecciones servicios publicos offline: prueba offline",
+        "inspecciones servicios publicos offline: errores de interpretación",
+        "inspecciones servicios publicos offline: criterios de selección",
+        "inspecciones servicios publicos offline: de la visita a la oficina"
+      ],
+      "informationGain": "Un registro de visita útil permite reconocer el activo, entender la observación y saber qué queda pendiente de revisión técnica.",
+      "editingPasses": [
+        "Estructura e intención diferenciada",
+        "Claridad y ejemplos ficticios sin datos reales",
+        "Evidencia y límites de capacidades",
+        "Edición de línea y revisión de patrones repetitivos",
+        "Título, descripción, enlaces y CTA"
+      ],
+      "conversion": "/inspecciones-servicios-publicos"
+    },
+    {
+      "path": "/blog/formularios-asistencia-tecnica-agropecuaria",
+      "primaryKeyword": "formularios asistencia tecnica agropecuaria",
+      "secondaryKeywords": [
+        "caracterizacion productores rurales",
+        "visitas predios offline",
+        "extension agropecuaria datos"
+      ],
+      "intent": "Informacional con siguiente paso comercial y plantilla de campos en el texto",
+      "selectedTitle": "Formularios de asistencia técnica agropecuaria offline",
+      "titleCandidates": [
+        "Formularios de asistencia técnica agropecuaria offline",
+        "Guía de formularios asistencia tecnica agropecuaria",
+        "formularios asistencia tecnica agropecuaria: campos y preparación",
+        "formularios asistencia tecnica agropecuaria en Colombia: qué revisar",
+        "Cómo preparar formularios asistencia tecnica agropecuaria",
+        "formularios asistencia tecnica agropecuaria: ejemplo de instrumento",
+        "formularios asistencia tecnica agropecuaria: prueba offline",
+        "formularios asistencia tecnica agropecuaria: errores de interpretación",
+        "formularios asistencia tecnica agropecuaria: criterios de selección",
+        "formularios asistencia tecnica agropecuaria: de la visita a la oficina"
+      ],
+      "informationGain": "La calidad del seguimiento depende de relacionar unidades y visitas, conservar unidades de medida y explicar qué parte fue observada o declarada.",
+      "editingPasses": [
+        "Estructura e intención diferenciada",
+        "Claridad y ejemplos ficticios sin datos reales",
+        "Evidencia y límites de capacidades",
+        "Edición de línea y revisión de patrones repetitivos",
+        "Título, descripción, enlaces y CTA"
+      ],
+      "conversion": "/formularios-sector-agropecuario"
+    },
+    {
+      "path": "/blog/bitacora-obra-evidencia-offline",
+      "primaryKeyword": "bitacora obra offline",
+      "secondaryKeywords": [
+        "registro visitas obra",
+        "evidencia fotografica interventoria",
+        "formulario obra sin internet"
+      ],
+      "intent": "Informacional con siguiente paso comercial y plantilla de campos en el texto",
+      "selectedTitle": "Bitácora de obra offline: visitas y evidencia",
+      "titleCandidates": [
+        "Bitácora de obra offline: visitas y evidencia",
+        "Guía de bitacora obra offline",
+        "bitacora obra offline: campos y preparación",
+        "bitacora obra offline en Colombia: qué revisar",
+        "Cómo preparar bitacora obra offline",
+        "bitacora obra offline: ejemplo de instrumento",
+        "bitacora obra offline: prueba offline",
+        "bitacora obra offline: errores de interpretación",
+        "bitacora obra offline: criterios de selección",
+        "bitacora obra offline: de la visita a la oficina"
+      ],
+      "informationGain": "La bitácora aporta información revisable cuando conserva proyecto, actividad, fuente de la cantidad y relación con la evidencia. Completar el formulario no equivale a aprobar técnicamente el trabajo.",
+      "editingPasses": [
+        "Estructura e intención diferenciada",
+        "Claridad y ejemplos ficticios sin datos reales",
+        "Evidencia y límites de capacidades",
+        "Edición de línea y revisión de patrones repetitivos",
+        "Título, descripción, enlaces y CTA"
+      ],
+      "conversion": "/inspecciones-obras-campo"
+    },
+    {
+      "path": "/blog/evidencia-entrega-novedades-offline",
+      "primaryKeyword": "evidencia entrega offline",
+      "secondaryKeywords": [
+        "formulario novedades entrega",
+        "registro intento entrega",
+        "logistica datos sin internet"
+      ],
+      "intent": "Informacional con siguiente paso comercial y plantilla de campos en el texto",
+      "selectedTitle": "Evidencia de entrega offline y registro de novedades",
+      "titleCandidates": [
+        "Evidencia de entrega offline y registro de novedades",
+        "Guía de evidencia entrega offline",
+        "evidencia entrega offline: campos y preparación",
+        "evidencia entrega offline en Colombia: qué revisar",
+        "Cómo preparar evidencia entrega offline",
+        "evidencia entrega offline: ejemplo de instrumento",
+        "evidencia entrega offline: prueba offline",
+        "evidencia entrega offline: errores de interpretación",
+        "evidencia entrega offline: criterios de selección",
+        "evidencia entrega offline: de la visita a la oficina"
+      ],
+      "informationGain": "El registro conserva valor cuando explica qué evento se reportó, a qué referencia corresponde y quién debe validarlo después de recibirlo.",
+      "editingPasses": [
+        "Estructura e intención diferenciada",
+        "Claridad y ejemplos ficticios sin datos reales",
+        "Evidencia y límites de capacidades",
+        "Edición de línea y revisión de patrones repetitivos",
+        "Título, descripción, enlaces y CTA"
+      ],
+      "conversion": "/formularios-logistica-entregas"
+    },
+    {
+      "path": "/blog/formulario-visita-comercial-ia",
+      "primaryKeyword": "formulario visita comercial IA",
+      "secondaryKeywords": [
+        "crear formularios empresas inteligencia artificial",
+        "encuestas comerciales IA",
+        "cuestionario visita offline"
+      ],
+      "intent": "Informacional con siguiente paso comercial y plantilla de campos en el texto",
+      "selectedTitle": "Cómo crear un formulario de visita comercial con IA",
+      "titleCandidates": [
+        "Cómo crear un formulario de visita comercial con IA",
+        "Guía de formulario visita comercial IA",
+        "formulario visita comercial IA: campos y preparación",
+        "formulario visita comercial IA en Colombia: qué revisar",
+        "Cómo preparar formulario visita comercial IA",
+        "formulario visita comercial IA: ejemplo de instrumento",
+        "formulario visita comercial IA: prueba offline",
+        "formulario visita comercial IA: errores de interpretación",
+        "formulario visita comercial IA: criterios de selección",
+        "formulario visita comercial IA: de la visita a la oficina"
+      ],
+      "informationGain": "Un buen prompt define la visita y sus excepciones. La revisión humana y la prueba offline convierten el borrador en un instrumento que el equipo puede aplicar.",
+      "editingPasses": [
+        "Estructura e intención diferenciada",
+        "Claridad y ejemplos ficticios sin datos reales",
+        "Evidencia y límites de capacidades",
+        "Edición de línea y revisión de patrones repetitivos",
+        "Título, descripción, enlaces y CTA"
+      ],
+      "conversion": "/encuestas-con-inteligencia-artificial"
+    },
+    {
+      "path": "/blog/caracterizacion-proveedores-empresas",
+      "primaryKeyword": "caracterizacion proveedores empresas",
+      "secondaryKeywords": [
+        "ficha proveedores formulario",
+        "levantamiento informacion proveedores",
+        "visita proveedores offline"
+      ],
+      "intent": "Informacional con siguiente paso comercial y plantilla de campos en el texto",
+      "selectedTitle": "Caracterización de proveedores: campos y revisión",
+      "titleCandidates": [
+        "Caracterización de proveedores: campos y revisión",
+        "Guía de caracterizacion proveedores empresas",
+        "caracterizacion proveedores empresas: campos y preparación",
+        "caracterizacion proveedores empresas en Colombia: qué revisar",
+        "Cómo preparar caracterizacion proveedores empresas",
+        "caracterizacion proveedores empresas: ejemplo de instrumento",
+        "caracterizacion proveedores empresas: prueba offline",
+        "caracterizacion proveedores empresas: errores de interpretación",
+        "caracterizacion proveedores empresas: criterios de selección",
+        "caracterizacion proveedores empresas: de la visita a la oficina"
+      ],
+      "informationGain": "La ficha sirve cuando conserva qué se declaró, qué se revisó y quién debe decidir. Una captura completa no equivale a un proveedor aprobado.",
+      "editingPasses": [
+        "Estructura e intención diferenciada",
+        "Claridad y ejemplos ficticios sin datos reales",
+        "Evidencia y límites de capacidades",
+        "Edición de línea y revisión de patrones repetitivos",
+        "Título, descripción, enlaces y CTA"
+      ],
+      "conversion": "/blog/caracterizacion-empresas-clientes-establecimientos"
+    }
+  ],
+  "imageGeneration": {
+    "mode": "builtin image_gen",
+    "prompts": [
+      {
+        "key": "combustibles",
+        "prompt": "Use case: photorealistic-natural. Asset type: editorial blog cover for Control G, a Colombian offline field-data app. Primary request: Colombian commercial representative reviewing a tablet with a fuel-station manager in the safe administrative parking area, distant unbranded service station visible behind them, well away from pumps and fueling operations. Landscape 1536x1024, natural documentary photography, navy work clothing, clear morning, credible Colombian setting. No logos, no readable text, no identifiable real company, no hazardous device use, no watermarks. Illustrative synthetic scene, not a real customer photograph.",
+        "path": "public/blog/sector-combustibles-control-g.jpg"
+      },
+      {
+        "key": "distribucion",
+        "prompt": "Use case: photorealistic-natural. Asset type: editorial blog cover for Control G. Primary request: a Colombian food distributor's sales representative and a neighborhood shop owner recording a visit on an Android tablet in a small tienda with shelves of unbranded packaged foods and beverages. Landscape 1536x1024, natural daylight, documentary B2B photography, human realistic hands, no readable screen text. No logos, no legible packaging labels, no real client identity, no watermarks. Illustrative synthetic scene.",
+        "path": "public/blog/sector-distribucion-control-g.jpg"
+      },
+      {
+        "key": "servicios",
+        "prompt": "Use case: photorealistic-natural. Asset type: editorial cover for offline field inspections in Colombia. Primary request: utility field technician wearing a hard hat and reflective vest recording a routine visual observation on a tablet from a safe sidewalk, residential neighborhood, closed utility cabinet in background, no exposed electrical equipment and no work on live installations. Landscape 1536x1024, daylight, credible documentary photograph. No logos, no text, no official emblems, no watermarks, no claim of a real client.",
+        "path": "public/blog/sector-servicios-control-g.jpg"
+      },
+      {
+        "key": "agro",
+        "prompt": "Use case: photorealistic-natural. Asset type: editorial cover for agricultural field-data forms in Colombia. Primary request: agricultural extension technician and adult farmer discussing observations beside a Colombian coffee plantation, technician holding tablet, rolling green rural landscape, simple authentic working clothes. Landscape 1536x1024, natural diffused daylight, documentary photography. No logos, no text or readable screen, no pesticides or chemical handling, no watermarks. Illustrative synthetic scene, not a real customer.",
+        "path": "public/blog/sector-agro-control-g.jpg"
+      }
+    ],
+    "provenance": "Escenas ilustrativas generadas con IA, sin logos y con divulgación visible. No prueban clientes o resultados.",
+    "optimization": "JPEG 1536x1024, conversión sips calidad 68 (agro: 60 para mantener menos de 400 kB), dimensiones y texto alternativo."
+  },
+  "measurement": {
+    "commercialEvents": [
+      "whatsapp_click con consentimiento: intención de contacto, no conversación ni venta",
+      "Cualificación manual por sector, equipo y necesidad",
+      "Demo realizada y propuesta aceptada: registrar solo en proceso comercial autorizado"
+    ],
+    "weekly": [
+      "Comprobar errores de indexación y sitemap",
+      "Revisar nuevas URLs prioritarias sin reenviar repetidamente las mismas",
+      "Comparar consultas y páginas por intención y país"
+    ],
+    "monthly": [
+      "Comparar periodos equivalentes de 28 días",
+      "Separar marca, caracterización social y sectores empresariales",
+      "Medir demos cualificadas y contratos, no solo tráfico"
+    ],
+    "aiVisibility": "No se midió una tasa de recomendación de IA. Plan: conjunto fijo de consultas, varias ejecuciones por motor y registro de muestra. No atribuir visibilidad a llms.txt ni garantizar citas."
+  },
+  "roadmap": [
+    {
+      "window": "Publicación inicial",
+      "actions": [
+        "Diez páginas, doce artículos y cuatro portadas",
+        "Actualizar portada, página empresarial y dos guías existentes",
+        "Enlaces, metadatos, RSS, sitemap y documentos LLM",
+        "Verificación automatizada, móvil y producción"
+      ]
+    },
+    {
+      "window": "Semanas 1–2 tras publicar",
+      "actions": [
+        "Verificar solicitudes y exclusiones en Search Console",
+        "Priorizar combustibles, visitas y distribución",
+        "Recoger preguntas de demos sin divulgar información reservada"
+      ]
+    },
+    {
+      "window": "Días 30–60",
+      "actions": [
+        "Mejorar títulos y contenido según consultas reales",
+        "Publicar caso solo si existe evidencia y autorización del cliente",
+        "Evaluar nuevas verticales por datos de demanda y encaje"
+      ]
+    },
+    {
+      "window": "Días 60–90",
+      "actions": [
+        "Contrastar leads cualificados por sector",
+        "Revisar canibalización y consolidar páginas si hace falta",
+        "Preparar demostraciones en video y colaboraciones editoriales autorizadas, sin compra de enlaces"
+      ]
+    }
+  ],
+  "constraints": [
+    "No se garantiza número uno ni indexación inmediata",
+    "No crear páginas por cada empresa o municipio cambiando nombres",
+    "No publicar listas de clientes ni casos inventados",
+    "No anunciar IA offline: generación requiere conexión",
+    "No ofrecer CRM, inventario, precios, facturación o TMS como nativos",
+    "No modificar datos privados ni cuentas de clientes para SEO",
+    "Los objetivos continuos de 90 días no se declaran ejecutados por publicar el contenido"
+  ]
+}

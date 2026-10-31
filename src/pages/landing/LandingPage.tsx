@@ -8,7 +8,7 @@ import { StickyWhatsApp, WhatsAppCta } from '@/components/marketing/WhatsAppCta'
 import { PublicHeader } from '@/components/marketing/PublicHeader'
 import { PublicFooter } from '@/components/marketing/PublicFooter'
 import { TerritoryPreview } from '@/components/marketing/TerritoryPreview'
-import { getSeoPage } from '@/lib/marketing'
+import { getSeoPage, SECTOR_SEO_PAGES } from '@/lib/marketing'
 import '@/components/marketing/public-marketing.css'
 
 const LANDING_SEO = getSeoPage('/')!
@@ -29,7 +29,7 @@ const CAPABILITIES = [
 
 const AUDIENCES = [
   { title: 'Entidades públicas', text: 'Caracterizaciones, seguimiento de programas y diagnósticos en municipios y departamentos.', path: '/caracterizacion-colombia', label: 'Caracterización en Colombia' },
-  { title: 'Empresas y corporaciones', text: 'Visitas técnicas, encuestas de servicio, inventarios y levantamiento de información de sus operaciones.', path: '/encuestas-para-empresas', label: 'Soluciones para empresas' },
+  { title: 'Empresas y corporaciones', text: 'Visitas comerciales, censos de establecimientos, inspecciones y solicitudes preliminares recogidas en campo.', path: '/encuestas-para-empresas', label: 'Soluciones para empresas' },
   { title: 'ONG, fundaciones y organizaciones', text: 'Líneas de base, identificación de necesidades y seguimiento de hogares y beneficiarios.', path: '/encuestas-para-ong', label: 'Soluciones para organizaciones' },
 ]
 
@@ -173,6 +173,14 @@ export default function LandingPage() {
               {AUDIENCES.map(item => <article key={item.path}><Building2 size={25} strokeWidth={1.5} aria-hidden="true" /><h3>{item.title}</h3><p>{item.text}</p><Link to={item.path} className="cg-text-link">{item.label} <ArrowRight size={16} aria-hidden="true" /></Link></article>)}
             </div>
             <div className="cg-latam-line"><Globe2 size={22} aria-hidden="true" /><p><strong>Una operación adaptada al país.</strong> Defina territorios, departamentos o estados, municipios y equipos según el alcance de su proyecto.</p><Link to="/encuestas-offline/colombia" className="cg-text-link">Empezar en Colombia <ArrowRight size={16} aria-hidden="true" /></Link></div>
+          </div>
+        </section>
+
+        <section className="cg-section cg-sector-directory" aria-labelledby="cg-sectors-title">
+          <div className="cg-container">
+            <div className="cg-section-heading cg-heading-with-link"><div><h2 id="cg-sectors-title">Información de campo para su actividad.</h2><p>Explore instrumentos para combustibles, distribución, preventa y visitas técnicas. Cada operación tiene datos y criterios de revisión propios.</p></div><Link to="/sectores" className="cg-text-link">Explorar sectores <ArrowRight size={17} aria-hidden="true" /></Link></div>
+            <nav className="cg-sector-grid" aria-label="Sectores y formularios offline">{SECTOR_SEO_PAGES.filter(page => page.sector).map(page => <Link key={page.path} to={page.path}><h3>{page.sector}</h3><p>{page.description}</p><span>Ver el alcance <ArrowRight size={16} aria-hidden="true" /></span></Link>)}</nav>
+            <p className="cg-operational-note">Las solicitudes comerciales capturadas requieren revisión. Inventario, precios por cliente, facturación y despacho se evalúan como funciones o integraciones adicionales.</p>
           </div>
         </section>
 

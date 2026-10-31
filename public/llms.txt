@@ -13,6 +13,9 @@
 - Mapa territorial, capas GeoJSON, calor, grupos y cobertura.
 - Exportación GIS e integración ArcGIS con conexión, mapeo y autorización previos.
 - La precisión GPS depende del dispositivo y el entorno; no es una medición topográfica certificada.
+- Usos empresariales: visitas comerciales, censos de tiendas, observaciones de puntos de venta, visitas rurales, obras y novedades logísticas mediante instrumentos configurados.
+- Una solicitud comercial capturada no reserva inventario ni confirma precio, crédito, facturación o despacho. CRM, ERP, TMS y catálogos transaccionales requieren alcance e integración específicos.
+- Los formularios documentan observaciones; no certifican conformidad técnica, inocuidad, medición topográfica ni homologación de proveedores.
 
 ## Documentos públicos
 
@@ -25,11 +28,11 @@
 
 WhatsApp comercial: +57 300 901 0300. Cotización según alcance, equipo, capacitación y soporte.
 
-## Caracterización y encuestas que avanzan sin internet
+## Caracterización con IA y captura offline para su equipo
 
 https://www.controlg.co/
 
-Diseñe formularios, asigne equipos y recolecte datos, fotos, firmas y ubicación desde Android. Al recuperar conexión, sincronice para revisar resultados y analizar su territorio. Para empresas, entidades públicas, corporaciones y ONG.
+Diseñe instrumentos con asistencia de IA y revisión humana. Asigne equipos y recolecte datos, fotos, firmas y ubicación desde Android sin internet. Al recuperar conexión, sincronice para revisar resultados. Para empresas, entidades públicas y ONG en Colombia y Latinoamérica.
 
 ## Software de caracterización social para entidades y territorios
 
@@ -90,6 +93,66 @@ Prepare instrumentos para caracterizar comunidades, registrar hogares y seguir i
 https://www.controlg.co/caracterizacion-colombia
 
 Digitalice levantamientos de información en barrios, veredas, corregimientos y municipios. Control G reúne formularios, equipos, evidencias y mapas para entidades públicas, empresas, corporaciones y ONG.
+
+## Formularios offline para la operación de su sector
+
+https://www.controlg.co/sectores
+
+Una visita comercial, un censo de tiendas y una inspección requieren datos distintos. Control G permite preparar instrumentos con apoyo de IA, asignarlos y capturar respuestas sin internet desde Android. Explore el alcance que corresponde a su organización en Colombia.
+
+## Visitas comerciales con formularios que funcionan sin internet
+
+https://www.controlg.co/visitas-comerciales-offline
+
+El asesor registra lo que encontró en cada cliente aunque no tenga señal. Prepare formularios y asignaciones en Control G, capture desde Android y envíe la información para revisión al recuperar conexión. Para equipos comerciales y distribuidores en Colombia.
+
+## Información de campo para distribuidores de combustibles y estaciones
+
+https://www.controlg.co/formularios-sector-combustibles
+
+Organice visitas a estaciones, clientes empresariales y negocios de lubricantes con instrumentos digitales. Control G guarda respuestas y evidencias sin internet y permite revisarlas después de sincronizar. El formulario se adapta al propósito comercial y a los protocolos de la empresa.
+
+## Formularios offline para distribuidoras de alimentos y bebidas
+
+https://www.controlg.co/formularios-distribuidoras-alimentos
+
+Conozca qué ocurrió en cada tienda y qué solicitó el cliente. Sus asesores pueden registrar visitas y solicitudes preliminares sin señal desde Android. Al sincronizar, la oficina recibe la información para revisión y continuidad en el sistema comercial.
+
+## Formularios para preventistas que visitan zonas sin internet
+
+https://www.controlg.co/formularios-preventistas-offline
+
+Registre el motivo de visita, las referencias solicitadas y las observaciones del cliente en un formulario precargado. Control G conserva la captura offline y la envía al sincronizar. La oficina valida condiciones comerciales antes de confirmar el pedido.
+
+## Auditoría de puntos de venta con captura offline
+
+https://www.controlg.co/auditoria-puntos-venta
+
+Conserve observaciones de exhibición, referencias visibles y condiciones de atención en el mismo instrumento. Control G permite registrar visitas a tiendas sin conexión y revisar las evidencias cuando llegan a la oficina.
+
+## Formularios offline para visitas de servicios públicos
+
+https://www.controlg.co/inspecciones-servicios-publicos
+
+Documente observaciones de activos, redes y atención en territorio con instrumentos definidos por el prestador. Los equipos capturan respuestas y evidencias sin conexión, y coordinación revisa la información recibida después de sincronizar.
+
+## Formularios agropecuarios para visitas sin internet
+
+https://www.controlg.co/formularios-sector-agropecuario
+
+Prepare instrumentos para visitas a productores, asociaciones y unidades productivas. Control G permite capturar información sin datos móviles y sincronizar después para revisión, análisis territorial y seguimiento del proyecto.
+
+## Formularios offline para visitas y evidencia de obra
+
+https://www.controlg.co/inspecciones-obras-campo
+
+Organice registros de visita por proyecto, frente y actividad. El equipo captura observaciones y fotografías sin señal en Android. Después de sincronizar, los responsables revisan la información y sus entregables según el alcance contratado.
+
+## Formularios offline para novedades y evidencia de entrega
+
+https://www.controlg.co/formularios-logistica-entregas
+
+Documente visitas, intentos de entrega y condiciones reportadas con un instrumento preparado para campo. Capture respuestas y evidencias en Android sin señal. La oficina consulta la información cuando se completa su sincronización.
 
 ## Encuestas y caracterización offline en Argentina
 
@@ -212,6 +275,30 @@ https://www.controlg.co/encuestas-offline/venezuela
 Prepare un levantamiento en Venezuela con catálogo territorial aprobado, formularios y evidencias ajustados al objetivo. Defina quién captura, quién revisa y cuándo se entregan los registros conservados offline en cada dispositivo.
 
 # Guías y recursos
+
+- [Auditoría de punto de venta: checklist de campo](https://www.controlg.co/blog/auditoria-punto-venta-consumo-masivo): Prepare un checklist de punto de venta para consumo masivo: exhibición, referencias, evidencia autorizada, criterios de observación y revisión offline.
+
+- [Bitácora de obra offline: visitas y evidencia](https://www.controlg.co/blog/bitacora-obra-evidencia-offline): Qué registrar en una visita de obra sin internet: proyecto, frente, actividad, cantidades reportadas, fotografías, revisión y límites del instrumento.
+
+- [Caracterización de proveedores: campos y revisión](https://www.controlg.co/blog/caracterizacion-proveedores-empresas): Diseñe una ficha de caracterización de proveedores y visitas: unidades, capacidad declarada, evidencia, actualización y límites de la validación.
+
+- [Censo de tiendas y puntos de venta: campos y método](https://www.controlg.co/blog/censo-tiendas-puntos-venta): Cómo diseñar un censo de tiendas en Colombia: unidad de registro, códigos, campos, duplicados, cobertura y captura offline en el canal tradicional.
+
+- [Checklist de visita a una estación de servicio](https://www.controlg.co/blog/checklist-visita-estacion-servicio): Ejemplo de checklist administrativo y comercial para visitar una EDS. Separe observaciones, evidencias, revisión y controles técnicos especializados.
+
+- [Cómo crear un formulario de visita comercial con IA](https://www.controlg.co/blog/formulario-visita-comercial-ia): Un prompt de ejemplo y criterios para revisar formularios comerciales generados con IA. Preguntas, opciones, datos sensibles y prueba offline posterior.
+
+- [Datos de campo para distribuidoras de alimentos](https://www.controlg.co/blog/distribuidoras-alimentos-datos-campo): Qué información recoger en visitas de distribución de alimentos y bebidas: tienda, presentación, solicitud, servicio y novedades con captura offline.
+
+- [Evidencia de entrega offline y registro de novedades](https://www.controlg.co/blog/evidencia-entrega-novedades-offline): Diseñe un formulario para intentos de entrega, novedades y entregas parciales reportadas. Identificadores, evidencias y recepción después de sincronizar.
+
+- [Formularios de asistencia técnica agropecuaria offline](https://www.controlg.co/blog/formularios-asistencia-tecnica-agropecuaria): Cómo diseñar visitas a productores y predios con captura offline: unidad de registro, campos, compromisos, GPS y seguimiento del acompañamiento rural.
+
+- [Inspecciones de servicios públicos sin internet](https://www.controlg.co/blog/inspecciones-servicios-publicos-offline): Diseñe registros de visitas y activos para servicios públicos: identificadores, hallazgos, evidencia, GPS y recepción de capturas offline.
+
+- [Preventa sin internet: registrar solicitudes de pedido](https://www.controlg.co/blog/preventa-sin-internet-solicitudes-pedido): Qué debe incluir una solicitud de pedido offline y qué exige un sistema de preventa: referencias, cantidades, precios, inventario, aprobación y ERP.
+
+- [Visitas comerciales de combustibles sin internet](https://www.controlg.co/blog/visitas-comerciales-combustibles-offline): Cómo registrar visitas a estaciones y clientes de combustibles offline: campos, unidades, evidencias, sincronización y criterios para evaluar el software.
 
 - [Caracterización de jóvenes: formulario y planificación](https://www.controlg.co/blog/caracterizacion-jovenes-formulario): Diseñe una caracterización de jóvenes con preguntas sobre formación, acceso y disponibilidad, minimización de datos y una prueba de campo offline.
 

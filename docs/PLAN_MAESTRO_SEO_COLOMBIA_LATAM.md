@@ -188,3 +188,79 @@ node scripts/submit-indexnow.mjs --submit --revision SHA_COMPLETO_PUBLICADO
 ```
 
 La última instrucción modifica únicamente el estado de notificación en IndexNow y exige que el SHA indicado esté publicado. El script no usa contraseñas, claves de administración de Supabase ni tokens privados de buscadores.
+
+## Ampliación empresarial y sectorial: 31 de octubre de 2026
+
+### Objetivo y línea base
+
+La prioridad sigue siendo Colombia. Se conserva el posicionamiento de caracterización social y se amplía la captación hacia organizaciones que registran información en campo. Search Console, en el periodo mostrado del 1 al 28 de octubre de 2026, registró 50 clics, aproximadamente 3.720 impresiones, CTR de 1,3 % y posición media 6,6. La guía de caracterización poblacional recibió 21 clics, necesidades comunitarias 9 y diagnóstico comunitario 7. Estos datos no prueban atribución de clientes ni primer puesto para todas las búsquedas.
+
+El estudio detallado queda en `docs/seo-sectorial-colombia-20261031.json`: 25 segmentos, compradores, palabras clave, límites, muestra de resultados públicos, títulos alternativos, revisión editorial y calendario. Los volúmenes mensuales y la dificultad se dejan sin valor porque no se consultó una herramienta que los mida. La prioridad es cualitativa, basada en intención y encaje con las funciones verificadas.
+
+### Segmentos, compradores y búsquedas objetivo
+
+La prioridad indica encaje comercial cualitativo, no volumen medido. Las expresiones se agrupan por intención, sin crear una página por cada variante.
+
+| Segmento | Comprador | Búsquedas objetivo | Prioridad |
+| --- | --- | --- | --- |
+| Combustibles y lubricantes | Distribuidores mayoristas y equipos comerciales de redes | visitas comerciales combustibles; formularios estaciones de servicio; captura offline petroleras | Alta |
+| Estaciones propias y aliadas | Supervisión regional de EDS | checklist visita estación servicio; evidencia visita EDS | Alta |
+| Alimentos | Distribuidoras y mayoristas | formularios distribuidoras alimentos; visitas tiendas offline | Alta |
+| Bebidas | Distribución y supervisión de canal tradicional | captura visitas bebidas; encuestas tiendas bebidas | Alta |
+| Aseo y consumo masivo | Distribuidores y agencias comerciales | preventa sin internet; formulario preventistas | Alta |
+| Retail y tiendas | Trade marketing e investigación comercial | auditoría punto de venta; censo tiendas Colombia | Alta |
+| Ferretería y materiales | Mayoristas con vendedores externos | visitas comerciales ferretería; solicitud pedido offline | Media |
+| Logística y reparto | Operadores y distribuidores | evidencia entrega sin internet; formulario novedades entrega | Alta |
+| Acueducto y saneamiento | Prestadores y contratistas | inspecciones servicios públicos offline; registro activos campo | Alta |
+| Energía | Operadores y contratistas de visita | formularios mantenimiento campo; evidencia visitas técnicas | Alta |
+| Telecomunicaciones | Instalación y servicio técnico | actas visita técnica offline; formularios técnicos campo | Media |
+| Residuos y servicios urbanos | Operadores e interventorías | registro novedades servicios urbanos; evidencia recolección | Media |
+| Construcción | Constructoras y contratistas | bitácora obra offline; evidencia fotográfica obra | Alta |
+| Interventoría | Supervisores y consultoras | formularios interventoría; registro visitas obra | Alta |
+| Agro y asociaciones | Productores asociados y empresas agropecuarias | formularios agropecuarios offline; caracterización productores | Alta |
+| Extensión rural | EPSEA y operadores de acompañamiento | formulario asistencia técnica agropecuaria; visitas predios offline | Alta |
+| Gobierno local | Alcaldías y gobernaciones | plataforma caracterización; software caracterización Colombia | Alta |
+| ONG y fundaciones | Programas y seguimiento de proyectos | línea base offline; caracterización beneficiarios | Alta |
+| Investigación de mercados | Consultoras y universidades | encuestas mercado campo; cuestionarios IA | Alta |
+| Gestión social empresarial | Operadores y áreas de sostenibilidad | diagnóstico comunitario empresas; caracterización grupos interés | Alta |
+| Compras y proveedores | Empresas con visitas de levantamiento | caracterización proveedores; ficha proveedores formulario | Media |
+| Mantenimiento industrial | Prestadores con visitas de observación | formularios inspección industrial offline; evidencia mantenimiento | Media |
+| Consultoría ambiental | Equipos de levantamiento y seguimiento | formularios ambientales campo; datos georreferenciados offline | Media |
+| Salud comunitaria | Operadores de caracterización no clínica | encuestas comunitarias offline; caracterización población | Condicionada |
+| Inspección de inmuebles | Operadores de visitas y documentación | formularios visita inmueble; evidencia inspección offline | Condicionada |
+
+### Arquitectura publicada en esta ampliación
+
+- `/sectores` organiza la entrada a los casos empresariales y conserva acceso a entidades públicas y ONG.
+- `/visitas-comerciales-offline` cubre el flujo transversal de visita, resultado y revisión.
+- Ocho páginas específicas: combustibles, distribución de alimentos, preventistas, auditoría de puntos de venta, servicios públicos, agro, obras y logística.
+- Doce artículos con instrumentos de ejemplo, excepciones, límites y enlaces comerciales. Catálogo: `src/config/blog-business-20261031.json`.
+- Actualización de inicio, página de empresas, guía de caracterización empresarial y guía de IA. Las URLs y fechas de publicación originales se conservan.
+- Cuatro portadas ilustrativas de IA, sin marcas y con divulgación visible. Los prompts y destinos se registran en el estudio.
+- El menú, pie, portada, páginas y artículos enlazan el clúster. Los mensajes de WhatsApp incorporan ruta y ubicación; el formulario comercial añade sector y nuevos tipos de proyecto.
+
+Se utilizan los componentes React públicos reales para HTML de servidor, usuarios y rastreadores. Sitemap, RSS y documentos LLM se generan desde el mismo inventario. Las rutas nuevas se entregan como HTML público y quedan fuera del fallback offline de la aplicación instalada; la captura privada conserva su comportamiento.
+
+### Criterios editoriales y de posicionamiento
+
+Cada página debe responder a un trabajo específico y aportar un instrumento o criterio de decisión. Las búsquedas de preventa suelen incluir precios, stock y ERP. El contenido explica que Control G puede capturar solicitudes preliminares, pero no las convierte en pedidos aprobados ni anuncia esas funciones transaccionales como nativas. Tampoco certifica conformidad técnica, inocuidad, homologación de proveedores o precisión topográfica.
+
+La IA prepara borradores con conexión y revisión humana. La captura sin internet ocurre después de publicar, asignar y descargar instrumentos. Esta separación aparece en el contenido visible y en los documentos legibles. Las fuentes sectoriales y marcas investigadas no implican relación comercial. No se publican nombres de prospectos como clientes, teléfonos privados, cotizaciones, testimonios o métricas inventadas.
+
+No se crean páginas por cada empresa, ciudad o variante mínima de palabra clave. Los sectores futuros se priorizan por consultas y oportunidades reales, no por multiplicar URLs. Los datos estructurados describen la organización, aplicación, páginas y artículos; las preguntas frecuentes no se presentan como garantía de resultados enriquecidos. `llms.txt` facilita lectura, pero no es requisito ni garantía de presencia en respuestas de IA.
+
+### Operación SEO de los siguientes 90 días
+
+1. Semanas 1–2: verificar recepción del sitemap, inspeccionar URLs prioritarias y revisar exclusiones. Solicitar rastreo de páginas importantes sin repetir envíos de una URL sin cambios.
+2. Días 30–60: comparar periodos equivalentes, separar marca/social/empresas, mejorar títulos según consultas reales y recoger objeciones comerciales anonimizadas. Un caso de éxito requiere evidencia y autorización previa del cliente.
+3. Días 60–90: medir demos cualificadas y contratos por sector, revisar canibalización y decidir qué vertical ampliar. Colaboraciones, perfiles y videos necesitan contenido real y canales autorizados; no se compran enlaces ni se simulan reseñas.
+
+El clic a WhatsApp es intención de contacto, no una conversación ni una venta. La atribución comercial debe cerrarse con el equipo. La medición de IA requiere consultas fijas, varias ejecuciones y muestra documentada; no se afirma una tasa que no se haya medido.
+
+### Verificación y límites de la entrega
+
+Verificación local del 31 de octubre: 145 pruebas aprobadas, ESLint y compilación TypeScript correctos. El verificador de HTML valida 95 URLs públicas, incluidos 53 artículos, sin errores ni avisos. En navegador se revisaron inicio, menú sectorial, página de combustibles y guía de preventa en escritorio y móvil de 390 px, sin desbordamiento horizontal ni imágenes rotas. Se comprobó el resumen de WhatsApp con empresa, sector y necesidad, sin enviar mensajes. Estas pruebas locales no demuestran indexación ni resultados comerciales.
+
+Comprobar unicidad, intención, metadatos, enlaces, imágenes, rutas públicas, noindex privado, persistencia del fallback de campo, compilación y sonda de producción. Revisar móvil y escritorio, CTA, menú y HTML sin depender de JavaScript. Verificar el SHA publicado antes de notificar cambios a IndexNow. La aceptación de un sitemap o notificación no significa indexación confirmada.
+
+La publicación de esta ampliación puede completarse y verificarse; el seguimiento de 90 días y el objetivo de posiciones orgánicas continúan después. No se promete el puesto número uno. La APK y el backend operativo no se modifican para esta campaña.

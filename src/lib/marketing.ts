@@ -1,4 +1,5 @@
 import seoPagesData from '@/config/seo-pages.json'
+import sectorPagesData from '@/config/seo-sectors-20261031.json'
 import countryLandingProfiles from '@/config/country-landing-profiles.json'
 import { trackConsentedMarketingEvent } from '@/lib/marketing-analytics'
 
@@ -31,6 +32,10 @@ export interface SeoPage {
   countryCode?: string
   locale?: string
   updatedAt?: string
+  sector?: string
+  image?: string
+  imageAlt?: string
+  imageCaption?: string
   relatedLinks?: Array<{ title: string; path: string }>
   sources?: Array<{ title: string; publisher: string; url: string }>
 }
@@ -117,7 +122,8 @@ export function buildCountrySeoPage(profile: CountryLandingProfile): SeoPage {
   })
 }
 
-export const CORE_SEO_PAGES = seoPagesData as SeoPage[]
+export const SECTOR_SEO_PAGES = sectorPagesData as SeoPage[]
+export const CORE_SEO_PAGES = [...seoPagesData, ...SECTOR_SEO_PAGES] as SeoPage[]
 export const COUNTRY_SEO_PAGES = (countryLandingProfiles as CountryLandingProfile[]).map(buildCountrySeoPage)
 export const SEO_PAGES = [...CORE_SEO_PAGES, ...COUNTRY_SEO_PAGES]
 

@@ -17,14 +17,14 @@ export function marketingMetadata(path: string, posts: BlogPost[] = BLOG_POSTS) 
   const page = getSeoPage(path)
   const isBlog = path === '/blog'
   if (!page && !isBlog && !post) return null
-  const image = post ? blogCover(post) : '/og-image.png'
+  const image = post ? blogCover(post) : page?.image || '/og-image.png'
   return {
     title: post?.title || (isBlog ? BLOG_META.title : page!.title),
     description: post?.description || (isBlog ? BLOG_META.description : page!.description),
     canonical: `${SITE_URL}${path}`,
     locale: page?.locale || 'es-CO',
     image: image.startsWith('https://') ? image : `${SITE_URL}${image}`,
-    imageAlt: post?.imageAlt || 'Control G: encuestas offline y mapa territorial',
+    imageAlt: post?.imageAlt || page?.imageAlt || 'Control G: encuestas offline y mapa territorial',
     type: post ? 'article' : 'website',
     publishedAt: post?.publishedAt,
     updatedAt: post?.updatedAt,

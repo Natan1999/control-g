@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://www.controlg.co/</loc></url>
+  <url><loc>https://www.controlg.co/</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://www.controlg.co/software-caracterizacion-social</loc></url>
   <url><loc>https://www.controlg.co/encuestas-offline</loc></url>
   <url><loc>https://www.controlg.co/levantamiento-informacion-campo</loc></url>
@@ -9,9 +9,19 @@
   <url><loc>https://www.controlg.co/encuestas-con-inteligencia-artificial</loc></url>
   <url><loc>https://www.controlg.co/encuestas-georreferenciadas</loc></url>
   <url><loc>https://www.controlg.co/integracion-arcgis</loc></url>
-  <url><loc>https://www.controlg.co/encuestas-para-empresas</loc></url>
+  <url><loc>https://www.controlg.co/encuestas-para-empresas</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://www.controlg.co/encuestas-para-ong</loc></url>
   <url><loc>https://www.controlg.co/caracterizacion-colombia</loc></url>
+  <url><loc>https://www.controlg.co/sectores</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/visitas-comerciales-offline</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/formularios-sector-combustibles</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/formularios-distribuidoras-alimentos</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/formularios-preventistas-offline</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/auditoria-puntos-venta</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/inspecciones-servicios-publicos</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/formularios-sector-agropecuario</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/inspecciones-obras-campo</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/formularios-logistica-entregas</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://www.controlg.co/encuestas-offline/argentina</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://www.controlg.co/encuestas-offline/bolivia</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://www.controlg.co/encuestas-offline/brasil</loc><lastmod>2026-10-15</lastmod></url>
@@ -32,7 +42,19 @@
   <url><loc>https://www.controlg.co/encuestas-offline/puerto-rico</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://www.controlg.co/encuestas-offline/uruguay</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://www.controlg.co/encuestas-offline/venezuela</loc><lastmod>2026-10-15</lastmod></url>
-  <url><loc>https://www.controlg.co/blog</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://www.controlg.co/blog</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/blog/auditoria-punto-venta-consumo-masivo</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/blog/bitacora-obra-evidencia-offline</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/blog/caracterizacion-proveedores-empresas</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/blog/censo-tiendas-puntos-venta</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/blog/checklist-visita-estacion-servicio</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/blog/formulario-visita-comercial-ia</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/blog/distribuidoras-alimentos-datos-campo</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/blog/evidencia-entrega-novedades-offline</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/blog/formularios-asistencia-tecnica-agropecuaria</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/blog/inspecciones-servicios-publicos-offline</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/blog/preventa-sin-internet-solicitudes-pedido</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/blog/visitas-comerciales-combustibles-offline</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://www.controlg.co/blog/caracterizacion-jovenes-formulario</loc><lastmod>2026-10-16</lastmod></url>
   <url><loc>https://www.controlg.co/blog/que-es-caracterizacion-poblacional</loc><lastmod>2026-10-16</lastmod></url>
   <url><loc>https://www.controlg.co/blog/analizar-resultados-encuestas</loc><lastmod>2026-10-16</lastmod></url>
@@ -47,8 +69,8 @@
   <url><loc>https://www.controlg.co/blog/ficha-caracterizacion-familiar-ejemplo</loc><lastmod>2026-10-16</lastmod></url>
   <url><loc>https://www.controlg.co/blog/perfil-poblacional-indicadores-territoriales</loc><lastmod>2026-10-16</lastmod></url>
   <url><loc>https://www.controlg.co/blog/plataforma-caracterizacion-como-elegir</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://www.controlg.co/blog/caracterizacion-empresas-clientes-establecimientos</loc><lastmod>2026-10-15</lastmod></url>
-  <url><loc>https://www.controlg.co/blog/crear-encuestas-ia-validacion-humana</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://www.controlg.co/blog/caracterizacion-empresas-clientes-establecimientos</loc><lastmod>2026-10-31</lastmod></url>
+  <url><loc>https://www.controlg.co/blog/crear-encuestas-ia-validacion-humana</loc><lastmod>2026-10-31</lastmod></url>
   <url><loc>https://www.controlg.co/blog/disenar-encuestas-sin-sesgos</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://www.controlg.co/blog/plan-operativo-mil-encuestas-bolivar</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://www.controlg.co/blog/encuestas-arcgis-geojson-shapefile</loc><lastmod>2026-10-15</lastmod></url>

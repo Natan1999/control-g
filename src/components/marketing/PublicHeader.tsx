@@ -11,6 +11,7 @@ const SOLUTIONS = [
   { label: 'Encuestas georreferenciadas', path: '/encuestas-georreferenciadas' },
   { label: 'Mapas, GIS y ArcGIS', path: '/integracion-arcgis' },
   { label: 'Empresas y corporaciones', path: '/encuestas-para-empresas' },
+  { label: 'Sectores y operación comercial', path: '/sectores' },
   { label: 'ONG y organizaciones', path: '/encuestas-para-ong' },
 ]
 

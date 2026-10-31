@@ -40,6 +40,7 @@ export default defineConfig({
           // New editorial URLs must use current SSR, not an older cached app
           // bundle whose versioned article catalog predates their publication.
           /^\/blog(?:\/|$)/,
+          /^\/(?:sectores|visitas-comerciales-offline|formularios-sector-combustibles|formularios-distribuidoras-alimentos|formularios-preventistas-offline|auditoria-puntos-venta|inspecciones-servicios-publicos|formularios-sector-agropecuario|inspecciones-obras-campo|formularios-logistica-entregas)(?:\/|$)/,
           /\.(?:xml|txt|xsl|json|webmanifest|apk|pdf)$/i,
           /^\/sitemap\.html$/,
         ],

@@ -79,6 +79,9 @@ export function buildLlms(pages, posts, full = false) {
 - Mapa territorial, capas GeoJSON, calor, grupos y cobertura.
 - Exportación GIS e integración ArcGIS con conexión, mapeo y autorización previos.
 - La precisión GPS depende del dispositivo y el entorno; no es una medición topográfica certificada.
+- Usos empresariales: visitas comerciales, censos de tiendas, observaciones de puntos de venta, visitas rurales, obras y novedades logísticas mediante instrumentos configurados.
+- Una solicitud comercial capturada no reserva inventario ni confirma precio, crédito, facturación o despacho. CRM, ERP, TMS y catálogos transaccionales requieren alcance e integración específicos.
+- Los formularios documentan observaciones; no certifican conformidad técnica, inocuidad, medición topográfica ni homologación de proveedores.
 
 ## Documentos públicos
 

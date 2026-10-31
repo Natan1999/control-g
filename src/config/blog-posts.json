@@ -929,14 +929,34 @@
       }
     ],
     "sources": [
-      {"title": "Plan de recolección de información", "publisher": "DANE", "url": "https://www.dane.gov.co/files/sen/lineamientos/Guia-elaboracion-de-un-plan-de-recoleccion.pdf"},
-      {"title": "Caracterización de usuarios y partes interesadas", "publisher": "MinCIT", "url": "https://www.mincit.gov.co/servicio-ciudadano/caracterizacion-de-usuarios-y-partes-interesadas"}
+      {
+        "title": "Plan de recolección de información",
+        "publisher": "DANE",
+        "url": "https://www.dane.gov.co/files/sen/lineamientos/Guia-elaboracion-de-un-plan-de-recoleccion.pdf"
+      },
+      {
+        "title": "Caracterización de usuarios y partes interesadas",
+        "publisher": "MinCIT",
+        "url": "https://www.mincit.gov.co/servicio-ciudadano/caracterizacion-de-usuarios-y-partes-interesadas"
+      }
     ],
     "relatedLinks": [
-      {"title": "Probar una plataforma para caracterización", "path": "/blog/plataforma-caracterizacion-como-elegir"},
-      {"title": "Modelo de ficha de caracterización familiar", "path": "/blog/ficha-caracterizacion-familiar-ejemplo"},
-      {"title": "Qué es caracterización poblacional", "path": "/blog/que-es-caracterizacion-poblacional"},
-      {"title": "Control G para caracterización social", "path": "/software-caracterizacion-social"}
+      {
+        "title": "Probar una plataforma para caracterización",
+        "path": "/blog/plataforma-caracterizacion-como-elegir"
+      },
+      {
+        "title": "Modelo de ficha de caracterización familiar",
+        "path": "/blog/ficha-caracterizacion-familiar-ejemplo"
+      },
+      {
+        "title": "Qué es caracterización poblacional",
+        "path": "/blog/que-es-caracterizacion-poblacional"
+      },
+      {
+        "title": "Control G para caracterización social",
+        "path": "/software-caracterizacion-social"
+      }
     ]
   },
   {
@@ -1382,7 +1402,7 @@
     "category": "Diseño de encuestas",
     "country": "Colombia y Latinoamérica",
     "publishedAt": "2026-10-15",
-    "updatedAt": "2026-10-16",
+    "updatedAt": "2026-10-31",
     "readingMinutes": 7,
     "keywords": [
       "crear encuestas con IA",
@@ -1439,6 +1459,13 @@
           "Complete una prueba sin internet, guarde, cierre la aplicación y vuelva a abrirla. Recupere conexión, sincronice y compruebe que coordinación vea la respuesta con sus evidencias. Exporte una muestra y verifique que las opciones se entiendan fuera del formulario. Este recorrido detecta problemas que la lectura del cuestionario no muestra.",
           "Finalmente, conserve objetivo, versión aprobada, fecha y responsable. Si modifica una pregunta durante el operativo, documente cómo afecta la comparación de respuestas. La IA puede agilizar la preparación, pero la calidad final depende del diseño, de las personas entrevistadas y del control que se mantenga durante la captura."
         ]
+      },
+      {
+        "title": "Un borrador empresarial debe explicar las excepciones",
+        "paragraphs": [
+          "Al describir una visita comercial a la IA, indique si cada respuesta representa una visita, una empresa o una sede. Pida opciones para negocio cerrado, dato desconocido y evidencia no autorizada. Las cantidades necesitan unidad y periodo. Use ejemplos ficticios y conserve fuera del prompt las bases de clientes y los datos reservados.",
+          "En Control G la generación requiere conexión y disponibilidad del proveedor. Una persona revisa la propuesta y el flujo editorial antes de asignarla. Después se prepara el dispositivo para captura offline. El piloto debe comprobar excepciones, persistencia al cerrar la app y recepción de respuestas con sus evidencias."
+        ]
       }
     ],
     "comparison": [],
@@ -1471,20 +1498,16 @@
     ],
     "relatedLinks": [
       {
-        "title": "Encuestas con inteligencia artificial",
+        "title": "Prompt para una visita comercial",
+        "path": "/blog/formulario-visita-comercial-ia"
+      },
+      {
+        "title": "Asistente integrado de formularios",
         "path": "/encuestas-con-inteligencia-artificial"
       },
       {
-        "title": "Preguntas claras y sin sesgos",
-        "path": "/blog/disenar-encuestas-sin-sesgos"
-      },
-      {
-        "title": "Encuestas offline",
-        "path": "/encuestas-offline"
-      },
-      {
-        "title": "Caracterización social",
-        "path": "/software-caracterizacion-social"
+        "title": "Sectores empresariales",
+        "path": "/sectores"
       }
     ]
   },
@@ -1739,7 +1762,7 @@
     "category": "Empresas",
     "country": "Colombia y Latinoamérica",
     "publishedAt": "2026-10-15",
-    "updatedAt": "2026-10-15",
+    "updatedAt": "2026-10-31",
     "readingMinutes": 7,
     "keywords": [
       "caracterización empresarial",
@@ -1803,6 +1826,13 @@
           "Prepare una base con identificadores, diccionario de variables, fecha de corte y explicación de categorías. Si entrega una capa, incluya referencia espacial y el contenido permitido. Una presentación con gráficas puede acompañar el archivo, pero no debería ser la única fuente para revisar decisiones o comparar futuras mediciones.",
           "La implementación de Control G puede contemplar configuración, instalación, capacitación y acompañamiento según el alcance acordado. Antes de cotizar, defina formularios, profesionales, dispositivos, duración y entregables. Ese alcance permite a la empresa evaluar el valor del operativo completo y no únicamente el número de respuestas almacenadas."
         ]
+      },
+      {
+        "title": "Una empresa puede tener varias sedes y visitas",
+        "paragraphs": [
+          "Antes del operativo, distinga organización, establecimiento y visita. Un cambio de nombre o una segunda visita no debe crear automáticamente una empresa nueva. El instrumento puede recoger códigos existentes y referencias provisionales. Coordinación revisa posibles duplicados con criterios documentados. Una ficha única con historial consolidado requiere una adaptación del modelo de datos.",
+          "Los campos de necesidades, categorías de producto y compromisos deben conservar su finalidad. Una solicitud capturada no confirma precios, existencias o una venta. Esa distinción permite usar formularios offline sin atribuirles funciones de un ERP o un CRM que todavía no se han contratado."
+        ]
       }
     ],
     "comparison": [],
@@ -1830,20 +1860,20 @@
     ],
     "relatedLinks": [
       {
-        "title": "Encuestas para empresas",
-        "path": "/encuestas-para-empresas"
+        "title": "Censo de tiendas y establecimientos",
+        "path": "/blog/censo-tiendas-puntos-venta"
       },
       {
-        "title": "Levantamiento en campo",
-        "path": "/levantamiento-informacion-campo"
+        "title": "Caracterización de proveedores",
+        "path": "/blog/caracterizacion-proveedores-empresas"
       },
       {
-        "title": "Diseño de preguntas",
-        "path": "/blog/disenar-encuestas-sin-sesgos"
+        "title": "Visitas comerciales offline",
+        "path": "/visitas-comerciales-offline"
       },
       {
-        "title": "Encuestas georreferenciadas",
-        "path": "/encuestas-georreferenciadas"
+        "title": "Sectores de Control G",
+        "path": "/sectores"
       }
     ]
   },

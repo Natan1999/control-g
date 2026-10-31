@@ -13,6 +13,9 @@
 - Mapa territorial, capas GeoJSON, calor, grupos y cobertura.
 - Exportación GIS e integración ArcGIS con conexión, mapeo y autorización previos.
 - La precisión GPS depende del dispositivo y el entorno; no es una medición topográfica certificada.
+- Usos empresariales: visitas comerciales, censos de tiendas, observaciones de puntos de venta, visitas rurales, obras y novedades logísticas mediante instrumentos configurados.
+- Una solicitud comercial capturada no reserva inventario ni confirma precio, crédito, facturación o despacho. CRM, ERP, TMS y catálogos transaccionales requieren alcance e integración específicos.
+- Los formularios documentan observaciones; no certifican conformidad técnica, inocuidad, medición topográfica ni homologación de proveedores.
 
 ## Documentos públicos
 
@@ -25,11 +28,11 @@
 
 WhatsApp comercial: +57 300 901 0300. Cotización según alcance, equipo, capacitación y soporte.
 
-## Caracterización y encuestas que avanzan sin internet
+## Caracterización con IA y captura offline para su equipo
 
 https://www.controlg.co/
 
-Diseñe formularios, asigne equipos y recolecte datos, fotos, firmas y ubicación desde Android. Al recuperar conexión, sincronice para revisar resultados y analizar su territorio. Para empresas, entidades públicas, corporaciones y ONG.
+Diseñe instrumentos con asistencia de IA y revisión humana. Asigne equipos y recolecte datos, fotos, firmas y ubicación desde Android sin internet. Al recuperar conexión, sincronice para revisar resultados. Para empresas, entidades públicas y ONG en Colombia y Latinoamérica.
 
 ### Del cuestionario al operativo de campo
 
@@ -503,6 +506,10 @@ Una sede puede recibir varias visitas y un proveedor puede tener varios establec
 
 Acorde las tablas, mapas y cortes que utilizarán los responsables y compruebe una exportación durante el piloto. Añada diccionario de variables, identificación de unidades y explicación de ausentes o excluidos. Si dirección necesita un resumen, defina qué detalle debe omitirse y qué información quedará para revisión operativa. Una gráfica atractiva no sustituye una base con significado claro. La propuesta debe precisar formularios, número de usuarios y dispositivos, vigencia, sesiones de formación, soporte y tareas adicionales para que el alcance permita comparar opciones.
 
+### Visitas comerciales por sector
+
+Una distribuidora de combustibles, una empresa de alimentos y un prestador de mantenimiento necesitan instrumentos distintos. Defina empresa, sede, visita y evento para conservar su significado. El equipo registra necesidades y solicitudes preliminares offline; la validación comercial ocurre después. Inventario, precios, facturación y despacho requieren sistemas o integraciones adicionales.
+
 ### ¿Sirve para empresas privadas y corporaciones?
 
 Sí. Control G puede configurarse para organizaciones privadas que necesitan recolectar información presencial, coordinar personal y revisar resultados de visitas, encuestas o diagnósticos territoriales.
@@ -626,6 +633,386 @@ La cantidad por sí sola no determina representatividad. Importan población obj
 ### ¿Cómo se cotiza una implementación?
 
 Se revisan cantidad y complejidad de formularios, usuarios, dispositivos, encuestas, tiempo de uso, instalación, capacitación, soporte y logística. Escríbanos por WhatsApp con el objetivo y el territorio para preparar una propuesta.
+
+## Formularios offline para la operación de su sector
+
+https://www.controlg.co/sectores
+
+Una visita comercial, un censo de tiendas y una inspección requieren datos distintos. Control G permite preparar instrumentos con apoyo de IA, asignarlos y capturar respuestas sin internet desde Android. Explore el alcance que corresponde a su organización en Colombia.
+
+### Combustibles y redes de estaciones
+
+Los equipos de una distribuidora pueden registrar visitas a estaciones propias, aliadas o clientes empresariales. El instrumento debe distinguir sede, tipo de relación, productos consultados y resultado. La ubicación y la fotografía acompañan la visita cuando se autorizan. El alcance administrativo se separa de la operación de surtidores y de las verificaciones técnicas reglamentarias.
+
+### Distribución, preventa y canal tradicional
+
+Distribuidores de alimentos, bebidas, aseo o ferretería necesitan conocer qué pasó en cada tienda. Un formulario captura referencias solicitadas, cantidades y observaciones sin red. La oficina revisa la solicitud al recibirla. Precios vigentes, existencias, cupos, facturación y despacho pertenecen al proceso comercial que debe configurarse o integrarse por separado.
+
+### Servicios públicos, obras y mantenimiento
+
+Las visitas pueden describir un activo, una novedad, una intervención o un avance reportado. Cada registro necesita un identificador estable y un contexto territorial. Los formularios recogen evidencias para revisión; la aprobación técnica corresponde a la persona autorizada. La herramienta no reemplaza un sistema de facturación de servicios ni certifica la seguridad de una instalación.
+
+### Agro, programas sociales y organizaciones
+
+Asociaciones, empresas agrícolas, prestadores de extensión, entidades públicas y ONG pueden registrar visitas a productores o comunidades. Antes de publicar se define si la unidad es una persona, una empresa, un predio o una visita. El acceso, el consentimiento y la divulgación de resultados se ajustan al proyecto. La posición GPS no sustituye una delimitación catastral.
+
+### Una prueba antes del despliegue
+
+Comparta un formulario vacío y los modelos de dispositivos. Prepare cuentas, permisos y asignaciones con conexión. Pruebe captura en modo avión, cierre y reapertura, sincronización y revisión por coordinación. La demostración permite acordar qué se configura con las funciones actuales y qué necesita desarrollo. La creación asistida por IA requiere internet y revisión humana.
+
+### ¿Control G reemplaza el ERP de una empresa?
+
+Su alcance es la captura, revisión y análisis de información de campo. Inventario transaccional, facturación, cartera y despacho requieren el sistema empresarial correspondiente y una integración definida.
+
+### ¿Cada sector necesita una aplicación diferente?
+
+Los instrumentos y asignaciones se configuran por entidad. Los cambios sectoriales de navegación, catálogos o integraciones se acuerdan antes del piloto; no todas las adaptaciones son automáticas.
+
+### ¿Cómo solicito una demostración sectorial?
+
+Indique actividad, país, usuarios, dispositivos, visitas mensuales y el formato actual. Use ejemplos anonimizados para revisar el flujo sin compartir datos personales o comerciales reservados.
+
+## Visitas comerciales con formularios que funcionan sin internet
+
+https://www.controlg.co/visitas-comerciales-offline
+
+El asesor registra lo que encontró en cada cliente aunque no tenga señal. Prepare formularios y asignaciones en Control G, capture desde Android y envíe la información para revisión al recuperar conexión. Para equipos comerciales y distribuidores en Colombia.
+
+### Cada visita conserva su propósito
+
+Separe visita de prospección, seguimiento, atención de novedad y solicitud comercial. Incluya código del cliente, sede y asesor, además del motivo y el resultado. Una misma empresa puede recibir varias visitas. Los identificadores permiten relacionarlas en el análisis; una ficha de cliente con historial consolidado o un CRM completo requieren un alcance específico.
+
+### El trabajo offline empieza antes de salir
+
+Inicie sesión con conexión, descargue los instrumentos asignados y compruebe cámara y ubicación. Las respuestas y sus evidencias se guardan en el dispositivo. Al regresar la señal, compruebe el estado de sincronización y corrija los pendientes. La oficina consulta los registros recibidos, no los que siguen únicamente en una tablet desconectada.
+
+### Supervisión por asesor y territorio
+
+Configure grupos, vigencias, instrucciones y cuotas de captura. Después de sincronizar, coordinación revisa registros, observaciones, cobertura y calidad. Las metas de captura no equivalen a ventas realizadas. El mapa representa ubicaciones disponibles; el planificador ordena visitas mediante distancias geográficas aproximadas y no ofrece tiempos reales de conducción.
+
+### Un formulario puede registrar una solicitud
+
+Si el asesor recoge cantidades o productos de interés, defina si se trata de una intención, una solicitud o un pedido aprobado. La captura no confirma existencias, precio, crédito ni despacho. Esas validaciones pertenecen al sistema comercial. Antes de conectar un ERP deben acordarse autenticación, campos, estados, errores y pruebas de recuperación.
+
+### Una demostración con su formato
+
+Envíe un instrumento vacío y un ejemplo de resultado esperado. Revisamos preguntas, dispositivos, número de cuentas, territorios y evidencia. La propuesta separa configuración, capacitación, soporte y desarrollos adicionales. Puede preparar el primer borrador con IA y editarlo antes de publicar; esa etapa necesita internet y aprobación de una persona responsable.
+
+### ¿Puedo registrar visitas sin conexión?
+
+Sí, después de iniciar sesión y descargar las asignaciones. Las capturas permanecen en el dispositivo hasta completar su sincronización.
+
+### ¿Puedo seguir al vendedor en tiempo real?
+
+Control G registra ubicación asociada a capturas cuando está disponible. Ese flujo no equivale a seguimiento GPS permanente ni permite ver inmediatamente registros de un equipo desconectado.
+
+### ¿Incluye una integración con mi CRM?
+
+Debe evaluarse por separado. Necesitamos documentación de la API, permisos, reglas de datos y un entorno de prueba antes de comprometer una conexión.
+
+## Información de campo para distribuidores de combustibles y estaciones
+
+https://www.controlg.co/formularios-sector-combustibles
+
+Organice visitas a estaciones, clientes empresariales y negocios de lubricantes con instrumentos digitales. Control G guarda respuestas y evidencias sin internet y permite revisarlas después de sincronizar. El formulario se adapta al propósito comercial y a los protocolos de la empresa.
+
+### Una red con relaciones diferentes
+
+Distinga estaciones propias, abanderadas, aliadas y empresas compradoras. El formulario puede recoger código de establecimiento, municipio, responsable de la visita, línea de producto y motivo. Una estación registrada es una unidad de análisis; no implica una licencia para todos sus empleados. Los usuarios se dimensionan según quién captura, revisa y administra.
+
+### Visitas comerciales y necesidades declaradas
+
+Registre productos consultados, consumo estimado con su unidad y periodo, observaciones y próximo compromiso. Diferencie la información declarada por el contacto de una medición verificada. El equipo comercial revisa las solicitudes recibidas. Cupos, precios, inventario, facturación y programación de entregas no se confirman por completar el formulario.
+
+### Evidencias en áreas autorizadas
+
+Defina fotografías y ubicación únicamente cuando el sitio y sus protocolos permitan usar el dispositivo. Una firma manuscrita capturada no convierte el registro en un certificado técnico. El cuestionario administrativo puede documentar hallazgos para revisión; las inspecciones reglamentarias y la operación de equipos corresponden a los profesionales y sistemas habilitados.
+
+### Cobertura regional con conectividad intermitente
+
+Prepare cuentas e instrumentos antes del desplazamiento. Los asesores capturan offline y revisan pendientes al reconectarse. El mapa permite analizar las ubicaciones recibidas por territorio y tipo de visita. La captura GPS conserva precisión disponible; no garantiza presencia física ni ofrece una medición topográfica. Para navegación vial se necesita una solución específica.
+
+### Piloto antes de conectar otros sistemas
+
+Seleccione un instrumento comercial y dispositivos reales. Pruebe captura desconectada, reapertura, carga de fotografías y recepción administrativa. Después evalúe la relación con el sistema comercial existente. La configuración, los catálogos de clientes, la historia consolidada y las integraciones deben quedar diferenciados en la propuesta.
+
+### ¿Control G opera surtidores o tanques?
+
+El alcance de esta solución es registrar y revisar información de campo. La operación de surtidores, telemetría, inventario de combustible y facturación requieren sistemas especializados.
+
+### ¿Sirve para visitas a clientes mayoristas?
+
+Puede configurarse un instrumento para registrar necesidades y resultados de visita. El piloto debe definir unidades, identificadores y qué información se valida en el sistema comercial.
+
+### ¿Las empresas citadas son clientes de Control G?
+
+Las referencias sectoriales públicas no implican relación comercial, alianza ni autorización para usar sus marcas. La demostración utiliza datos ficticios identificados como ejemplo.
+
+## Formularios offline para distribuidoras de alimentos y bebidas
+
+https://www.controlg.co/formularios-distribuidoras-alimentos
+
+Conozca qué ocurrió en cada tienda y qué solicitó el cliente. Sus asesores pueden registrar visitas y solicitudes preliminares sin señal desde Android. Al sincronizar, la oficina recibe la información para revisión y continuidad en el sistema comercial.
+
+### La tienda como unidad de trabajo
+
+Use un código de punto de venta y diferencie la sede del negocio y la persona contactada. Puede registrar canal, barrio, horarios reportados, visita realizada o motivo de no atención. Un censo inicial ayuda a organizar cobertura. Si necesita un maestro de clientes editable con historial consolidado, debe incluirse como adaptación específica.
+
+### Solicitudes con referencias y unidades claras
+
+El instrumento puede recoger código de producto, presentación, cantidad y fecha solicitada. Una caja y una unidad no se suman como si fueran equivalentes. El registro es una solicitud pendiente de validación comercial. La disponibilidad, la lista de precios y los descuentos necesitan catálogos vigentes y reglas definidas; no se deducen de la conexión offline.
+
+### Observaciones de exhibición y servicio
+
+Recopile observaciones de disponibilidad visible, presentación de exhibición y satisfacción con la atención. La evidencia debe seguir las autorizaciones del establecimiento. Un formulario documenta condiciones reportadas, pero no certifica inocuidad, cadena de frío ni calidad de un alimento. Esas verificaciones necesitan protocolos y personal competente.
+
+### Continuidad entre ruta y oficina
+
+Descargue las asignaciones antes de la jornada y pruebe el dispositivo desconectado. Al volver la señal, confirme que respuestas y fotos hayan llegado. La oficina debe diferenciar solicitudes recibidas, revisadas y aceptadas en su proceso. La integración con ERP, bodega o reparto se diseña a partir de estados y permisos acordados.
+
+### Un piloto por canal comercial
+
+Pruebe el instrumento con un grupo acotado de asesores y tiendas de ejemplo. Revise tiempo de diligenciamiento, errores de presentación, sincronización y lectura administrativa. La propuesta puede incluir configuración, capacitación y acompañamiento. Evite trasladar al piloto información comercial reservada que no sea necesaria para comprobar el flujo.
+
+### ¿Es un sistema completo de preventa y facturación?
+
+Control G captura información mediante formularios. Inventario transaccional, precios por cliente, impuestos, facturación y despacho requieren funcionalidades o integraciones adicionales expresamente contratadas.
+
+### ¿Puedo registrar cantidades sin internet?
+
+Sí, con el instrumento asignado y precargado. Las cantidades capturadas no reservan producto ni confirman una venta.
+
+### ¿Puedo generar el formulario con IA?
+
+El asistente propone un borrador desde una descripción. Necesita internet y revisión humana antes de guardar, publicar y asignar el instrumento.
+
+## Formularios para preventistas que visitan zonas sin internet
+
+https://www.controlg.co/formularios-preventistas-offline
+
+Registre el motivo de visita, las referencias solicitadas y las observaciones del cliente en un formulario precargado. Control G conserva la captura offline y la envía al sincronizar. La oficina valida condiciones comerciales antes de confirmar el pedido.
+
+### Una solicitud pendiente de aprobación
+
+Acuerde qué significa enviar el formulario. Puede ser un requerimiento del cliente que la oficina revisa después. Asigne un identificador de captura y conserve cliente, sede, referencias y cantidades. La confirmación comercial debe ocurrir en un estado diferente. Una respuesta sincronizada demuestra recepción de información, no aceptación del pedido.
+
+### Catálogos que necesitan una versión
+
+Un catálogo precargado puede quedar desactualizado mientras el asesor está desconectado. Defina quién lo prepara y qué fecha de vigencia utiliza. La aplicación no debe prometer existencias o precios actualizados que el equipo no ha recibido. Si el proyecto necesita listas por cliente, promociones y cupos, esas reglas deben evaluarse antes de contratar.
+
+### Prueba de persistencia y reintento
+
+Prepare cuentas y asignaciones, capture sin datos móviles y cierre la aplicación. Al reabrir, revise respuestas y evidencias. Reconecte y compruebe su llegada a coordinación. El identificador local ayuda al control de reintentos. Debe probarse el circuito completo, incluyendo registros incompletos, fotografías pendientes y recuperación después de una interrupción.
+
+### Alcance frente a un software especializado
+
+Las plataformas de preventa pueden incluir inventario, precios diferenciados, impuestos, cartera, impresión y ERP. Control G se enfoca en instrumentos configurables y datos de campo. Elija el alcance según el trabajo real: una visita con solicitud preliminar puede resolverse con un formulario; una transacción comercial completa necesita componentes adicionales.
+
+### La demostración como criterio de compra
+
+Comparta un formato vacío y un catálogo ficticio pequeño. Pruebe unidades, rechazo por dato faltante y lectura de la solicitud en oficina. Acorde qué recibe el usuario al terminar y qué comprobante necesita el cliente. La propuesta separa captura, capacitación, soporte, catálogo e integración para evitar comprometer funciones que el piloto no ha validado.
+
+### ¿El formulario confirma inventario y precio?
+
+No reserva inventario ni confirma precios. Una captura offline recoge la información definida en el instrumento. La disponibilidad y condiciones comerciales deben validarse con una fuente y reglas acordadas.
+
+### ¿Se puede conectar con un ERP?
+
+Es un trabajo de integración por alcance. Necesitamos documentación, permisos y pruebas de estados, errores y reintentos antes de ofrecerlo como operativo.
+
+### ¿Puedo usar Control G solo para las visitas?
+
+Sí. Un instrumento de motivo, resultado y necesidades de la visita puede usarse sin convertirlo en un sistema transaccional de preventa.
+
+## Auditoría de puntos de venta con captura offline
+
+https://www.controlg.co/auditoria-puntos-venta
+
+Conserve observaciones de exhibición, referencias visibles y condiciones de atención en el mismo instrumento. Control G permite registrar visitas a tiendas sin conexión y revisar las evidencias cuando llegan a la oficina.
+
+### Censo y auditoría responden preguntas distintas
+
+Un censo identifica establecimientos y define el universo de trabajo. Una auditoría observa criterios en una visita a puntos seleccionados. Distinga código de tienda, código de sede y código de visita. Volver a una tienda no crea un establecimiento nuevo. Si solo visita una muestra, el informe no debe presentarla como un censo completo.
+
+### Criterios que dos observadores puedan aplicar
+
+Defina la referencia, la presentación y el lugar observado. Aclare si una ausencia es falta en estante, falta declarada o dato no observado. Incluya no aplica y motivo cuando corresponda. Una fotografía aporta contexto, pero no reemplaza las definiciones del instrumento ni permite inferir ventas o inventario de bodega.
+
+### Evidencia autorizada y comparable
+
+Acorde con el establecimiento qué puede fotografiar. Evite personas, documentos y pantallas que no sean necesarios. Para comparaciones, describa el encuadre y el criterio de selección. Las capturas conservan su contexto y se revisan después de sincronizar. El proyecto debe definir acceso, retención y entrega de los archivos.
+
+### Cobertura con pendientes visibles
+
+Asigne equipos por territorio y vigencia antes de salir. El instrumento y la sesión deben quedar preparados para trabajar offline. La cobertura central corresponde a registros recibidos. No interprete una zona sin capturas sincronizadas como ausencia de establecimientos ni como incumplimiento confirmado del asesor.
+
+### Un piloto de observación
+
+Dos personas pueden aplicar el mismo checklist en puntos de ejemplo y comparar interpretaciones. Corrija criterios ambiguos antes de publicar. Pruebe también una visita incompleta, una tienda cerrada y un registro sin GPS disponible. La configuración final debe permitir distinguir estas situaciones de una observación válida.
+
+### ¿Control G mide automáticamente participación de anaquel?
+
+El formulario puede recoger mediciones definidas por el proyecto. Esta solución no implica reconocimiento automático de productos ni medición de imágenes con IA.
+
+### ¿El mapa muestra ventas?
+
+Representa registros georreferenciados disponibles y variables configuradas. Las ventas requieren una fuente comercial y una metodología diferente.
+
+### ¿Puedo hacer un censo de tiendas?
+
+Puede preparar un instrumento para registrar establecimientos. El diseño del universo, los identificadores y el procedimiento de deduplicación deben acordarse antes del operativo.
+
+## Formularios offline para visitas de servicios públicos
+
+https://www.controlg.co/inspecciones-servicios-publicos
+
+Documente observaciones de activos, redes y atención en territorio con instrumentos definidos por el prestador. Los equipos capturan respuestas y evidencias sin conexión, y coordinación revisa la información recibida después de sincronizar.
+
+### Una visita vinculada a un activo
+
+Registre identificador del activo, orden de referencia si existe, territorio, motivo y observación. Una coordenada sin código puede resultar insuficiente para volver al mismo elemento. El instrumento debe distinguir inspección visual, atención de reporte y verificación posterior. Un cambio de estado técnico requiere la revisión del responsable autorizado.
+
+### Evidencias con seguridad operativa
+
+El prestador define dónde se puede usar cámara y tablet. Los formularios recogen observaciones desde condiciones autorizadas y no guían maniobras sobre equipos. Una fotografía o firma no certifica conformidad ni habilita una instalación. Los protocolos técnicos y las competencias del personal continúan siendo responsabilidad de la organización.
+
+### Trabajo en zonas con señal intermitente
+
+Precargue instrumentos y permisos antes de salir. Si el dispositivo no entrega GPS, conserve el motivo y los identificadores alternativos acordados. Al recuperar internet, revise pendientes de evidencias y respuestas. La captura offline facilita el registro; no reemplaza comunicaciones de emergencia ni canales de despacho que deban operar en tiempo real.
+
+### Lectura territorial y exportación
+
+Después de sincronizar puede revisar ubicaciones, capas y variables de observación. Diferencie activo existente, visita y hallazgo para evitar contar lo mismo varias veces. Las exportaciones GIS requieren un diccionario de campos y permisos. Conectar órdenes de trabajo o plataformas del prestador necesita mapeo y pruebas adicionales.
+
+### Aceptación con un caso representativo
+
+Seleccione un instrumento y una ruta de prueba autorizada. Compruebe sesión, evidencias, reapertura sin señal y recepción administrativa. Incluya casos de activo no encontrado y dato ilegible. Acorde con el área técnica qué puede concluirse del registro y quién puede aprobar su cierre antes de ampliar el despliegue.
+
+### ¿Control G factura consumos de servicios públicos?
+
+No forma parte de este alcance. El formulario recoge información de campo y no sustituye los sistemas de medición, facturación o gestión comercial del prestador.
+
+### ¿Las fotos certifican una instalación?
+
+Documentan el contexto permitido. La conformidad técnica y su certificación requieren el procedimiento y los profesionales competentes.
+
+### ¿Puedo registrar sin GPS?
+
+Puede capturarse información sin ubicación cuando el instrumento lo permita. Deben conservarse identificadores y razones para que la revisión distinga datos ausentes de coordenadas válidas.
+
+## Formularios agropecuarios para visitas sin internet
+
+https://www.controlg.co/formularios-sector-agropecuario
+
+Prepare instrumentos para visitas a productores, asociaciones y unidades productivas. Control G permite capturar información sin datos móviles y sincronizar después para revisión, análisis territorial y seguimiento del proyecto.
+
+### Productor, predio y visita son unidades distintas
+
+Una persona puede relacionarse con varias unidades productivas y recibir acompañamiento en diferentes fechas. Defina códigos y relaciones antes de diseñar preguntas. El formulario puede recoger el identificador acordado; una ficha consolidada con relaciones e historial requiere un alcance de datos específico. Evite crear un productor nuevo por cada visita.
+
+### Información definida por el equipo técnico
+
+El instrumento puede registrar actividad productiva, prácticas declaradas, necesidades de acompañamiento y compromisos. Cada medida debe incluir unidad y periodo. Diferencie lo observado de lo informado por el productor. La herramienta organiza datos; las recomendaciones agronómicas, sanitarias o veterinarias corresponden a profesionales competentes y al protocolo del programa.
+
+### Preparación offline en territorio rural
+
+Descargue la sesión y los formularios asignados antes del desplazamiento. Pruebe captura, batería, almacenamiento y permisos en los equipos reales. GPS puede obtener posición sin datos móviles en un receptor compatible, pero su disponibilidad y precisión varían. Los mapas base y capas necesarios deben estar preparados antes de salir.
+
+### Seguimiento con cortes comparables
+
+Conserve el periodo, el instrumento y el alcance de la visita para interpretar cambios. Un mapa de capturas describe registros disponibles, no necesariamente todos los productores del municipio. Las áreas capturadas son evidencia del levantamiento y no sustituyen un plano catastral o una medición certificada. Acorde acceso a ubicaciones exactas y resultados agregados.
+
+### Piloto con situaciones diferentes
+
+Incluya un registro sin GPS, una visita de seguimiento y un caso con varias actividades productivas. Revise si las preguntas permiten describirlos sin duplicar unidades. El asistente de IA ayuda a preparar un borrador con conexión; la validación del contenido y la aprobación antes de publicar pertenecen al responsable del proyecto.
+
+### ¿El formulario es el registro oficial de un programa?
+
+Debe validarse con la entidad responsable. Un instrumento configurado en Control G no se convierte automáticamente en un registro oficial ni en un requisito cumplido.
+
+### ¿La IA recomienda tratamientos para el cultivo?
+
+El asistente crea borradores de instrumentos. No sustituye diagnóstico ni recomendaciones de un profesional agropecuario.
+
+### ¿Funciona en veredas sin señal?
+
+La captura puede continuar con sesión e instrumentos preparados. La sincronización y las actualizaciones requieren recuperar conexión.
+
+## Formularios offline para visitas y evidencia de obra
+
+https://www.controlg.co/inspecciones-obras-campo
+
+Organice registros de visita por proyecto, frente y actividad. El equipo captura observaciones y fotografías sin señal en Android. Después de sincronizar, los responsables revisan la información y sus entregables según el alcance contratado.
+
+### El registro necesita una referencia de obra
+
+Identifique proyecto, frente, actividad, fecha y responsable. Describa si el dato corresponde a avance observado, cantidad reportada o solicitud pendiente. Las evidencias deben poder relacionarse con el mismo contexto. Una fotografía de una actividad no prueba por sí sola una cantidad ejecutada ni una aprobación de pago.
+
+### Preguntas acordadas con supervisión
+
+Prepare campos de observación, evidencia, responsable de aclaración y fecha de seguimiento. Las opciones deben distinguir no aplica, no observado y pendiente de verificación. Control G documenta la visita; los ensayos, cálculos, decisiones de diseño y aprobaciones técnicas necesitan profesionales autorizados y procedimientos del contrato.
+
+### Persistencia en frentes desconectados
+
+Prepare instrumentos, permisos y sesión antes de desplazarse. El dispositivo conserva respuestas y medios mientras no existe internet. Al sincronizar, compruebe la llegada de fotografías y registros, incluyendo los pendientes. La prueba debe cubrir cierre de la aplicación y reapertura para verificar que la captura no dependa solo de la pantalla activa.
+
+### Información para informes y mapas
+
+Los registros recibidos pueden revisarse por territorio y variables del formulario. Defina qué incluye cada corte y qué visitas siguen sin recibirse. Las ubicaciones ayudan al contexto, pero no sustituyen levantamientos topográficos. Presupuestos, APU, programación de obra y control financiero pertenecen a un alcance distinto.
+
+### Un piloto con reglas de aceptación
+
+Use un proyecto ficticio y casos de avance, novedad y seguimiento. Compare el registro de dos observadores y corrija ambigüedades antes de publicar. La propuesta debe indicar qué reportes estándar se incluyen, qué requiere adaptación y cómo se tramitan correcciones. El acompañamiento no reemplaza la responsabilidad de supervisión del contrato.
+
+### ¿Control G reemplaza el presupuesto de obra?
+
+Este alcance es de captura y revisión de información de campo. No incluye por defecto APU, presupuesto, programación, contabilidad o aprobación de pagos.
+
+### ¿Una firma en pantalla aprueba un acta contractual?
+
+La captura de firma manuscrita no determina por sí sola efectos contractuales. La organización define autorización, procedimiento y mecanismo de firma requerido.
+
+### ¿Sirve para interventorías?
+
+Puede configurarse un instrumento de visita y evidencias. La metodología y los requisitos de cada contrato deben revisarse antes de implementar.
+
+## Formularios offline para novedades y evidencia de entrega
+
+https://www.controlg.co/formularios-logistica-entregas
+
+Documente visitas, intentos de entrega y condiciones reportadas con un instrumento preparado para campo. Capture respuestas y evidencias en Android sin señal. La oficina consulta la información cuando se completa su sincronización.
+
+### Entrega, intento y novedad son eventos distintos
+
+Defina un identificador de referencia de su sistema y un código para cada visita. Registre si hubo entrega reportada, intento sin atención, rechazo o novedad pendiente. Una firma o fotografía aislada no describe todo el evento. El instrumento debe conservar cantidades y motivos con opciones que el equipo logístico pueda interpretar.
+
+### Datos necesarios y evidencia autorizada
+
+Acorde qué observaciones necesita el destinatario del reporte. Evite fotografiar documentos, interiores o personas cuando no sean necesarios. Puede configurar una firma manuscrita o una ubicación si el caso lo requiere. Estos elementos aportan contexto; no convierten automáticamente el formulario en una prueba certificada ni en un documento de transporte oficial.
+
+### La oficina conoce lo que ha recibido
+
+El equipo debe descargar asignaciones antes de salir. Durante la desconexión, los registros quedan en el dispositivo. La oficina ve los eventos sincronizados y no puede inferir el resultado de lo que sigue pendiente. Para emergencias, custodia y comunicaciones críticas se mantienen los canales operativos correspondientes.
+
+### Relación con la plataforma logística
+
+Una referencia permite comparar exportaciones con el sistema de transporte o distribución. Una conexión automática requiere definir campos, permisos, estados y reglas de reintento. Control G no incluye por defecto un TMS, despacho de flota, liquidación de fletes o navegación vial. El piloto debe separar registro del evento y confirmación en el sistema principal.
+
+### Prueba con excepciones de campo
+
+Incluya rechazo, entrega parcial reportada, ausencia de receptor y falta de GPS. Compruebe que las fotografías permanezcan después de cerrar la app y que lleguen con su registro al reconectar. Defina quién revisa la novedad y cómo pide una aclaración. El despliegue se dimensiona por usuarios, visitas, medios y retención.
+
+### ¿Incluye seguimiento de vehículos en tiempo real?
+
+No es el alcance de estos formularios. La ubicación asociada a una captura no equivale a telemetría permanente ni permite ver eventos offline antes de sincronizar.
+
+### ¿El formulario crea una remesa oficial?
+
+Debe revisarse con el sistema y procedimiento de la operación. Capturar un evento no genera automáticamente documentos oficiales de transporte.
+
+### ¿Puedo registrar una entrega parcial?
+
+El instrumento puede incluir cantidades y motivo. La aceptación, conciliación y actualización del pedido se definen en el proceso y sistema logístico correspondiente.
 
 ## Encuestas y caracterización offline en Argentina
 
@@ -1649,6 +2036,690 @@ No. Debe realizar un piloto con las tablets, instrumento, evidencias y condicion
 
 # Guías y recursos
 
+## Auditoría de punto de venta: checklist de campo
+
+https://www.controlg.co/blog/auditoria-punto-venta-consumo-masivo
+
+Publicado: 2026-10-31. Actualizado: 2026-10-31. Autor: equipo editorial Control G, DRAN Digital.
+
+Una auditoría de punto de venta necesita criterios que diferentes observadores puedan aplicar de forma parecida. Una respuesta como buena exhibición aporta poco si cada persona entiende algo distinto. La definición de la variable debe acompañar al formulario.
+
+El modelo siguiente sirve para observación comercial. No presupone reconocimiento de productos con IA, cálculo automático de participación de anaquel ni lectura de inventario. El equipo puede capturar datos definidos y revisar la evidencia cuando exista conexión.
+
+### Un criterio observable por pregunta
+
+Reemplace valoraciones vagas por preguntas que indiquen referencia, lugar y condición observada. Defina qué significa presente en exhibición y qué respuesta corresponde si no se pudo observar. Si necesita una medida, especifique la unidad y el método que usará el personal.
+
+La ausencia visible de un producto no prueba falta de inventario en bodega. Una declaración del encargado tampoco es una medición de ventas. Conserve el origen del dato para que el analista pueda diferenciar observación, respuesta del contacto y dato importado de otra fuente.
+
+### Checklist inicial para revisar con el equipo
+
+Ajuste la lista a las categorías realmente evaluadas. Un instrumento breve y consistente puede ser más útil que una auditoría extensa con campos que nadie utiliza. Pruebe cada opción en situaciones ficticias.
+
+- Código de tienda, sede y visita.
+- Categoría y referencia observada.
+- Zona o ubicación de exhibición definida.
+- Presencia observada: sí, no o no observable.
+- Condición descrita con criterio del proyecto.
+- Precio visible, moneda y fecha, solo si forman parte del estudio.
+- Material comercial observado y autorización de fotografía.
+- Motivo de dato ausente o no aplicable.
+- Responsable y periodo de la observación.
+- Aclaración pendiente para coordinación.
+
+### Una fotografía que responda a una pregunta
+
+Defina qué debe mostrar cada encuadre y qué elementos debe evitar. La evidencia necesita relacionarse con una observación concreta para que el revisor sepa por qué existe. Una galería de fotos sin códigos puede resultar difícil de interpretar aunque tenga muchas imágenes.
+
+Acuerde autorizaciones con el establecimiento y limite personas o documentos en la captura. Si no se puede fotografiar, el formulario debe permitir registrar la restricción. Evite convertir una evidencia faltante en un incumplimiento comercial sin conocer el motivo.
+
+### Comparabilidad entre visitas
+
+Mantenga el periodo, los puntos seleccionados y los criterios al comparar resultados. Una variación puede deberse a que se visitaron tiendas diferentes o a que cambió el instrumento. Documente esas modificaciones antes de atribuir el resultado a una campaña.
+
+Realice una prueba de concordancia: dos observadores aplican el mismo checklist a un caso de ejemplo y explican sus decisiones. Las discrepancias muestran preguntas que necesitan aclaración. Capacitar con esas diferencias suele aportar más que memorizar el orden de las pantallas.
+
+### Captura offline y revisión de información recibida
+
+En Control G se preparan instrumentos y asignaciones con conexión. El equipo puede registrar respuestas y evidencias sin señal desde Android. Verifique que el dispositivo conserva la captura después de cerrar la aplicación y que la oficina recibe los archivos al sincronizar.
+
+Para leer cobertura, use puntos previstos y visitas recibidas con una fecha de corte. Las capturas aún en el dispositivo no forman parte del reporte central. El mapa muestra ubicaciones disponibles, no una estimación automática de ventas o de todos los negocios del territorio.
+
+### Criterios para elegir la solución
+
+Pida una demostración con una tienda ficticia y casos de dato ausente. Revise cómo se publica una versión, qué ve cada asesor y cómo coordinación solicita aclaraciones. Compruebe también exportaciones y el significado de cada campo.
+
+Si necesita reconocimiento de imágenes, catálogos vivos o conexión con ventas, descríbalo como un componente adicional. La configuración de formularios resuelve el instrumento; las funciones analíticas o transaccionales especiales requieren evidencia y pruebas propias.
+
+Control G: https://www.controlg.co/auditoria-puntos-venta
+
+## Bitácora de obra offline: visitas y evidencia
+
+https://www.controlg.co/blog/bitacora-obra-evidencia-offline
+
+Publicado: 2026-10-31. Actualizado: 2026-10-31. Autor: equipo editorial Control G, DRAN Digital.
+
+Una bitácora de visita de obra necesita relacionar lo observado con un proyecto, un frente y una actividad. Si las fotografías y cantidades llegan sin esas referencias, el responsable puede tener dificultad para explicar a qué corresponden. El instrumento debe conservar ese contexto desde la captura.
+
+Esta guía aborda registros de campo. Control G puede apoyar instrumentos y evidencias offline, pero no debe anunciarse como presupuesto, programación de obra o aprobación automática de cantidades y pagos. Esos procesos requieren alcances y competencias diferentes.
+
+### El nivel del registro cambia el análisis
+
+Defina si cada respuesta representa una visita, una actividad observada o una novedad. Una visita puede contener varias actividades y cada una necesitar su referencia. El diseño debe permitir relacionarlas sin sumar varias veces un mismo evento. Si usa códigos del presupuesto o del contrato, conserve su versión y significado.
+
+En un ejemplo ficticio, una foto de un frente puede acompañar dos observaciones. Eso no equivale a dos visitas ni demuestra la cantidad ejecutada. El diccionario del proyecto debe indicar qué puede contarse y qué necesita verificación adicional.
+
+### Instrumento inicial de visita
+
+El responsable de supervisión revisa las preguntas y decide qué información puede respaldar cada estado. Use esta lista como borrador administrativo, no como formato contractual aprobado.
+
+- Código de proyecto y referencia del contrato cuando aplique.
+- Identificador y fecha de la visita.
+- Frente, ubicación y actividad observada.
+- Fuente de la cantidad: medida, reportada o pendiente de verificar.
+- Cantidad y unidad definidas por el proyecto.
+- Descripción de la observación o novedad.
+- Evidencia autorizada vinculada a la actividad.
+- Restricción de acceso u observación.
+- Persona o rol responsable de aclaración.
+- Estado de revisión administrativa.
+
+### Cantidad reportada y cantidad aprobada
+
+Separe lo que una persona informó de lo que el responsable verificó. Una unidad de medida necesita método y criterio de aceptación cuando interviene en una decisión técnica. El formulario puede conservar una cantidad reportada sin convertirla automáticamente en un avance aprobado.
+
+El instrumento tampoco decide si un hallazgo cumple una norma o si procede un pago. Evite etiquetas generales de aprobado cuando solo se completó la captura. Los procesos de supervisión e interventoría tienen responsabilidades propias; la documentación pública de Colombia Compra Eficiente sirve para ampliar ese contexto.
+
+### Fotografías que conserven referencia
+
+Defina qué evidencia necesita cada observación y qué áreas permiten usar el dispositivo. Evite capturar personas o documentos que no sean necesarios. Si la fotografía no está permitida o no puede obtenerse, registre el motivo y la alternativa acordada.
+
+Una fecha y una coordenada aportan contexto, pero no certifican autenticidad, presencia o precisión topográfica de manera infalible. La revisión necesita relacionar los archivos con el instrumento y las reglas del proyecto. Las firmas manuscritas capturadas deben interpretarse dentro del procedimiento autorizado.
+
+### Prueba offline con reapertura
+
+Prepare la cuenta y los formularios asignados con conexión. Capture un ejemplo sin datos móviles, guarde y cierre la app. Al reabrir, compruebe respuestas y medios. Luego recupere conexión y revise desde coordinación la llegada del mismo registro y sus fotografías.
+
+Incluya una interrupción y una novedad incompleta en la prueba. La oficina consulta lo recibido, no todo lo que permanece en dispositivos desconectados. El cierre de jornada debe distinguir registros pendientes de sincronización y aclaraciones pendientes del equipo técnico.
+
+### Una contratación con entregables definidos
+
+Pida una demostración con el formato del proyecto y casos ficticios. Revise publicaciones de versión, permisos, devolución de observaciones y exportaciones. Especifique qué informe estándar se incluye y qué adaptación requiere programación.
+
+Para Control G, el alcance puede cubrir instrumentos, captura y lectura territorial de la información. Presupuesto, APU, programación financiera e integración con otros sistemas deben evaluarse aparte. Un piloto con los equipos físicos permite acordar los criterios de aceptación antes del despliegue.
+
+Colombia Compra Eficiente: https://operaciones.colombiacompra.gov.co/tema/supervision-e-interventoria
+
+## Caracterización de proveedores: campos y revisión
+
+https://www.controlg.co/blog/caracterizacion-proveedores-empresas
+
+Publicado: 2026-10-31. Actualizado: 2026-10-31. Autor: equipo editorial Control G, DRAN Digital.
+
+Una caracterización de proveedores reúne información definida por la empresa para conocer sus relaciones de abastecimiento. La ficha debe indicar qué dato es declarado, qué evidencia se revisó y qué queda pendiente. Recopilar información no equivale a homologar o aprobar al proveedor.
+
+Un formulario puede apoyar visitas o levantamientos sin conexión cuando el dispositivo está preparado. El alcance del registro debe mantenerse separado de decisiones de contratación, revisión jurídica, riesgo y verificación documental especializada.
+
+### La finalidad limita lo que se pregunta
+
+Escriba qué necesita conocer el área de compras: categorías atendidas, cobertura declarada, contactos autorizados o capacidades que requieren revisión posterior. Evite acumular documentos porque podrían servir algún día. Cada dato necesita finalidad, responsable y condiciones de acceso.
+
+Si la ficha incluye personas naturales o información de contactos, revise con el responsable de datos qué es necesario y cómo se conserva. Una consulta comercial puede requerir menos información que una etapa de vinculación. Los instrumentos deben distinguir esos momentos.
+
+### Empresa, sede y visita
+
+Use referencias que permitan reconocer a la organización y sus establecimientos sin contar cada visita como un proveedor nuevo. Una sede puede tener capacidad o cobertura diferente a otra. El nombre comercial por sí solo puede resultar insuficiente para relacionarlas.
+
+El Registro Estadístico de Empresas del DANE ofrece contexto sobre unidades económicas. Una caracterización interna de compras tiene su propio universo y finalidad. No reemplaza ese registro, un certificado de existencia ni las verificaciones que exija el proceso de contratación.
+
+### Ficha inicial para revisar con compras
+
+El siguiente esquema evita incorporar criterios de aprobación automática. Adáptelo con las áreas responsables y use ejemplos ficticios en el piloto.
+
+- Código de proveedor y referencia de sede.
+- Categoría de suministro declarada.
+- Territorios que afirma atender.
+- Capacidad declarada, unidad y periodo.
+- Condiciones o limitaciones informadas.
+- Fecha y modalidad de la visita.
+- Origen del dato y evidencia efectivamente revisada.
+- Documento o aclaración pendiente, si corresponde.
+- Responsable de revisar la información.
+- Fecha prevista para actualización.
+
+### Declaración, evidencia y decisión
+
+Conserve separadas la respuesta del contacto y la conclusión del revisor. Si el proveedor informa una capacidad mensual, registre periodo y unidad. Una fotografía no demuestra por sí sola esa capacidad. Un archivo adjunto tampoco acredita autenticidad o vigencia sin el procedimiento correspondiente.
+
+Defina qué puede corregir el capturador y qué exige una nueva revisión. La trazabilidad necesita conservar qué versión se usó y cuándo se recibió la información. Evite un estado general de aprobado si únicamente se verificó que los campos estaban completos.
+
+### Captura de visita y sincronización
+
+Prepare cuenta, instrumento y permisos antes de salir. En Control G puede registrar respuestas y evidencias offline desde Android después de la precarga. La prueba debe comprobar persistencia al cerrar y reabrir la app y recepción posterior en coordinación.
+
+La oficina trabaja con los registros recibidos. Si una ficha continúa en una tablet desconectada, no forma parte del corte central. Antes de cerrar una campaña de actualización, revise pendientes, aclaraciones y posibles duplicados. La fecha de visita y la fecha de recepción responden a preguntas diferentes.
+
+### Uso de IA y alcance del software
+
+La IA puede ayudar a redactar el borrador del instrumento a partir de una descripción sin datos reales. Una persona debe revisar preguntas, opciones y necesidad de documentos. El asistente no debe presentarse como una aprobación automática del proveedor o una evaluación certificada de riesgo.
+
+Control G aporta captura y revisión de información de campo. Un portal de proveedores, una homologación documental, una conexión con compras o un motor de riesgo necesitan alcance y validaciones adicionales. La demostración debe identificar quién decide y en qué sistema queda la aprobación.
+
+### Actualización y entregables
+
+Defina qué dato caduca, quién solicita actualización y qué se conserva como historia. El reporte debe mostrar fecha de corte y distinguir información pendiente de comprobar. Para compartir resultados, seleccione únicamente los campos que necesita el destinatario.
+
+Lleve a la demostración un formato vacío y casos de empresa con varias sedes, dato desconocido y documento pendiente. Con esas excepciones puede comprobar si el instrumento conserva el contexto sin pedir trabajo que el capturador no está autorizado a realizar.
+
+DANE: https://www.dane.gov.co/index.php/servicios-al-ciudadano/servicios-informacion/registro-estadistico-de-empresas/directorio-estadistico-de-empresas
+
+## Censo de tiendas y puntos de venta: campos y método
+
+https://www.controlg.co/blog/censo-tiendas-puntos-venta
+
+Publicado: 2026-10-31. Actualizado: 2026-10-31. Autor: equipo editorial Control G, DRAN Digital.
+
+Un censo de tiendas busca identificar los establecimientos de un universo definido. Para que el resultado sea interpretable, necesita delimitar el área, decidir qué cuenta como punto de venta y registrar también las situaciones en las que no pudo observarlo. Una colección de visitas no es automáticamente un censo.
+
+En Colombia, el Registro Estadístico de Empresas del DANE sirve como referencia conceptual sobre unidades económicas. Un operativo comercial propio tiene otra finalidad y no reemplaza ese registro. La guía propone decisiones para organizar la captura y su revisión.
+
+### Delimite el universo antes de contar
+
+Escriba qué tipos de negocio se incluyen y qué límites territoriales usará. Indique si contará locales fijos, puestos temporales, negocios dentro de otro establecimiento o sedes de una misma empresa. Sin esa definición, dos encuestadores pueden producir cifras diferentes sobre la misma calle.
+
+Si parte de una lista de clientes, el resultado describe esa lista, no todos los comercios del territorio. Si toma una muestra, explique su selección. El informe debe identificar áreas recorridas, zonas pendientes y las condiciones que limitaron la observación.
+
+### Empresa, sede y visita con códigos diferentes
+
+Una empresa puede tener varias sedes. Una sede puede cambiar de nombre comercial o recibir varias visitas. Conserve identificadores que permitan revisar esas situaciones sin crear automáticamente una unidad nueva. Una coordenada ayuda al contexto, pero no es una llave única infalible.
+
+La revisión de posibles duplicados debe usar criterios acordados y conservar el historial de decisiones. Un nombre parecido no prueba identidad, y una cercanía GPS no garantiza que se trate del mismo local. La plataforma necesita un alcance específico si el proyecto requiere un maestro consolidado de establecimientos.
+
+### Campos para la ficha de establecimiento
+
+Priorice variables que se usarán para organizar visitas o analizar cobertura. La información personal del propietario no es necesaria para todas las finalidades. Ajuste el acceso y las autorizaciones antes del operativo.
+
+- Código provisional o existente del establecimiento.
+- Tipo de punto de venta y criterio de inclusión.
+- Municipio, zona y referencia de ubicación.
+- Nombre comercial cuando sea necesario.
+- Condición observada: abierto, cerrado, no encontrado o pendiente.
+- Categorías de producto de interés para el estudio.
+- Horario reportado y fuente del dato.
+- Disponibilidad o ausencia de posición GPS.
+- Fecha, responsable e identificador de visita.
+- Motivo para marcar un posible duplicado.
+
+### Capture excepciones sin inventar respuestas
+
+Una tienda cerrada no equivale a un establecimiento inexistente. Puede requerir otra visita. Diferencie negativa a participar, falta de información y dato no aplicable. Si el proyecto necesita validar la ubicación, defina una revisión cuando el GPS no entregue precisión suficiente.
+
+Prepare ejemplos para capacitar: dos locales contiguos con nombres similares, una sede trasladada y un negocio dentro de una vivienda. Compare cómo responde el equipo. Esa prueba ayuda a corregir el instrumento antes de que las discrepancias se multipliquen en campo.
+
+### Operación offline y control de cobertura
+
+Descargue formularios y asignaciones con conexión. En Control G el equipo puede capturar respuestas y evidencias offline desde Android y sincronizarlas al recuperar señal. Pruebe persistencia al cerrar y reabrir la app en los dispositivos seleccionados.
+
+La cobertura central se calcula sobre los registros recibidos. Una zona sin puntos sincronizados puede tener capturas aún en una tablet. Antes de cerrar el censo, revise pendientes, visitas repetidas y decisiones sobre duplicados. Documente la fecha de corte y el universo utilizado.
+
+### Entregables que otra persona pueda interpretar
+
+Prepare un diccionario con definiciones, opciones y códigos territoriales. Separe el archivo de establecimientos del registro de visitas cuando el modelo lo requiera. En un mapa público puede necesitar agregación o menor detalle para evitar divulgar ubicaciones y contactos innecesarios.
+
+Control G ofrece instrumentos, revisión y lectura territorial. Para una demostración, lleve un formato vacío y ejemplos ficticios de excepciones. La propuesta debe indicar qué parte se configura con formularios y qué necesita un catálogo o una relación de datos adicional.
+
+DANE: https://www.dane.gov.co/index.php/servicios-al-ciudadano/servicios-informacion/registro-estadistico-de-empresas/directorio-estadistico-de-empresas
+
+## Checklist de visita a una estación de servicio
+
+https://www.controlg.co/blog/checklist-visita-estacion-servicio
+
+Publicado: 2026-10-31. Actualizado: 2026-10-31. Autor: equipo editorial Control G, DRAN Digital.
+
+Un checklist de visita a una estación de servicio debe indicar su propósito antes de enumerar preguntas. Seguimiento comercial, observación administrativa e inspección técnica tienen responsables y evidencias diferentes. El modelo de esta guía se limita al registro administrativo y comercial.
+
+Una herramienta digital puede ordenar la visita y conservar su evidencia. La conformidad técnica de instalaciones, equipos o procesos exige el procedimiento y las competencias correspondientes. Este ejemplo no contiene instrucciones para intervenir combustible ni reemplaza una lista reglamentaria.
+
+### La finalidad determina las preguntas
+
+Escriba una frase de alcance: por ejemplo, documentar necesidades y compromisos de una visita comercial. Establezca quién diligencia, quién revisa y a quién se entrega el resultado. Si se encuentra una situación que necesita atención técnica, registre la referencia para el canal autorizado de la empresa.
+
+Evite un resultado general como estación aprobada si el asesor solo observó una parte de la operación. El estado del registro puede referirse a revisión administrativa completa, información pendiente o aclaración solicitada. Esa precisión evita atribuir al formulario una facultad que no tiene.
+
+### Estructura del checklist de ejemplo
+
+Los campos deben permitir reconstruir el contexto sin pedir documentos o fotografías innecesarios. Adapte esta lista con el responsable del instrumento y pruebe las opciones antes de publicarla.
+
+- Código de estación y municipio.
+- Fecha y objetivo de la visita.
+- Nombre o código del responsable que aplica el instrumento.
+- Área autorizada para la conversación y captura.
+- Temas comerciales tratados y línea de producto.
+- Necesidad declarada por el establecimiento.
+- Observación administrativa y fuente de la información.
+- Restricción que impidió observar o fotografiar.
+- Compromiso, responsable y plazo propuesto.
+- Estado de revisión del registro.
+
+### Defina respuestas que no obliguen a suponer
+
+Una escala como cumple o no cumple necesita un criterio observable. Si no existe ese criterio, use una pregunta descriptiva o un estado de seguimiento. No observado, no aplica y dato no disponible deben tener significados distintos. Una respuesta en blanco tampoco debe interpretarse automáticamente como ausencia de novedad.
+
+En una prueba ficticia, el encargado puede no conocer una fecha o negar una fotografía. El formulario debe conservar esa circunstancia y permitir continuar cuando el dato no sea obligatorio. Revise qué campos realmente justifican detener la captura.
+
+### Fotografías y ubicación con restricciones claras
+
+Antes de llevar dispositivos al sitio, confirme áreas permitidas y protocolos internos. El instrumento puede incluir la razón por la que no se obtuvo evidencia. Defina qué muestra cada fotografía autorizada y evite captar personas, documentos o elementos ajenos a la finalidad.
+
+Una posición GPS tiene precisión variable y puede estar ausente. Conserve el código de estación como referencia independiente. La coordenada, una marca de tiempo o una firma no hacen que el checklist sea una certificación de seguridad ni una prueba infalible de presencia.
+
+### Aplicación offline y revisión posterior
+
+Con Control G puede asignar el instrumento, preparar la sesión y capturar sin conexión desde Android. Antes de la primera salida, haga una prueba con el dispositivo real y confirme que el formulario quedó disponible. Incluya el caso de cerrar la aplicación después de guardar.
+
+Cuando vuelva internet, revise si el registro y sus medios llegaron a coordinación. Una captura pendiente no está disponible en el reporte central. El responsable debe devolver observaciones concretas, señalando la pregunta o evidencia que requiere aclaración, en lugar de pedir rehacer toda la visita.
+
+### Control de versión y cierre del instrumento
+
+Documente quién aprobó las preguntas, qué cambió y desde cuándo se usa la nueva versión. Si agrega opciones a mitad del operativo, indique cómo se compararán con las anteriores. Las conclusiones deben corresponder al alcance administrativo efectivamente observado.
+
+Para contratar, pida una demostración del ciclo completo: asignación, captura desconectada, recepción y revisión. Acorde capacitación, dispositivos, soporte y exportaciones. La compra del software debe acompañarse de criterios operativos que la empresa pueda comprobar.
+
+Control G: https://www.controlg.co/formularios-sector-combustibles
+
+## Cómo crear un formulario de visita comercial con IA
+
+https://www.controlg.co/blog/formulario-visita-comercial-ia
+
+Publicado: 2026-10-31. Actualizado: 2026-10-31. Autor: equipo editorial Control G, DRAN Digital.
+
+La inteligencia artificial puede proponer un borrador de formulario de visita comercial desde una descripción del trabajo. Para obtener una propuesta útil, necesita propósito, unidad de registro, campos y excepciones. El responsable revisa el resultado antes de publicarlo.
+
+En Control G, el asistente funciona con conexión y un proveedor disponible. La captura offline corresponde a instrumentos ya preparados y asignados. Generar con IA y diligenciar sin internet son etapas diferentes del mismo operativo.
+
+### Describa una tarea concreta
+
+Indique quién aplicará el formulario y qué decisión debe apoyar la oficina. Diferencie visita, empresa, sede y solicitud comercial. Explique si las cantidades son necesidades declaradas o un pedido que requiere aprobación posterior. Esa información evita que el borrador use estados que el proceso no puede respaldar.
+
+Use ejemplos ficticios. No pegue bases de clientes, teléfonos, documentos o información reservada para explicar el formato. Puede describir los campos y sus reglas sin enviar respuestas de campo. La revisión debe incluir qué información se transmite al proveedor de IA.
+
+### Prompt inicial para una visita de distribución
+
+Puede adaptar el siguiente texto al caso de su empresa. El objetivo es producir preguntas y criterios de revisión, no crear una transacción o publicar automáticamente el formulario.
+
+Prepara un borrador en español para asesores que visitan tiendas en Colombia. Cada respuesta representa una visita. Necesito código de cliente y sede, motivo, resultado y necesidades declaradas. Si el contacto solicita productos, recoge referencia, presentación, cantidad y unidad como solicitud pendiente de validación. Incluye opciones para tienda cerrada, dato desconocido y evidencia no autorizada. Propón secciones breves, validaciones y ayudas. Explica qué debe revisar una persona. No incluyas datos reales ni afirmes que se reserva inventario, se factura o se aprueba un pedido.
+
+### Revise preguntas, opciones y ramas
+
+Lea cada pregunta desde la posición del asesor. Compruebe si puede responder con la información disponible. Una pregunta que mezcla satisfacción y precio puede requerir separarse. Las opciones deben cubrir situaciones reales sin obligar a inventar un dato para continuar.
+
+Simule diferentes ramas: visita sin atención, cliente interesado y solicitud incompleta. Revise campos obligatorios y opciones como no aplica. Una pregunta oculta no debería producir una respuesta que la oficina interprete como observada. Las validaciones se comprueban con ejemplos, no solamente leyendo el borrador.
+
+- Cada pregunta tiene finalidad y unidad de registro.
+- Las cantidades conservan unidad y periodo.
+- Se distinguen observado, declarado y desconocido.
+- Las ramas permiten terminar las excepciones previstas.
+- La evidencia tiene un propósito y condiciones de autorización.
+- El estado final coincide con el proceso comercial real.
+
+### La persona responsable aprueba el instrumento
+
+La IA puede proponer una estructura convincente y aun así usar términos ambiguos o pedir información innecesaria. El equipo debe comprobar contenido comercial, permisos y tratamiento de datos. La propuesta tampoco certifica validez metodológica o cumplimiento de requisitos de una entidad.
+
+En el constructor de Control G, la propuesta se revisa y puede incorporarse al editor. La generación no significa que el formulario quede publicado o asignado automáticamente. Mantenga el flujo de aprobación y una versión identificable antes de llevarlo al operativo.
+
+### Pruebe después la captura sin internet
+
+Inicie sesión y descargue el instrumento asignado en un dispositivo real. Desconecte datos móviles, complete un ejemplo y guarde. Cierre y reabra la aplicación para comprobar persistencia. Luego recupere conexión y revise el registro desde coordinación con sus evidencias.
+
+Incluya al menos las excepciones que definió en el prompt. La oficina debe entender los resultados recibidos y distinguir pendientes. Si necesita catálogos vivos o integración con ERP, incorpore pruebas de ese componente en un alcance separado.
+
+Para una demostración, comparta el propósito y un formato vacío. La conversación comercial debe terminar con una lista de funciones configurables, adaptaciones y responsabilidades del cliente. El borrador asistido acelera la preparación, pero la aceptación depende de esa revisión y del piloto.
+
+Control G: https://www.controlg.co/encuestas-con-inteligencia-artificial
+
+## Datos de campo para distribuidoras de alimentos
+
+https://www.controlg.co/blog/distribuidoras-alimentos-datos-campo
+
+Publicado: 2026-10-31. Actualizado: 2026-10-31. Autor: equipo editorial Control G, DRAN Digital.
+
+Una distribuidora de alimentos puede necesitar información de tiendas, visitas y solicitudes comerciales en el mismo recorrido. Si mezcla esos niveles, una novedad de atención puede parecer un pedido y una cantidad solicitada puede interpretarse como venta. El formulario debe conservar el significado de cada registro.
+
+La propuesta de esta guía es un instrumento de campo con límites claros. Puede aplicarse a alimentos y bebidas, y adaptarse a otras categorías de consumo masivo. No es una certificación sanitaria ni un sistema completo de inventario o facturación.
+
+### Decida qué se resolverá con cada dato
+
+Antes de agregar preguntas, indique qué decisión apoyarán. La oficina puede necesitar saber qué cliente pidió una aclaración, qué referencia no se encontró o qué tienda requiere otra visita. Si una variable no tiene uso definido, revise si vale la pena pedirla en cada recorrido.
+
+Separe variables relativamente estables del punto de venta de las que cambian en cada visita. Actualizar un horario no debería borrar el resultado anterior. Cuando el proyecto requiere historia consolidada o relaciones entre clientes y visitas, el modelo necesita una adaptación específica.
+
+### Ficha de visita propuesta
+
+Use un ejemplo ficticio para revisar esta estructura con ventas y operaciones. Los campos repetidos por producto deben mantener la referencia y la presentación. Evite que una observación libre reemplace códigos necesarios para interpretar la solicitud.
+
+- Código de cliente, sede y visita.
+- Canal comercial y zona de atención.
+- Motivo y resultado del encuentro.
+- Referencia de producto y presentación solicitada.
+- Cantidad, unidad y fecha requerida.
+- Necesidad declarada o incidencia de servicio.
+- Fuente de la información registrada.
+- Observación de exhibición autorizada.
+- Compromiso propuesto y responsable de revisión.
+- Estado inicial de la solicitud en oficina.
+
+### Presentaciones y cantidades comparables
+
+Una caja, un paquete y una unidad pueden corresponder a cantidades diferentes del mismo producto. Documente cómo se reconocen las presentaciones y qué versión de catálogo usa el equipo. Si la equivalencia no está definida, conserve la unidad original en lugar de sumar valores incompatibles.
+
+La captura puede incluir una fecha requerida, pero no confirma capacidad de entrega. La oficina debe validar existencias, condiciones comerciales y aceptación. Si necesita calcular precios, promociones o impuestos, pida una demostración de esas reglas en el sistema que realmente las ejecutará.
+
+### Observación comercial y calidad del producto
+
+Describa lo observado con términos acordados. Un asesor puede registrar empaque dañado reportado o necesidad de devolución, pero la clasificación técnica y la decisión correspondiente pertenecen al protocolo de la empresa. No derive conclusiones de inocuidad a partir de una fotografía.
+
+Aclare qué evidencia necesita y cuándo está permitida. Las personas o documentos ajenos al propósito deben quedar fuera del encuadre. Una observación no disponible debe conservar su motivo para que coordinación no la interprete como una respuesta satisfactoria.
+
+### Preparación de una jornada offline
+
+Antes de salir, inicie sesión, descargue asignaciones y compruebe cámara, ubicación y espacio. En Control G la captura puede permanecer en Android sin internet hasta sincronizar. Una prueba útil incluye cierre y reapertura, cambios de conectividad y un registro con fotografías.
+
+Al terminar la jornada, revise los pendientes. La oficina puede analizar lo que recibió, pero no conoce automáticamente las solicitudes que siguen en una tablet desconectada. Defina cómo se informa esa situación antes de preparar un corte comercial o prometer entregas.
+
+### Una demostración que conecte campo y oficina
+
+Invite a una persona que captura y a otra que revisa. Use pocas referencias ficticias y pruebe una solicitud, una aclaración y una visita sin atención. Compruebe que cada caso tenga un resultado distinto y que los códigos se conserven en la exportación.
+
+La contratación debe separar formulario, capacitación y soporte de una posible integración con ERP o bodega. La herramienta de campo puede aportar información estructurada, mientras las decisiones sobre venta y distribución continúan en el sistema y proceso definidos por la empresa.
+
+Control G: https://www.controlg.co/formularios-distribuidoras-alimentos
+
+## Evidencia de entrega offline y registro de novedades
+
+https://www.controlg.co/blog/evidencia-entrega-novedades-offline
+
+Publicado: 2026-10-31. Actualizado: 2026-10-31. Autor: equipo editorial Control G, DRAN Digital.
+
+El registro de una entrega necesita describir el evento, no solamente adjuntar una fotografía. Una visita sin receptor, una entrega parcial reportada y una entrega completa son situaciones distintas. Los códigos y opciones del instrumento permiten que la oficina las interprete después.
+
+La captura offline conserva observaciones mientras el dispositivo está desconectado. La oficina las conoce al sincronizar. Este flujo puede apoyar documentación logística, pero no equivale a seguimiento permanente de vehículos ni a un sistema completo de transporte.
+
+### Identifique el evento y su referencia
+
+Use el código del pedido, envío u orden que suministre el sistema principal. Agregue un identificador para la visita. Un mismo envío puede tener varios intentos y el análisis debe conservar esa secuencia sin sumar cada intento como una entrega nueva.
+
+Si el equipo no encuentra la referencia, incluya un estado provisional y un mecanismo de aclaración. Evite crear una equivalencia automática por nombre del destinatario. La coincidencia necesita datos y criterios autorizados, especialmente cuando existen sedes o referencias parecidas.
+
+### Ficha de evento propuesta
+
+La lista siguiente organiza información para revisión. No convierte el formulario en un documento oficial de transporte ni determina por sí sola la aceptación de una mercancía.
+
+- Referencia del sistema logístico y código de visita.
+- Fecha y responsable del registro.
+- Destino o sede identificados por código.
+- Tipo de evento: intento, entrega reportada o novedad.
+- Cantidades reportadas y unidad correspondiente.
+- Motivo de rechazo, ausencia o diferencia.
+- Descripción de la condición observada.
+- Fotografía o firma manuscrita cuando estén autorizadas.
+- Disponibilidad de ubicación y precisión informada.
+- Responsable de revisar la excepción.
+
+### Defina quién confirma el resultado
+
+Completar un formulario puede significar que el conductor o asesor terminó de reportar. La conciliación y la confirmación en el sistema principal pueden ocurrir después. El proyecto necesita identificar a la persona o regla que acepta el evento y qué ocurre si pide una aclaración.
+
+Una firma capturada debe tener un significado acordado. Puede documentar una interacción, pero no debe presentarse como certificado infalible. La empresa define qué evidencia necesita, el procedimiento de autorización y qué información personal es realmente necesaria.
+
+### Prepare las excepciones antes de salir
+
+Ensaye un destino cerrado, una entrega parcial y una referencia ilegible. El formulario debe distinguir esos casos de un dato faltante. Si obliga a elegir entregado para poder terminar, producirá un error de proceso aunque todos los campos estén completos.
+
+Las fotografías se obtienen en zonas autorizadas y con encuadres que eviten personas o documentos ajenos al propósito. La ubicación puede no estar disponible. Conserve la razón y las referencias alternativas en lugar de inventar una coordenada para cumplir una exigencia de la pantalla.
+
+### Una prueba completa sin conexión
+
+Prepare sesión y asignaciones de Control G con internet. Capture un evento ficticio en Android sin datos móviles, guarde y cierre la aplicación. Al reabrir, revise respuestas y archivos. Recupere conexión y compruebe su recepción en oficina.
+
+Durante una desconexión, el panel central no muestra necesariamente lo que acaba de ocurrir. Mantenga los canales de operación crítica que la empresa requiera. Para un corte de información, indique fecha y registros pendientes de recibirse antes de concluir que hubo una demora o un incumplimiento.
+
+### Intercambio con el sistema principal
+
+Un archivo exportado puede relacionarse por referencia con el sistema logístico. Una conexión automática necesita campos, permisos, estados y reglas de reintento. Pruebe errores e interrupciones para que una notificación repetida no se interprete como otro evento comercial.
+
+La propuesta debe separar formularios y soporte de cualquier integración con TMS, despacho, facturación o documentos oficiales. Lleve a la demostración un formato vacío y pocos eventos ficticios. El objetivo del piloto es comprobar el significado de cada estado y la llegada de sus evidencias.
+
+Control G: https://www.controlg.co/formularios-logistica-entregas
+
+## Formularios de asistencia técnica agropecuaria offline
+
+https://www.controlg.co/blog/formularios-asistencia-tecnica-agropecuaria
+
+Publicado: 2026-10-31. Actualizado: 2026-10-31. Autor: equipo editorial Control G, DRAN Digital.
+
+La asistencia técnica rural puede generar visitas a un productor, a una unidad productiva o a un grupo. Esas unidades no deben mezclarse al contar atenciones o describir cobertura. El formulario necesita indicar a quién se atendió y qué representa cada respuesta.
+
+La Agencia de Desarrollo Rural describe la extensión agropecuaria como acompañamiento a productores. El instrumento de esta guía es una propuesta operativa para organizar datos; no reemplaza registros oficiales, recomendaciones profesionales ni requisitos de un programa.
+
+### Productor, unidad productiva y evento
+
+Defina códigos para relacionar la persona o asociación, la unidad productiva y la visita. Un productor puede tener varios predios y una visita puede tratar actividades diferentes. Si solo usa el nombre, cambios de escritura o coincidencias pueden dificultar el análisis.
+
+Documente quién revisará posibles duplicados y cómo se conservarán los cambios. El formulario puede recoger las referencias del proyecto. Un catálogo consolidado con relaciones e historial necesita una adaptación de datos que debe especificarse antes de implementar.
+
+### Campos de una visita de ejemplo
+
+El equipo técnico selecciona variables según la finalidad del acompañamiento. Cada medida necesita una unidad y una fecha o periodo. Aplique preguntas individuales o grupales de acuerdo con el evento real.
+
+- Código de productor o asociación y unidad productiva.
+- Identificador, fecha y modalidad de la visita.
+- Municipio, vereda y referencia territorial.
+- Actividad productiva declarada.
+- Necesidad o tema del acompañamiento.
+- Observación realizada y fuente de la información.
+- Medida registrada, unidad y periodo.
+- Compromiso propuesto y responsable.
+- Fecha prevista para revisar el compromiso.
+- Evidencia autorizada y estado de ubicación.
+
+### Observación y declaración con significados distintos
+
+Una práctica informada por el productor no equivale a una práctica observada por el técnico. Conserve la fuente y permita desconocido cuando corresponda. También distinga área cultivada, área total y área reportada para una actividad. Un número sin definición puede llevar a comparaciones equivocadas.
+
+Pruebe unidades usadas en el territorio y defina cualquier conversión antes de consolidar. Si una medida requiere instrumento o competencia especializada, el formulario solo debe recogerla bajo ese procedimiento. La app no transforma una estimación en una medición certificada.
+
+### Trabajo sin datos móviles
+
+Antes del desplazamiento prepare cuentas, instrumentos, permisos y almacenamiento. En Control G el técnico puede capturar respuestas y evidencias en Android offline después de la precarga. La prueba física debe incluir cierre y reapertura, batería y una jornada representativa de archivos.
+
+Un receptor compatible puede obtener GPS sin datos móviles, aunque la posición y precisión dependen del entorno. La falta de señal celular y la falta de coordenadas no son lo mismo. Acuerde qué se registra cuando el GPS no está disponible y qué capas deben estar preparadas para el mapa.
+
+### Seguimiento entre momentos
+
+Relacione la visita posterior con la misma unidad y conserve el instrumento utilizado. Si cambia una pregunta o el periodo de referencia, documente cómo afecta la comparación. Un resultado diferente puede reflejar participantes distintos o cambios de metodología, además de una posible variación real.
+
+El informe necesita distinguir visitas recibidas, registros pendientes de sincronización y casos fuera del universo. Las áreas o polígonos capturados son evidencia de campo y no sustituyen delimitaciones catastrales. La divulgación de ubicaciones exactas requiere criterios de acceso acordados.
+
+### Revisión humana del instrumento
+
+El asistente de IA de Control G puede preparar un borrador desde una descripción con conexión. Pídale opciones y validaciones, y revise términos, unidades y preguntas sensibles con el equipo competente. La IA no debe decidir tratamientos ni generar recomendaciones profesionales para el cultivo o los animales.
+
+El piloto debe usar ejemplos ficticios de varias actividades y una visita sin GPS. Compruebe persistencia y recepción en coordinación. La propuesta final debe separar configuración de instrumentos, formación y cualquier catálogo o conexión institucional adicional.
+
+Agencia de Desarrollo Rural: https://www.adr.gov.co/atencion-y-servicios-a-la-ciudadania/extension-agropecuaria-2/
+
+## Inspecciones de servicios públicos sin internet
+
+https://www.controlg.co/blog/inspecciones-servicios-publicos-offline
+
+Publicado: 2026-10-31. Actualizado: 2026-10-31. Autor: equipo editorial Control G, DRAN Digital.
+
+Una visita de servicios públicos necesita relacionar la observación con un activo y con el motivo que llevó al equipo a campo. El código del activo, la referencia de la orden y la fecha ayudan a reconstruir el evento cuando las evidencias llegan a la oficina.
+
+El formulario puede acompañar la captura en zonas sin señal. Su función es documentar información para revisión. No reemplaza comunicaciones de emergencia, procedimientos de intervención ni decisiones de un profesional autorizado.
+
+### Activo, orden y visita con relaciones claras
+
+Un activo puede recibir varias visitas y una orden puede incluir más de un elemento. Defina qué representa cada respuesta. Si conserva únicamente la coordenada, puede ser difícil distinguir instalaciones próximas o posiciones de baja precisión. Incluya el identificador disponible y la razón cuando no se pudo verificar.
+
+El instrumento debe separar una referencia tomada de una placa o catálogo de una descripción provisional. Ese origen permite revisar después la relación correcta. Un maestro de activos o una conexión con órdenes de trabajo requieren un modelo e integración específicos.
+
+### Ficha de observación propuesta
+
+El responsable técnico determina los criterios y condiciones de uso. Esta lista organiza el registro administrativo de una visita y debe adaptarse al procedimiento del prestador.
+
+- Identificador de visita y referencia de orden, si existe.
+- Código de activo y modo de identificación.
+- Territorio y motivo de atención.
+- Tipo de observación permitida.
+- Descripción del hallazgo o novedad reportada.
+- Dato no observable y motivo de la limitación.
+- Evidencia autorizada y vínculo con el hallazgo.
+- Ubicación disponible y precisión informada.
+- Responsable de revisar o aclarar.
+- Estado administrativo del registro recibido.
+
+### Datos ausentes que no deben ocultarse
+
+Un valor ilegible, un activo no encontrado y una coordenada no disponible son situaciones diferentes. El formulario debe permitir describirlas. Convertir todos esos casos en otro o dejar una casilla vacía dificulta decidir qué trabajo de revisión necesita cada registro.
+
+Use ejemplos para capacitar: identificación parcial, observación impedida y una visita que debe repetirse. El equipo no debe completar datos por suposición para lograr que la pantalla permita enviar. Las validaciones sirven para mejorar calidad, no para fabricar certeza.
+
+### Evidencia bajo condiciones autorizadas
+
+La organización establece dónde se permite usar dispositivos y qué elementos pueden fotografiarse. El instrumento no contiene instrucciones para abrir equipos, intervenir redes ni evaluar riesgos técnicos. Las observaciones se capturan desde las condiciones aprobadas por el prestador.
+
+La firma manuscrita, la fotografía y el GPS aportan contexto. No certifican por sí solos la seguridad o conformidad de una instalación. El cierre técnico debe tener responsables y procedimientos distintos del simple estado completado de un formulario.
+
+### Prueba de sincronización con archivos
+
+Prepare la sesión y los formularios de Control G antes del desplazamiento. Capture un caso de ejemplo sin datos móviles y cierre la aplicación. Al reabrir, compruebe respuestas y medios. Recupere conexión y revise el registro desde coordinación.
+
+Incluya una interrupción y un archivo pendiente en la prueba. La oficina consulta información recibida, por lo que un corte central puede no representar todo el trabajo guardado en dispositivos. El procedimiento de cierre de jornada debe comprobar pendientes y aclaraciones.
+
+### Del registro al análisis territorial
+
+Defina si el indicador cuenta activos, visitas o hallazgos. Un activo con tres eventos no debe aparecer como tres activos distintos. Antes de crear mapas, revise códigos, precisión y qué registros carecen de ubicación. Las conclusiones deben indicar esas limitaciones.
+
+Control G permite instrumentos y lectura territorial de datos recibidos. Conectar un sistema del prestador, publicar en ArcGIS o automatizar estados exige permisos, mapeo y pruebas. La demostración debe separar las funciones existentes de lo que se desarrollará para el proyecto.
+
+Control G: https://www.controlg.co/inspecciones-servicios-publicos
+
+## Preventa sin internet: registrar solicitudes de pedido
+
+https://www.controlg.co/blog/preventa-sin-internet-solicitudes-pedido
+
+Publicado: 2026-10-31. Actualizado: 2026-10-31. Autor: equipo editorial Control G, DRAN Digital.
+
+La preventa sin internet puede significar dos trabajos diferentes: recoger una solicitud para revisión posterior o ejecutar una transacción con precios, condiciones e inventario. Antes de elegir una app, defina cuál necesita su distribuidora. Esa decisión cambia el formulario, los catálogos y la integración.
+
+Control G puede configurarse para capturar visitas y solicitudes preliminares mediante instrumentos offline. No debe presentarse como un ERP de preventa completo. El ejemplo siguiente describe cómo conservar una solicitud que la oficina pueda interpretar y validar.
+
+### Un estado claro al terminar la visita
+
+Explique al cliente si lo registrado queda solicitado, recibido o confirmado. Cada palabra debe corresponder a una acción verificable. Guardado en el dispositivo significa que la oficina todavía puede no conocer el registro. Sincronizado significa recibido por la plataforma, no necesariamente aprobado para despacho.
+
+El sistema comercial puede rechazar una cantidad, proponer una alternativa o pedir aclaración. Acorde cómo se comunica esa decisión. Si el proyecto requiere estados automáticos y notificaciones entre sistemas, inclúyalos en el alcance técnico en vez de asumir que aparecen al crear un formulario.
+
+### Campos mínimos de la solicitud
+
+Use referencias estables y unidades explícitas. Una descripción libre puede complementar el dato, pero no debería ser el único modo de reconocer lo que se solicita. Esta lista es un punto de partida para la reunión con operaciones.
+
+- Identificador de captura y referencia del cliente.
+- Sede o punto de entrega propuesto.
+- Fecha, asesor y código de visita.
+- Referencia de producto y presentación.
+- Cantidad solicitada y unidad comercial.
+- Fecha requerida, cuando sea relevante.
+- Observación sobre sustituciones o restricciones.
+- Versión y fecha del catálogo utilizado.
+- Estado inicial: solicitud pendiente de validación.
+
+### El catálogo desconectado tiene una fecha
+
+Los productos y opciones disponibles en una tablet corresponden a la última preparación. Si cambian presentaciones, promociones o restricciones, el equipo necesita un procedimiento de actualización. Un vendedor sin red no puede conocer automáticamente un cambio que aún no recibió.
+
+El precio escrito en una solicitud puede ser una referencia pendiente de revisión, si así lo define la empresa. No debe aparecer como precio garantizado sin una regla de vigencia. La disponibilidad de bodega, el cupo y los impuestos requieren fuentes y validaciones comerciales adicionales.
+
+### Cuándo necesita una plataforma especializada
+
+Si necesita listas por cliente, inventario por almacén, promociones, cartera, impresión y transmisión al ERP, evalúe un sistema de preventa con ese alcance documentado. Las páginas oficiales de inSitu Sales y Persat muestran funciones de esta categoría. Esa referencia ayuda a construir una lista de evaluación, no implica equivalencia con Control G.
+
+Para un equipo que solo recoge necesidades o intenciones de compra, un formulario puede ser suficiente. Compare el trabajo real y las excepciones. No compre funciones transaccionales que no necesita, ni espere que un instrumento genérico las resuelva sin configuración o desarrollo.
+
+### Una prueba con desconexión e interrupciones
+
+Prepare una cuenta y una solicitud ficticia con pocas referencias. Capture sin internet, guarde y cierre la aplicación. Reabra y compruebe cantidades y evidencia. Después reconecte y revise desde oficina que se recibió la misma solicitud, sin confundir reintentos con pedidos nuevos.
+
+Incluya cantidad cero cuando sea válida, producto no encontrado y solicitud incompleta. El piloto debe mostrar qué se puede corregir y qué queda registrado. La prueba física con los modelos de tablet elegidos es necesaria antes de ampliar el operativo.
+
+### Conexión con oficina y ERP
+
+Defina quién valida, qué archivo o API recibe y cómo se identifica cada solicitud. El mapeo debe conservar códigos, unidades y estado. Especifique qué ocurre ante un error o un envío parcial. La integración necesita permisos, documentación y un entorno de prueba.
+
+La propuesta de Control G debe separar instrumentos, formación, soporte y cualquier adaptación comercial. Si requiere un comprobante o una actualización de pedido, muestre ese flujo en la demostración y documente quién lo implementará.
+
+inSitu Sales: https://www.insitusales.com/es/soluciones/aplicacion-de-ventas-de-campo/pre-ventas/
+Persat: https://www.persat-latam.com/app-vendedores-consumo-masivo/
+
+## Visitas comerciales de combustibles sin internet
+
+https://www.controlg.co/blog/visitas-comerciales-combustibles-offline
+
+Publicado: 2026-10-31. Actualizado: 2026-10-31. Autor: equipo editorial Control G, DRAN Digital.
+
+Una visita comercial de combustibles necesita identificar a quién se visitó, qué se conversó y qué debe revisar la oficina. Una empresa puede tener varias sedes y recibir visitas en fechas diferentes. Registrar esos niveles por separado permite comparar resultados sin convertir cada desplazamiento en un cliente nuevo.
+
+El modo offline es útil cuando la ruta tiene señal intermitente. Requiere preparar el dispositivo con anticipación y comprobar la recepción posterior. El ejemplo siguiente es un diseño de instrumento, no un caso de éxito de una petrolera ni una herramienta para operar surtidores.
+
+### Separe empresa, establecimiento y visita
+
+Asigne un código a la empresa y otro a la sede o estación. La visita tendrá su propio identificador y fecha. Agregue el tipo de relación definido por la organización: propia, aliada, compradora o prospecto. La persona contactada puede cambiar sin que cambie el establecimiento. Conserve esa diferencia en el diccionario del proyecto para evitar duplicar unidades al consolidar.
+
+Un mapa de visitas muestra eventos capturados, no necesariamente la totalidad de clientes de la distribuidora. Para hablar de cobertura necesita un universo de establecimientos y una regla que indique cuáles debían visitarse en el periodo.
+
+### Campos para un instrumento comercial
+
+La siguiente estructura sirve como punto de partida para revisar con el equipo de ventas. Cada variable necesita una finalidad. Un consumo declarado puede orientar una conversación, pero no equivale a una venta ni a un volumen comprobado.
+
+- Código de empresa y código de establecimiento.
+- Fecha, asesor y territorio de la visita.
+- Tipo de relación y motivo del encuentro.
+- Línea de producto de interés.
+- Cantidad estimada, unidad y periodo de referencia.
+- Origen del dato: declarado, observado o tomado de un sistema autorizado.
+- Resultado de la visita y aclaración necesaria.
+- Próximo compromiso, fecha propuesta y responsable.
+- Fotografía o ubicación solo cuando estén autorizadas.
+
+### Unidades que permiten interpretar cantidades
+
+Indique si la cantidad corresponde a galones, litros u otra unidad definida por el negocio. Añada el periodo: por mes, por entrega o para una necesidad puntual. No mezcle consumo histórico, capacidad de almacenamiento e intención de compra. Son conceptos distintos, aunque todos se expresen con números.
+
+Pruebe un caso con dato desconocido y otro con intervalo aproximado. Pedir una cifra obligatoria cuando el contacto no la conoce produce precisión aparente. El formulario debe permitir describir esa incertidumbre sin inventar valores.
+
+### Evidencias dentro de los protocolos del sitio
+
+El uso de cámara y tablet depende de las áreas y procedimientos autorizados por la instalación. Prepare una alternativa cuando una fotografía no esté permitida. Una observación comercial puede registrarse sin captar trabajadores, documentos o infraestructura que el proyecto no necesita.
+
+La firma manuscrita y las coordenadas aportan contexto al registro. No sustituyen una certificación técnica, una autorización de operación o una verificación de presencia infalible. La organización define quién revisa la información y qué decisiones puede respaldar.
+
+### Pruebe el recorrido completo sin señal
+
+En Control G se prepara la cuenta y se descargan formularios asignados con conexión. Después, el asesor puede guardar respuestas y evidencias en Android sin datos móviles. La prueba debe incluir cerrar y reabrir la aplicación, completar una visita y recuperar conectividad.
+
+Compruebe desde coordinación que llegó el mismo registro con sus archivos. Revise pendientes antes de dar por terminado el día. La oficina solo conoce lo sincronizado; un asesor desconectado puede tener trabajo guardado que aún no aparece en el corte central.
+
+### Alcance de la propuesta y del piloto
+
+Elija un formato comercial y un grupo acotado de dispositivos. Mida tiempo de captura, datos incompletos y conciliación de registros recibidos. Si necesita un maestro de clientes, historial consolidado o conexión con ventas, inclúyalos como componentes específicos del alcance.
+
+Control G organiza instrumentos y captura de campo. Precios vigentes, inventario, cupos, facturación y despacho requieren reglas y sistemas comerciales adicionales. La demostración debe indicar dónde termina la solicitud registrada y quién confirma la operación.
+
+Zeuss: https://zeuss.com.co/negocios-dealers-zeuss/
+Control G: https://www.controlg.co/encuestas-offline
+
 ## Caracterización de jóvenes: formulario y planificación
 
 https://www.controlg.co/blog/caracterizacion-jovenes-formulario
@@ -2434,7 +3505,7 @@ DANE: https://www.dane.gov.co/files/sen/lineamientos/Guia-elaboracion-de-un-plan
 
 https://www.controlg.co/blog/caracterizacion-empresas-clientes-establecimientos
 
-Publicado: 2026-10-15. Actualizado: 2026-10-15. Autor: equipo editorial Control G, DRAN Digital.
+Publicado: 2026-10-15. Actualizado: 2026-10-31. Autor: equipo editorial Control G, DRAN Digital.
 
 Una caracterización empresarial describe unidades relevantes para una decisión: clientes, establecimientos, proveedores o comunidades vinculadas a una operación. Requiere definir qué representa cada registro, cómo se selecciona, qué variables se necesitan y quién revisará la información. Un formulario largo no garantiza un diagnóstico útil.
 
@@ -2482,13 +3553,19 @@ Prepare una base con identificadores, diccionario de variables, fecha de corte y
 
 La implementación de Control G puede contemplar configuración, instalación, capacitación y acompañamiento según el alcance acordado. Antes de cotizar, defina formularios, profesionales, dispositivos, duración y entregables. Ese alcance permite a la empresa evaluar el valor del operativo completo y no únicamente el número de respuestas almacenadas.
 
+### Una empresa puede tener varias sedes y visitas
+
+Antes del operativo, distinga organización, establecimiento y visita. Un cambio de nombre o una segunda visita no debe crear automáticamente una empresa nueva. El instrumento puede recoger códigos existentes y referencias provisionales. Coordinación revisa posibles duplicados con criterios documentados. Una ficha única con historial consolidado requiere una adaptación del modelo de datos.
+
+Los campos de necesidades, categorías de producto y compromisos deben conservar su finalidad. Una solicitud capturada no confirma precios, existencias o una venta. Esa distinción permite usar formularios offline sin atribuirles funciones de un ERP o un CRM que todavía no se han contratado.
+
 U.S. Census Bureau: https://www.census.gov/about/policies/quality/standards/appendixa2.html
 
 ## Cómo crear encuestas con IA y validación humana
 
 https://www.controlg.co/blog/crear-encuestas-ia-validacion-humana
 
-Publicado: 2026-10-15. Actualizado: 2026-10-16. Autor: equipo editorial Control G, DRAN Digital.
+Publicado: 2026-10-15. Actualizado: 2026-10-31. Autor: equipo editorial Control G, DRAN Digital.
 
 Crear una encuesta con inteligencia artificial consiste en utilizar un modelo para proponer y revisar un borrador de preguntas. Ese borrador necesita decisiones humanas sobre variables, población, lenguaje y análisis. Después se configura en una herramienta de captura y se prueba en las condiciones reales del operativo.
 
@@ -2529,6 +3606,12 @@ El constructor de Control G incluye Crear con IA para cuentas de coordinación y
 Complete una prueba sin internet, guarde, cierre la aplicación y vuelva a abrirla. Recupere conexión, sincronice y compruebe que coordinación vea la respuesta con sus evidencias. Exporte una muestra y verifique que las opciones se entiendan fuera del formulario. Este recorrido detecta problemas que la lectura del cuestionario no muestra.
 
 Finalmente, conserve objetivo, versión aprobada, fecha y responsable. Si modifica una pregunta durante el operativo, documente cómo afecta la comparación de respuestas. La IA puede agilizar la preparación, pero la calidad final depende del diseño, de las personas entrevistadas y del control que se mantenga durante la captura.
+
+### Un borrador empresarial debe explicar las excepciones
+
+Al describir una visita comercial a la IA, indique si cada respuesta representa una visita, una empresa o una sede. Pida opciones para negocio cerrado, dato desconocido y evidencia no autorizada. Las cantidades necesitan unidad y periodo. Use ejemplos ficticios y conserve fuera del prompt las bases de clientes y los datos reservados.
+
+En Control G la generación requiere conexión y disponibilidad del proveedor. Una persona revisa la propuesta y el flujo editorial antes de asignarla. Después se prepara el dispositivo para captura offline. El piloto debe comprobar excepciones, persistencia al cerrar la app y recepción de respuestas con sus evidencias.
 
 NIST: https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.600-1.pdf
 U.S. Census Bureau: https://www.census.gov/about/policies/quality/standards/appendixa2.html

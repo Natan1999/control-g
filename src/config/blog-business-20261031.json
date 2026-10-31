@@ -1,0 +1,1424 @@
+[
+  {
+    "slug": "visitas-comerciales-combustibles-offline",
+    "title": "Visitas comerciales de combustibles sin internet",
+    "description": "Cómo registrar visitas a estaciones y clientes de combustibles offline: campos, unidades, evidencias, sincronización y criterios para evaluar el software.",
+    "excerpt": "Un instrumento para distinguir cliente, establecimiento y visita, y llevar información útil a la oficina sin prometer inventario en tiempo real.",
+    "keywords": [
+      "visitas comerciales combustibles",
+      "formularios petroleras offline",
+      "clientes mayoristas combustibles",
+      "software campo estaciones Colombia"
+    ],
+    "intro": [
+      "Una visita comercial de combustibles necesita identificar a quién se visitó, qué se conversó y qué debe revisar la oficina. Una empresa puede tener varias sedes y recibir visitas en fechas diferentes. Registrar esos niveles por separado permite comparar resultados sin convertir cada desplazamiento en un cliente nuevo.",
+      "El modo offline es útil cuando la ruta tiene señal intermitente. Requiere preparar el dispositivo con anticipación y comprobar la recepción posterior. El ejemplo siguiente es un diseño de instrumento, no un caso de éxito de una petrolera ni una herramienta para operar surtidores."
+    ],
+    "sections": [
+      {
+        "title": "Separe empresa, establecimiento y visita",
+        "paragraphs": [
+          "Asigne un código a la empresa y otro a la sede o estación. La visita tendrá su propio identificador y fecha. Agregue el tipo de relación definido por la organización: propia, aliada, compradora o prospecto. La persona contactada puede cambiar sin que cambie el establecimiento. Conserve esa diferencia en el diccionario del proyecto para evitar duplicar unidades al consolidar.",
+          "Un mapa de visitas muestra eventos capturados, no necesariamente la totalidad de clientes de la distribuidora. Para hablar de cobertura necesita un universo de establecimientos y una regla que indique cuáles debían visitarse en el periodo."
+        ]
+      },
+      {
+        "title": "Campos para un instrumento comercial",
+        "paragraphs": [
+          "La siguiente estructura sirve como punto de partida para revisar con el equipo de ventas. Cada variable necesita una finalidad. Un consumo declarado puede orientar una conversación, pero no equivale a una venta ni a un volumen comprobado."
+        ],
+        "bullets": [
+          "Código de empresa y código de establecimiento.",
+          "Fecha, asesor y territorio de la visita.",
+          "Tipo de relación y motivo del encuentro.",
+          "Línea de producto de interés.",
+          "Cantidad estimada, unidad y periodo de referencia.",
+          "Origen del dato: declarado, observado o tomado de un sistema autorizado.",
+          "Resultado de la visita y aclaración necesaria.",
+          "Próximo compromiso, fecha propuesta y responsable.",
+          "Fotografía o ubicación solo cuando estén autorizadas."
+        ]
+      },
+      {
+        "title": "Unidades que permiten interpretar cantidades",
+        "paragraphs": [
+          "Indique si la cantidad corresponde a galones, litros u otra unidad definida por el negocio. Añada el periodo: por mes, por entrega o para una necesidad puntual. No mezcle consumo histórico, capacidad de almacenamiento e intención de compra. Son conceptos distintos, aunque todos se expresen con números.",
+          "Pruebe un caso con dato desconocido y otro con intervalo aproximado. Pedir una cifra obligatoria cuando el contacto no la conoce produce precisión aparente. El formulario debe permitir describir esa incertidumbre sin inventar valores."
+        ]
+      },
+      {
+        "title": "Evidencias dentro de los protocolos del sitio",
+        "paragraphs": [
+          "El uso de cámara y tablet depende de las áreas y procedimientos autorizados por la instalación. Prepare una alternativa cuando una fotografía no esté permitida. Una observación comercial puede registrarse sin captar trabajadores, documentos o infraestructura que el proyecto no necesita.",
+          "La firma manuscrita y las coordenadas aportan contexto al registro. No sustituyen una certificación técnica, una autorización de operación o una verificación de presencia infalible. La organización define quién revisa la información y qué decisiones puede respaldar."
+        ]
+      },
+      {
+        "title": "Pruebe el recorrido completo sin señal",
+        "paragraphs": [
+          "En Control G se prepara la cuenta y se descargan formularios asignados con conexión. Después, el asesor puede guardar respuestas y evidencias en Android sin datos móviles. La prueba debe incluir cerrar y reabrir la aplicación, completar una visita y recuperar conectividad.",
+          "Compruebe desde coordinación que llegó el mismo registro con sus archivos. Revise pendientes antes de dar por terminado el día. La oficina solo conoce lo sincronizado; un asesor desconectado puede tener trabajo guardado que aún no aparece en el corte central."
+        ]
+      },
+      {
+        "title": "Alcance de la propuesta y del piloto",
+        "paragraphs": [
+          "Elija un formato comercial y un grupo acotado de dispositivos. Mida tiempo de captura, datos incompletos y conciliación de registros recibidos. Si necesita un maestro de clientes, historial consolidado o conexión con ventas, inclúyalos como componentes específicos del alcance.",
+          "Control G organiza instrumentos y captura de campo. Precios vigentes, inventario, cupos, facturación y despacho requieren reglas y sistemas comerciales adicionales. La demostración debe indicar dónde termina la solicitud registrada y quién confirma la operación."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "¿El formulario genera un pedido aprobado de combustible?",
+        "answer": "Recoge la información configurada. La aprobación comercial y las condiciones de suministro pertenecen al proceso y sistema que la empresa defina."
+      },
+      {
+        "question": "¿Se puede usar en todas las estaciones?",
+        "answer": "Debe autorizarlo cada operación y comprobar compatibilidad de dispositivos y protocolos. Una licencia nacional no elimina restricciones de uso del sitio."
+      },
+      {
+        "question": "¿Control G trabaja con las marcas citadas en fuentes?",
+        "answer": "Una referencia pública describe el sector. No implica que esa empresa sea cliente, aliada o usuaria de Control G."
+      }
+    ],
+    "verdict": "El instrumento aporta valor cuando identifica la unidad visitada, conserva el significado de las cantidades y deja claro qué debe validar la oficina después de sincronizar.",
+    "sources": [
+      {
+        "title": "Canales de relación comercial",
+        "publisher": "Zeuss",
+        "url": "https://zeuss.com.co/negocios-dealers-zeuss/"
+      },
+      {
+        "title": "Captura offline y preparación",
+        "publisher": "Control G",
+        "url": "https://www.controlg.co/encuestas-offline"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Solución para combustibles",
+        "path": "/formularios-sector-combustibles"
+      },
+      {
+        "title": "Checklist administrativo de visita",
+        "path": "/blog/checklist-visita-estacion-servicio"
+      },
+      {
+        "title": "Formulario comercial con IA",
+        "path": "/blog/formulario-visita-comercial-ia"
+      }
+    ],
+    "category": "Operación empresarial",
+    "country": "Colombia",
+    "publishedAt": "2026-10-31",
+    "updatedAt": "2026-10-31",
+    "readingMinutes": 4,
+    "comparison": [],
+    "whatsappMessage": "Hola, leí «Visitas comerciales de combustibles sin internet» en Control G. Quiero una demostración para mi operación en Colombia.",
+    "image": "/blog/sector-combustibles-control-g.jpg",
+    "imageAlt": "Representante y responsable de estación registran información comercial con una tablet en una zona administrativa segura",
+    "imageCaption": "Escena ilustrativa generada con IA. No representa una empresa cliente, resultados reales ni una certificación."
+  },
+  {
+    "slug": "checklist-visita-estacion-servicio",
+    "title": "Checklist de visita a una estación de servicio",
+    "description": "Ejemplo de checklist administrativo y comercial para visitar una EDS. Separe observaciones, evidencias, revisión y controles técnicos especializados.",
+    "excerpt": "Campos y criterios para documentar una visita a una estación sin confundir un registro administrativo con una inspección técnica certificada.",
+    "keywords": [
+      "checklist visita estacion servicio",
+      "formulario EDS",
+      "visita administrativa estacion",
+      "evidencias estaciones servicio"
+    ],
+    "intro": [
+      "Un checklist de visita a una estación de servicio debe indicar su propósito antes de enumerar preguntas. Seguimiento comercial, observación administrativa e inspección técnica tienen responsables y evidencias diferentes. El modelo de esta guía se limita al registro administrativo y comercial.",
+      "Una herramienta digital puede ordenar la visita y conservar su evidencia. La conformidad técnica de instalaciones, equipos o procesos exige el procedimiento y las competencias correspondientes. Este ejemplo no contiene instrucciones para intervenir combustible ni reemplaza una lista reglamentaria."
+    ],
+    "sections": [
+      {
+        "title": "La finalidad determina las preguntas",
+        "paragraphs": [
+          "Escriba una frase de alcance: por ejemplo, documentar necesidades y compromisos de una visita comercial. Establezca quién diligencia, quién revisa y a quién se entrega el resultado. Si se encuentra una situación que necesita atención técnica, registre la referencia para el canal autorizado de la empresa.",
+          "Evite un resultado general como estación aprobada si el asesor solo observó una parte de la operación. El estado del registro puede referirse a revisión administrativa completa, información pendiente o aclaración solicitada. Esa precisión evita atribuir al formulario una facultad que no tiene."
+        ]
+      },
+      {
+        "title": "Estructura del checklist de ejemplo",
+        "paragraphs": [
+          "Los campos deben permitir reconstruir el contexto sin pedir documentos o fotografías innecesarios. Adapte esta lista con el responsable del instrumento y pruebe las opciones antes de publicarla."
+        ],
+        "bullets": [
+          "Código de estación y municipio.",
+          "Fecha y objetivo de la visita.",
+          "Nombre o código del responsable que aplica el instrumento.",
+          "Área autorizada para la conversación y captura.",
+          "Temas comerciales tratados y línea de producto.",
+          "Necesidad declarada por el establecimiento.",
+          "Observación administrativa y fuente de la información.",
+          "Restricción que impidió observar o fotografiar.",
+          "Compromiso, responsable y plazo propuesto.",
+          "Estado de revisión del registro."
+        ]
+      },
+      {
+        "title": "Defina respuestas que no obliguen a suponer",
+        "paragraphs": [
+          "Una escala como cumple o no cumple necesita un criterio observable. Si no existe ese criterio, use una pregunta descriptiva o un estado de seguimiento. No observado, no aplica y dato no disponible deben tener significados distintos. Una respuesta en blanco tampoco debe interpretarse automáticamente como ausencia de novedad.",
+          "En una prueba ficticia, el encargado puede no conocer una fecha o negar una fotografía. El formulario debe conservar esa circunstancia y permitir continuar cuando el dato no sea obligatorio. Revise qué campos realmente justifican detener la captura."
+        ]
+      },
+      {
+        "title": "Fotografías y ubicación con restricciones claras",
+        "paragraphs": [
+          "Antes de llevar dispositivos al sitio, confirme áreas permitidas y protocolos internos. El instrumento puede incluir la razón por la que no se obtuvo evidencia. Defina qué muestra cada fotografía autorizada y evite captar personas, documentos o elementos ajenos a la finalidad.",
+          "Una posición GPS tiene precisión variable y puede estar ausente. Conserve el código de estación como referencia independiente. La coordenada, una marca de tiempo o una firma no hacen que el checklist sea una certificación de seguridad ni una prueba infalible de presencia."
+        ]
+      },
+      {
+        "title": "Aplicación offline y revisión posterior",
+        "paragraphs": [
+          "Con Control G puede asignar el instrumento, preparar la sesión y capturar sin conexión desde Android. Antes de la primera salida, haga una prueba con el dispositivo real y confirme que el formulario quedó disponible. Incluya el caso de cerrar la aplicación después de guardar.",
+          "Cuando vuelva internet, revise si el registro y sus medios llegaron a coordinación. Una captura pendiente no está disponible en el reporte central. El responsable debe devolver observaciones concretas, señalando la pregunta o evidencia que requiere aclaración, en lugar de pedir rehacer toda la visita."
+        ]
+      },
+      {
+        "title": "Control de versión y cierre del instrumento",
+        "paragraphs": [
+          "Documente quién aprobó las preguntas, qué cambió y desde cuándo se usa la nueva versión. Si agrega opciones a mitad del operativo, indique cómo se compararán con las anteriores. Las conclusiones deben corresponder al alcance administrativo efectivamente observado.",
+          "Para contratar, pida una demostración del ciclo completo: asignación, captura desconectada, recepción y revisión. Acorde capacitación, dispositivos, soporte y exportaciones. La compra del software debe acompañarse de criterios operativos que la empresa pueda comprobar."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "¿Este checklist sirve para una inspección reglamentaria?",
+        "answer": "Es un ejemplo administrativo y comercial. Un instrumento reglamentario debe revisarlo el responsable competente con los requisitos vigentes del caso."
+      },
+      {
+        "question": "¿Puedo diligenciar sin tomar fotografías?",
+        "answer": "Sí, si la definición del formulario lo permite. Registre la razón cuando la evidencia no esté autorizada o no pueda obtenerse."
+      },
+      {
+        "question": "¿La IA puede aprobar el checklist?",
+        "answer": "El asistente puede proponer preguntas con conexión. La revisión técnica y la autorización del instrumento siguen siendo humanas."
+      }
+    ],
+    "verdict": "La utilidad del checklist depende de su finalidad y de criterios que el asesor pueda observar. La digitalización conserva el registro, pero no cambia las competencias de quien lo aplica.",
+    "sources": [
+      {
+        "title": "Alcance de captura para combustibles",
+        "publisher": "Control G",
+        "url": "https://www.controlg.co/formularios-sector-combustibles"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Formularios del sector combustibles",
+        "path": "/formularios-sector-combustibles"
+      },
+      {
+        "title": "Guía comercial de combustibles",
+        "path": "/blog/visitas-comerciales-combustibles-offline"
+      },
+      {
+        "title": "Evidencias de campo",
+        "path": "/blog/evidencias-fotos-firmas-sin-internet"
+      }
+    ],
+    "category": "Operación empresarial",
+    "country": "Colombia",
+    "publishedAt": "2026-10-31",
+    "updatedAt": "2026-10-31",
+    "readingMinutes": 4,
+    "comparison": [],
+    "whatsappMessage": "Hola, leí «Checklist de visita a una estación de servicio» en Control G. Quiero una demostración para mi operación en Colombia.",
+    "image": "/blog/sector-combustibles-control-g.jpg",
+    "imageAlt": "Representante y responsable de estación registran información comercial con una tablet en una zona administrativa segura",
+    "imageCaption": "Escena ilustrativa generada con IA. No representa una empresa cliente, resultados reales ni una certificación."
+  },
+  {
+    "slug": "preventa-sin-internet-solicitudes-pedido",
+    "title": "Preventa sin internet: registrar solicitudes de pedido",
+    "description": "Qué debe incluir una solicitud de pedido offline y qué exige un sistema de preventa: referencias, cantidades, precios, inventario, aprobación y ERP.",
+    "excerpt": "Una guía para elegir entre un formulario de solicitud comercial y un sistema transaccional de preventa sin prometer funciones que no se han contratado.",
+    "keywords": [
+      "preventa sin internet",
+      "solicitud pedido offline",
+      "formularios preventistas",
+      "toma pedidos sin conexion Colombia"
+    ],
+    "intro": [
+      "La preventa sin internet puede significar dos trabajos diferentes: recoger una solicitud para revisión posterior o ejecutar una transacción con precios, condiciones e inventario. Antes de elegir una app, defina cuál necesita su distribuidora. Esa decisión cambia el formulario, los catálogos y la integración.",
+      "Control G puede configurarse para capturar visitas y solicitudes preliminares mediante instrumentos offline. No debe presentarse como un ERP de preventa completo. El ejemplo siguiente describe cómo conservar una solicitud que la oficina pueda interpretar y validar."
+    ],
+    "sections": [
+      {
+        "title": "Un estado claro al terminar la visita",
+        "paragraphs": [
+          "Explique al cliente si lo registrado queda solicitado, recibido o confirmado. Cada palabra debe corresponder a una acción verificable. Guardado en el dispositivo significa que la oficina todavía puede no conocer el registro. Sincronizado significa recibido por la plataforma, no necesariamente aprobado para despacho.",
+          "El sistema comercial puede rechazar una cantidad, proponer una alternativa o pedir aclaración. Acorde cómo se comunica esa decisión. Si el proyecto requiere estados automáticos y notificaciones entre sistemas, inclúyalos en el alcance técnico en vez de asumir que aparecen al crear un formulario."
+        ]
+      },
+      {
+        "title": "Campos mínimos de la solicitud",
+        "paragraphs": [
+          "Use referencias estables y unidades explícitas. Una descripción libre puede complementar el dato, pero no debería ser el único modo de reconocer lo que se solicita. Esta lista es un punto de partida para la reunión con operaciones."
+        ],
+        "bullets": [
+          "Identificador de captura y referencia del cliente.",
+          "Sede o punto de entrega propuesto.",
+          "Fecha, asesor y código de visita.",
+          "Referencia de producto y presentación.",
+          "Cantidad solicitada y unidad comercial.",
+          "Fecha requerida, cuando sea relevante.",
+          "Observación sobre sustituciones o restricciones.",
+          "Versión y fecha del catálogo utilizado.",
+          "Estado inicial: solicitud pendiente de validación."
+        ]
+      },
+      {
+        "title": "El catálogo desconectado tiene una fecha",
+        "paragraphs": [
+          "Los productos y opciones disponibles en una tablet corresponden a la última preparación. Si cambian presentaciones, promociones o restricciones, el equipo necesita un procedimiento de actualización. Un vendedor sin red no puede conocer automáticamente un cambio que aún no recibió.",
+          "El precio escrito en una solicitud puede ser una referencia pendiente de revisión, si así lo define la empresa. No debe aparecer como precio garantizado sin una regla de vigencia. La disponibilidad de bodega, el cupo y los impuestos requieren fuentes y validaciones comerciales adicionales."
+        ]
+      },
+      {
+        "title": "Cuándo necesita una plataforma especializada",
+        "paragraphs": [
+          "Si necesita listas por cliente, inventario por almacén, promociones, cartera, impresión y transmisión al ERP, evalúe un sistema de preventa con ese alcance documentado. Las páginas oficiales de inSitu Sales y Persat muestran funciones de esta categoría. Esa referencia ayuda a construir una lista de evaluación, no implica equivalencia con Control G.",
+          "Para un equipo que solo recoge necesidades o intenciones de compra, un formulario puede ser suficiente. Compare el trabajo real y las excepciones. No compre funciones transaccionales que no necesita, ni espere que un instrumento genérico las resuelva sin configuración o desarrollo."
+        ]
+      },
+      {
+        "title": "Una prueba con desconexión e interrupciones",
+        "paragraphs": [
+          "Prepare una cuenta y una solicitud ficticia con pocas referencias. Capture sin internet, guarde y cierre la aplicación. Reabra y compruebe cantidades y evidencia. Después reconecte y revise desde oficina que se recibió la misma solicitud, sin confundir reintentos con pedidos nuevos.",
+          "Incluya cantidad cero cuando sea válida, producto no encontrado y solicitud incompleta. El piloto debe mostrar qué se puede corregir y qué queda registrado. La prueba física con los modelos de tablet elegidos es necesaria antes de ampliar el operativo."
+        ]
+      },
+      {
+        "title": "Conexión con oficina y ERP",
+        "paragraphs": [
+          "Defina quién valida, qué archivo o API recibe y cómo se identifica cada solicitud. El mapeo debe conservar códigos, unidades y estado. Especifique qué ocurre ante un error o un envío parcial. La integración necesita permisos, documentación y un entorno de prueba.",
+          "La propuesta de Control G debe separar instrumentos, formación, soporte y cualquier adaptación comercial. Si requiere un comprobante o una actualización de pedido, muestre ese flujo en la demostración y documente quién lo implementará."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "¿Una solicitud offline reserva inventario?",
+        "answer": "La captura por formulario no reserva existencias. Esa acción requiere reglas y conexión con el sistema que administra el inventario."
+      },
+      {
+        "question": "¿Control G emite facturas al registrar la solicitud?",
+        "answer": "No es una función incluida por completar un formulario. Facturación e impuestos pertenecen al alcance del sistema comercial correspondiente."
+      },
+      {
+        "question": "¿Qué debo pedir en una demostración?",
+        "answer": "Solicite captura desconectada, cierre y reapertura, recepción en oficina y una explicación de qué paso confirma realmente el pedido."
+      }
+    ],
+    "verdict": "La solicitud preliminar y la transacción comercial necesitan alcances diferentes. La elección correcta empieza por definir qué significa que el asesor termine el registro.",
+    "sources": [
+      {
+        "title": "Software de preventa",
+        "publisher": "inSitu Sales",
+        "url": "https://www.insitusales.com/es/soluciones/aplicacion-de-ventas-de-campo/pre-ventas/"
+      },
+      {
+        "title": "Aplicación para distribución de consumo masivo",
+        "publisher": "Persat",
+        "url": "https://www.persat-latam.com/app-vendedores-consumo-masivo/"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Alcance para preventistas",
+        "path": "/formularios-preventistas-offline"
+      },
+      {
+        "title": "Distribuidoras de alimentos",
+        "path": "/formularios-distribuidoras-alimentos"
+      },
+      {
+        "title": "Censo de tiendas",
+        "path": "/blog/censo-tiendas-puntos-venta"
+      },
+      {
+        "title": "Visitas de distribuidoras de alimentos",
+        "path": "/blog/distribuidoras-alimentos-datos-campo"
+      }
+    ],
+    "category": "Operación empresarial",
+    "country": "Colombia",
+    "publishedAt": "2026-10-31",
+    "updatedAt": "2026-10-31",
+    "readingMinutes": 4,
+    "comparison": [],
+    "whatsappMessage": "Hola, leí «Preventa sin internet: registrar solicitudes de pedido» en Control G. Quiero una demostración para mi operación en Colombia.",
+    "image": "/blog/sector-distribucion-control-g.jpg",
+    "imageAlt": "Asesor y tendera revisan información de una visita comercial con tablet en una tienda de barrio colombiana",
+    "imageCaption": "Escena ilustrativa generada con IA. No representa una empresa cliente, resultados reales ni una certificación."
+  },
+  {
+    "slug": "censo-tiendas-puntos-venta",
+    "title": "Censo de tiendas y puntos de venta: campos y método",
+    "description": "Cómo diseñar un censo de tiendas en Colombia: unidad de registro, códigos, campos, duplicados, cobertura y captura offline en el canal tradicional.",
+    "excerpt": "Un diseño operativo para identificar establecimientos sin contar cada visita como una tienda nueva ni confundir una muestra con un censo.",
+    "keywords": [
+      "censo tiendas Colombia",
+      "censo puntos venta",
+      "caracterizacion canal tradicional",
+      "levantamiento establecimientos offline"
+    ],
+    "intro": [
+      "Un censo de tiendas busca identificar los establecimientos de un universo definido. Para que el resultado sea interpretable, necesita delimitar el área, decidir qué cuenta como punto de venta y registrar también las situaciones en las que no pudo observarlo. Una colección de visitas no es automáticamente un censo.",
+      "En Colombia, el Registro Estadístico de Empresas del DANE sirve como referencia conceptual sobre unidades económicas. Un operativo comercial propio tiene otra finalidad y no reemplaza ese registro. La guía propone decisiones para organizar la captura y su revisión."
+    ],
+    "sections": [
+      {
+        "title": "Delimite el universo antes de contar",
+        "paragraphs": [
+          "Escriba qué tipos de negocio se incluyen y qué límites territoriales usará. Indique si contará locales fijos, puestos temporales, negocios dentro de otro establecimiento o sedes de una misma empresa. Sin esa definición, dos encuestadores pueden producir cifras diferentes sobre la misma calle.",
+          "Si parte de una lista de clientes, el resultado describe esa lista, no todos los comercios del territorio. Si toma una muestra, explique su selección. El informe debe identificar áreas recorridas, zonas pendientes y las condiciones que limitaron la observación."
+        ]
+      },
+      {
+        "title": "Empresa, sede y visita con códigos diferentes",
+        "paragraphs": [
+          "Una empresa puede tener varias sedes. Una sede puede cambiar de nombre comercial o recibir varias visitas. Conserve identificadores que permitan revisar esas situaciones sin crear automáticamente una unidad nueva. Una coordenada ayuda al contexto, pero no es una llave única infalible.",
+          "La revisión de posibles duplicados debe usar criterios acordados y conservar el historial de decisiones. Un nombre parecido no prueba identidad, y una cercanía GPS no garantiza que se trate del mismo local. La plataforma necesita un alcance específico si el proyecto requiere un maestro consolidado de establecimientos."
+        ]
+      },
+      {
+        "title": "Campos para la ficha de establecimiento",
+        "paragraphs": [
+          "Priorice variables que se usarán para organizar visitas o analizar cobertura. La información personal del propietario no es necesaria para todas las finalidades. Ajuste el acceso y las autorizaciones antes del operativo."
+        ],
+        "bullets": [
+          "Código provisional o existente del establecimiento.",
+          "Tipo de punto de venta y criterio de inclusión.",
+          "Municipio, zona y referencia de ubicación.",
+          "Nombre comercial cuando sea necesario.",
+          "Condición observada: abierto, cerrado, no encontrado o pendiente.",
+          "Categorías de producto de interés para el estudio.",
+          "Horario reportado y fuente del dato.",
+          "Disponibilidad o ausencia de posición GPS.",
+          "Fecha, responsable e identificador de visita.",
+          "Motivo para marcar un posible duplicado."
+        ]
+      },
+      {
+        "title": "Capture excepciones sin inventar respuestas",
+        "paragraphs": [
+          "Una tienda cerrada no equivale a un establecimiento inexistente. Puede requerir otra visita. Diferencie negativa a participar, falta de información y dato no aplicable. Si el proyecto necesita validar la ubicación, defina una revisión cuando el GPS no entregue precisión suficiente.",
+          "Prepare ejemplos para capacitar: dos locales contiguos con nombres similares, una sede trasladada y un negocio dentro de una vivienda. Compare cómo responde el equipo. Esa prueba ayuda a corregir el instrumento antes de que las discrepancias se multipliquen en campo."
+        ]
+      },
+      {
+        "title": "Operación offline y control de cobertura",
+        "paragraphs": [
+          "Descargue formularios y asignaciones con conexión. En Control G el equipo puede capturar respuestas y evidencias offline desde Android y sincronizarlas al recuperar señal. Pruebe persistencia al cerrar y reabrir la app en los dispositivos seleccionados.",
+          "La cobertura central se calcula sobre los registros recibidos. Una zona sin puntos sincronizados puede tener capturas aún en una tablet. Antes de cerrar el censo, revise pendientes, visitas repetidas y decisiones sobre duplicados. Documente la fecha de corte y el universo utilizado."
+        ]
+      },
+      {
+        "title": "Entregables que otra persona pueda interpretar",
+        "paragraphs": [
+          "Prepare un diccionario con definiciones, opciones y códigos territoriales. Separe el archivo de establecimientos del registro de visitas cuando el modelo lo requiera. En un mapa público puede necesitar agregación o menor detalle para evitar divulgar ubicaciones y contactos innecesarios.",
+          "Control G ofrece instrumentos, revisión y lectura territorial. Para una demostración, lleve un formato vacío y ejemplos ficticios de excepciones. La propuesta debe indicar qué parte se configura con formularios y qué necesita un catálogo o una relación de datos adicional."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "¿Cada formulario terminado cuenta como una tienda?",
+        "answer": "No necesariamente. El formulario registra un evento. La regla del operativo debe determinar qué respuestas representan establecimientos únicos."
+      },
+      {
+        "question": "¿Un censo comercial equivale al registro del DANE?",
+        "answer": "No. Tiene finalidad y metodología propias. La referencia oficial ayuda a entender unidades económicas, pero el levantamiento no reemplaza un registro estadístico oficial."
+      },
+      {
+        "question": "¿El GPS elimina automáticamente los duplicados?",
+        "answer": "La ubicación es una señal para revisar. Coordenadas cercanas o imprecisas no bastan para decidir que dos registros son el mismo negocio."
+      }
+    ],
+    "verdict": "Un censo útil conserva el universo, la definición de establecimiento y las decisiones sobre excepciones. El número de capturas por sí solo no demuestra cobertura completa.",
+    "sources": [
+      {
+        "title": "Registro Estadístico de Empresas",
+        "publisher": "DANE",
+        "url": "https://www.dane.gov.co/index.php/servicios-al-ciudadano/servicios-informacion/registro-estadistico-de-empresas/directorio-estadistico-de-empresas"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Auditoría de puntos de venta",
+        "path": "/auditoria-puntos-venta"
+      },
+      {
+        "title": "Checklist para consumo masivo",
+        "path": "/blog/auditoria-punto-venta-consumo-masivo"
+      },
+      {
+        "title": "Caracterización de empresas",
+        "path": "/blog/caracterizacion-empresas-clientes-establecimientos"
+      }
+    ],
+    "category": "Operación empresarial",
+    "country": "Colombia",
+    "publishedAt": "2026-10-31",
+    "updatedAt": "2026-10-31",
+    "readingMinutes": 4,
+    "comparison": [],
+    "whatsappMessage": "Hola, leí «Censo de tiendas y puntos de venta: campos y método» en Control G. Quiero una demostración para mi operación en Colombia.",
+    "image": "/blog/sector-distribucion-control-g.jpg",
+    "imageAlt": "Asesor y tendera revisan información de una visita comercial con tablet en una tienda de barrio colombiana",
+    "imageCaption": "Escena ilustrativa generada con IA. No representa una empresa cliente, resultados reales ni una certificación."
+  },
+  {
+    "slug": "distribuidoras-alimentos-datos-campo",
+    "title": "Datos de campo para distribuidoras de alimentos",
+    "description": "Qué información recoger en visitas de distribución de alimentos y bebidas: tienda, presentación, solicitud, servicio y novedades con captura offline.",
+    "excerpt": "Una ficha de visita para distinguir lo que pide la tienda de lo que la empresa puede confirmar, preparar y entregar.",
+    "keywords": [
+      "distribuidoras alimentos datos campo",
+      "visitas tiendas alimentos",
+      "formularios consumo masivo",
+      "distribucion alimentos offline"
+    ],
+    "intro": [
+      "Una distribuidora de alimentos puede necesitar información de tiendas, visitas y solicitudes comerciales en el mismo recorrido. Si mezcla esos niveles, una novedad de atención puede parecer un pedido y una cantidad solicitada puede interpretarse como venta. El formulario debe conservar el significado de cada registro.",
+      "La propuesta de esta guía es un instrumento de campo con límites claros. Puede aplicarse a alimentos y bebidas, y adaptarse a otras categorías de consumo masivo. No es una certificación sanitaria ni un sistema completo de inventario o facturación."
+    ],
+    "sections": [
+      {
+        "title": "Decida qué se resolverá con cada dato",
+        "paragraphs": [
+          "Antes de agregar preguntas, indique qué decisión apoyarán. La oficina puede necesitar saber qué cliente pidió una aclaración, qué referencia no se encontró o qué tienda requiere otra visita. Si una variable no tiene uso definido, revise si vale la pena pedirla en cada recorrido.",
+          "Separe variables relativamente estables del punto de venta de las que cambian en cada visita. Actualizar un horario no debería borrar el resultado anterior. Cuando el proyecto requiere historia consolidada o relaciones entre clientes y visitas, el modelo necesita una adaptación específica."
+        ]
+      },
+      {
+        "title": "Ficha de visita propuesta",
+        "paragraphs": [
+          "Use un ejemplo ficticio para revisar esta estructura con ventas y operaciones. Los campos repetidos por producto deben mantener la referencia y la presentación. Evite que una observación libre reemplace códigos necesarios para interpretar la solicitud."
+        ],
+        "bullets": [
+          "Código de cliente, sede y visita.",
+          "Canal comercial y zona de atención.",
+          "Motivo y resultado del encuentro.",
+          "Referencia de producto y presentación solicitada.",
+          "Cantidad, unidad y fecha requerida.",
+          "Necesidad declarada o incidencia de servicio.",
+          "Fuente de la información registrada.",
+          "Observación de exhibición autorizada.",
+          "Compromiso propuesto y responsable de revisión.",
+          "Estado inicial de la solicitud en oficina."
+        ]
+      },
+      {
+        "title": "Presentaciones y cantidades comparables",
+        "paragraphs": [
+          "Una caja, un paquete y una unidad pueden corresponder a cantidades diferentes del mismo producto. Documente cómo se reconocen las presentaciones y qué versión de catálogo usa el equipo. Si la equivalencia no está definida, conserve la unidad original en lugar de sumar valores incompatibles.",
+          "La captura puede incluir una fecha requerida, pero no confirma capacidad de entrega. La oficina debe validar existencias, condiciones comerciales y aceptación. Si necesita calcular precios, promociones o impuestos, pida una demostración de esas reglas en el sistema que realmente las ejecutará."
+        ]
+      },
+      {
+        "title": "Observación comercial y calidad del producto",
+        "paragraphs": [
+          "Describa lo observado con términos acordados. Un asesor puede registrar empaque dañado reportado o necesidad de devolución, pero la clasificación técnica y la decisión correspondiente pertenecen al protocolo de la empresa. No derive conclusiones de inocuidad a partir de una fotografía.",
+          "Aclare qué evidencia necesita y cuándo está permitida. Las personas o documentos ajenos al propósito deben quedar fuera del encuadre. Una observación no disponible debe conservar su motivo para que coordinación no la interprete como una respuesta satisfactoria."
+        ]
+      },
+      {
+        "title": "Preparación de una jornada offline",
+        "paragraphs": [
+          "Antes de salir, inicie sesión, descargue asignaciones y compruebe cámara, ubicación y espacio. En Control G la captura puede permanecer en Android sin internet hasta sincronizar. Una prueba útil incluye cierre y reapertura, cambios de conectividad y un registro con fotografías.",
+          "Al terminar la jornada, revise los pendientes. La oficina puede analizar lo que recibió, pero no conoce automáticamente las solicitudes que siguen en una tablet desconectada. Defina cómo se informa esa situación antes de preparar un corte comercial o prometer entregas."
+        ]
+      },
+      {
+        "title": "Una demostración que conecte campo y oficina",
+        "paragraphs": [
+          "Invite a una persona que captura y a otra que revisa. Use pocas referencias ficticias y pruebe una solicitud, una aclaración y una visita sin atención. Compruebe que cada caso tenga un resultado distinto y que los códigos se conserven en la exportación.",
+          "La contratación debe separar formulario, capacitación y soporte de una posible integración con ERP o bodega. La herramienta de campo puede aportar información estructurada, mientras las decisiones sobre venta y distribución continúan en el sistema y proceso definidos por la empresa."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "¿Puedo recibir solicitudes de tiendas sin internet?",
+        "answer": "El asesor puede capturarlas con el instrumento precargado. La oficina las recibe cuando el dispositivo completa la sincronización."
+      },
+      {
+        "question": "¿Se controla la cadena de frío con el formulario?",
+        "answer": "Puede documentar datos definidos por el protocolo, pero no sustituye equipos de medición, criterios técnicos ni certificaciones de conservación."
+      },
+      {
+        "question": "¿Control G muestra stock por bodega?",
+        "answer": "No es una función que deba darse por incluida en este alcance. Requiere un catálogo y una integración o desarrollo comercial específico."
+      }
+    ],
+    "verdict": "Una buena ficha de distribución permite a la oficina entender la visita y validar la solicitud. Cada cantidad necesita presentación y unidad antes de consolidarse.",
+    "sources": [
+      {
+        "title": "Alcance para distribución de alimentos",
+        "publisher": "Control G",
+        "url": "https://www.controlg.co/formularios-distribuidoras-alimentos"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Formularios para alimentos",
+        "path": "/formularios-distribuidoras-alimentos"
+      },
+      {
+        "title": "Solicitudes de pedido offline",
+        "path": "/blog/preventa-sin-internet-solicitudes-pedido"
+      },
+      {
+        "title": "Auditoría en tiendas",
+        "path": "/blog/auditoria-punto-venta-consumo-masivo"
+      }
+    ],
+    "category": "Operación empresarial",
+    "country": "Colombia",
+    "publishedAt": "2026-10-31",
+    "updatedAt": "2026-10-31",
+    "readingMinutes": 4,
+    "comparison": [],
+    "whatsappMessage": "Hola, leí «Datos de campo para distribuidoras de alimentos» en Control G. Quiero una demostración para mi operación en Colombia.",
+    "image": "/blog/sector-distribucion-control-g.jpg",
+    "imageAlt": "Asesor y tendera documentan una visita con tablet en una tienda colombiana de alimentos",
+    "imageCaption": "Escena ilustrativa generada con IA. No representa clientes, resultados reales ni una certificación."
+  },
+  {
+    "slug": "auditoria-punto-venta-consumo-masivo",
+    "title": "Auditoría de punto de venta: checklist de campo",
+    "description": "Prepare un checklist de punto de venta para consumo masivo: exhibición, referencias, evidencia autorizada, criterios de observación y revisión offline.",
+    "excerpt": "Cómo convertir una lista de observaciones en datos comparables entre tiendas, asesores y periodos.",
+    "keywords": [
+      "auditoria punto venta",
+      "checklist consumo masivo",
+      "formularios trade marketing",
+      "observacion tiendas offline"
+    ],
+    "intro": [
+      "Una auditoría de punto de venta necesita criterios que diferentes observadores puedan aplicar de forma parecida. Una respuesta como buena exhibición aporta poco si cada persona entiende algo distinto. La definición de la variable debe acompañar al formulario.",
+      "El modelo siguiente sirve para observación comercial. No presupone reconocimiento de productos con IA, cálculo automático de participación de anaquel ni lectura de inventario. El equipo puede capturar datos definidos y revisar la evidencia cuando exista conexión."
+    ],
+    "sections": [
+      {
+        "title": "Un criterio observable por pregunta",
+        "paragraphs": [
+          "Reemplace valoraciones vagas por preguntas que indiquen referencia, lugar y condición observada. Defina qué significa presente en exhibición y qué respuesta corresponde si no se pudo observar. Si necesita una medida, especifique la unidad y el método que usará el personal.",
+          "La ausencia visible de un producto no prueba falta de inventario en bodega. Una declaración del encargado tampoco es una medición de ventas. Conserve el origen del dato para que el analista pueda diferenciar observación, respuesta del contacto y dato importado de otra fuente."
+        ]
+      },
+      {
+        "title": "Checklist inicial para revisar con el equipo",
+        "paragraphs": [
+          "Ajuste la lista a las categorías realmente evaluadas. Un instrumento breve y consistente puede ser más útil que una auditoría extensa con campos que nadie utiliza. Pruebe cada opción en situaciones ficticias."
+        ],
+        "bullets": [
+          "Código de tienda, sede y visita.",
+          "Categoría y referencia observada.",
+          "Zona o ubicación de exhibición definida.",
+          "Presencia observada: sí, no o no observable.",
+          "Condición descrita con criterio del proyecto.",
+          "Precio visible, moneda y fecha, solo si forman parte del estudio.",
+          "Material comercial observado y autorización de fotografía.",
+          "Motivo de dato ausente o no aplicable.",
+          "Responsable y periodo de la observación.",
+          "Aclaración pendiente para coordinación."
+        ]
+      },
+      {
+        "title": "Una fotografía que responda a una pregunta",
+        "paragraphs": [
+          "Defina qué debe mostrar cada encuadre y qué elementos debe evitar. La evidencia necesita relacionarse con una observación concreta para que el revisor sepa por qué existe. Una galería de fotos sin códigos puede resultar difícil de interpretar aunque tenga muchas imágenes.",
+          "Acuerde autorizaciones con el establecimiento y limite personas o documentos en la captura. Si no se puede fotografiar, el formulario debe permitir registrar la restricción. Evite convertir una evidencia faltante en un incumplimiento comercial sin conocer el motivo."
+        ]
+      },
+      {
+        "title": "Comparabilidad entre visitas",
+        "paragraphs": [
+          "Mantenga el periodo, los puntos seleccionados y los criterios al comparar resultados. Una variación puede deberse a que se visitaron tiendas diferentes o a que cambió el instrumento. Documente esas modificaciones antes de atribuir el resultado a una campaña.",
+          "Realice una prueba de concordancia: dos observadores aplican el mismo checklist a un caso de ejemplo y explican sus decisiones. Las discrepancias muestran preguntas que necesitan aclaración. Capacitar con esas diferencias suele aportar más que memorizar el orden de las pantallas."
+        ]
+      },
+      {
+        "title": "Captura offline y revisión de información recibida",
+        "paragraphs": [
+          "En Control G se preparan instrumentos y asignaciones con conexión. El equipo puede registrar respuestas y evidencias sin señal desde Android. Verifique que el dispositivo conserva la captura después de cerrar la aplicación y que la oficina recibe los archivos al sincronizar.",
+          "Para leer cobertura, use puntos previstos y visitas recibidas con una fecha de corte. Las capturas aún en el dispositivo no forman parte del reporte central. El mapa muestra ubicaciones disponibles, no una estimación automática de ventas o de todos los negocios del territorio."
+        ]
+      },
+      {
+        "title": "Criterios para elegir la solución",
+        "paragraphs": [
+          "Pida una demostración con una tienda ficticia y casos de dato ausente. Revise cómo se publica una versión, qué ve cada asesor y cómo coordinación solicita aclaraciones. Compruebe también exportaciones y el significado de cada campo.",
+          "Si necesita reconocimiento de imágenes, catálogos vivos o conexión con ventas, descríbalo como un componente adicional. La configuración de formularios resuelve el instrumento; las funciones analíticas o transaccionales especiales requieren evidencia y pruebas propias."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "¿La app reconoce marcas o productos en las fotografías?",
+        "answer": "Ese reconocimiento no forma parte del alcance descrito. El formulario recoge las observaciones que ingresa el equipo."
+      },
+      {
+        "question": "¿Puedo calcular participación de anaquel?",
+        "answer": "Necesita definir mediciones y denominadores. La herramienta puede capturar esas variables, pero no convierte una fotografía en una medición validada automáticamente."
+      },
+      {
+        "question": "¿Qué diferencia hay con un censo de tiendas?",
+        "answer": "El censo busca identificar un universo de establecimientos. La auditoría registra criterios en una visita y puede aplicarse sobre una muestra."
+      }
+    ],
+    "verdict": "La auditoría produce datos comparables cuando las preguntas fijan qué se observa, cómo se registra una excepción y qué puede concluirse del resultado.",
+    "sources": [
+      {
+        "title": "Formularios de auditoría y censo",
+        "publisher": "Control G",
+        "url": "https://www.controlg.co/auditoria-puntos-venta"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Solución de puntos de venta",
+        "path": "/auditoria-puntos-venta"
+      },
+      {
+        "title": "Método de censo de tiendas",
+        "path": "/blog/censo-tiendas-puntos-venta"
+      },
+      {
+        "title": "Analizar resultados",
+        "path": "/blog/analizar-resultados-encuestas"
+      }
+    ],
+    "category": "Operación empresarial",
+    "country": "Colombia",
+    "publishedAt": "2026-10-31",
+    "updatedAt": "2026-10-31",
+    "readingMinutes": 4,
+    "comparison": [],
+    "whatsappMessage": "Hola, leí «Auditoría de punto de venta: checklist de campo» en Control G. Quiero una demostración para mi operación en Colombia.",
+    "image": "/blog/sector-distribucion-control-g.jpg",
+    "imageAlt": "Asesor y tendera documentan una visita con tablet en una tienda colombiana de alimentos",
+    "imageCaption": "Escena ilustrativa generada con IA. No representa clientes, resultados reales ni una certificación."
+  },
+  {
+    "slug": "inspecciones-servicios-publicos-offline",
+    "title": "Inspecciones de servicios públicos sin internet",
+    "description": "Diseñe registros de visitas y activos para servicios públicos: identificadores, hallazgos, evidencia, GPS y recepción de capturas offline.",
+    "excerpt": "Un instrumento para documentar observaciones de campo sin confundir el formulario con una aprobación técnica o un sistema de emergencias.",
+    "keywords": [
+      "inspecciones servicios publicos offline",
+      "formularios activos campo",
+      "visitas mantenimiento sin internet",
+      "captura redes servicios Colombia"
+    ],
+    "intro": [
+      "Una visita de servicios públicos necesita relacionar la observación con un activo y con el motivo que llevó al equipo a campo. El código del activo, la referencia de la orden y la fecha ayudan a reconstruir el evento cuando las evidencias llegan a la oficina.",
+      "El formulario puede acompañar la captura en zonas sin señal. Su función es documentar información para revisión. No reemplaza comunicaciones de emergencia, procedimientos de intervención ni decisiones de un profesional autorizado."
+    ],
+    "sections": [
+      {
+        "title": "Activo, orden y visita con relaciones claras",
+        "paragraphs": [
+          "Un activo puede recibir varias visitas y una orden puede incluir más de un elemento. Defina qué representa cada respuesta. Si conserva únicamente la coordenada, puede ser difícil distinguir instalaciones próximas o posiciones de baja precisión. Incluya el identificador disponible y la razón cuando no se pudo verificar.",
+          "El instrumento debe separar una referencia tomada de una placa o catálogo de una descripción provisional. Ese origen permite revisar después la relación correcta. Un maestro de activos o una conexión con órdenes de trabajo requieren un modelo e integración específicos."
+        ]
+      },
+      {
+        "title": "Ficha de observación propuesta",
+        "paragraphs": [
+          "El responsable técnico determina los criterios y condiciones de uso. Esta lista organiza el registro administrativo de una visita y debe adaptarse al procedimiento del prestador."
+        ],
+        "bullets": [
+          "Identificador de visita y referencia de orden, si existe.",
+          "Código de activo y modo de identificación.",
+          "Territorio y motivo de atención.",
+          "Tipo de observación permitida.",
+          "Descripción del hallazgo o novedad reportada.",
+          "Dato no observable y motivo de la limitación.",
+          "Evidencia autorizada y vínculo con el hallazgo.",
+          "Ubicación disponible y precisión informada.",
+          "Responsable de revisar o aclarar.",
+          "Estado administrativo del registro recibido."
+        ]
+      },
+      {
+        "title": "Datos ausentes que no deben ocultarse",
+        "paragraphs": [
+          "Un valor ilegible, un activo no encontrado y una coordenada no disponible son situaciones diferentes. El formulario debe permitir describirlas. Convertir todos esos casos en otro o dejar una casilla vacía dificulta decidir qué trabajo de revisión necesita cada registro.",
+          "Use ejemplos para capacitar: identificación parcial, observación impedida y una visita que debe repetirse. El equipo no debe completar datos por suposición para lograr que la pantalla permita enviar. Las validaciones sirven para mejorar calidad, no para fabricar certeza."
+        ]
+      },
+      {
+        "title": "Evidencia bajo condiciones autorizadas",
+        "paragraphs": [
+          "La organización establece dónde se permite usar dispositivos y qué elementos pueden fotografiarse. El instrumento no contiene instrucciones para abrir equipos, intervenir redes ni evaluar riesgos técnicos. Las observaciones se capturan desde las condiciones aprobadas por el prestador.",
+          "La firma manuscrita, la fotografía y el GPS aportan contexto. No certifican por sí solos la seguridad o conformidad de una instalación. El cierre técnico debe tener responsables y procedimientos distintos del simple estado completado de un formulario."
+        ]
+      },
+      {
+        "title": "Prueba de sincronización con archivos",
+        "paragraphs": [
+          "Prepare la sesión y los formularios de Control G antes del desplazamiento. Capture un caso de ejemplo sin datos móviles y cierre la aplicación. Al reabrir, compruebe respuestas y medios. Recupere conexión y revise el registro desde coordinación.",
+          "Incluya una interrupción y un archivo pendiente en la prueba. La oficina consulta información recibida, por lo que un corte central puede no representar todo el trabajo guardado en dispositivos. El procedimiento de cierre de jornada debe comprobar pendientes y aclaraciones."
+        ]
+      },
+      {
+        "title": "Del registro al análisis territorial",
+        "paragraphs": [
+          "Defina si el indicador cuenta activos, visitas o hallazgos. Un activo con tres eventos no debe aparecer como tres activos distintos. Antes de crear mapas, revise códigos, precisión y qué registros carecen de ubicación. Las conclusiones deben indicar esas limitaciones.",
+          "Control G permite instrumentos y lectura territorial de datos recibidos. Conectar un sistema del prestador, publicar en ArcGIS o automatizar estados exige permisos, mapeo y pruebas. La demostración debe separar las funciones existentes de lo que se desarrollará para el proyecto."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "¿Se pueden registrar lecturas y facturar desde el formulario?",
+        "answer": "Puede capturarse un dato definido por el instrumento. La validación de medición y la facturación pertenecen al sistema y procedimiento del prestador."
+      },
+      {
+        "question": "¿Qué pasa si el GPS no está disponible?",
+        "answer": "Conserve el motivo y los identificadores alternativos acordados. El formulario debe permitir ese caso cuando el proyecto lo autorice."
+      },
+      {
+        "question": "¿El mapa sirve para atender emergencias en tiempo real?",
+        "answer": "Los datos offline aparecen después de sincronizar. Ese flujo no sustituye los canales de despacho o emergencia de la operación."
+      }
+    ],
+    "verdict": "Un registro de visita útil permite reconocer el activo, entender la observación y saber qué queda pendiente de revisión técnica.",
+    "sources": [
+      {
+        "title": "Alcance de visitas de servicios públicos",
+        "publisher": "Control G",
+        "url": "https://www.controlg.co/inspecciones-servicios-publicos"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Formularios para prestadores",
+        "path": "/inspecciones-servicios-publicos"
+      },
+      {
+        "title": "Encuestas de percepción de servicios",
+        "path": "/blog/encuesta-servicios-publicos-ejemplo"
+      },
+      {
+        "title": "GPS y precisión",
+        "path": "/blog/gps-sin-internet-encuestas-georreferenciadas"
+      }
+    ],
+    "category": "Operación empresarial",
+    "country": "Colombia",
+    "publishedAt": "2026-10-31",
+    "updatedAt": "2026-10-31",
+    "readingMinutes": 4,
+    "comparison": [],
+    "whatsappMessage": "Hola, leí «Inspecciones de servicios públicos sin internet» en Control G. Quiero una demostración para mi operación en Colombia.",
+    "image": "/blog/sector-servicios-control-g.jpg",
+    "imageAlt": "Técnico registra observaciones desde una acera segura junto a infraestructura cerrada de servicios públicos",
+    "imageCaption": "Escena ilustrativa generada con IA. No representa clientes, resultados reales ni una certificación."
+  },
+  {
+    "slug": "formularios-asistencia-tecnica-agropecuaria",
+    "title": "Formularios de asistencia técnica agropecuaria offline",
+    "description": "Cómo diseñar visitas a productores y predios con captura offline: unidad de registro, campos, compromisos, GPS y seguimiento del acompañamiento rural.",
+    "excerpt": "Un esquema de instrumento para distinguir productor, predio y visita, y conservar el contexto del acompañamiento rural.",
+    "keywords": [
+      "formularios asistencia tecnica agropecuaria",
+      "caracterizacion productores rurales",
+      "visitas predios offline",
+      "extension agropecuaria datos"
+    ],
+    "intro": [
+      "La asistencia técnica rural puede generar visitas a un productor, a una unidad productiva o a un grupo. Esas unidades no deben mezclarse al contar atenciones o describir cobertura. El formulario necesita indicar a quién se atendió y qué representa cada respuesta.",
+      "La Agencia de Desarrollo Rural describe la extensión agropecuaria como acompañamiento a productores. El instrumento de esta guía es una propuesta operativa para organizar datos; no reemplaza registros oficiales, recomendaciones profesionales ni requisitos de un programa."
+    ],
+    "sections": [
+      {
+        "title": "Productor, unidad productiva y evento",
+        "paragraphs": [
+          "Defina códigos para relacionar la persona o asociación, la unidad productiva y la visita. Un productor puede tener varios predios y una visita puede tratar actividades diferentes. Si solo usa el nombre, cambios de escritura o coincidencias pueden dificultar el análisis.",
+          "Documente quién revisará posibles duplicados y cómo se conservarán los cambios. El formulario puede recoger las referencias del proyecto. Un catálogo consolidado con relaciones e historial necesita una adaptación de datos que debe especificarse antes de implementar."
+        ]
+      },
+      {
+        "title": "Campos de una visita de ejemplo",
+        "paragraphs": [
+          "El equipo técnico selecciona variables según la finalidad del acompañamiento. Cada medida necesita una unidad y una fecha o periodo. Aplique preguntas individuales o grupales de acuerdo con el evento real."
+        ],
+        "bullets": [
+          "Código de productor o asociación y unidad productiva.",
+          "Identificador, fecha y modalidad de la visita.",
+          "Municipio, vereda y referencia territorial.",
+          "Actividad productiva declarada.",
+          "Necesidad o tema del acompañamiento.",
+          "Observación realizada y fuente de la información.",
+          "Medida registrada, unidad y periodo.",
+          "Compromiso propuesto y responsable.",
+          "Fecha prevista para revisar el compromiso.",
+          "Evidencia autorizada y estado de ubicación."
+        ]
+      },
+      {
+        "title": "Observación y declaración con significados distintos",
+        "paragraphs": [
+          "Una práctica informada por el productor no equivale a una práctica observada por el técnico. Conserve la fuente y permita desconocido cuando corresponda. También distinga área cultivada, área total y área reportada para una actividad. Un número sin definición puede llevar a comparaciones equivocadas.",
+          "Pruebe unidades usadas en el territorio y defina cualquier conversión antes de consolidar. Si una medida requiere instrumento o competencia especializada, el formulario solo debe recogerla bajo ese procedimiento. La app no transforma una estimación en una medición certificada."
+        ]
+      },
+      {
+        "title": "Trabajo sin datos móviles",
+        "paragraphs": [
+          "Antes del desplazamiento prepare cuentas, instrumentos, permisos y almacenamiento. En Control G el técnico puede capturar respuestas y evidencias en Android offline después de la precarga. La prueba física debe incluir cierre y reapertura, batería y una jornada representativa de archivos.",
+          "Un receptor compatible puede obtener GPS sin datos móviles, aunque la posición y precisión dependen del entorno. La falta de señal celular y la falta de coordenadas no son lo mismo. Acuerde qué se registra cuando el GPS no está disponible y qué capas deben estar preparadas para el mapa."
+        ]
+      },
+      {
+        "title": "Seguimiento entre momentos",
+        "paragraphs": [
+          "Relacione la visita posterior con la misma unidad y conserve el instrumento utilizado. Si cambia una pregunta o el periodo de referencia, documente cómo afecta la comparación. Un resultado diferente puede reflejar participantes distintos o cambios de metodología, además de una posible variación real.",
+          "El informe necesita distinguir visitas recibidas, registros pendientes de sincronización y casos fuera del universo. Las áreas o polígonos capturados son evidencia de campo y no sustituyen delimitaciones catastrales. La divulgación de ubicaciones exactas requiere criterios de acceso acordados."
+        ]
+      },
+      {
+        "title": "Revisión humana del instrumento",
+        "paragraphs": [
+          "El asistente de IA de Control G puede preparar un borrador desde una descripción con conexión. Pídale opciones y validaciones, y revise términos, unidades y preguntas sensibles con el equipo competente. La IA no debe decidir tratamientos ni generar recomendaciones profesionales para el cultivo o los animales.",
+          "El piloto debe usar ejemplos ficticios de varias actividades y una visita sin GPS. Compruebe persistencia y recepción en coordinación. La propuesta final debe separar configuración de instrumentos, formación y cualquier catálogo o conexión institucional adicional."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "¿El formulario es un registro oficial de extensión?",
+        "answer": "Debe validarse con la entidad responsable. Configurarlo en Control G no lo convierte automáticamente en un registro oficial."
+      },
+      {
+        "question": "¿Puede la IA dar recomendaciones agronómicas?",
+        "answer": "El asistente prepara borradores de cuestionarios. Las recomendaciones requieren el profesional y el procedimiento correspondientes."
+      },
+      {
+        "question": "¿Se pueden capturar visitas grupales?",
+        "answer": "Puede diseñarse un instrumento para un evento grupal. Debe definir la unidad y cómo contará participantes sin duplicar atenciones."
+      }
+    ],
+    "verdict": "La calidad del seguimiento depende de relacionar unidades y visitas, conservar unidades de medida y explicar qué parte fue observada o declarada.",
+    "sources": [
+      {
+        "title": "Extensión agropecuaria",
+        "publisher": "Agencia de Desarrollo Rural",
+        "url": "https://www.adr.gov.co/atencion-y-servicios-a-la-ciudadania/extension-agropecuaria-2/"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Formularios del sector agropecuario",
+        "path": "/formularios-sector-agropecuario"
+      },
+      {
+        "title": "Preparar una jornada rural offline",
+        "path": "/blog/encuestas-offline-zonas-rurales"
+      },
+      {
+        "title": "GPS sin internet y precisión",
+        "path": "/blog/gps-sin-internet-encuestas-georreferenciadas"
+      },
+      {
+        "title": "Crear instrumentos con IA",
+        "path": "/encuestas-con-inteligencia-artificial"
+      }
+    ],
+    "category": "Operación empresarial",
+    "country": "Colombia",
+    "publishedAt": "2026-10-31",
+    "updatedAt": "2026-10-31",
+    "readingMinutes": 4,
+    "comparison": [],
+    "whatsappMessage": "Hola, leí «Formularios de asistencia técnica agropecuaria offline» en Control G. Quiero una demostración para mi operación en Colombia.",
+    "image": "/blog/sector-agro-control-g.jpg",
+    "imageAlt": "Extensionista y productor registran observaciones con una tablet junto a un cafetal colombiano",
+    "imageCaption": "Escena ilustrativa generada con IA. No representa clientes, resultados reales ni una certificación."
+  },
+  {
+    "slug": "bitacora-obra-evidencia-offline",
+    "title": "Bitácora de obra offline: visitas y evidencia",
+    "description": "Qué registrar en una visita de obra sin internet: proyecto, frente, actividad, cantidades reportadas, fotografías, revisión y límites del instrumento.",
+    "excerpt": "Una estructura para documentar visitas y novedades sin convertir una fotografía en aprobación técnica o de pago.",
+    "keywords": [
+      "bitacora obra offline",
+      "registro visitas obra",
+      "evidencia fotografica interventoria",
+      "formulario obra sin internet"
+    ],
+    "intro": [
+      "Una bitácora de visita de obra necesita relacionar lo observado con un proyecto, un frente y una actividad. Si las fotografías y cantidades llegan sin esas referencias, el responsable puede tener dificultad para explicar a qué corresponden. El instrumento debe conservar ese contexto desde la captura.",
+      "Esta guía aborda registros de campo. Control G puede apoyar instrumentos y evidencias offline, pero no debe anunciarse como presupuesto, programación de obra o aprobación automática de cantidades y pagos. Esos procesos requieren alcances y competencias diferentes."
+    ],
+    "sections": [
+      {
+        "title": "El nivel del registro cambia el análisis",
+        "paragraphs": [
+          "Defina si cada respuesta representa una visita, una actividad observada o una novedad. Una visita puede contener varias actividades y cada una necesitar su referencia. El diseño debe permitir relacionarlas sin sumar varias veces un mismo evento. Si usa códigos del presupuesto o del contrato, conserve su versión y significado.",
+          "En un ejemplo ficticio, una foto de un frente puede acompañar dos observaciones. Eso no equivale a dos visitas ni demuestra la cantidad ejecutada. El diccionario del proyecto debe indicar qué puede contarse y qué necesita verificación adicional."
+        ]
+      },
+      {
+        "title": "Instrumento inicial de visita",
+        "paragraphs": [
+          "El responsable de supervisión revisa las preguntas y decide qué información puede respaldar cada estado. Use esta lista como borrador administrativo, no como formato contractual aprobado."
+        ],
+        "bullets": [
+          "Código de proyecto y referencia del contrato cuando aplique.",
+          "Identificador y fecha de la visita.",
+          "Frente, ubicación y actividad observada.",
+          "Fuente de la cantidad: medida, reportada o pendiente de verificar.",
+          "Cantidad y unidad definidas por el proyecto.",
+          "Descripción de la observación o novedad.",
+          "Evidencia autorizada vinculada a la actividad.",
+          "Restricción de acceso u observación.",
+          "Persona o rol responsable de aclaración.",
+          "Estado de revisión administrativa."
+        ]
+      },
+      {
+        "title": "Cantidad reportada y cantidad aprobada",
+        "paragraphs": [
+          "Separe lo que una persona informó de lo que el responsable verificó. Una unidad de medida necesita método y criterio de aceptación cuando interviene en una decisión técnica. El formulario puede conservar una cantidad reportada sin convertirla automáticamente en un avance aprobado.",
+          "El instrumento tampoco decide si un hallazgo cumple una norma o si procede un pago. Evite etiquetas generales de aprobado cuando solo se completó la captura. Los procesos de supervisión e interventoría tienen responsabilidades propias; la documentación pública de Colombia Compra Eficiente sirve para ampliar ese contexto."
+        ]
+      },
+      {
+        "title": "Fotografías que conserven referencia",
+        "paragraphs": [
+          "Defina qué evidencia necesita cada observación y qué áreas permiten usar el dispositivo. Evite capturar personas o documentos que no sean necesarios. Si la fotografía no está permitida o no puede obtenerse, registre el motivo y la alternativa acordada.",
+          "Una fecha y una coordenada aportan contexto, pero no certifican autenticidad, presencia o precisión topográfica de manera infalible. La revisión necesita relacionar los archivos con el instrumento y las reglas del proyecto. Las firmas manuscritas capturadas deben interpretarse dentro del procedimiento autorizado."
+        ]
+      },
+      {
+        "title": "Prueba offline con reapertura",
+        "paragraphs": [
+          "Prepare la cuenta y los formularios asignados con conexión. Capture un ejemplo sin datos móviles, guarde y cierre la app. Al reabrir, compruebe respuestas y medios. Luego recupere conexión y revise desde coordinación la llegada del mismo registro y sus fotografías.",
+          "Incluya una interrupción y una novedad incompleta en la prueba. La oficina consulta lo recibido, no todo lo que permanece en dispositivos desconectados. El cierre de jornada debe distinguir registros pendientes de sincronización y aclaraciones pendientes del equipo técnico."
+        ]
+      },
+      {
+        "title": "Una contratación con entregables definidos",
+        "paragraphs": [
+          "Pida una demostración con el formato del proyecto y casos ficticios. Revise publicaciones de versión, permisos, devolución de observaciones y exportaciones. Especifique qué informe estándar se incluye y qué adaptación requiere programación.",
+          "Para Control G, el alcance puede cubrir instrumentos, captura y lectura territorial de la información. Presupuesto, APU, programación financiera e integración con otros sistemas deben evaluarse aparte. Un piloto con los equipos físicos permite acordar los criterios de aceptación antes del despliegue."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "¿La bitácora reemplaza un software de presupuesto?",
+        "answer": "No. El instrumento descrito documenta visitas y observaciones. Presupuesto, APU y programación requieren funcionalidades específicas."
+      },
+      {
+        "question": "¿Una fotografía prueba el avance ejecutado?",
+        "answer": "Aporta contexto. La cantidad y su aprobación necesitan método, referencias y revisión del responsable competente."
+      },
+      {
+        "question": "¿Puedo usar el formato contractual de mi entidad?",
+        "answer": "Puede revisarse para configurar preguntas y validaciones. La entidad debe aprobar el contenido y el procedimiento antes de usarlo como instrumento oficial."
+      }
+    ],
+    "verdict": "La bitácora aporta información revisable cuando conserva proyecto, actividad, fuente de la cantidad y relación con la evidencia. Completar el formulario no equivale a aprobar técnicamente el trabajo.",
+    "sources": [
+      {
+        "title": "Supervisión e interventoría",
+        "publisher": "Colombia Compra Eficiente",
+        "url": "https://operaciones.colombiacompra.gov.co/tema/supervision-e-interventoria"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Formularios para obra",
+        "path": "/inspecciones-obras-campo"
+      },
+      {
+        "title": "Visitas de servicios públicos",
+        "path": "/blog/inspecciones-servicios-publicos-offline"
+      },
+      {
+        "title": "Fotos y firmas offline",
+        "path": "/blog/evidencias-fotos-firmas-sin-internet"
+      }
+    ],
+    "category": "Operación empresarial",
+    "country": "Colombia",
+    "publishedAt": "2026-10-31",
+    "updatedAt": "2026-10-31",
+    "readingMinutes": 4,
+    "comparison": [],
+    "whatsappMessage": "Hola, leí «Bitácora de obra offline: visitas y evidencia» en Control G. Quiero una demostración para mi operación en Colombia.",
+    "image": "/blog/sector-servicios-control-g.jpg",
+    "imageAlt": "Profesional de campo registra una observación con tablet desde un área de acceso segura",
+    "imageCaption": "Escena ilustrativa generada con IA. No representa clientes, resultados reales ni una certificación."
+  },
+  {
+    "slug": "evidencia-entrega-novedades-offline",
+    "title": "Evidencia de entrega offline y registro de novedades",
+    "description": "Diseñe un formulario para intentos de entrega, novedades y entregas parciales reportadas. Identificadores, evidencias y recepción después de sincronizar.",
+    "excerpt": "Qué debe conservar el registro para que la oficina distinga una entrega reportada, un intento y una excepción pendiente de validación.",
+    "keywords": [
+      "evidencia entrega offline",
+      "formulario novedades entrega",
+      "registro intento entrega",
+      "logistica datos sin internet"
+    ],
+    "intro": [
+      "El registro de una entrega necesita describir el evento, no solamente adjuntar una fotografía. Una visita sin receptor, una entrega parcial reportada y una entrega completa son situaciones distintas. Los códigos y opciones del instrumento permiten que la oficina las interprete después.",
+      "La captura offline conserva observaciones mientras el dispositivo está desconectado. La oficina las conoce al sincronizar. Este flujo puede apoyar documentación logística, pero no equivale a seguimiento permanente de vehículos ni a un sistema completo de transporte."
+    ],
+    "sections": [
+      {
+        "title": "Identifique el evento y su referencia",
+        "paragraphs": [
+          "Use el código del pedido, envío u orden que suministre el sistema principal. Agregue un identificador para la visita. Un mismo envío puede tener varios intentos y el análisis debe conservar esa secuencia sin sumar cada intento como una entrega nueva.",
+          "Si el equipo no encuentra la referencia, incluya un estado provisional y un mecanismo de aclaración. Evite crear una equivalencia automática por nombre del destinatario. La coincidencia necesita datos y criterios autorizados, especialmente cuando existen sedes o referencias parecidas."
+        ]
+      },
+      {
+        "title": "Ficha de evento propuesta",
+        "paragraphs": [
+          "La lista siguiente organiza información para revisión. No convierte el formulario en un documento oficial de transporte ni determina por sí sola la aceptación de una mercancía."
+        ],
+        "bullets": [
+          "Referencia del sistema logístico y código de visita.",
+          "Fecha y responsable del registro.",
+          "Destino o sede identificados por código.",
+          "Tipo de evento: intento, entrega reportada o novedad.",
+          "Cantidades reportadas y unidad correspondiente.",
+          "Motivo de rechazo, ausencia o diferencia.",
+          "Descripción de la condición observada.",
+          "Fotografía o firma manuscrita cuando estén autorizadas.",
+          "Disponibilidad de ubicación y precisión informada.",
+          "Responsable de revisar la excepción."
+        ]
+      },
+      {
+        "title": "Defina quién confirma el resultado",
+        "paragraphs": [
+          "Completar un formulario puede significar que el conductor o asesor terminó de reportar. La conciliación y la confirmación en el sistema principal pueden ocurrir después. El proyecto necesita identificar a la persona o regla que acepta el evento y qué ocurre si pide una aclaración.",
+          "Una firma capturada debe tener un significado acordado. Puede documentar una interacción, pero no debe presentarse como certificado infalible. La empresa define qué evidencia necesita, el procedimiento de autorización y qué información personal es realmente necesaria."
+        ]
+      },
+      {
+        "title": "Prepare las excepciones antes de salir",
+        "paragraphs": [
+          "Ensaye un destino cerrado, una entrega parcial y una referencia ilegible. El formulario debe distinguir esos casos de un dato faltante. Si obliga a elegir entregado para poder terminar, producirá un error de proceso aunque todos los campos estén completos.",
+          "Las fotografías se obtienen en zonas autorizadas y con encuadres que eviten personas o documentos ajenos al propósito. La ubicación puede no estar disponible. Conserve la razón y las referencias alternativas en lugar de inventar una coordenada para cumplir una exigencia de la pantalla."
+        ]
+      },
+      {
+        "title": "Una prueba completa sin conexión",
+        "paragraphs": [
+          "Prepare sesión y asignaciones de Control G con internet. Capture un evento ficticio en Android sin datos móviles, guarde y cierre la aplicación. Al reabrir, revise respuestas y archivos. Recupere conexión y compruebe su recepción en oficina.",
+          "Durante una desconexión, el panel central no muestra necesariamente lo que acaba de ocurrir. Mantenga los canales de operación crítica que la empresa requiera. Para un corte de información, indique fecha y registros pendientes de recibirse antes de concluir que hubo una demora o un incumplimiento."
+        ]
+      },
+      {
+        "title": "Intercambio con el sistema principal",
+        "paragraphs": [
+          "Un archivo exportado puede relacionarse por referencia con el sistema logístico. Una conexión automática necesita campos, permisos, estados y reglas de reintento. Pruebe errores e interrupciones para que una notificación repetida no se interprete como otro evento comercial.",
+          "La propuesta debe separar formularios y soporte de cualquier integración con TMS, despacho, facturación o documentos oficiales. Lleve a la demostración un formato vacío y pocos eventos ficticios. El objetivo del piloto es comprobar el significado de cada estado y la llegada de sus evidencias."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "¿Se puede ver al vehículo en tiempo real?",
+        "answer": "La ubicación de una captura no es telemetría continua. Los eventos offline aparecen después de sincronizar."
+      },
+      {
+        "question": "¿El formulario cierra el pedido en el sistema de la empresa?",
+        "answer": "Solo si existe una integración y reglas expresamente implementadas y probadas. La captura por sí sola no actualiza un sistema externo."
+      },
+      {
+        "question": "¿Puedo registrar una entrega parcial?",
+        "answer": "El instrumento puede incluir cantidades y motivos. La validación y conciliación de la diferencia pertenecen al procedimiento logístico."
+      }
+    ],
+    "verdict": "El registro conserva valor cuando explica qué evento se reportó, a qué referencia corresponde y quién debe validarlo después de recibirlo.",
+    "sources": [
+      {
+        "title": "Alcance de captura logística",
+        "publisher": "Control G",
+        "url": "https://www.controlg.co/formularios-logistica-entregas"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Formularios de logística y entregas",
+        "path": "/formularios-logistica-entregas"
+      },
+      {
+        "title": "Solicitudes de pedido offline",
+        "path": "/blog/preventa-sin-internet-solicitudes-pedido"
+      },
+      {
+        "title": "Datos para distribuidoras",
+        "path": "/blog/distribuidoras-alimentos-datos-campo"
+      }
+    ],
+    "category": "Operación empresarial",
+    "country": "Colombia",
+    "publishedAt": "2026-10-31",
+    "updatedAt": "2026-10-31",
+    "readingMinutes": 4,
+    "comparison": [],
+    "whatsappMessage": "Hola, leí «Evidencia de entrega offline y registro de novedades» en Control G. Quiero una demostración para mi operación en Colombia.",
+    "image": "/blog/sector-distribucion-control-g.jpg",
+    "imageAlt": "Asesor registra información de visita en tablet con la responsable de una tienda colombiana",
+    "imageCaption": "Escena ilustrativa generada con IA. No representa clientes, resultados reales ni una certificación."
+  },
+  {
+    "slug": "formulario-visita-comercial-ia",
+    "title": "Cómo crear un formulario de visita comercial con IA",
+    "description": "Un prompt de ejemplo y criterios para revisar formularios comerciales generados con IA. Preguntas, opciones, datos sensibles y prueba offline posterior.",
+    "excerpt": "Pase de una descripción del operativo a un borrador revisable, con una prueba que incluya excepciones y límites comerciales.",
+    "keywords": [
+      "formulario visita comercial IA",
+      "crear formularios empresas inteligencia artificial",
+      "encuestas comerciales IA",
+      "cuestionario visita offline"
+    ],
+    "intro": [
+      "La inteligencia artificial puede proponer un borrador de formulario de visita comercial desde una descripción del trabajo. Para obtener una propuesta útil, necesita propósito, unidad de registro, campos y excepciones. El responsable revisa el resultado antes de publicarlo.",
+      "En Control G, el asistente funciona con conexión y un proveedor disponible. La captura offline corresponde a instrumentos ya preparados y asignados. Generar con IA y diligenciar sin internet son etapas diferentes del mismo operativo."
+    ],
+    "sections": [
+      {
+        "title": "Describa una tarea concreta",
+        "paragraphs": [
+          "Indique quién aplicará el formulario y qué decisión debe apoyar la oficina. Diferencie visita, empresa, sede y solicitud comercial. Explique si las cantidades son necesidades declaradas o un pedido que requiere aprobación posterior. Esa información evita que el borrador use estados que el proceso no puede respaldar.",
+          "Use ejemplos ficticios. No pegue bases de clientes, teléfonos, documentos o información reservada para explicar el formato. Puede describir los campos y sus reglas sin enviar respuestas de campo. La revisión debe incluir qué información se transmite al proveedor de IA."
+        ]
+      },
+      {
+        "title": "Prompt inicial para una visita de distribución",
+        "paragraphs": [
+          "Puede adaptar el siguiente texto al caso de su empresa. El objetivo es producir preguntas y criterios de revisión, no crear una transacción o publicar automáticamente el formulario.",
+          "Prepara un borrador en español para asesores que visitan tiendas en Colombia. Cada respuesta representa una visita. Necesito código de cliente y sede, motivo, resultado y necesidades declaradas. Si el contacto solicita productos, recoge referencia, presentación, cantidad y unidad como solicitud pendiente de validación. Incluye opciones para tienda cerrada, dato desconocido y evidencia no autorizada. Propón secciones breves, validaciones y ayudas. Explica qué debe revisar una persona. No incluyas datos reales ni afirmes que se reserva inventario, se factura o se aprueba un pedido."
+        ]
+      },
+      {
+        "title": "Revise preguntas, opciones y ramas",
+        "paragraphs": [
+          "Lea cada pregunta desde la posición del asesor. Compruebe si puede responder con la información disponible. Una pregunta que mezcla satisfacción y precio puede requerir separarse. Las opciones deben cubrir situaciones reales sin obligar a inventar un dato para continuar.",
+          "Simule diferentes ramas: visita sin atención, cliente interesado y solicitud incompleta. Revise campos obligatorios y opciones como no aplica. Una pregunta oculta no debería producir una respuesta que la oficina interprete como observada. Las validaciones se comprueban con ejemplos, no solamente leyendo el borrador."
+        ],
+        "bullets": [
+          "Cada pregunta tiene finalidad y unidad de registro.",
+          "Las cantidades conservan unidad y periodo.",
+          "Se distinguen observado, declarado y desconocido.",
+          "Las ramas permiten terminar las excepciones previstas.",
+          "La evidencia tiene un propósito y condiciones de autorización.",
+          "El estado final coincide con el proceso comercial real."
+        ]
+      },
+      {
+        "title": "La persona responsable aprueba el instrumento",
+        "paragraphs": [
+          "La IA puede proponer una estructura convincente y aun así usar términos ambiguos o pedir información innecesaria. El equipo debe comprobar contenido comercial, permisos y tratamiento de datos. La propuesta tampoco certifica validez metodológica o cumplimiento de requisitos de una entidad.",
+          "En el constructor de Control G, la propuesta se revisa y puede incorporarse al editor. La generación no significa que el formulario quede publicado o asignado automáticamente. Mantenga el flujo de aprobación y una versión identificable antes de llevarlo al operativo."
+        ]
+      },
+      {
+        "title": "Pruebe después la captura sin internet",
+        "paragraphs": [
+          "Inicie sesión y descargue el instrumento asignado en un dispositivo real. Desconecte datos móviles, complete un ejemplo y guarde. Cierre y reabra la aplicación para comprobar persistencia. Luego recupere conexión y revise el registro desde coordinación con sus evidencias.",
+          "Incluya al menos las excepciones que definió en el prompt. La oficina debe entender los resultados recibidos y distinguir pendientes. Si necesita catálogos vivos o integración con ERP, incorpore pruebas de ese componente en un alcance separado.",
+          "Para una demostración, comparta el propósito y un formato vacío. La conversación comercial debe terminar con una lista de funciones configurables, adaptaciones y responsabilidades del cliente. El borrador asistido acelera la preparación, pero la aceptación depende de esa revisión y del piloto."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "¿Se generan formularios con IA sin internet?",
+        "answer": "La generación requiere conexión y disponibilidad del proveedor. La captura offline utiliza formularios previamente publicados, asignados y descargados."
+      },
+      {
+        "question": "¿La IA puede usar respuestas de clientes para diseñar el formulario?",
+        "answer": "El asistente descrito trabaja con la solicitud y, en mejoras, la definición del cuestionario. Evite incluir respuestas reales o datos reservados en el texto que envía."
+      },
+      {
+        "question": "¿El resultado queda publicado automáticamente?",
+        "answer": "No. La propuesta requiere revisión e incorporación al editor, y después el flujo de aprobación y publicación correspondiente."
+      }
+    ],
+    "verdict": "Un buen prompt define la visita y sus excepciones. La revisión humana y la prueba offline convierten el borrador en un instrumento que el equipo puede aplicar.",
+    "sources": [
+      {
+        "title": "Asistente de creación de instrumentos",
+        "publisher": "Control G",
+        "url": "https://www.controlg.co/encuestas-con-inteligencia-artificial"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Crear cuestionarios con IA",
+        "path": "/encuestas-con-inteligencia-artificial"
+      },
+      {
+        "title": "Visitas comerciales offline",
+        "path": "/visitas-comerciales-offline"
+      },
+      {
+        "title": "Validación humana de encuestas",
+        "path": "/blog/crear-encuestas-ia-validacion-humana"
+      },
+      {
+        "title": "Caracterización empresarial",
+        "path": "/blog/caracterizacion-empresas-clientes-establecimientos"
+      }
+    ],
+    "category": "Operación empresarial",
+    "country": "Colombia",
+    "publishedAt": "2026-10-31",
+    "updatedAt": "2026-10-31",
+    "readingMinutes": 4,
+    "comparison": [],
+    "whatsappMessage": "Hola, leí «Cómo crear un formulario de visita comercial con IA» en Control G. Quiero una demostración para mi operación en Colombia.",
+    "image": "/blog/sector-combustibles-control-g.jpg",
+    "imageAlt": "Representante comercial y responsable revisan información de campo con una tablet en zona administrativa segura",
+    "imageCaption": "Escena ilustrativa generada con IA. No representa clientes, resultados reales ni una certificación."
+  },
+  {
+    "slug": "caracterizacion-proveedores-empresas",
+    "title": "Caracterización de proveedores: campos y revisión",
+    "description": "Diseñe una ficha de caracterización de proveedores y visitas: unidades, capacidad declarada, evidencia, actualización y límites de la validación.",
+    "excerpt": "Una estructura para recopilar información de proveedores sin confundir el dato declarado con una homologación o una aprobación de riesgo.",
+    "keywords": [
+      "caracterizacion proveedores empresas",
+      "ficha proveedores formulario",
+      "levantamiento informacion proveedores",
+      "visita proveedores offline"
+    ],
+    "intro": [
+      "Una caracterización de proveedores reúne información definida por la empresa para conocer sus relaciones de abastecimiento. La ficha debe indicar qué dato es declarado, qué evidencia se revisó y qué queda pendiente. Recopilar información no equivale a homologar o aprobar al proveedor.",
+      "Un formulario puede apoyar visitas o levantamientos sin conexión cuando el dispositivo está preparado. El alcance del registro debe mantenerse separado de decisiones de contratación, revisión jurídica, riesgo y verificación documental especializada."
+    ],
+    "sections": [
+      {
+        "title": "La finalidad limita lo que se pregunta",
+        "paragraphs": [
+          "Escriba qué necesita conocer el área de compras: categorías atendidas, cobertura declarada, contactos autorizados o capacidades que requieren revisión posterior. Evite acumular documentos porque podrían servir algún día. Cada dato necesita finalidad, responsable y condiciones de acceso.",
+          "Si la ficha incluye personas naturales o información de contactos, revise con el responsable de datos qué es necesario y cómo se conserva. Una consulta comercial puede requerir menos información que una etapa de vinculación. Los instrumentos deben distinguir esos momentos."
+        ]
+      },
+      {
+        "title": "Empresa, sede y visita",
+        "paragraphs": [
+          "Use referencias que permitan reconocer a la organización y sus establecimientos sin contar cada visita como un proveedor nuevo. Una sede puede tener capacidad o cobertura diferente a otra. El nombre comercial por sí solo puede resultar insuficiente para relacionarlas.",
+          "El Registro Estadístico de Empresas del DANE ofrece contexto sobre unidades económicas. Una caracterización interna de compras tiene su propio universo y finalidad. No reemplaza ese registro, un certificado de existencia ni las verificaciones que exija el proceso de contratación."
+        ]
+      },
+      {
+        "title": "Ficha inicial para revisar con compras",
+        "paragraphs": [
+          "El siguiente esquema evita incorporar criterios de aprobación automática. Adáptelo con las áreas responsables y use ejemplos ficticios en el piloto."
+        ],
+        "bullets": [
+          "Código de proveedor y referencia de sede.",
+          "Categoría de suministro declarada.",
+          "Territorios que afirma atender.",
+          "Capacidad declarada, unidad y periodo.",
+          "Condiciones o limitaciones informadas.",
+          "Fecha y modalidad de la visita.",
+          "Origen del dato y evidencia efectivamente revisada.",
+          "Documento o aclaración pendiente, si corresponde.",
+          "Responsable de revisar la información.",
+          "Fecha prevista para actualización."
+        ]
+      },
+      {
+        "title": "Declaración, evidencia y decisión",
+        "paragraphs": [
+          "Conserve separadas la respuesta del contacto y la conclusión del revisor. Si el proveedor informa una capacidad mensual, registre periodo y unidad. Una fotografía no demuestra por sí sola esa capacidad. Un archivo adjunto tampoco acredita autenticidad o vigencia sin el procedimiento correspondiente.",
+          "Defina qué puede corregir el capturador y qué exige una nueva revisión. La trazabilidad necesita conservar qué versión se usó y cuándo se recibió la información. Evite un estado general de aprobado si únicamente se verificó que los campos estaban completos."
+        ]
+      },
+      {
+        "title": "Captura de visita y sincronización",
+        "paragraphs": [
+          "Prepare cuenta, instrumento y permisos antes de salir. En Control G puede registrar respuestas y evidencias offline desde Android después de la precarga. La prueba debe comprobar persistencia al cerrar y reabrir la app y recepción posterior en coordinación.",
+          "La oficina trabaja con los registros recibidos. Si una ficha continúa en una tablet desconectada, no forma parte del corte central. Antes de cerrar una campaña de actualización, revise pendientes, aclaraciones y posibles duplicados. La fecha de visita y la fecha de recepción responden a preguntas diferentes."
+        ]
+      },
+      {
+        "title": "Uso de IA y alcance del software",
+        "paragraphs": [
+          "La IA puede ayudar a redactar el borrador del instrumento a partir de una descripción sin datos reales. Una persona debe revisar preguntas, opciones y necesidad de documentos. El asistente no debe presentarse como una aprobación automática del proveedor o una evaluación certificada de riesgo.",
+          "Control G aporta captura y revisión de información de campo. Un portal de proveedores, una homologación documental, una conexión con compras o un motor de riesgo necesitan alcance y validaciones adicionales. La demostración debe identificar quién decide y en qué sistema queda la aprobación."
+        ]
+      },
+      {
+        "title": "Actualización y entregables",
+        "paragraphs": [
+          "Defina qué dato caduca, quién solicita actualización y qué se conserva como historia. El reporte debe mostrar fecha de corte y distinguir información pendiente de comprobar. Para compartir resultados, seleccione únicamente los campos que necesita el destinatario.",
+          "Lleve a la demostración un formato vacío y casos de empresa con varias sedes, dato desconocido y documento pendiente. Con esas excepciones puede comprobar si el instrumento conserva el contexto sin pedir trabajo que el capturador no está autorizado a realizar."
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "question": "¿Completar la ficha homologa al proveedor?",
+        "answer": "No. La caracterización recopila datos. La homologación y la aprobación corresponden al procedimiento y responsables definidos por la empresa."
+      },
+      {
+        "question": "¿Control G valida automáticamente documentos externos?",
+        "answer": "No debe asumirse esa función. Adjuntar un archivo no implica verificar autenticidad, vigencia o cumplimiento."
+      },
+      {
+        "question": "¿Puedo usar IA para redactar las preguntas?",
+        "answer": "Sí, con conexión y revisión humana. Describa el instrumento sin enviar bases reales ni información reservada al proveedor de IA."
+      }
+    ],
+    "verdict": "La ficha sirve cuando conserva qué se declaró, qué se revisó y quién debe decidir. Una captura completa no equivale a un proveedor aprobado.",
+    "sources": [
+      {
+        "title": "Registro Estadístico de Empresas",
+        "publisher": "DANE",
+        "url": "https://www.dane.gov.co/index.php/servicios-al-ciudadano/servicios-informacion/registro-estadistico-de-empresas/directorio-estadistico-de-empresas"
+      }
+    ],
+    "relatedLinks": [
+      {
+        "title": "Caracterización empresarial",
+        "path": "/blog/caracterizacion-empresas-clientes-establecimientos"
+      },
+      {
+        "title": "Soluciones para empresas",
+        "path": "/encuestas-para-empresas"
+      },
+      {
+        "title": "Gobierno de datos",
+        "path": "/blog/gobierno-datos-encuestas-campo"
+      }
+    ],
+    "category": "Operación empresarial",
+    "country": "Colombia",
+    "publishedAt": "2026-10-31",
+    "updatedAt": "2026-10-31",
+    "readingMinutes": 4,
+    "comparison": [],
+    "whatsappMessage": "Hola, leí «Caracterización de proveedores: campos y revisión» en Control G. Quiero una demostración para mi operación en Colombia.",
+    "image": "/blog/sector-servicios-control-g.jpg",
+    "imageAlt": "Profesional de campo registra una observación con tablet desde un área de acceso segura",
+    "imageCaption": "Escena ilustrativa generada con IA. No representa clientes, resultados reales ni una certificación."
+  }
+]
