@@ -5,6 +5,8 @@ import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
 import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import { getCachedFamilies } from '@/lib/sync-engine'
+import { useOrganizationProfile } from '@/hooks/useOrganizationProfile'
+import { ProfessionalOperationsReports } from '@/components/shared/ProfessionalOperationsReports'
 
 interface FamilyDoc {
   $id: string
@@ -39,6 +41,12 @@ const OBS_TYPE_COLOR: Record<string, { bg: string; text: string }> = {
 }
 
 export default function FieldReportsPage() {
+  const operation = useOrganizationProfile()
+  if (operation.loading) return <p role="status" className="p-6">Cargando operación…</p>
+  return operation.unit === 'family' ? <HouseholdReports /> : <ProfessionalOperationsReports />
+}
+
+function HouseholdReports() {
   const { user } = useAuthStore()
   const [families, setFamilies] = useState<FamilyDoc[]>([])
   const [observations, setObservations] = useState<ObsDoc[]>([])

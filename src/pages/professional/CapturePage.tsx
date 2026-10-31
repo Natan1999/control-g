@@ -170,7 +170,7 @@ export default function FieldCapturePage() {
             <span className="text-[#D4AF37]">recolectar</span> hoy?
           </h1>
           <p className="text-blue-100/70 text-xs mt-3 max-w-[200px] leading-relaxed">
-            Selecciona un formulario oficial para iniciar la recolección de datos.
+            Abre un formulario asignado para registrar respuestas, fotografías y demás evidencias. Cada evidencia queda vinculada a su captura.
           </p>
         </div>
       </div>

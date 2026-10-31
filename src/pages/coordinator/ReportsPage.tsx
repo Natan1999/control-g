@@ -9,6 +9,8 @@ import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
 import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import { jsPDF } from 'jspdf'
+import { useOrganizationProfile } from '@/hooks/useOrganizationProfile'
+import AnalyticsPage from '@/pages/shared/AnalyticsPage'
 
 type ActivityTypeOption = 'ex_ante' | 'encounter_1' | 'encounter_2' | 'encounter_3' | 'ex_post'
 
@@ -576,6 +578,12 @@ async function generatePopulationImpactPDF(
 // ─── Page component ───────────────────────────────────────────────────────────
 
 export default function ReportsPage() {
+  const operation = useOrganizationProfile()
+  if (operation.loading) return <p role="status" className="p-6">Cargando operación…</p>
+  return operation.unit === 'family' ? <HouseholdReports /> : <AnalyticsPage />
+}
+
+function HouseholdReports() {
   const { user } = useAuthStore()
   const [generating, setGenerating] = useState<string | null>(null)
   const [activityType, setActivityType] = useState<ActivityTypeOption>('ex_ante')

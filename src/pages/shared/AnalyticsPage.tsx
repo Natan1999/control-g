@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   AlertTriangle, BarChart3, CalendarDays, Download, FileSpreadsheet,
   FileText, Filter, Loader2, MapPinned, RefreshCw, ShieldCheck, DatabaseZap,
@@ -47,6 +47,11 @@ export default function AnalyticsPage() {
   const [snapshotting, setSnapshotting] = useState(false)
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
+  const [autoRefresh, setAutoRefresh] = useState(true)
+  const [lastReceivedAt, setLastReceivedAt] = useState('')
+  const [availableResponses, setAvailableResponses] = useState(0)
+  const requestSequence = useRef(0)
+  const inFlight = useRef(0)
 
   const loadEntities = useCallback(async () => {
     if (!user) return
@@ -63,12 +68,15 @@ export default function AnalyticsPage() {
     setEntityId(current => current || result.documents[0]?.$id || '')
   }, [user])
 
-  const loadAnalytics = useCallback(async () => {
+  const loadAnalytics = useCallback(async (silent = false) => {
     if (!entityId) {
       setLoading(false)
       return
     }
-    setLoading(true)
+    if (silent && inFlight.current) return
+    const request = ++requestSequence.current
+    inFlight.current = request
+    if (!silent) setLoading(true)
     setError('')
     try {
       const [formResult, responseResult, municipalityResult, indicatorResult, snapshotResult] = await Promise.all([
@@ -78,22 +86,44 @@ export default function AnalyticsPage() {
         databases.listDocuments(DATABASE_ID, COLLECTION_IDS.INDICATOR_DEFINITIONS, [Query.limit(1000)]).catch(() => ({ documents: [], total: 0 })),
         databases.listDocuments(DATABASE_ID, COLLECTION_IDS.INDICATOR_SNAPSHOTS, [Query.equal('entity_id', entityId), Query.orderDesc('cutoff_at'), Query.limit(200)]).catch(() => ({ documents: [], total: 0 })),
       ])
+      if (request !== requestSequence.current) return
       setForms(formResult.documents)
       setResponses(responseResult.documents)
+      setAvailableResponses(responseResult.total)
       setMunicipalities(municipalityResult.documents)
       setIndicatorDefinitions(indicatorResult.documents
         .filter((item: any) => !item.entity_id || item.entity_id === entityId)
         .map(normalizeIndicatorDefinition))
       setSnapshots(snapshotResult.documents)
+      setLastReceivedAt(new Date().toISOString())
     } catch (loadError) {
-      setError(loadError instanceof Error ? loadError.message : 'No fue posible cargar los datos analíticos.')
+      if (request === requestSequence.current) setError(loadError instanceof Error ? loadError.message : 'No fue posible cargar los datos analíticos.')
     } finally {
-      setLoading(false)
+      if (request === requestSequence.current) { setLoading(false); inFlight.current = 0 }
     }
   }, [entityId])
 
   useEffect(() => { void loadEntities() }, [loadEntities])
-  useEffect(() => { void loadAnalytics() }, [loadAnalytics])
+  useEffect(() => {
+    setForms([]); setResponses([]); setMunicipalities([]); setSnapshots([]); setIndicatorDefinitions([])
+    setFilters(EMPTY_FILTERS); setLastReceivedAt(''); setAvailableResponses(0)
+    void loadAnalytics()
+    return () => { requestSequence.current += 1; inFlight.current = 0 }
+  }, [loadAnalytics])
+  useEffect(() => {
+    if (!autoRefresh || !entityId) return
+    const refresh = () => {
+      if (document.visibilityState === 'visible' && navigator.onLine) void loadAnalytics(true)
+    }
+    const interval = window.setInterval(refresh, 60_000)
+    window.addEventListener('online', refresh)
+    document.addEventListener('visibilitychange', refresh)
+    return () => {
+      window.clearInterval(interval)
+      window.removeEventListener('online', refresh)
+      document.removeEventListener('visibilitychange', refresh)
+    }
+  }, [autoRefresh, entityId, loadAnalytics])
 
   const entity = entities.find(item => item.$id === entityId)
   const variables = useMemo(() => listAnalyticsVariables(forms, responses)
@@ -198,6 +228,11 @@ export default function AnalyticsPage() {
       />
 
       <div className="space-y-6 p-4 sm:p-6">
+        <section className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4 text-xs text-slate-600" aria-label="Actualización de datos">
+          <p>Última consulta: {lastReceivedAt ? new Date(lastReceivedAt).toLocaleString('es-CO') : 'pendiente'}. Solo se muestran registros recibidos en el servidor; las capturas offline aparecen después de sincronizar.</p>
+          <label className="flex min-h-11 shrink-0 items-center gap-2 font-bold"><input type="checkbox" checked={autoRefresh} onChange={event => setAutoRefresh(event.target.checked)} /> Actualizar cada minuto</label>
+        </section>
+        {availableResponses > responses.length ? <p role="status" className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900">Este panel cargó {responses.length.toLocaleString()} de {availableResponses.toLocaleString()} registros. Las gráficas y exportaciones corresponden solo al conjunto cargado, no al histórico completo de la operación.</p> : null}
         <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5" aria-labelledby="analytics-filters-title">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>

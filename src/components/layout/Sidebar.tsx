@@ -14,6 +14,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { SyncIndicator } from '@/components/shared'
 import { cn, getInitials } from '@/lib/utils'
 import type { UserRole } from '@/types'
+import { useOrganizationProfile } from '@/hooks/useOrganizationProfile'
 
 interface NavItem {
   path: string
@@ -24,7 +25,7 @@ interface NavItem {
 const navItems: Record<UserRole, NavItem[]> = {
   admin: [
     { path: '/admin',          label: 'Dashboard',     icon: <LayoutDashboard size={18} /> },
-    { path: '/admin/entities', label: 'Entidades',     icon: <Building2 size={18} /> },
+    { path: '/admin/entities', label: 'Organizaciones', icon: <Building2 size={18} /> },
     { path: '/admin/territories', label: 'Catálogos territoriales', icon: <Globe2 size={18} /> },
     { path: '/admin/forms',    label: 'Formularios',   icon: <ClipboardList size={18} /> },
     { path: '/admin/responses', label: 'Respuestas',   icon: <ClipboardList size={18} /> },
@@ -78,7 +79,9 @@ export function Sidebar({ role }: SidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const { user, signOut } = useAuthStore()
   const navigate = useNavigate()
-  const items = navItems[role] ?? []
+  const operation = useOrganizationProfile()
+  const items = (navItems[role] ?? []).filter(item => operation.unit === 'family' || !['/coord/families', '/coord/reports'].includes(item.path))
+    .map(item => item.path === '/coord/municipalities' && operation.coverageMode === 'operational_zones' ? { ...item, label: 'Zonas de operación' } : item)
 
   const handleLogout = async () => {
     await signOut()

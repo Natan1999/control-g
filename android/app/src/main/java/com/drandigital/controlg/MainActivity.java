@@ -1,7 +1,12 @@
 package com.drandigital.controlg;
 
 import android.os.Bundle;
+import android.os.Build;
+import android.view.View;
 import android.webkit.WebView;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.WebViewListener;
 
@@ -25,6 +30,20 @@ public class MainActivity extends BridgeActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (bridge == null) return;
+
+        // Android 15+ enforces edge-to-edge for current Play targets. Keep
+        // login, capture controls and bottom navigation outside system bars,
+        // display cutouts and the keyboard, including landscape/tablet mode.
+        if (Build.VERSION.SDK_INT >= 35) {
+            View content = findViewById(android.R.id.content);
+            ViewCompat.setOnApplyWindowInsetsListener(content, (view, windowInsets) -> {
+                Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+                Insets keyboard = windowInsets.getInsets(WindowInsetsCompat.Type.ime());
+                view.setPadding(bars.left, bars.top, bars.right, Math.max(bars.bottom, keyboard.bottom));
+                return WindowInsetsCompat.CONSUMED;
+            });
+            content.post(() -> ViewCompat.requestApplyInsets(content));
+        }
 
         bridge.addWebViewListener(new WebViewListener() {
             @Override

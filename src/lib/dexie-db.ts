@@ -114,6 +114,7 @@ export interface LocalFormResponse {
   localId: string;                   // primary key
   formId: string;
   familyId: string | null;
+  municipalityId?: string | null;    // assigned operational territory, also valid for companies
   entityId: string;
   professionalId: string;
   answers: Record<string, any>;      // JSON object with fieldId: value

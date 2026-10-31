@@ -379,7 +379,7 @@ test('el constructor ofrece plantillas LATAM reutilizables sin reemplazar los fo
 
   assert.match(templates, /Coordenada GPS de la visita/)
   assert.match(templates, /Firma o constancia de consentimiento/)
-  assert.match(builder, /Biblioteca de caracterizaciones/)
+  assert.match(builder, /Formularios para cada operación/)
   assert.match(builder, /cloneTemplatePages/)
 })
 

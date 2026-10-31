@@ -1,6 +1,7 @@
 // ==============================
 // CONTROL G — TypeScript Types
 // ==============================
+import type { OrganizationRegionalSettings } from '@/lib/organization-profile'
 
 export type UserRole = 'admin' | 'coordinator' | 'support' | 'professional'
 export type UserStatus = 'active' | 'inactive' | 'suspended'
@@ -46,7 +47,7 @@ export interface Entity {
   defaultMapCenter?: { latitude: number; longitude: number }
   defaultMapZoom?: number
   mapPrivacyMode?: 'exact' | 'approximate' | 'aggregate'
-  regionalSettings?: Record<string, unknown>
+  regionalSettings?: OrganizationRegionalSettings
   periodStart: string
   periodEnd: string
   familiesPerMunicipality: number

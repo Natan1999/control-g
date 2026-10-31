@@ -16,6 +16,7 @@ import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import { FormField, FormDefinition, FormPage, FormFieldType, FormVisibilityOperator, ActivityType, Entity, FormValidationProfile } from '@/types'
 import { cloneTemplatePages, FORM_TEMPLATES, type ControlGFormTemplate } from '@/config/form-templates'
+import { getOrganizationProfile } from '@/lib/organization-profile'
 import { LATAM_COUNTRIES } from '@/config/countries'
 import FormRenderer from '@/components/forms/FormRenderer'
 import { analyzeFormQuality, buildFormPrivacyChecklist, formQualityScore } from '@/lib/form-quality'
@@ -121,23 +122,26 @@ export default function FormBuilderPage() {
   // Super Admin specific state
   const [entities, setEntities] = useState<Entity[]>([])
   const [selectedEntityId, setSelectedEntityId] = useState<string>(user?.entityId || '')
+  const builderUserRole = user?.role
+  const builderUserEntityId = user?.entityId
 
   useEffect(() => {
-    if (user?.role === 'admin') {
+    if (builderUserRole === 'admin' || builderUserEntityId) {
       const fetchEntities = async () => {
         try {
           const res = await databases.listDocuments(DATABASE_ID, COLLECTION_IDS.ENTITIES, [
+            ...(builderUserRole === 'admin' ? [] : [Query.equal('$id', builderUserEntityId!)]),
             Query.orderDesc('$createdAt'),
             Query.limit(100)
           ])
-          setEntities(res.documents as unknown as Entity[])
+          setEntities(res.documents.map((entity: Record<string, unknown>) => ({ ...entity, countryCode: String(entity.country_code || 'CO'), currencyCode: String(entity.currency_code || 'COP'), regionalSettings: entity.regional_settings })) as unknown as Entity[])
         } catch (err) {
           console.error('Error fetching entities:', err)
         }
       }
       fetchEntities()
     }
-  }, [user?.role])
+  }, [builderUserRole, builderUserEntityId])
 
   useEffect(() => {
     if (id) {
@@ -215,6 +219,7 @@ export default function FormBuilderPage() {
   const editorReadOnly = workflowStatus === 'in_review' || workflowStatus === 'approved'
   const workflow = EDITORIAL_STATUS[workflowStatus]
   const entityCountryCode = entities.find(entity => entity.id === selectedEntityId)?.countryCode || 'CO'
+  const commercialInstrument = getOrganizationProfile(entities.find(entity => entity.id === selectedEntityId)?.regionalSettings).unit !== 'family'
 
   const addField = (type: FormFieldType) => {
     const entityCurrency = entities.find(entity => entity.id === selectedEntityId)?.currencyCode || 'COP'
@@ -584,11 +589,11 @@ export default function FormBuilderPage() {
                      disabled={editorReadOnly}
                      className="mt-2 w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 normal-case tracking-normal"
                    >
-                     <option value="ex_ante">Ex-Antes</option>
-                     <option value="encounter_1">Momento 1</option>
-                     <option value="encounter_2">Momento 2</option>
-                     <option value="encounter_3">Momento 3</option>
-                     <option value="ex_post">Ex-Post</option>
+                     <option value="ex_ante">{commercialInstrument ? 'Caracterización inicial' : 'Ex-Antes'}</option>
+                     <option value="encounter_1">{commercialInstrument ? 'Visita de campo' : 'Momento 1'}</option>
+                     <option value="encounter_2">{commercialInstrument ? 'Seguimiento 1' : 'Momento 2'}</option>
+                     <option value="encounter_3">{commercialInstrument ? 'Seguimiento 2' : 'Momento 3'}</option>
+                     <option value="ex_post">{commercialInstrument ? 'Evaluación de cierre' : 'Ex-Post'}</option>
                    </select>
                  </label>
                  {user?.role === 'admin' && (
@@ -1132,8 +1137,8 @@ export default function FormBuilderPage() {
             <header className="sticky top-0 z-10 flex items-start justify-between gap-5 border-b border-slate-200 bg-white px-5 py-5 sm:px-7">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.16em] text-[#3D7B9E]">Control G LATAM</p>
-                <h2 id="form-template-title" className="mt-1 text-xl font-black text-slate-950">Biblioteca de caracterizaciones</h2>
-                <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-500">Instrumentos iniciales editables. Adapta lenguaje, marco jurídico y variables a la entidad y al país antes de publicar.</p>
+                <h2 id="form-template-title" className="mt-1 text-xl font-black text-slate-950">Formularios para cada operación</h2>
+                <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-500">Visitas comerciales, caracterización y programas públicos. Usa una base editable o crea un borrador con IA. Las plantillas no requieren una API; revisa las preguntas antes de publicar y asignar.</p>
               </div>
               <button type="button" onClick={() => setShowTemplates(false)} aria-label="Cerrar biblioteca de plantillas" className="flex h-12 w-12 shrink-0 items-center justify-center text-slate-500"><X size={21} /></button>
             </header>

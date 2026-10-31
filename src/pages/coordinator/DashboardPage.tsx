@@ -12,6 +12,9 @@ import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
 import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import type { ProfessionalProgress } from '@/types'
+import { Link } from 'react-router-dom'
+import { useOrganizationProfile } from '@/hooks/useOrganizationProfile'
+import AnalyticsPage from '@/pages/shared/AnalyticsPage'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -85,6 +88,16 @@ function RadialProgress({ pct, size = 80, color = COLORS.primary }: { pct: numbe
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function CoordDashboard() {
+  const operation = useOrganizationProfile()
+  if (operation.loading) return <p role="status" className="p-6">Cargando operación…</p>
+  if (operation.unit !== 'family') return <>
+    <section className="m-4 rounded-2xl bg-[#173B4C] p-5 text-white sm:m-6"><p className="text-xs font-bold uppercase tracking-widest text-teal-200">Operación de campo</p><h1 className="mt-2 text-2xl font-black">{operation.name || 'Panel de la organización'}</h1><p className="mt-2 text-sm leading-6 text-slate-200">Prepara instrumentos, asigna profesionales y revisa la información recibida del territorio.</p><div className="mt-4 flex flex-wrap gap-3">{[['/coord/forms','Formularios e IA'],['/coord/team','Equipo y asignaciones'],['/coord/responses','Revisar respuestas'],['/coord/map','Mapa y capas GIS']].map(([path,label]) => <Link key={path} to={path} className="inline-flex min-h-11 items-center rounded-xl border border-white/30 px-4 text-sm font-bold">{label}</Link>)}</div></section>
+    <AnalyticsPage />
+  </>
+  return <HouseholdDashboard />
+}
+
+function HouseholdDashboard() {
   const { user } = useAuthStore()
   const [summary, setSummary] = useState<Summary>({
     totalFamilies: 0, completedFamilies: 0, inProgressFamilies: 0, pendingFamilies: 0,

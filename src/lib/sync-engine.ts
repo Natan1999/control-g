@@ -4,6 +4,7 @@ import { databases, storage, DATABASE_ID, COLLECTION_IDS, BUCKET_IDS, ID, Query,
 import { localDB, type LocalMedia } from './dexie-db'
 import { isOnline } from './network'
 import { sha256Blob } from './capture-integrity'
+import { organizationCacheValue } from './organization-profile'
 
 export { isOnline } from './network'
 
@@ -234,6 +235,7 @@ async function syncFormResponses(): Promise<string[]> {
         professional_id: response.professionalId,
         entity_id: response.entityId,
         family_id: response.familyId || null,
+        municipality_id: response.municipalityId || null,
         local_id: response.localId,
         answers,
         answers_json: JSON.stringify(answers),
@@ -340,14 +342,16 @@ function assignmentIsCurrent(assignment: any) {
 export async function updateLocalCache(entityId?: string, professionalId?: string, role?: string) {
   if (!(await isOnline()) || !entityId) return
   try {
-    const [families, municipalities] = await Promise.all([
+    const [families, municipalities, entity] = await Promise.all([
       databases.listDocuments(DATABASE_ID, COLLECTION_IDS.FAMILIES, [
         Query.equal('entity_id', entityId), Query.limit(2000),
       ]),
       databases.listDocuments(DATABASE_ID, COLLECTION_IDS.ENTITY_MUNICIPALITIES, [
         Query.equal('entity_id', entityId), Query.limit(500),
       ]),
+      databases.getDocument(DATABASE_ID, COLLECTION_IDS.ENTITIES, entityId).catch(() => null),
     ])
+    if (entity) localStorage.setItem(`cg_operation_profile_${entityId}`, JSON.stringify(organizationCacheValue(entity)))
 
     let formDocuments: any[] = []
     if (role === 'professional' && professionalId) {

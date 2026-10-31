@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Building2, Users, CheckCircle, Plus, TrendingUp } from 'lucide-react'
+import { Building2, Users, CheckCircle, Plus, ClipboardList } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
 import { Query } from '@/lib/backend'
@@ -8,22 +8,27 @@ import { Query } from '@/lib/backend'
 interface Stats {
   totalEntities: number
   activeEntities: number
-  totalFamilies: number
+  totalUsers: number | null
+  publishedForms: number | null
 }
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
-  const [stats, setStats] = useState<Stats>({ totalEntities: 0, activeEntities: 0, totalFamilies: 0 })
+  const [stats, setStats] = useState<Stats>({ totalEntities: 0, activeEntities: 0, totalUsers: null, publishedForms: null })
   const [entities, setEntities] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function load() {
       try {
-        const res = await databases.listDocuments(DATABASE_ID, COLLECTION_IDS.ENTITIES, [Query.limit(20), Query.orderDesc('$createdAt')])
-        const active = res.documents.filter((e: any) => e.status === 'active')
+        const [res, active, users, forms] = await Promise.all([
+          databases.listDocuments(DATABASE_ID, COLLECTION_IDS.ENTITIES, [Query.limit(20), Query.orderDesc('$createdAt')]),
+          databases.listDocuments(DATABASE_ID, COLLECTION_IDS.ENTITIES, [Query.equal('status', 'active'), Query.limit(1)]),
+          databases.listDocuments(DATABASE_ID, COLLECTION_IDS.USER_PROFILES, [Query.limit(1)]).catch(() => null),
+          databases.listDocuments(DATABASE_ID, COLLECTION_IDS.FORMS, [Query.equal('status', 'published'), Query.limit(1)]).catch(() => null),
+        ])
         setEntities(res.documents)
-        setStats({ totalEntities: res.total, activeEntities: active.length, totalFamilies: 0 })
+        setStats({ totalEntities: res.total, activeEntities: active.total, totalUsers: users?.total ?? null, publishedForms: forms?.total ?? null })
       } catch {
         setEntities([])
       } finally {
@@ -34,24 +39,24 @@ export default function AdminDashboard() {
   }, [])
 
   const kpis = [
-    { label: 'Total Entidades', value: stats.totalEntities, icon: <Building2 size={20} />, color: '#1B3A4B' },
-    { label: 'Contratos Activos', value: stats.activeEntities, icon: <CheckCircle size={20} />, color: '#27AE60' },
-    { label: 'Usuarios del Sistema', value: '—', icon: <Users size={20} />, color: '#3D7B9E' },
-    { label: 'Crecimiento', value: '+12%', icon: <TrendingUp size={20} />, color: '#F39C12' },
+    { label: 'Organizaciones', value: loading ? '—' : stats.totalEntities, icon: <Building2 size={20} />, color: '#1B3A4B' },
+    { label: 'Organizaciones activas', value: loading ? '—' : stats.activeEntities, icon: <CheckCircle size={20} />, color: '#27AE60' },
+    { label: 'Usuarios del sistema', value: loading ? '—' : stats.totalUsers ?? '—', icon: <Users size={20} />, color: '#3D7B9E' },
+    { label: 'Formularios publicados', value: loading ? '—' : stats.publishedForms ?? '—', icon: <ClipboardList size={20} />, color: '#F39C12' },
   ]
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <TopBar
         title="Dashboard Super Administrador"
-        subtitle="Gestión global de entidades — DRAN Digital S.A.S."
+        subtitle="Operaciones públicas y privadas — DRAN Digital S.A.S."
         actions={
           <button
             onClick={() => navigate('/admin/entities')}
             className="flex items-center gap-2 px-4 py-2 text-white rounded-xl text-sm font-semibold"
             style={{ background: '#1B3A4B' }}
           >
-            <Plus size={16} /> Nueva Entidad
+            <Plus size={16} /> Nueva organización
           </button>
         }
       />
@@ -75,7 +80,7 @@ export default function AdminDashboard() {
       {/* Entities list */}
       <div className="bg-white rounded-2xl border border-border shadow-sm mt-6">
         <div className="px-6 py-4 border-b border-border flex items-center justify-between">
-          <h2 className="font-bold text-foreground">Entidades registradas</h2>
+          <h2 className="font-bold text-foreground">Organizaciones registradas</h2>
           <button
             onClick={() => navigate('/admin/entities')}
             className="text-sm font-semibold"

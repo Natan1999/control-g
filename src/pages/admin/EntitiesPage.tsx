@@ -7,9 +7,15 @@ import { TopBar } from '@/components/layout/Sidebar'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
 import { Query } from '@/lib/backend'
 import { getDepartments, getMunicipalities, Department, Municipality } from '@/services/geographyService'
+import { ENTITY_KIND_OPTIONS, ORGANIZATION_SECTOR_OPTIONS, CAPTURE_UNIT_OPTIONS, organizationKind, getOrganizationProfile, parseOperationalZones, validateOrganizationSettings, validateOperationTerritories, type EntityKind, type CaptureUnit, type CoverageMode, type OrganizationSector } from '@/lib/organization-profile'
 import { countryConfig, countryName, LATAM_COUNTRIES } from '@/config/countries'
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 
 interface EntityForm {
+  entity_kind: EntityKind;
+  organization_sector: OrganizationSector;
+  capture_unit: CaptureUnit;
+  coverage_mode: CoverageMode;
   name: string;
   nit: string;
   contract_number: string;
@@ -38,6 +44,7 @@ interface EntityForm {
 }
 
 const EMPTY_FORM: EntityForm = {
+  entity_kind: 'municipality', organization_sector: 'public_programs', capture_unit: 'family', coverage_mode: 'administrative',
   name: '', nit: '', contract_number: '', contract_object: '', operator_name: '',
   country_code: 'CO', locale: 'es-CO', timezone: 'America/Bogota', currency_code: 'COP', map_privacy_mode: 'exact', map_minimum_group_size: 5, map_coverage_target: 10, require_mfa_for_privileged: true,
   department_id: '', department_name: '', period_start: '', period_end: '',
@@ -113,7 +120,7 @@ export default function AdminEntitiesPage() {
       // Default to Bolívar (13) if available
       const bolivar = depts.find(d => d.id === '13')
       if (bolivar) {
-        setForm(f => f.country_code === 'CO' && !f.department_id ? ({ ...f, department_id: '13', department_name: 'BOLÍVAR' }) : f)
+        setForm(f => f.coverage_mode === 'administrative' && f.country_code === 'CO' && !f.department_id ? ({ ...f, department_id: '13', department_name: 'BOLÍVAR' }) : f)
       }
     } catch (err) {
       console.error("Error loading departments", err)
@@ -134,12 +141,12 @@ export default function AdminEntitiesPage() {
   }
 
   useEffect(() => {
-    if (form.country_code === 'CO' && form.department_id) {
+    if (form.coverage_mode === 'administrative' && form.country_code === 'CO' && form.department_id) {
       loadMunicipalities(form.department_id)
       const name = departments.find(d => d.id === form.department_id)?.name || ''
       setForm(f => ({ ...f, department_name: name, municipalities: [] }))
     }
-  }, [form.country_code, form.department_id, departments])
+  }, [form.coverage_mode, form.country_code, form.department_id, departments])
 
   function selectCountry(countryCode: string) {
     const fallback = countryConfig(countryCode)
@@ -181,7 +188,17 @@ export default function AdminEntitiesPage() {
         : [...f.municipalities, { id: mId, name: mName }],
     }))
 
+  function selectOrganization(kind: EntityKind) {
+    const defaults = organizationKind(kind)
+    setForm(current => ({ ...current, entity_kind: kind, capture_unit: defaults.defaultUnit,
+      coverage_mode: defaults.defaultCoverage, organization_sector: kind === 'municipality' || kind === 'public_entity' ? 'public_programs' : 'other',
+      department_id: '', department_name: '', municipalities: [], manual_municipalities: '' }))
+  }
+
   async function handleSave() {
+    const settingsError = validateOrganizationSettings(form)
+    if (settingsError) { showToast(settingsError, 'error'); return }
+
     if (!form.name || !form.contract_number || !form.department_name || !form.period_start || !form.period_end ||
         !form.coordinator_email || !form.coordinator_name || !form.coordinator_password) {
       showToast('Completa todos los campos obligatorios (*)', 'error')
@@ -217,12 +234,13 @@ export default function AdminEntitiesPage() {
     try {
       const center = customCenter ? { latitude: Number(form.map_latitude), longitude: Number(form.map_longitude) } : countryConfig(form.country_code).mapCenter
       const demo = demoMode ? buildMunicipalProvisionBundle(center) : null
-      const territories = demo ? demo.territories : form.country_code === 'CO' ? form.municipalities : [...new Set(form.manual_municipalities.split(/[\n,;]/).map(name => name.trim()).filter(Boolean))].map(name => ({id:'',name}))
-      if (!territories.length) throw new Error('Agrega al menos un territorio de operación.')
+      const territories = demo ? demo.territories : form.coverage_mode === 'administrative' && form.country_code === 'CO' ? form.municipalities : parseOperationalZones(form.manual_municipalities)
+      const territoryError = validateOperationTerritories(territories)
+      if (territoryError) throw new Error(territoryError)
       const accounts: ProvisionAccount[] = demoMode ? demoAccounts.map((account,index) => index === 0 ? {...account,email:form.coordinator_email,password:form.coordinator_password,full_name:form.coordinator_name} : account) : [{key:'coordinator',email:form.coordinator_email,password:form.coordinator_password,full_name:form.coordinator_name,role:'coordinator'}]
       const { error } = await supabase.rpc('provision_entity', {p_request_id:requestId.current, p_accounts:accounts, p_demo:demo, p_entity:{
         is_demo: demoMode,
-        entity_kind: 'municipality',
+        entity_kind: form.entity_kind,
         territories,
         name: form.name,
         nit: form.nit,
@@ -241,8 +259,10 @@ export default function AdminEntitiesPage() {
         map_coverage_target: form.map_coverage_target,
         require_mfa_for_privileged: form.require_mfa_for_privileged,
         regional_settings: {
-          administrative_division_label: countryProfiles.find(item => item.country_code === form.country_code)?.administrative_levels?.[1] || countryConfig(form.country_code).adminLevel2Label,
-          administrative_level_1_label: countryProfiles.find(item => item.country_code === form.country_code)?.administrative_levels?.[0] || countryConfig(form.country_code).adminLevel1Label,
+          entity_kind: form.entity_kind, organization_sector: form.organization_sector,
+          capture_unit: form.capture_unit, coverage_mode: form.coverage_mode,
+          administrative_division_label: form.coverage_mode === 'operational_zones' ? 'Zona de operación' : countryProfiles.find(item => item.country_code === form.country_code)?.administrative_levels?.[1] || countryConfig(form.country_code).adminLevel2Label,
+          administrative_level_1_label: form.coverage_mode === 'operational_zones' ? 'Región operativa' : countryProfiles.find(item => item.country_code === form.country_code)?.administrative_levels?.[0] || countryConfig(form.country_code).adminLevel1Label,
         },
         period_start: form.period_start,
         period_end: form.period_end,
@@ -254,7 +274,7 @@ export default function AdminEntitiesPage() {
       setCreatedAccounts(accounts)
       requestId.current = crypto.randomUUID()
 
-      showToast(`Entidad "${form.name}" y coordinador creados exitosamente`)
+      showToast(`Organización "${form.name}" y coordinador creados exitosamente`)
       setShowForm(false)
       setForm(EMPTY_FORM)
       setDemoAccounts([])
@@ -319,17 +339,17 @@ export default function AdminEntitiesPage() {
   )
 
   return (
-    <div className="p-8 max-w-7xl mx-auto min-h-screen">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto min-h-screen">
       <TopBar
-        title="Gestión de Entidades"
-        subtitle="Administra contratos, operadores y cobertura territorial"
+        title="Organizaciones y operaciones"
+        subtitle="Empresas privadas, entidades públicas y organizaciones de Latinoamérica"
         actions={
           <div className="flex flex-wrap gap-3"><button type="button" onClick={prepareDemo} className="flex min-h-12 items-center rounded-2xl border border-slate-200 px-4 text-sm font-bold">Crear alcaldía demo privada</button><button
             onClick={() => { setDemoMode(false); setDemoAccounts([]); setForm(EMPTY_FORM); requestId.current=crypto.randomUUID(); setShowForm(true) }}
             className="flex items-center gap-2 px-6 py-3 text-white rounded-2xl text-sm font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all"
             style={{ background: COLORS.primary }}
           >
-            <Plus size={18} /> Nueva Entidad
+            <Plus size={18} /> Nueva organización
           </button></div>
         }
       />
@@ -347,7 +367,7 @@ export default function AdminEntitiesPage() {
             <Building2 size={40} className="text-blue-600" />
           </div>
           <h3 className="text-xl font-bold text-slate-900 mb-2">Sin Entidades Activas</h3>
-          <p className="text-muted-foreground mb-8">Comienza registrando una entidad territorial o un contrato operador para habilitar el sistema.</p>
+          <p className="text-muted-foreground mb-8">Registra una empresa, entidad pública u organización y define su operación de campo.</p>
           <button 
             onClick={() => setShowForm(true)} 
             className="w-full px-5 py-3 text-white rounded-2xl font-bold shadow-xl shadow-blue-500/20" 
@@ -378,7 +398,7 @@ export default function AdminEntitiesPage() {
                         }`}>
                           {e.status === 'active' ? 'Activo' : 'Suspendido'}
                         </span>
-                        <span className="text-xs text-slate-400">· {countryName(e.country_code)} · {e.department}</span>
+                        <span className="text-xs text-slate-400">{getOrganizationProfile(e.regional_settings).kindLabel} · {countryName(e.country_code)} · {e.department}</span>
                         {e.require_mfa_for_privileged && <span className="text-[10px] font-bold text-emerald-700">· MFA</span>}
                       </div>
                     </div>
@@ -391,7 +411,7 @@ export default function AdminEntitiesPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Users size={14} className="text-slate-400" />
-                      <span className="text-sm font-medium text-slate-600">{e.families_per_municipality} Fam/Mun</span>
+                      <span className="text-sm font-medium text-slate-600">{e.families_per_municipality} {getOrganizationProfile(e.regional_settings).unitPlural}/zona</span>
                     </div>
                     <div className="flex items-center gap-2 col-span-2">
                       <Calendar size={14} className="text-slate-400" />
@@ -430,60 +450,61 @@ export default function AdminEntitiesPage() {
       )}
 
       {/* Create Entity Modal */}
-      <AnimatePresence>
-        {showForm && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto"
-            onClick={(e) => { if (e.target === e.currentTarget) setShowForm(false) }}
-          >
-            <motion.div
-              initial={{ scale: 0.9, y: 20, opacity: 0 }}
-              animate={{ scale: 1, y: 0, opacity: 1 }}
-              exit={{ scale: 0.9, y: 20, opacity: 0 }}
-              className="bg-white rounded-[32px] w-full max-w-3xl shadow-2xl relative overflow-hidden"
+      <Dialog open={showForm} onOpenChange={open => { if (!saving) setShowForm(open) }}>
+            <DialogContent
+              onEscapeKeyDown={event => { if (saving) event.preventDefault() }}
+              onPointerDownOutside={event => { if (saving) event.preventDefault() }}
+              className="bg-white rounded-2xl sm:rounded-[32px] w-[calc(100%-1rem)] max-w-3xl max-h-[92dvh] overflow-y-auto shadow-2xl p-0 gap-0 [&>button]:hidden"
             >
               <div className="absolute top-0 left-0 right-0 h-1.5" style={{ background: `linear-gradient(90deg, ${COLORS.primary}, ${COLORS.secondary})` }} />
 
-              <div className="px-8 py-6 flex items-center justify-between border-b border-slate-50">
+              <div className="sticky top-0 z-10 bg-white px-5 sm:px-8 py-6 flex items-center justify-between gap-3 border-b border-slate-100">
                 <div>
-                  <h2 className="font-bold text-2xl text-slate-900">Nueva Operación</h2>
-                  <p className="text-sm text-slate-500">Registra una entidad territorial y su configuración base</p>
+                  <DialogTitle className="font-bold text-2xl text-slate-900">Nueva operación</DialogTitle>
+                  <DialogDescription className="text-sm text-slate-500">Configura el tipo de organización, su cobertura y su equipo responsable</DialogDescription>
                 </div>
-                <button onClick={() => setShowForm(false)} className="p-2.5 hover:bg-slate-100 rounded-2xl transition-colors">
+                <button aria-label="Cerrar nueva operación" disabled={saving} onClick={() => setShowForm(false)} className="p-3 hover:bg-slate-100 rounded-2xl transition-colors">
                   <X size={20} className="text-slate-400" />
                 </button>
               </div>
 
-              <div className="p-8">
+              <div className="p-5 sm:p-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="md:col-span-2 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <h3 className="font-bold text-slate-900">Perfil de la operación</h3>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">Una empresa puede organizar clientes, establecimientos y visitas por zonas comerciales; no necesita depender de un solo municipio.</p>
+                    <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                      <label className="text-sm font-semibold">Tipo de organización<select disabled={demoMode} value={form.entity_kind} onChange={event => selectOrganization(event.target.value as EntityKind)} className="mt-2 min-h-12 w-full rounded-xl border border-slate-300 bg-white p-3 text-sm">{ENTITY_KIND_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
+                      <label className="text-sm font-semibold">Sector de actividad<select disabled={demoMode} value={form.organization_sector} onChange={event => setForm(current => ({...current, organization_sector:event.target.value as OrganizationSector}))} className="mt-2 min-h-12 w-full rounded-xl border border-slate-300 bg-white p-3 text-sm">{ORGANIZATION_SECTOR_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
+                      <label className="text-sm font-semibold">Unidad de registro<select disabled={demoMode} value={form.capture_unit} onChange={event => setForm(current => ({...current, capture_unit:event.target.value as CaptureUnit}))} className="mt-2 min-h-12 w-full rounded-xl border border-slate-300 bg-white p-3 text-sm">{CAPTURE_UNIT_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
+                      <label className="text-sm font-semibold">Organización de la cobertura<select disabled={demoMode} value={form.coverage_mode} onChange={event => setForm(current => ({...current, coverage_mode:event.target.value as CoverageMode,department_id:'',department_name:'',municipalities:[],manual_municipalities:''}))} className="mt-2 min-h-12 w-full rounded-xl border border-slate-300 bg-white p-3 text-sm"><option value="administrative">Divisiones administrativas del país</option><option value="operational_zones">Zonas de operación o cobertura nacional</option></select></label>
+                    </div>
+                  </div>
                   {/* Basic Info Section */}
                   <div className="md:col-span-2 flex items-center gap-2 mb-2">
                     <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">1</span>
-                    <h4 className="font-bold text-slate-800">{demoMode ? 'Alcaldía demo privada · 5 cuentas, 2 formularios y 240 respuestas' : 'Información del Contratante'}</h4>
+                    <h4 className="font-bold text-slate-800">{demoMode ? 'Alcaldía demo privada · 5 cuentas, 2 formularios y 240 respuestas' : 'Información de la organización'}</h4>
                   </div>
                   
                   <div className="md:col-span-2">
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Nombre de la Entidad Territorial *</label>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Nombre de la organización *</label>
                     <div className="relative">
                       <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                       <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                        placeholder="Ej: Alcaldía Mayor de Cartagena"
+                        placeholder="Ej: Empresa de distribución o Alcaldía de Cartagena"
                         className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner" />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">NIT / Identificación</label>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">NIT, RUC o identificación fiscal</label>
                     <input value={form.nit} onChange={e => setForm(f => ({ ...f, nit: e.target.value }))}
                       placeholder="890000XXX-1"
                       className="w-full px-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner" />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Número de Contrato *</label>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Código de contrato o proyecto *</label>
                     <input value={form.contract_number} onChange={e => setForm(f => ({ ...f, contract_number: e.target.value }))}
                       placeholder="CONTR-2025-001"
                       className="w-full px-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner" />
@@ -513,9 +534,9 @@ export default function AdminEntitiesPage() {
 
                   <div>
                     <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">
-                      {countryConfig(form.country_code).adminLevel1Label} *
+                      {form.coverage_mode === 'operational_zones' ? 'Región o cobertura comercial' : countryConfig(form.country_code).adminLevel1Label} *
                     </label>
-                    {form.country_code === 'CO' ? (
+                    {form.coverage_mode === 'administrative' && form.country_code === 'CO' ? (
                       <div className="relative">
                         <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <select
@@ -531,7 +552,7 @@ export default function AdminEntitiesPage() {
                       <input
                         value={form.department_name}
                         onChange={event => setForm(current => ({ ...current, department_name: event.target.value }))}
-                        placeholder={`Nombre de ${countryConfig(form.country_code).adminLevel1Label.toLowerCase()}`}
+                        placeholder={form.coverage_mode === 'operational_zones' ? 'Ej: Nacional, Caribe o Región centro' : `Nombre de ${countryConfig(form.country_code).adminLevel1Label.toLowerCase()}`}
                         className="w-full px-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner"
                       />
                     )}
@@ -546,7 +567,7 @@ export default function AdminEntitiesPage() {
                     <p className="self-center text-xs leading-5 text-slate-500">Personaliza la operación territorial. Los límites oficiales se cargan como capas GeoJSON desde el mapa; el centro no reemplaza la cartografía local.</p>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Meta por territorio</label>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Meta por territorio ({getOrganizationProfile(form).unitPlural})</label>
                     <input type="number" value={form.families_per_municipality} onChange={e => setForm(f => ({ ...f, families_per_municipality: +e.target.value }))}
                       className="w-full px-4 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all shadow-inner" />
                   </div>
@@ -585,11 +606,11 @@ export default function AdminEntitiesPage() {
                   <div className="md:col-span-2">
                     <div className="flex items-center justify-between mb-2">
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">
-                        {countryConfig(form.country_code).adminLevel2Label} de operación
+                        {form.coverage_mode === 'operational_zones' ? 'Zonas comerciales o de operación' : countryConfig(form.country_code).adminLevel2Label + ' de operación'}
                       </label>
-                      {!demoMode && form.country_code === 'CO' && <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">{form.municipalities.length} Seleccionados</span>}
+                      {!demoMode && form.coverage_mode === 'administrative' && form.country_code === 'CO' && <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">{form.municipalities.length} Seleccionados</span>}
                     </div>
-                    {demoMode ? <p className="rounded-xl bg-blue-50 p-4 text-sm text-blue-950">La demo crea seis sectores ficticios: Centro, La Esperanza, Los Cedros, El Progreso, Ribera y Zona rural. Sus capas y capturas se ubican alrededor del centro del mapa configurado. No representan límites oficiales.</p> : form.country_code === 'CO' ? <>
+                    {demoMode ? <p className="rounded-xl bg-blue-50 p-4 text-sm text-blue-950">La demo crea seis sectores ficticios: Centro, La Esperanza, Los Cedros, El Progreso, Ribera y Zona rural. Sus capas y capturas se ubican alrededor del centro del mapa configurado. No representan límites oficiales.</p> : form.coverage_mode === 'administrative' && form.country_code === 'CO' ? <>
                       <div className="relative mb-3">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                         <input value={munSearch} onChange={event => setMunSearch(event.target.value)} placeholder="Filtrar municipios..." className="w-full pl-11 pr-4 py-3 bg-slate-50 border-none rounded-2xl text-xs font-medium focus:ring-2 focus:ring-blue-500/10 focus:bg-white transition-all" />
@@ -603,7 +624,7 @@ export default function AdminEntitiesPage() {
                       <textarea
                         value={form.manual_municipalities}
                         onChange={event => setForm(current => ({ ...current, manual_municipalities: event.target.value }))}
-                        placeholder={`Escribe ${countryConfig(form.country_code).adminLevel2Label.toLowerCase()} separados por coma o una línea por cada uno`}
+                        placeholder={form.coverage_mode === 'operational_zones' ? 'Ej: Región Caribe; Región Andina; Clientes industriales' : `Escribe ${countryConfig(form.country_code).adminLevel2Label.toLowerCase()} separados por punto y coma o una línea por cada uno`}
                         className="min-h-32 w-full bg-slate-50 px-4 py-3 text-sm font-medium shadow-inner outline-none focus:ring-2 focus:ring-blue-500/20"
                       />
                     )}
@@ -663,7 +684,7 @@ export default function AdminEntitiesPage() {
                 </div>
 
                 <div className="flex gap-4 mt-10">
-                  <button onClick={() => setShowForm(false)} className="flex-1 py-4 text-slate-500 font-bold hover:bg-slate-50 rounded-[20px] transition-all">
+                  <button disabled={saving} onClick={() => setShowForm(false)} className="flex-1 py-4 text-slate-500 font-bold hover:bg-slate-50 rounded-[20px] transition-all">
                     Cancelar
                   </button>
                   <button onClick={handleSave} disabled={saving}
@@ -673,10 +694,8 @@ export default function AdminEntitiesPage() {
                   </button>
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </DialogContent>
+      </Dialog>
 
       {/* Premium Toast */}
       <AnimatePresence>

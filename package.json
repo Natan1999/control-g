@@ -1,7 +1,7 @@
 {
   "name": "control-g",
   "private": true,
-  "version": "2.18.0",
+  "version": "2.19.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -29,7 +29,9 @@
     "db:backup:verify": "node scripts/db-backup-restore.mjs verify",
     "db:restore:drill": "node scripts/db-backup-restore.mjs restore-drill",
     "android:sync": "npm run build && cap sync android",
-    "android:apk": "bash scripts/build-apk.sh"
+    "android:apk": "bash scripts/build-apk.sh",
+    "android:release": "bash scripts/build-apk.sh release",
+    "android:release:local": "node scripts/build-android-release.mjs"
   },
   "dependencies": {
     "@capacitor/camera": "^6.1.3",

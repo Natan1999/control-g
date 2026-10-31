@@ -4,6 +4,8 @@ import { TopBar } from '@/components/layout/Sidebar'
 import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
 import { Query, ID } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
+import { useOrganizationProfile } from '@/hooks/useOrganizationProfile'
+import FormResponsesPage from '@/pages/shared/FormResponsesPage'
 
 interface ActivityCard {
   $id: string
@@ -40,6 +42,12 @@ function Toast({ message, type, onClose }: { message: string; type: 'success' | 
 }
 
 export default function ApoyoReviewPage() {
+  const operation = useOrganizationProfile()
+  if (operation.loading) return <p role="status" className="p-6">Cargando operación…</p>
+  return operation.unit === 'family' ? <HouseholdReview /> : <FormResponsesPage />
+}
+
+function HouseholdReview() {
   const { user } = useAuthStore()
   const [activities, setActivities] = useState<ActivityCard[]>([])
   const [loading, setLoading] = useState(true)

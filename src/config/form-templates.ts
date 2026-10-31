@@ -50,6 +50,105 @@ const consentPage = (prefix: string): FormPage => ({
 
 export const FORM_TEMPLATES: ControlGFormTemplate[] = [
   {
+    id: 'necesidades-comerciales',
+    title: 'Caracterización de clientes y necesidades de productos',
+    description: 'Visitas a estaciones, comercios y empresas: segmento, productos de interés, consumo estimado y siguiente acción. Sin crear familias ni pedidos vinculantes.',
+    category: 'Operación comercial', countries: ['LATAM'],
+    recommendedFor: 'Distribuidores de combustibles, lubricantes, alimentos y consumo masivo', type: 'ex_ante',
+    pages: [
+      { id: 'com_establecimiento', title: 'Establecimiento y cobertura', description: 'Usa un código de tu catálogo. No registres documentos ni datos personales innecesarios.', fields: [
+        field('com_code', 'text', 'Código interno del cliente o establecimiento', true),
+        field('com_zone', 'text', 'Zona comercial o territorio asignado', true),
+        field('com_segment', 'select', 'Tipo de establecimiento', true, [
+          { label: 'Estación de servicio', value: 'estacion' }, { label: 'Cliente industrial', value: 'industria' },
+          { label: 'Empresa de transporte', value: 'transporte' }, { label: 'Tienda o comercio', value: 'comercio' },
+          { label: 'Distribuidor', value: 'distribuidor' }, { label: 'Otro', value: 'otro' },
+        ]),
+        field('com_gps', 'gps', 'Ubicación de la visita (opcional)'),
+      ] },
+      { id: 'com_needs', title: 'Productos y necesidades', description: 'Las cantidades son estimaciones declaradas, no órdenes de compra. Adapta el catálogo y las unidades antes de publicar.', fields: [
+        field('com_products', 'multi_select', 'Productos de interés', true, [
+          { label: 'Combustibles', value: 'combustibles' }, { label: 'Lubricantes', value: 'lubricantes' },
+          { label: 'Alimentos y bebidas', value: 'alimentos' }, { label: 'Otros productos', value: 'otros' },
+          { label: 'Sin interés por ahora', value: 'sin_interes' },
+        ]),
+        { ...field('com_monthly_volume', 'number', 'Consumo mensual estimado (si lo conoce)'), validationRules: { min: 0 } },
+        field('com_volume_unit', 'select', 'Unidad del consumo mensual estimado', false, [
+          { label: 'Galones', value: 'galones' }, { label: 'Litros', value: 'litros' },
+          { label: 'Kilogramos', value: 'kg' }, { label: 'Unidades', value: 'unidades' }, { label: 'Cajas', value: 'cajas' },
+        ]),
+        field('com_frequency', 'radio', 'Frecuencia habitual de compra', true, [
+          { label: 'Diaria', value: 'diaria' }, { label: 'Semanal', value: 'semanal' },
+          { label: 'Quincenal', value: 'quincenal' }, { label: 'Mensual', value: 'mensual' }, { label: 'Ocasional o no informa', value: 'ocasional' },
+        ]),
+        field('com_needs_text', 'longtext', 'Necesidades detectadas y condiciones de atención'),
+      ] },
+      { id: 'com_followup', title: 'Resultado y seguimiento', fields: [
+        field('com_priority', 'radio', 'Prioridad de seguimiento comercial', true, [
+          { label: 'Alta', value: 'alta' }, { label: 'Media', value: 'media' }, { label: 'Baja', value: 'baja' },
+        ]),
+        field('com_next_action', 'select', 'Próxima acción', true, [
+          { label: 'Preparar cotización', value: 'cotizacion' }, { label: 'Enviar información', value: 'informacion' },
+          { label: 'Agendar nueva visita', value: 'visita' }, { label: 'Revisión técnica', value: 'tecnica' }, { label: 'Sin seguimiento', value: 'ninguna' },
+        ]),
+        field('com_next_date', 'date', 'Fecha sugerida de seguimiento'),
+        { ...field('com_photo', 'photo', 'Foto autorizada del entorno (opcional)'), sensitive: true, sensitiveJustification: 'Puede mostrar instalaciones privadas o personas. Capturar solo con autorización y sin datos identificativos.' },
+      ] },
+    ],
+  },
+  {
+    id: 'visita-comercial', title: 'Registro de visita comercial',
+    description: 'Instrumento breve para documentar visitas, hallazgos, evidencias autorizadas y compromisos de seguimiento. Compatible con captura offline.',
+    category: 'Operación comercial', countries: ['LATAM'], recommendedFor: 'Equipos comerciales, preventistas y supervisores de campo', type: 'encounter_1',
+    pages: [{ id: 'visit_context', title: 'La visita', fields: [
+      field('visit_code', 'text', 'Código del establecimiento o cliente', true),
+      field('visit_zone', 'text', 'Zona de operación', true),
+      field('visit_date', 'date', 'Fecha de la visita', true),
+      field('visit_reason', 'select', 'Motivo de la visita', true, [
+        { label: 'Prospección', value: 'prospeccion' }, { label: 'Seguimiento', value: 'seguimiento' },
+        { label: 'Necesidades de productos', value: 'necesidades' }, { label: 'Atención a solicitud', value: 'solicitud' },
+      ]),
+      field('visit_result', 'radio', 'Resultado', true, [
+        { label: 'Atendida', value: 'atendida' }, { label: 'Responsable no disponible', value: 'no_disponible' },
+        { label: 'Establecimiento cerrado', value: 'cerrado' }, { label: 'Reprogramar', value: 'reprogramar' },
+      ]),
+    ] }, { id: 'visit_close', title: 'Hallazgos y siguiente paso', fields: [
+      field('visit_findings', 'longtext', 'Hallazgos y necesidades'),
+      field('visit_action', 'longtext', 'Acción de seguimiento propuesta'),
+      field('visit_followup', 'date', 'Próximo seguimiento'),
+      field('visit_gps', 'gps', 'Ubicación GPS (opcional)'),
+      { ...field('visit_photo', 'photo', 'Foto autorizada (opcional)'), sensitive: true, sensitiveJustification: 'Evidencia privada de visita; requiere autorización y acceso restringido.' },
+    ] }],
+  },
+  {
+    id: 'servicios-publicos-territorial', title: 'Acceso a servicios públicos por zona',
+    description: 'Diagnóstico de agua, energía, saneamiento y residuos, sin exigir identificación personal ni señal de GPS. Adapta barrios, localidades y lenguaje al país.',
+    category: 'Servicios públicos', countries: ['LATAM'], recommendedFor: 'Entidades públicas, empresas de servicios y organizaciones comunitarias', type: 'ex_ante',
+    pages: [{ id: 'svc_context', title: 'Territorio y participación', fields: [
+      field('svc_zone', 'text', 'Barrio, comunidad o zona de operación', true),
+      field('svc_participation', 'radio', '¿Acepta participar voluntariamente en este diagnóstico anónimo?', true, yesNo.slice(0, 2)),
+      field('svc_gps', 'gps', 'Ubicación GPS autorizada (opcional)'),
+    ] }, { id: 'svc_access', title: 'Condiciones de los servicios', fields: [
+      field('svc_water', 'select', 'Fuente principal de agua', true, [
+        { label: 'Acueducto', value: 'acueducto' }, { label: 'Pozo o fuente comunitaria', value: 'pozo' },
+        { label: 'Abastecimiento móvil', value: 'movil' }, { label: 'Otra fuente', value: 'otra' }, { label: 'No informa', value: 'no_informa' },
+      ]),
+      field('svc_energy', 'radio', 'Disponibilidad de energía eléctrica', true, [
+        { label: 'Regular', value: 'regular' }, { label: 'Intermitente', value: 'intermitente' }, { label: 'Sin acceso', value: 'sin_acceso' }, { label: 'No informa', value: 'no_informa' },
+      ]),
+      field('svc_sanitation', 'select', 'Solución principal de saneamiento', true, [
+        { label: 'Alcantarillado', value: 'alcantarillado' }, { label: 'Sistema séptico', value: 'septico' },
+        { label: 'Otra solución', value: 'otra' }, { label: 'Sin solución', value: 'sin_solucion' }, { label: 'No informa', value: 'no_informa' },
+      ]),
+      field('svc_waste', 'radio', '¿Cuenta con recolección regular de residuos?', true, yesNo),
+      field('svc_priority', 'select', 'Necesidad principal reportada', true, [
+        { label: 'Agua', value: 'agua' }, { label: 'Energía', value: 'energia' }, { label: 'Saneamiento', value: 'saneamiento' },
+        { label: 'Residuos', value: 'residuos' }, { label: 'Ninguna o no informa', value: 'ninguna' },
+      ]),
+      field('svc_notes', 'longtext', 'Observaciones sin datos personales'),
+    ] }],
+  },
+  {
     id: 'demografica-socioeconomica',
     title: 'Caracterización demográfica y socioeconómica',
     description: 'Perfil del hogar, educación, ocupación, ingresos, vivienda y acceso a servicios.',

@@ -6,6 +6,9 @@ import { databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
 import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import type { ProfessionalProgress } from '@/types'
+import { useOrganizationProfile } from '@/hooks/useOrganizationProfile'
+import AnalyticsPage from '@/pages/shared/AnalyticsPage'
+import { Link } from 'react-router-dom'
 
 interface PendingActivity {
   $id: string
@@ -26,6 +29,16 @@ const activityTypeLabel: Record<string, string> = {
 }
 
 export default function ApoyoDashboard() {
+  const operation = useOrganizationProfile()
+  if (operation.loading) return <p role="status" className="p-6">Cargando operación…</p>
+  if (operation.unit !== 'family') return <>
+    <div className="flex flex-wrap gap-3 p-4"><Link className="inline-flex min-h-11 items-center rounded-xl bg-[#173B4C] px-4 text-sm font-bold text-white" to="/apoyo/responses">Revisar formularios recibidos</Link><Link className="inline-flex min-h-11 items-center rounded-xl border px-4 text-sm font-bold" to="/apoyo/observations">Observaciones al equipo</Link></div>
+    <AnalyticsPage />
+  </>
+  return <HouseholdSupportDashboard />
+}
+
+function HouseholdSupportDashboard() {
   const { user } = useAuthStore()
   const [totalFamilies, setTotalFamilies] = useState(0)
   const [completedFamilies, setCompletedFamilies] = useState(0)

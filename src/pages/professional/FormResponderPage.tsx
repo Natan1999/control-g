@@ -28,12 +28,14 @@ const FormResponderPage: React.FC = () => {
   const [loadError, setLoadError] = useState('')
   const [captureLocation, setCaptureLocation] = useState(true)
   const draftLocalId = useRef<string>(crypto.randomUUID())
+  const assignedTerritoryId = useRef<string | null>(null)
 
   useEffect(() => {
     const loadForm = async () => {
       if (!formId) return
       setLoading(true)
       setLoadError('')
+      assignedTerritoryId.current = null
 
       try {
         const cachedAssignments = getCachedFormAssignments(user?.entityId, user?.id)
@@ -65,6 +67,7 @@ const FormResponderPage: React.FC = () => {
         if (!selectedAssignment) {
           throw new Error('Este formulario no está asignado a tu perfil. Solicita la asignación a coordinación.')
         }
+        assignedTerritoryId.current = selectedAssignment.territory_id || null
 
         if (user?.id) {
           const responses = await localDB.formResponses
@@ -137,6 +140,7 @@ const FormResponderPage: React.FC = () => {
       entityId: user.entityId || formDef.entityId,
       professionalId: user.id,
       familyId: familyId || null,
+      municipalityId: assignedTerritoryId.current,
       answers,
       status: 'draft',
       createdAt: existing?.createdAt || now,
@@ -193,6 +197,7 @@ const FormResponderPage: React.FC = () => {
         entityId: user.entityId || formDef.entityId,
         professionalId: user.id,
         familyId: familyId || null,
+        municipalityId: assignedTerritoryId.current,
         formVersion: formDef.version,
         geo,
         answers: {

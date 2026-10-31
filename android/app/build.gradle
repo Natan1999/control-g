@@ -1,5 +1,11 @@
 apply plugin: 'com.android.application'
 
+def releaseStore = System.getenv('CONTROL_G_ANDROID_KEYSTORE')
+def releaseAlias = System.getenv('CONTROL_G_ANDROID_KEY_ALIAS')
+def releaseStorePassword = System.getenv('CONTROL_G_ANDROID_STORE_PASSWORD')
+def releaseKeyPassword = System.getenv('CONTROL_G_ANDROID_KEY_PASSWORD')
+def releaseSigningReady = [releaseStore, releaseAlias, releaseStorePassword, releaseKeyPassword].every { it }
+
 android {
     namespace "com.drandigital.controlg"
     compileSdk rootProject.ext.compileSdkVersion
@@ -7,8 +13,8 @@ android {
         applicationId "com.drandigital.controlg"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 22
-        versionName "2.18.0"
+        versionCode 23
+        versionName "2.19.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,11 +22,29 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        if (releaseSigningReady) {
+            release {
+                storeFile file(releaseStore)
+                storePassword releaseStorePassword
+                keyAlias releaseAlias
+                keyPassword releaseKeyPassword
+            }
+        }
+    }
     buildTypes {
         release {
+            if (releaseSigningReady) signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+}
+
+// Never produce an unsigned store deliverable or use the debug key for release.
+gradle.taskGraph.whenReady { graph ->
+    if (graph.allTasks.any { it.project == project && it.name in ['assembleRelease', 'bundleRelease', 'packageRelease'] } && !releaseSigningReady) {
+        throw new GradleException('Falta configurar la firma de publicación de Control G. No se generó un release sin firma.')
     }
 }
 

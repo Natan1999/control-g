@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { Home, Users, Camera, User, Cloud, CloudOff, Loader2, BarChart2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useSyncStore } from '@/stores/syncStore'
+import { useOrganizationProfile } from '@/hooks/useOrganizationProfile'
 
 export function SyncStatusBar() {
   const { status, pendingCount } = useSyncStore()
@@ -49,10 +50,12 @@ const navItems = [
 ]
 
 export function BottomNav() {
+  const operation = useOrganizationProfile()
+  const items = navItems.filter(item => operation.unit === 'family' || item.to !== '/field/families')
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-border">
       <div className="flex">
-        {navItems.map((item, i) => (
+        {items.map(item => (
           <NavLink
             key={item.to}
             to={item.to}
@@ -67,7 +70,7 @@ export function BottomNav() {
             {({ isActive }) => (
               <>
                 {/* Central capture button is bigger */}
-                {i === 2 ? (
+                {item.to === '/field/capture' ? (
                   <span className={cn(
                     'w-12 h-12 rounded-full flex items-center justify-center mb-0.5 transition-all',
                     isActive ? 'bg-[#1B3A4B] text-white scale-110' : 'bg-[#1B3A4B]/10 text-[#1B3A4B]',

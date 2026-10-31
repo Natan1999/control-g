@@ -9,6 +9,7 @@ import { getDepartments, getMunicipalities, Department, Municipality } from '@/s
 import { Search, Loader2, Globe } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { motion } from 'framer-motion'
+import { useOrganizationProfile } from '@/hooks/useOrganizationProfile'
 
 // ─── Colombian departments ────────────────────────────────────────────────────
 
@@ -34,6 +35,9 @@ const EMPTY_MUN: MunForm = { municipality_name: '', department: 'Bolívar', fami
 
 export default function MunicipalitiesPage() {
   const { user } = useAuthStore()
+  const operation = useOrganizationProfile()
+  const households = operation.unit === 'family'
+  const colombianAdministrative = operation.countryCode === 'CO' && operation.coverageMode === 'administrative'
   const [municipalities, setMunicipalities]   = useState<any[]>([])
   const [professionals, setProfessionals]     = useState<any[]>([])
   const [assignments, setAssignments]         = useState<any[]>([])
@@ -82,7 +86,7 @@ export default function MunicipalitiesPage() {
         databases.listDocuments(DATABASE_ID, COLLECTION_IDS.PROFESSIONAL_ASSIGNMENTS, [
           Query.equal('entity_id', user!.entityId!), Query.limit(500),
         ]),
-        databases.listDocuments(DATABASE_ID, COLLECTION_IDS.FAMILIES, [
+        databases.listDocuments(DATABASE_ID, households ? COLLECTION_IDS.FAMILIES : COLLECTION_IDS.FORM_RESPONSES, [
           Query.equal('entity_id', user!.entityId!), Query.limit(500),
         ]),
       ])
@@ -99,18 +103,19 @@ export default function MunicipalitiesPage() {
     } finally {
       setLoading(false)
     }
-  }, [user])
+  }, [user, households])
 
   useEffect(() => { if (user?.entityId) loadAll() }, [user?.entityId, loadAll])
 
   // Load DANE departments on mount
   useEffect(() => {
+    if (!colombianAdministrative) return
     const fetchDepts = async () => {
       const depts = await getDepartments()
       setDaneDepts(depts)
     }
     fetchDepts()
-  }, [])
+  }, [colombianAdministrative])
 
   // Load DANE municipalities when dept changes
   useEffect(() => {
@@ -130,7 +135,7 @@ export default function MunicipalitiesPage() {
   // ─── Municipality CRUD ──────────────────────────────────────────────────────
 
   function openAddMun() {
-    setMunForm(EMPTY_MUN)
+    setMunForm({ ...EMPTY_MUN, department: operation.region || (colombianAdministrative ? 'Bolívar' : '') })
     setMunError('')
     setMunModal({ open: true, editing: null })
   }
@@ -148,11 +153,11 @@ export default function MunicipalitiesPage() {
 
   async function handleSaveMun() {
     if (!munForm.municipality_name.trim()) {
-      setMunError('El nombre del municipio es obligatorio.')
+      setMunError('El nombre del territorio o zona es obligatorio.')
       return
     }
     if (munForm.families_target < 1) {
-      setMunError('La meta de familias debe ser al menos 1.')
+      setMunError('La meta territorial debe ser al menos 1.')
       return
     }
     setMunSaving(true)
@@ -266,14 +271,14 @@ export default function MunicipalitiesPage() {
   return (
     <PageWrapper>
       <TopBar
-        title="Municipios"
-        subtitle={`${municipalities.length} municipio${municipalities.length !== 1 ? 's' : ''} configurado${municipalities.length !== 1 ? 's' : ''}`}
+        title={colombianAdministrative ? 'Municipios' : 'Territorios y zonas de operación'}
+        subtitle={`${municipalities.length} territorios configurados · ${households ? 'hogares y familias' : 'capturas de campo'}`}
         actions={
           <button
             onClick={openAddMun}
             className="flex items-center gap-2 bg-[#1B3A4B] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#2a5570] transition-colors"
           >
-            <Plus size={16} /> Agregar municipio
+            <Plus size={16} /> Agregar territorio
           </button>
         }
       />
@@ -333,7 +338,7 @@ export default function MunicipalitiesPage() {
                   <div>
                     <div className="flex justify-between text-xs mb-1.5">
                       <span className="text-muted-foreground flex items-center gap-1">
-                        <Users size={12} /> Familias registradas
+                        <Users size={12} /> {households ? 'Familias registradas' : 'Capturas recibidas'}
                       </span>
                       <span className="font-semibold text-foreground">{familiesRegistered} / {familiesTarget} <span className="text-muted-foreground font-normal">({pct}%)</span></span>
                     </div>
@@ -400,7 +405,7 @@ export default function MunicipalitiesPage() {
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-base font-bold">{munModal.editing ? 'Editar municipio' : 'Agregar municipio'}</h2>
+              <h2 className="text-base font-bold">{munModal.editing ? 'Editar territorio' : 'Agregar territorio'}</h2>
               <button onClick={() => setMunModal({ open: false, editing: null })} className="text-muted-foreground hover:text-foreground">
                 <X size={18} />
               </button>
@@ -410,11 +415,11 @@ export default function MunicipalitiesPage() {
               {/* Municipality name — free text */}
               <div>
                 <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">
-                  Nombre del municipio <span className="text-red-500">*</span>
+                  Nombre del territorio o zona <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  placeholder="Ej: Altos del Rosario, Carmen de Bolívar..."
+                  placeholder={colombianAdministrative ? 'Ej: Cartagena de Indias' : 'Ej: Región Caribe o Zona industrial'}
                   className="w-full px-4 py-2.5 rounded-xl border border-input text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A4B]/30"
                   value={munForm.municipality_name}
                   onChange={e => setMunForm(f => ({ ...f, municipality_name: e.target.value }))}
@@ -425,22 +430,22 @@ export default function MunicipalitiesPage() {
               {/* Department */}
               <div>
                 <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">
-                  Departamento <span className="text-red-500">*</span>
+                  Región o división administrativa <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <select
+                  {colombianAdministrative ? <select
                     value={munForm.department}
                     onChange={e => setMunForm(f => ({ ...f, department: e.target.value }))}
                     className="w-full appearance-none px-4 py-2.5 rounded-xl border border-input text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A4B]/30 pr-9 bg-white"
                   >
                     {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
-                  </select>
-                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                  </select> : <input value={munForm.department} onChange={event => setMunForm(current => ({ ...current, department: event.target.value }))} placeholder="Región, estado, departamento o Nacional" className="min-h-11 w-full rounded-xl border border-input px-4 py-2 text-sm" />}
+                  {colombianAdministrative && <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />}
                 </div>
               </div>
 
               {/* DANE DIVIPOLA Lookup */}
-              <div className="pt-2">
+              {colombianAdministrative && <div className="pt-2">
                 <button
                   type="button"
                   onClick={() => setShowDaneLookup(!showDaneLookup)}
@@ -514,12 +519,12 @@ export default function MunicipalitiesPage() {
                     <span className="text-[10px] font-bold text-emerald-700">Código DANE vinculado: <span className="font-mono">{munForm.dane_code}</span></span>
                   </div>
                 )}
-              </div>
+              </div>}
 
               {/* Families target */}
               <div>
                 <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5">
-                  Meta de familias <span className="text-red-500">*</span>
+                  {households ? 'Meta de familias' : 'Meta de capturas'} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="number"
@@ -529,7 +534,7 @@ export default function MunicipalitiesPage() {
                   value={munForm.families_target}
                   onChange={e => setMunForm(f => ({ ...f, families_target: parseInt(e.target.value) || 1 }))}
                 />
-                <p className="text-xs text-muted-foreground mt-1">Número de familias que se deben atender en este municipio.</p>
+                <p className="text-xs text-muted-foreground mt-1">{households ? 'Número de familias que se deben atender en este territorio.' : 'Número de registros esperados en esta zona; no representa clientes únicos ni ventas.'}</p>
               </div>
 
               {munError && <p className="text-sm text-red-500">{munError}</p>}

@@ -7,6 +7,8 @@ import { Query } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
 import { getCachedFamilies } from '@/lib/sync-engine'
 import { useSyncStore } from '@/stores/syncStore'
+import { useOrganizationProfile } from '@/hooks/useOrganizationProfile'
+import { ProfessionalOperationsHome } from '@/components/shared/ProfessionalOperationsHome'
 
 interface FamilyDoc {
   $id: string
@@ -53,6 +55,12 @@ function getLastCompletedActivity(f: FamilyDoc): string | null {
 }
 
 export default function FieldHome() {
+  const operation = useOrganizationProfile()
+  if (operation.loading) return <p role="status" className="p-6">Cargando operación…</p>
+  return operation.unit === 'family' ? <HouseholdHome /> : <ProfessionalOperationsHome name={operation.name} />
+}
+
+function HouseholdHome() {
   const { user } = useAuthStore()
   const pendingSync = useSyncStore(state => state.pendingCount)
   const [families, setFamilies] = useState<FamilyDoc[]>([])

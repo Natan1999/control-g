@@ -33,3 +33,8 @@ Thumbs.db
 
 # Mobile Apps
 *.apk
+*.aab
+*.jks
+*.keystore
+keystore.properties
+.android-signing/
