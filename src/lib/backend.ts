@@ -182,7 +182,7 @@ function safeFilename(name: string) {
 }
 
 export const storage = {
-  async createFile(bucketId: string, fileId: string, file: File | Blob) {
+  async createFile(bucketId: string, fileId: string, file: File | Blob, expectedOwner?: { entityId: string; professionalId: string }) {
     const { data: authData } = await supabase.auth.getUser()
     if (!authData.user) throw new BackendError('Debes iniciar sesión para subir archivos.', 401)
     const { data: profile } = await supabase
@@ -190,6 +190,12 @@ export const storage = {
       .select('entity_id')
       .eq('user_id', authData.user.id)
       .single()
+    // A shared tablet can retain an outbox from another account. Never upload
+    // its bytes into the active user's storage namespace before the manifest
+    // or response RLS has a chance to reject the mismatched ownership.
+    if (expectedOwner && (expectedOwner.professionalId !== authData.user.id || expectedOwner.entityId !== profile?.entity_id)) {
+      throw new BackendError('Esta evidencia pertenece a otra cuenta u organización. Inicia sesión con su propietario para sincronizarla.', 403)
+    }
     const originalName = file instanceof File ? file.name : 'archivo.bin'
     const path = `${profile?.entity_id || 'global'}/${authData.user.id}/${fileId}/${safeFilename(originalName)}`
     const { data, error } = await supabase.storage.from(bucketId).upload(path, file, {

@@ -23,7 +23,7 @@ test('captura offline con foto y firma sobrevive reinicio, reintenta y llega una
   const values = new Map()
   const originalLocalStorage = globalThis.localStorage
   globalThis.localStorage = { getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value), removeItem: key => values.delete(key) }
-  class BackendError extends Error { constructor(code) { super(String(code)); this.code = code } }
+  class BackendError extends Error { constructor(message, code = message) { super(String(message)); this.code = code } }
   const tables = new Map(); const uploads = new Map(); const events = []
   let online = false, photoFails = true, acknowledgementLost = true, sequence = 0
   const store = { pendingCount: 0, status: 'offline', setStatus(value) { this.status = value }, setPendingCount(value) { this.pendingCount = value }, setSyncComplete() { this.status = 'synced'; this.pendingCount = 0 } }
@@ -35,7 +35,8 @@ test('captura offline con foto y firma sobrevive reinicio, reintenta y llega una
     BUCKET_IDS: { FIELD_PHOTOS: 'photos', SIGNATURES: 'signatures', FIELD_AUDIO: 'audio', EXPORTS: 'exports' },
     ID: { unique: () => `id-${++sequence}` }, Query: {},
     sha256Blob: async blob => createHash('sha256').update(Buffer.from(await blob.arrayBuffer())).digest('hex'),
-    storage: { createFile: async (bucket, id, file) => {
+    storage: { createFile: async (bucket, id, file, owner) => {
+      assert.deepEqual(owner, { entityId: 'tenant', professionalId: 'professional' })
       assert.equal(online, true); events.push(`upload:${id}`)
       if (photoFails && id === 'photo') { photoFails = false; throw new BackendError(503) }
       uploads.set(id, { bucket, bytes: await file.text() })
@@ -68,6 +69,9 @@ test('captura offline con foto y firma sobrevive reinicio, reintenta y llega una
       answers: { result: 'atendida', photo: { pendingMediaId: 'photo' }, signature: { pendingMediaId: 'signature' }, _metadata: { lat: null, lng: null, capturedAt: now } },
       status: 'completed', formVersion: 2, createdAt: now, updatedAt: now,
     }, ['photo','signature'].map(id => ({ id, activityLocalId: 'visit', answerFieldId: id, entityId: 'tenant', professionalId: 'professional', file: new Blob([`bytes:${id}`]), name: `${id}.png`, bucketId: id === 'photo' ? 'photos' : 'signatures', status: 'pending' })))
+    // Simulate an old outbox row: resolve its owner from the durable response,
+    // not from the active login, and restore audit metadata after the upload.
+    await localDB.mediaQueue.update('photo', { entityId: undefined, professionalId: undefined })
     localDB.close(); await localDB.open()
     const offline = await sync.processSyncQueue()
     assert.equal(offline.pendingCount, 3); assert.equal(events.length, 0)
@@ -85,6 +89,8 @@ test('captura offline con foto y firma sobrevive reinicio, reintenta y llega una
     assert.equal(tables.get('responses').size, 1, 'El reintento no duplica la visita')
     assert.equal((await localDB.formResponses.get('visit')).status, 'synced')
     assert.equal(uploads.size, 2)
+    assert.equal((await localDB.mediaQueue.get('photo')).professionalId, 'professional')
+    assert.equal(tables.get('evidence').size, 2)
     const received = [...tables.get('responses').values()][0]
     assert.equal(received.family_id, null); assert.equal(received.latitude, null); assert.equal(received.longitude, null)
     assert.equal(received.form_version, 2)

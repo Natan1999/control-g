@@ -128,14 +128,28 @@ async function syncMediaQueue(): Promise<string[]> {
           : media.bucketId === BUCKET_IDS.EXPORTS
             ? BUCKET_IDS.EXPORTS
             : BUCKET_IDS.FIELD_PHOTOS
-      const upload = await storage.createFile(bucket, media.id, media.file)
-      if (media.entityId && media.professionalId) {
+      // Recover ownership from a durable parent for pre-metadata outboxes.
+      // Never infer it from the currently logged-in user.
+      const parent = await localDB.formResponses.get(media.activityLocalId)
+      let legacyOwner: { entity_id?: string; professional_id?: string } = {}
+      if (!parent && (!media.entityId || !media.professionalId)) {
+        const activity = await localDB.activities.get(media.activityLocalId)
+        if (activity) legacyOwner = JSON.parse(activity.data)
+      }
+      const owner = {
+        entityId: media.entityId || parent?.entityId || legacyOwner.entity_id,
+        professionalId: media.professionalId || parent?.professionalId || legacyOwner.professional_id,
+      }
+      if (!owner.entityId || !owner.professionalId) throw new BackendError('No se pudo determinar el propietario de esta evidencia. Se conserva en el dispositivo para revisión.', 422)
+      if (parent && (parent.entityId !== owner.entityId || parent.professionalId !== owner.professionalId)) throw new BackendError('La evidencia no coincide con el propietario de su captura. Se conserva para revisión.', 422)
+      const upload = await storage.createFile(bucket, media.id, media.file, { entityId: owner.entityId, professionalId: owner.professionalId })
+      if (owner.entityId && owner.professionalId) {
         const checksum = media.sha256 || await sha256Blob(media.file)
         try {
           await databases.createDocument(DATABASE_ID, COLLECTION_IDS.EVIDENCE_FILES, media.id, {
-            entity_id: media.entityId,
+            entity_id: owner.entityId,
             local_id: media.id,
-            parent_type: media.parentType || 'other',
+            parent_type: media.parentType || (parent ? 'form_response' : 'other'),
             parent_local_id: media.activityLocalId,
             field_id: media.answerFieldId || null,
             bucket_id: bucket,
@@ -145,13 +159,13 @@ async function syncMediaQueue(): Promise<string[]> {
             size_bytes: media.file.size,
             sha256: checksum,
             captured_at: media.capturedAt || new Date().toISOString(),
-            created_by: media.professionalId,
+            created_by: owner.professionalId,
           })
         } catch (manifestError) {
           if (!isDuplicate(manifestError)) throw manifestError
         }
       }
-      await localDB.mediaQueue.update(media.id, { status: 'uploaded', remotePath: upload.$id })
+      await localDB.mediaQueue.update(media.id, { status: 'uploaded', remotePath: upload.$id, entityId: owner.entityId, professionalId: owner.professionalId })
     } catch (error) {
       const attempts = (media.retryCount || 0) + 1
       const message = errorMessage(error)
@@ -160,7 +174,8 @@ async function syncMediaQueue(): Promise<string[]> {
         status: 'pending',
         lastError: message,
       })
-      errors.push(`Evidencia ${media.name}: ${message}`)
+      // Original filenames can contain personal data from a previous account.
+      errors.push(`Evidencia pendiente: ${message}`)
     }
   }
   return errors
