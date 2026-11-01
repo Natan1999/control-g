@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { processSyncQueue, updateLocalCache } from '@/lib/sync-engine'
 import { updatePassword } from '@/lib/auth'
 import { validateSecurePassword } from '@/lib/password-policy'
+import { LegalLinks } from '@/components/legal/LegalLinks'
 
 export default function FieldProfilePage() {
   const { user, signOut } = useAuthStore()
@@ -183,6 +184,7 @@ export default function FieldProfilePage() {
         </div>
 
         {/* Logout */}
+        <div className="mx-4 mt-4 text-[#075e83]"><LegalLinks /></div>
         <div className="mx-4 mt-4 mb-2">
           <button
             onClick={handleLogout}

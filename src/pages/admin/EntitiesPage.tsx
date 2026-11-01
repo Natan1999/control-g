@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
-import { buildMunicipalProvisionBundle, generateDemoAccounts, type ProvisionAccount } from '@/lib/entity-provisioning'
+import { buildMunicipalProvisionBundle, buildReviewProvisionBundle, generateDemoAccounts, generateReviewAccounts, type ProvisionAccount } from '@/lib/entity-provisioning'
 import { Plus, Building2, X, Search, MapPin, Calendar, Users, Mail, Hash, Globe2, ShieldCheck } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TopBar } from '@/components/layout/Sidebar'
@@ -76,17 +76,36 @@ export default function AdminEntitiesPage() {
   const [countryProfiles, setCountryProfiles] = useState<any[]>([])
   const [savingPolicyId, setSavingPolicyId] = useState('')
   const [demoMode, setDemoMode] = useState(false)
+  const [reviewDemoMode, setReviewDemoMode] = useState(false)
   const [demoAccounts, setDemoAccounts] = useState<ProvisionAccount[]>([])
   const [createdAccounts, setCreatedAccounts] = useState<ProvisionAccount[]>([])
   const requestId = useRef(crypto.randomUUID())
 
   function prepareDemo() {
+    setReviewDemoMode(false)
     requestId.current = crypto.randomUUID()
     const accounts = generateDemoAccounts(requestId.current.slice(0,8))
     setDemoAccounts(accounts)
     setDemoMode(true)
     setCreatedAccounts([])
     setForm({ ...EMPTY_FORM, name: 'Alcaldía Villa Esperanza · DEMO', department_name: 'BOLÍVAR', department_id: '13', contract_number: `DEMO-${requestId.current.slice(0,8)}`, contract_object: 'Caracterización ficticia de juventud y servicios públicos', period_start: new Date().toISOString().slice(0,10), period_end: `${new Date().getFullYear()+1}-12-31`, coordinator_name: accounts[0].full_name, coordinator_email: accounts[0].email, coordinator_password: accounts[0].password, map_latitude:'10.36', map_longitude:'-75.42' })
+    setShowForm(true)
+  }
+
+  function prepareReviewDemo() {
+    requestId.current = crypto.randomUUID()
+    const accounts = generateReviewAccounts(requestId.current.slice(0,8))
+    setDemoAccounts(accounts)
+    setDemoMode(true)
+    setReviewDemoMode(true)
+    setCreatedAccounts([])
+    setForm({ ...EMPTY_FORM, entity_kind:'private_company', organization_sector:'other', capture_unit:'record', coverage_mode:'operational_zones',
+      name:'Control G · Revisión Play', department_name:'Zona ficticia de revisión', contract_number:`PLAY-${requestId.current.slice(0,8)}`,
+      contract_object:'Revisión técnica con cuentas y registros ficticios, sin acceso a clientes reales', operator_name:'DRAN DIGITAL S.A.S.',
+      period_start:new Date().toISOString().slice(0,10), period_end:`${new Date().getFullYear()+1}-12-31`,
+      coordinator_name:accounts[0].full_name, coordinator_email:accounts[0].email, coordinator_password:accounts[0].password,
+      map_latitude:'10.36', map_longitude:'-75.42', families_per_municipality:4, require_mfa_for_privileged:false,
+    })
     setShowForm(true)
   }
 
@@ -233,7 +252,7 @@ export default function AdminEntitiesPage() {
     setSaving(true)
     try {
       const center = customCenter ? { latitude: Number(form.map_latitude), longitude: Number(form.map_longitude) } : countryConfig(form.country_code).mapCenter
-      const demo = demoMode ? buildMunicipalProvisionBundle(center) : null
+      const demo = demoMode ? reviewDemoMode ? buildReviewProvisionBundle(demoAccounts.find(account => account.role === 'professional')?.key || '', center) : buildMunicipalProvisionBundle(center) : null
       const territories = demo ? demo.territories : form.coverage_mode === 'administrative' && form.country_code === 'CO' ? form.municipalities : parseOperationalZones(form.manual_municipalities)
       const territoryError = validateOperationTerritories(territories)
       if (territoryError) throw new Error(territoryError)
@@ -279,6 +298,7 @@ export default function AdminEntitiesPage() {
       setForm(EMPTY_FORM)
       setDemoAccounts([])
       setDemoMode(false)
+      setReviewDemoMode(false)
       loadEntities()
     } catch (err: any) {
       showToast('Error al guardar: ' + (err?.message ?? 'intenta de nuevo'), 'error')
@@ -344,8 +364,8 @@ export default function AdminEntitiesPage() {
         title="Organizaciones y operaciones"
         subtitle="Empresas privadas, entidades públicas y organizaciones de Latinoamérica"
         actions={
-          <div className="flex flex-wrap gap-3"><button type="button" onClick={prepareDemo} className="flex min-h-12 items-center rounded-2xl border border-slate-200 px-4 text-sm font-bold">Crear alcaldía demo privada</button><button
-            onClick={() => { setDemoMode(false); setDemoAccounts([]); setForm(EMPTY_FORM); requestId.current=crypto.randomUUID(); setShowForm(true) }}
+          <div className="flex flex-wrap gap-3"><button type="button" onClick={prepareReviewDemo} className="flex min-h-12 items-center rounded-2xl border border-slate-200 px-4 text-sm font-bold">Crear demo de revisión (2 cuentas)</button><button type="button" onClick={prepareDemo} className="flex min-h-12 items-center rounded-2xl border border-slate-200 px-4 text-sm font-bold">Crear alcaldía demo privada</button><button
+            onClick={() => { setDemoMode(false); setReviewDemoMode(false); setDemoAccounts([]); setForm(EMPTY_FORM); requestId.current=crypto.randomUUID(); setShowForm(true) }}
             className="flex items-center gap-2 px-6 py-3 text-white rounded-2xl text-sm font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all"
             style={{ background: COLORS.primary }}
           >
@@ -483,7 +503,7 @@ export default function AdminEntitiesPage() {
                   {/* Basic Info Section */}
                   <div className="md:col-span-2 flex items-center gap-2 mb-2">
                     <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">1</span>
-                    <h4 className="font-bold text-slate-800">{demoMode ? 'Alcaldía demo privada · 5 cuentas, 2 formularios y 240 respuestas' : 'Información de la organización'}</h4>
+                    <h4 className="font-bold text-slate-800">{reviewDemoMode ? 'Revisión Play · 2 cuentas, 2 formularios y 24 registros ficticios' : demoMode ? 'Alcaldía demo privada · 5 cuentas, 2 formularios y 240 respuestas' : 'Información de la organización'}</h4>
                   </div>
                   
                   <div className="md:col-span-2">

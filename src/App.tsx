@@ -15,6 +15,7 @@ import { MfaGate } from '@/components/auth/MfaGate'
 import { SkipLink } from '@/components/a11y/SkipLink'
 import { CORE_SEO_PAGES, getSeoPage } from '@/lib/marketing'
 import NotFoundPage from '@/pages/landing/NotFoundPage'
+import LegalPage from '@/pages/legal/LegalPage'
 
 import BlogIndexPage from '@/pages/blog/BlogIndexPage'
 import BlogPostPage from '@/pages/blog/BlogPostPage'
@@ -90,6 +91,7 @@ export default function App() {
   const [ready, setReady] = useState(false)
   const { pathname } = useLocation()
   const publicMarketingRoute = !Capacitor.isNativePlatform() && (Boolean(getSeoPage(pathname)) || /^\/blog(?:\/|$)/.test(pathname))
+  const publicLegalRoute = pathname === '/privacidad' || pathname === '/eliminar-cuenta'
 
   useSync()
 
@@ -97,7 +99,7 @@ export default function App() {
     restore().finally(() => setReady(true))
   }, [restore])
 
-  if (!ready && !publicMarketingRoute) {
+  if (!ready && !publicMarketingRoute && !publicLegalRoute) {
     return (
       <div className="min-h-screen flex items-center justify-center relative overflow-hidden"
            style={{ background: '#1B3A4B' }}>
@@ -127,6 +129,8 @@ export default function App() {
       <SkipLink />
       <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background text-sm font-semibold text-muted-foreground">Cargando Control G…</div>}>
       <Routes>
+      <Route path="/privacidad" element={<LegalPage document="privacidad" />} />
+      <Route path="/eliminar-cuenta" element={<LegalPage document="eliminar-cuenta" />} />
       <Route path="/login" element={user ? <Navigate to={defaultRoutes[user.role as UserRole]} replace /> : <LoginPage />} />
       <Route path="/recuperar-contrasena" element={<PasswordRecoveryPage mode="request" />} />
       <Route path="/demo" element={<Navigate to="/login" replace />} />

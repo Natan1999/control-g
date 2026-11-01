@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/authStore'
 import type { UserRole } from '@/types'
 import { Capacitor } from '@capacitor/core'
 import { PublicHeader } from '@/components/marketing/PublicHeader'
+import { LegalLinks } from '@/components/legal/LegalLinks'
 
 const LOGIN_WHATSAPP_MESSAGE = 'Hola, quiero conocer Control G para una operación de recolección de información en campo.'
 
@@ -150,7 +151,7 @@ export default function LoginPage() {
         </div>
 
         <div className="relative z-10 text-white/30 text-xs">
-          © 2026 DRAN Digital · NIT 901.359.114 · Gobernación de Bolívar
+          © 2026 DRAN DIGITAL S.A.S.
         </div>
       </motion.div>
 
@@ -273,6 +274,7 @@ export default function LoginPage() {
           <p className="text-center text-xs text-muted-foreground mt-8">
             ¿Problemas de acceso? Contacta al administrador de tu organización.
           </p>
+          <LegalLinks />
         </div>
       </motion.div>
       </main>

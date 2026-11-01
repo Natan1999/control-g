@@ -30,6 +30,8 @@ for (const file of files) {
   assert.ok(js.includes('openrouter') && js.includes('Google · Gemini'),'Faltan proveedores de IA en el paquete')
   assert.ok(js.includes('https://www.controlg.co'),'Falta el servidor de IA de producción')
   assert.ok(js.includes('Esta evidencia pertenece a otra cuenta'),'Falta la protección de propietario en la cola offline')
+  assert.ok(js.includes('eliminar-cuenta') && js.includes('Política de privacidad de Control G'),'Faltan los documentos y accesos de privacidad en el paquete')
+  assert.ok(js.includes('No está dirigido a menores de 13 años'),'Falta la declaración de audiencia confirmada')
   assert.doesNotMatch(js,/\bsk-(?:or-v1-|proj-)[A-Za-z0-9_-]{30,}\b/,'Se detectó una credencial privada de IA')
   for (const token of js.match(/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g) || []) {
     let claims

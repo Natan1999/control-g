@@ -129,6 +129,10 @@
       "handle": "filesystem"
     },
     {
+      "src": "^/(privacidad|eliminar-cuenta)/?$",
+      "dest": "/api/legal?document=$1"
+    },
+    {
       "src": "^/(login|recuperar-contrasena|restablecer-contrasena|admin|coord|apoyo|field)(?:/.*)?$",
       "dest": "/index.html"
     },

@@ -37,6 +37,7 @@ export default defineConfig({
         // not the offline SPA shell (which renders a misleading 404 or blank UI).
         navigateFallbackDenylist: [
           /^\/api(?:\/|$)/,
+          /^\/(?:privacidad|eliminar-cuenta)(?:\/|$)/,
           // New editorial URLs must use current SSR, not an older cached app
           // bundle whose versioned article catalog predates their publication.
           /^\/blog(?:\/|$)/,

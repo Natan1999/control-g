@@ -42,7 +42,7 @@ export function MarketingSeo() {
     document.querySelectorAll('meta[property^="article:"]').forEach(element => element.remove())
 
     if (!page && !isBlogIndex && !blogPost) {
-      document.title = pathname === '/login' ? 'Iniciar sesión | Control G' : 'Control G | Plataforma institucional'
+      document.title = pathname === '/privacidad' ? 'Política de privacidad de Control G' : pathname === '/eliminar-cuenta' ? 'Eliminar cuenta y datos de Control G' : pathname === '/login' ? 'Iniciar sesión | Control G' : 'Control G | Plataforma institucional'
       setMeta('meta[name="robots"]', { name: 'robots', content: 'noindex, nofollow, noarchive' })
       setCanonical(null)
       document.documentElement.lang = 'es-CO'

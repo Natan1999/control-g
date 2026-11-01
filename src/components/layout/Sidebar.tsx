@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, Building2, Users, MapPin, FileText,
@@ -131,6 +131,9 @@ export function Sidebar({ role }: SidebarProps) {
 
       {/* User + Actions */}
       <div className="border-t border-white/10 p-3 space-y-2">
+        <Link to="/privacidad" onClick={() => setMobileOpen(false)} aria-label="Privacidad y solicitudes de eliminación de cuenta" title="Privacidad y cuenta" className="flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm text-white/80 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white">
+          <ShieldCheck size={16} aria-hidden="true" />{!collapsed && <span>Privacidad y cuenta</span>}
+        </Link>
         {!collapsed && (
           <div className="px-1">
             <SyncIndicator />

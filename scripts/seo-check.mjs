@@ -5,6 +5,9 @@ import { fileURLToPath } from 'node:url'
 import { SITE_ORIGIN, parseSitemapUrls, validatePublicUrl } from './submit-indexnow.mjs'
 
 const PRIVATE = /^\/(?:api|login|admin|coord|apoyo|field|recuperar-contrasena|restablecer-contrasena)(?:\/|$)/
+// Public legal resources are served by /api/legal and intentionally noindex;
+// they are not marketing URLs and must not enter the indexing sitemap.
+const PUBLIC_UTILITIES = new Set(['/privacidad', '/eliminar-cuenta'])
 const decode = value => String(value || '').replaceAll('&amp;', '&').replaceAll('&quot;', '"').replaceAll('&#39;', "'").replaceAll('&lt;', '<').replaceAll('&gt;', '>').replace(/&#(\d+);/g, (match, number) => Number(number) <= 0x10ffff ? String.fromCodePoint(Number(number)) : match)
 const text = value => decode(value.replace(/<[^>]*>/g, ' ')).replace(/\s+/g, ' ').trim()
 const issue = (path, code, message) => ({ path, code, message })
@@ -83,7 +86,7 @@ export function validatePublicLinks(facts, path, paths) {
     try { url = new URL(href, `${SITE_ORIGIN}${path}`) } catch { errors.push(issue(path, 'LINK_INVALID', 'Hay un enlace con URL inválida.')); continue }
     if (url.origin !== SITE_ORIGIN || PRIVATE.test(url.pathname)) continue
     const target = url.pathname === '/' ? '/' : url.pathname.replace(/\/$/, '')
-    if (!paths.has(target) && !/\.[a-z0-9]+$/i.test(target)) errors.push(issue(path, 'LINK_NOT_PUBLISHED', `El enlace interno ${target} no está en el inventario público.`))
+    if (!paths.has(target) && !PUBLIC_UTILITIES.has(target) && !/\.[a-z0-9]+$/i.test(target)) errors.push(issue(path, 'LINK_NOT_PUBLISHED', `El enlace interno ${target} no está en el inventario público.`))
   }
   return errors
 }

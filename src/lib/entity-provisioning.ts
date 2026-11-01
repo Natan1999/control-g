@@ -38,3 +38,48 @@ export function buildMunicipalProvisionBundle(center = { latitude: 10.36, longit
     })),
   }
 }
+
+// Store review is a separate, two-account tenant. Never reuse a customer or
+// silently expand the five-account municipal demonstration.
+export function generateReviewAccounts(namespace: string): ProvisionAccount[] {
+  const accounts = generateDemoAccounts(`play-${namespace}`)
+  return [accounts.find(account => account.role === 'coordinator')!, accounts.find(account => account.role === 'professional')!]
+    .map(account => ({ ...account, full_name: account.role === 'coordinator' ? 'Coordinación · Revisión Play (ficticia)' : 'Profesional · Revisión Play (ficticio)' }))
+}
+
+export function buildReviewProvisionBundle(professionalKey: string, center = { latitude: 10.36, longitude: -75.42 }) {
+  if (!professionalKey) throw new Error('Falta el profesional de la demo de revisión.')
+  const source = buildMunicipalProvisionBundle(center)
+  const forms = [{
+    id: 'review-visit', title: 'DEMO · Visita de campo', type: 'ex_ante',
+    description: 'Instrumento ficticio para verificar captura offline, evidencias y sincronización. No ingresar datos personales reales.',
+    professional_keys: [professionalKey],
+    pages: [{ id: 'review-page', title: 'Registro de visita ficticia', fields: [
+      { id: 'reference', type: 'text', label: 'Referencia ficticia de la visita', required: true },
+      { id: 'sector', type: 'select', label: 'Sector de intervención', required: true, options: source.territories.map(territory => ({label:territory.name,value:territory.name})) },
+      { id: 'result', type: 'radio', label: 'Resultado de la visita', required: true, options: [{label:'Atendida',value:'attended'},{label:'Pendiente',value:'pending'}] },
+      { id: 'notes', type: 'longtext', label: 'Hallazgo ficticio (sin datos personales)', required: false },
+      { id: 'gps', type: 'gps', label: 'Ubicación de demostración (opcional)', required: false },
+      { id: 'photo', type: 'photo', label: 'Foto de un objeto de prueba (opcional)', required: false },
+      { id: 'signature', type: 'signature', label: 'Trazo ficticio de prueba (opcional)', required: false },
+      { id: 'audio', type: 'audio', label: 'Audio de demostración (opcional)', required: false, maxFileSizeMb:5 },
+      { id: 'document', type: 'file', label: 'PDF ficticio (opcional)', required: false, maxFileSizeMb:5 },
+    ] }],
+  }, {
+    id: 'review-unassigned', title: 'DEMO · Control sin asignar', type: 'ex_post',
+    description: 'Este formulario no debe estar disponible para capturar en la cuenta profesional hasta que coordinación lo asigne.',
+    professional_keys: [],
+    pages: [{ id: 'review-unassigned-page', title: 'Control de asignación', fields: [{ id:'check', type:'text', label:'Comprobación de asignación', required:true }] }],
+  }]
+  return {
+    territories: source.territories, forms, layers: source.layers,
+    records: Array.from({ length: 24 }, (_, index) => {
+      const sector = source.territories[index % source.territories.length].name
+      const capturedAt = new Date(Date.now() - (index % 7 + 1) * 86400000).toISOString()
+      const latitude = center.latitude + ((index % 6) - 2.5) * 0.006
+      const longitude = center.longitude + (Math.floor(index / 6) - 1.5) * 0.008
+      return { formId: 'review-visit', professionalId: professionalKey, territory: sector, latitude, longitude, capturedAt,
+        answers: { reference:`DEMO-${index+1}`,sector,result:index%4?'attended':'pending',notes:'Registro ficticio para revisión de la aplicación',gps:{latitude,longitude,accuracy:20,timestamp:Date.parse(capturedAt)} } }
+    }),
+  }
+}

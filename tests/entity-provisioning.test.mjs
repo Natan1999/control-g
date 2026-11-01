@@ -42,3 +42,32 @@ test('no existe entrada pública al demo ni contraseñas en el resultado persist
   assert.match(cleanup,/caches.delete\('control-g-supabase-read-cache'\)/)
   assert.ok(!cleanup.includes('deleteDatabase'))
 })
+
+test('la revisión de Play tiene solo dos cuentas, un instrumento asignado y un control sin asignar',async()=>{
+  const {builder}=await loadDemoFixture('play-review')
+  const accounts=builder.generateReviewAccounts('isolated')
+  assert.deepEqual(accounts.map(account=>account.role),['coordinator','professional'])
+  assert.equal(new Set(accounts.map(account=>account.email)).size,2)
+  assert.equal(new Set(accounts.map(account=>account.password)).size,2)
+  assert.ok(accounts.every(account=>account.password.length>=20 && account.email.includes('play-isolated')))
+  const professional=accounts.find(account=>account.role==='professional')
+  const bundle=builder.buildReviewProvisionBundle(professional.key)
+  assert.equal(bundle.forms.length,2)
+  assert.equal(bundle.records.length,24)
+  assert.equal(bundle.forms.filter(form=>form.professional_keys.includes(professional.key)).length,1)
+  assert.equal(bundle.forms.filter(form=>form.professional_keys.length===0).length,1)
+  for(const record of bundle.records){
+    const form=bundle.forms.find(form=>form.id===record.formId)
+    assert.equal(record.professionalId,professional.key)
+    assert.ok(form.professional_keys.includes(professional.key))
+    assert.ok(bundle.territories.some(territory=>territory.name===record.territory))
+    for(const field of form.pages.flatMap(page=>page.fields).filter(field=>field.required)) {
+      assert.notEqual(record.answers[field.id],undefined)
+      if(field.options) assert.ok(field.options.some(option=>option.value===record.answers[field.id]))
+    }
+  }
+  const fields=bundle.forms[0].pages.flatMap(page=>page.fields)
+  for(const type of ['gps','photo','signature','audio','file']) assert.ok(fields.some(field=>field.type===type && !field.required))
+  assert.ok(fields.some(field=>field.type==='longtext'))
+  assert.throws(()=>builder.buildReviewProvisionBundle(''),/Falta el profesional/)
+})
