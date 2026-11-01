@@ -109,7 +109,7 @@ test('el panel de superadministración no inventa crecimiento y las firmas perma
   assert.doesNotMatch(keyScript, /console\.log\(password/)
 })
 
-test('Android 2.19 actualiza API36 y nunca firma producción con clave de debug', async () => {
+test('Android conserva API36, versiones coherentes y firma de producción independiente de debug', async () => {
   const variables = await readFile('android/variables.gradle', 'utf8')
   const gradle = await readFile('android/app/build.gradle', 'utf8')
   const manifest = await readFile('android/app/src/main/AndroidManifest.xml', 'utf8')

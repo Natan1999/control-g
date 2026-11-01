@@ -39,6 +39,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-feature android:name="android.hardware.wifi" android:required="false" />
 
     <!-- Camera y medios -->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -47,10 +48,16 @@
     <!-- Evidence stays in private app storage; no broad gallery access. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-feature android:name="android.hardware.microphone" android:required="false" />
 
     <!-- GPS / Ubicación -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- GPS and evidence are optional: devices without these capabilities can
+         still capture ordinary forms. A required field remains a form rule. -->
+    <uses-feature android:name="android.hardware.location" android:required="false" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+    <uses-feature android:name="android.hardware.location.network" android:required="false" />
 
     <!-- Wake lock durante sincronización -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
