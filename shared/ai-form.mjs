@@ -1,4 +1,6 @@
 import { z } from 'zod'
+import { AI_PROVIDERS } from './ai-providers.mjs'
+export { AI_PROVIDERS, isAiProvider } from './ai-providers.mjs'
 
 export const AI_FIELD_TYPES = ['text', 'longtext', 'number', 'currency', 'date', 'time', 'select', 'multi_select', 'radio', 'checkbox', 'matrix', 'photo', 'audio', 'signature', 'gps', 'geotrace', 'geoshape', 'municipality', 'repeat_group', 'note', 'file', 'phone', 'email']
 const choices = new Set(['select', 'multi_select', 'radio', 'checkbox', 'matrix'])
@@ -38,7 +40,7 @@ export const AI_FORM_JSON_SCHEMA = object({
 
 export const aiRequestSchema = z.object({
   entityId: z.string().regex(/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$/),
-  provider: z.enum(['openai', 'gemini']),
+  provider: z.enum(AI_PROVIDERS),
   mode: z.enum(['create', 'import', 'revise']),
   prompt: text(8000).min(20),
   countryCode: z.enum(['AR','BO','BR','CL','CO','CR','CU','DO','EC','SV','GT','HN','MX','NI','PA','PY','PE','PR','UY','VE']),

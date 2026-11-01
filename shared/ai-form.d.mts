@@ -1,4 +1,5 @@
 import type { FormPage } from '../src/types'
+export { type AiProvider, AI_PROVIDERS, isAiProvider } from './ai-providers.mjs'
 export type AiFormDraft = { title: string; description: string; pages: FormPage[]; warnings: string[] }
 export const AI_FIELD_TYPES: string[]
 export const AI_FORM_JSON_SCHEMA: Record<string, unknown>

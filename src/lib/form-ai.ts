@@ -2,8 +2,9 @@ import { Capacitor } from '@capacitor/core'
 import { supabase } from '@/lib/supabase'
 import type { FormDefinition, FormField } from '@/types'
 import type { AiFormDraft } from '../../shared/ai-form.mjs'
+import { isAiProvider, type AiProvider } from '../../shared/ai-providers.mjs'
 
-export type AiProvider = 'openai' | 'gemini'
+export type { AiProvider }
 export type AiFormMode = 'create' | 'import' | 'revise'
 export interface AiFormRequest {
   entityId: string
@@ -43,7 +44,7 @@ async function requestAi(method: 'GET' | 'POST', body?: AiFormRequest, signal?: 
 
 export async function loadAiProviders(signal?: AbortSignal): Promise<AiProvider[]> {
   const result = await requestAi('GET', undefined, signal)
-  return Array.isArray(result.providers) ? result.providers.filter((item: string) => item === 'openai' || item === 'gemini') : []
+  return Array.isArray(result.providers) ? result.providers.filter(isAiProvider) : []
 }
 
 export async function generateFormDraft(request: AiFormRequest, signal?: AbortSignal): Promise<AiFormResult> {
