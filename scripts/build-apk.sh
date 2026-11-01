@@ -21,6 +21,7 @@ if [ "$control_g_build_mode" = release ]; then
 fi
 echo "Construyendo Control G ${CONTROL_G_VERSION}..."
 VITE_NATIVE_BUILD=true npm run build
+node scripts/stamp-android-build.mjs
 npx cap sync android
 
 if [ -z "${JAVA_HOME:-}" ] || [ ! -x "${JAVA_HOME}/bin/java" ]; then

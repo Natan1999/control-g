@@ -36,8 +36,12 @@ for (const file of files) {
     try { claims = JSON.parse(Buffer.from(token.split('.')[1],'base64url').toString()) } catch { continue }
     assert.notEqual(claims.role,'service_role','Se detectó una clave privilegiada de Supabase')
   }
-  const manifest = JSON.parse(extract(`${root}public/seo-manifest.json`))
+  const manifest = JSON.parse(extract(`${root}public/app-release.json`))
   assert.equal(manifest.sourceRevision,revision,'El paquete no corresponde a la revisión actual de Git')
+  assert.equal(manifest.version,pkg.version)
+  assert.equal(manifest.versionCode,versionCode)
+  assert.equal(manifest.entryRoute,'/login')
+  assert.deepEqual(manifest.aiProviders,['gemini','openai','openrouter'])
   let certificateSha256
   if (bundle) {
     execFileSync('/Library/Java/JavaVirtualMachines/jdk-19.jdk/Contents/Home/bin/jarsigner',['-verify',file],{stdio:'pipe'})

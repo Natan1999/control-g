@@ -58,6 +58,8 @@ test('el paquete nativo arranca en login, contiene los proveedores y no depende 
   const vite = await readFile('vite.config.ts','utf8')
   const backup = await readFile('scripts/backup-android-signing.mjs','utf8')
   const manifest = await readFile('android/app/src/main/AndroidManifest.xml','utf8')
+  const build = await readFile('scripts/build-apk.sh','utf8')
+  const stamp = await readFile('scripts/stamp-android-build.mjs','utf8')
   assert.match(config, /appId: 'com\.drandigital\.controlg'/)
   assert.match(config, /webDir: 'dist'/)
   assert.doesNotMatch(config, /server:\s*\{[^}]*\burl:/)
@@ -70,6 +72,9 @@ test('el paquete nativo arranca en login, contiene los proveedores y no depende 
   assert.match(backup, /0o600/)
   assert.match(backup, /-storepass:env/)
   assert.doesNotMatch(backup, /console\.log\(config/)
+  assert.ok(build.indexOf('node scripts/stamp-android-build.mjs') < build.indexOf('npx cap sync android'))
+  assert.match(stamp, /dist\/app-release\.json/)
+  assert.match(stamp, /--untracked-files=no/)
   for (const hardware of ['location', 'location.gps', 'location.network', 'microphone', 'wifi']) {
     assert.ok(manifest.includes(`android:name="android.hardware.${hardware}" android:required="false"`), `${hardware} no debe impedir instalar la captura sin georreferenciación`)
   }
