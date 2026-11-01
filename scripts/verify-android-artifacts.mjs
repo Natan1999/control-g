@@ -55,10 +55,11 @@ for (const file of files) {
     assert.ok(info.includes(`versionName='${pkg.version}'`))
     assert.ok(info.includes(`versionCode='${versionCode}'`))
     assert.ok(info.includes("targetSdkVersion:'36'"))
+    assert.ok(info.includes("sdkVersion:'24'"))
     assert.doesNotMatch(info,/READ_MEDIA_IMAGES|READ_MEDIA_VIDEO|READ_EXTERNAL_STORAGE|WRITE_EXTERNAL_STORAGE/)
     for (const hardware of ['location','microphone','wifi']) assert.ok(info.includes(`uses-feature-not-required: name='android.hardware.${hardware}'`),`${hardware} no debe impedir la instalación`)
   }
   const bytes = readFileSync(file)
-  reports.push({path:resolve(file),version:pkg.version,versionCode,targetSdk:36,sourceRevision:revision,sizeBytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex'),signatureVerified:true,certificateSha256,localAssets:true,aiProviders:['gemini','openai','openrouter'],privateCredentialsFound:false,ownerGuardPresent:true})
+  reports.push({path:resolve(file),version:pkg.version,versionCode,minSdk:24,targetSdk:36,sourceRevision:revision,sizeBytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex'),signatureVerified:true,certificateSha256,localAssets:true,aiProviders:['gemini','openai','openrouter'],privateCredentialsFound:false,ownerGuardPresent:true})
 }
 console.log(JSON.stringify({ok:true,artifacts:reports},null,2))

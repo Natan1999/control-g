@@ -118,6 +118,7 @@ test('Android conserva API36, versiones coherentes y firma de producción indepe
   const health = await readFile('api/health.mjs', 'utf8')
   const activity = await readFile('android/app/src/main/java/com/drandigital/controlg/MainActivity.java', 'utf8')
   assert.match(variables, /targetSdkVersion = 36/)
+  assert.match(variables, /minSdkVersion = 24/)
   assert.match(gradle, new RegExp(`versionName "${pkg.version.replaceAll('.', '\\.')}"`))
   assert.ok(health.includes(`const RELEASE = '${pkg.version}'`))
   assert.match(gradle, /!releaseSigningReady/)
