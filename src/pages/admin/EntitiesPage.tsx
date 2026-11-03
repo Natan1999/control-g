@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { buildMunicipalProvisionBundle, buildReviewProvisionBundle, generateDemoAccounts, generateReviewAccounts, type ProvisionAccount } from '@/lib/entity-provisioning'
 import { Plus, Building2, X, Search, MapPin, Calendar, Users, Mail, Hash, Globe2, ShieldCheck } from 'lucide-react'
@@ -438,6 +439,7 @@ export default function AdminEntitiesPage() {
                       <span className="text-sm text-slate-500">{e.period_start} — {e.period_end}</span>
                     </div>
                   </div>
+                  <Link to={`/admin/entities/${encodeURIComponent(e.$id)}/team`} className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 px-3 text-sm font-bold text-[#1B3A4B] hover:bg-slate-50"><Users size={16} /> Administrar equipo</Link>
                   <details className="mt-5 rounded-2xl border border-slate-100 bg-slate-50/70 p-3">
                     <summary className="cursor-pointer text-xs font-black uppercase tracking-wide text-[#1B3A4B]">Política del mapa</summary>
                     <div className="mt-4 grid gap-3 sm:grid-cols-3">

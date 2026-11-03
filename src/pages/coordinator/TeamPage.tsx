@@ -1,10 +1,12 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { useParams } from 'react-router-dom'
 import { UserPlus, X, Check, Users } from 'lucide-react'
 import { TopBar } from '@/components/layout/Sidebar'
 import { PageWrapper } from '@/components/shared'
 import { account, databases, DATABASE_ID, COLLECTION_IDS } from '@/lib/backend'
 import { Query, ID } from '@/lib/backend'
 import { useAuthStore } from '@/stores/authStore'
+import { canInviteTeamRole, resolveTeamScope } from '@/lib/team-scope'
 
 const COLORS = {
   primary: '#0038A8',   // Royal Blue
@@ -37,7 +39,7 @@ const STATUS_LABELS: Record<string, string> = {
   suspended: 'Suspendido',
 }
 
-type InviteRole = 'support' | 'professional'
+type InviteRole = 'coordinator' | 'support' | 'professional'
 
 function temporaryPassword() {
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789'
@@ -47,6 +49,12 @@ function temporaryPassword() {
 
 export default function TeamPage() {
   const { user } = useAuthStore()
+  const { entityId: requestedEntityId } = useParams<{ entityId: string }>()
+  const scope = resolveTeamScope(user, requestedEntityId)
+  const entityId = scope?.entityId
+  const [entityName, setEntityName] = useState('')
+  const [loadedEntityId, setLoadedEntityId] = useState('')
+  const requestSequence = useRef(0)
   const [members, setMembers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
@@ -55,48 +63,72 @@ export default function TeamPage() {
   const [form, setForm] = useState({ full_name: '', email: '', role: 'professional' as InviteRole })
   const [inviting, setInviting] = useState(false)
   const [formError, setFormError] = useState('')
+  const [invitePassword, setInvitePassword] = useState('')
 
   const loadMembers = useCallback(async () => {
+    if (!entityId) { setLoading(false); return }
+    const request = ++requestSequence.current
     setLoading(true)
     try {
-      const res = await databases.listDocuments(
-        DATABASE_ID,
-        COLLECTION_IDS.USER_PROFILES,
-        [Query.equal('entity_id', user!.entityId!), Query.limit(100)]
-      )
+      const [res, entity] = await Promise.all([
+        databases.listDocuments(DATABASE_ID, COLLECTION_IDS.USER_PROFILES, [Query.equal('entity_id', entityId), Query.limit(100)]),
+        databases.getDocument(DATABASE_ID, COLLECTION_IDS.ENTITIES, entityId),
+      ])
+      if (request !== requestSequence.current) return
       setMembers(res.documents)
+      setEntityName(entity.name || '')
+      setLoadedEntityId(entityId)
     } catch (err) {
+      if (request !== requestSequence.current) return
       console.error('Error cargando equipo:', err)
       setMembers([])
+      setEntityName('')
+      setLoadedEntityId('')
     } finally {
-      setLoading(false)
+      if (request === requestSequence.current) setLoading(false)
     }
-  }, [user])
+  }, [entityId])
 
   useEffect(() => {
-    if (user?.entityId) loadMembers()
-  }, [user?.entityId, loadMembers])
+    setMembers([])
+    setEntityName('')
+    setLoadedEntityId('')
+    setShowModal(false)
+    setInvitePassword('')
+    setForm({ full_name: '', email: '', role: 'professional' })
+    void loadMembers()
+    return () => { requestSequence.current += 1 }
+  }, [loadMembers])
 
   async function handleInvite() {
+    if (!entityName || loadedEntityId !== entityId || !canInviteTeamRole(scope, form.role)) {
+      setFormError('Selecciona una organización válida. Solo el superadministrador puede crear coordinadores.')
+      return
+    }
     if (!form.full_name.trim() || !form.email.trim()) {
       setFormError('Nombre y email son requeridos')
+      return
+    }
+    if (scope?.mayCreateCoordinators && invitePassword && invitePassword.length < 12) {
+      setFormError('La contraseña temporal debe tener al menos 12 caracteres.')
       return
     }
     setInviting(true)
     setFormError('')
     try {
-      const password = temporaryPassword()
+      const password = scope?.mayCreateCoordinators && invitePassword ? invitePassword : temporaryPassword()
       await account.create(
         ID.unique(),
         form.email,
         password,
         form.full_name,
-        { role: form.role, entityId: user?.entityId ?? null },
+        { role: form.role, entityId: entityId! },
       )
       await navigator.clipboard?.writeText(password).catch(() => {})
       showToast(`Cuenta creada. Clave temporal: ${password} (copiada al portapapeles)`)
       setShowModal(false)
       setForm({ full_name: '', email: '', role: 'professional' })
+      setInvitePassword('')
       loadMembers()
     } catch (err) {
       console.error('Error invitando miembro:', err)
@@ -115,6 +147,7 @@ export default function TeamPage() {
     setShowModal(false)
     setForm({ full_name: '', email: '', role: 'professional' })
     setFormError('')
+    setInvitePassword('')
   }
 
   const grouped: Record<string, any[]> = {
@@ -127,9 +160,10 @@ export default function TeamPage() {
     <PageWrapper>
       <TopBar
         title="Equipo"
-        subtitle="Gestión de Coordinador, Apoyo Administrativo y Profesionales"
+        subtitle={entityName ? `Equipo de ${entityName}` : 'Selecciona una organización válida para administrar su equipo'}
         actions={
           <button
+            disabled={!entityName || loadedEntityId !== entityId || !scope}
             onClick={() => setShowModal(true)}
             className="flex items-center gap-2 bg-[#1B3A4B] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#2a5570] transition-colors"
           >
@@ -192,6 +226,7 @@ export default function TeamPage() {
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 bg-[#1B3A4B] text-white px-5 py-3 rounded-xl shadow-xl text-sm font-medium">
           <Check size={16} className="text-green-400" />
           {toast}
+          <button type="button" onClick={() => setToast('')} aria-label="Ocultar clave temporal"><X size={16} /></button>
         </div>
       )}
 
@@ -201,14 +236,15 @@ export default function TeamPage() {
           <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold">Invitar miembro</h2>
-              <button onClick={closeModal} className="text-muted-foreground hover:text-foreground">
+              <button onClick={closeModal} aria-label="Cerrar invitación" className="text-muted-foreground hover:text-foreground">
                 <X size={20} />
               </button>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold mb-1.5">Nombre completo</label>
+                <label htmlFor="team-member-name" className="block text-sm font-semibold mb-1.5">Nombre completo</label>
                 <input
+                  id="team-member-name"
                   value={form.full_name}
                   onChange={e => setForm(p => ({ ...p, full_name: e.target.value }))}
                   placeholder="Ej: María García López"
@@ -216,8 +252,9 @@ export default function TeamPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1.5">Correo electrónico</label>
+                <label htmlFor="team-member-email" className="block text-sm font-semibold mb-1.5">Correo electrónico</label>
                 <input
+                  id="team-member-email"
                   type="email"
                   value={form.email}
                   onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
@@ -226,16 +263,19 @@ export default function TeamPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1.5">Rol</label>
+                <label htmlFor="team-member-role" className="block text-sm font-semibold mb-1.5">Rol</label>
                 <select
+                  id="team-member-role"
                   value={form.role}
                   onChange={e => setForm(p => ({ ...p, role: e.target.value as InviteRole }))}
                   className="w-full px-4 py-2.5 rounded-xl border border-input text-sm focus:outline-none focus:ring-2 focus:ring-[#1B3A4B]/30"
                 >
+                  {scope?.mayCreateCoordinators && <option value="coordinator">Coordinador</option>}
                   <option value="support">Apoyo Administrativo</option>
                   <option value="professional">Profesional</option>
                 </select>
               </div>
+              {scope?.mayCreateCoordinators && <div><label htmlFor="team-member-password" className="block text-sm font-semibold mb-1.5">Contraseña temporal (opcional)</label><input id="team-member-password" type="password" autoComplete="new-password" minLength={12} value={invitePassword} onChange={event => setInvitePassword(event.target.value)} placeholder="Generar automáticamente si se deja vacía" className="w-full rounded-xl border border-input px-4 py-2.5 text-sm" /></div>}
               {formError && <p className="text-sm text-red-500">{formError}</p>}
             </div>
             <div className="flex gap-3 mt-6">

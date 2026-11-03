@@ -149,6 +149,7 @@ export default function App() {
             <Routes>
               <Route index element={<AdminDashboard />} />
               <Route path="entities" element={<AdminEntitiesPage />} />
+              <Route path="entities/:entityId/team" element={<CoordTeamPage />} />
               <Route path="territories" element={<CountryCatalogPage />} />
               <Route path="forms" element={<FormsListPage />} />
               <Route path="forms/new" element={<FormBuilderPage />} />
